@@ -1,0 +1,266 @@
+{
+  "HEADER": {
+    "SEARCH": "Buscar parking",
+    "LOGIN": "Identifícate",
+    "REGISTER": "Registrarse",
+    "PROFILE": "Mis datos",
+    "DASHBOARD": "Panel de Admin",
+    "HISTORY": "Historial de reservas",
+    "LOGOUT": "Cerrar sesión"
+  },
+
+  "FOOTER": {
+    "CONTACT": "Contáctanos",
+    "PROJECT": "ft_transcendence "
+  },
+
+  "LOGIN": {
+    "TITLE": "Inicia Sesión",
+    "EMAIL": "Correo electrónico",
+    "PASSWORD": "Contraseña",
+    "PLACEHOLDER_EMAIL": "ejemplo@correo.com",
+    "PLACEHOLDER_PASSWORD": "******",
+    "BUTTON": "Entrar",
+    "LOADING": "Cargando...",
+    "ERROR": {
+      "REQUIRED_EMAIL": "El email es obligatorio.",
+      "INVALID_EMAIL": "Formato de email incorrecto.",
+      "REQUIRED_PASSWORD": "La contraseña es obligatoria.",
+      "INVALID_CREDENTIALS": "Credenciales inválidas. Comprueba tu email y contraseña.",
+      "TIMEOUT": "El servidor tarda demasiado en responder. Inténtalo más tarde.",
+      "UNKNOWN": "Ocurrió un error inesperado. Inténtalo más tarde."
+    }
+  },
+
+  "REGISTER": {
+    "TITLE": "Registro de Usuario",
+    "BUTTON": "Crear cuenta",
+    "LOADING": "Procesando...",
+    "SUCCESS": "Registro completado correctamente.",
+
+    "FIELDS": {
+      "NAME": "Nombre *",
+      "LASTNAME": "Apellidos *",
+      "DNI": "DNI *",
+      "BIRTHDATE": "Fecha de nacimiento *",
+      "IBAN": "IBAN (Cuenta bancaria)",
+      "EMAIL": "Correo electrónico *",
+      "PASSWORD": "Contraseña *",
+      "CONFIRM": "Confirmar *"
+    },
+
+    "PLACEHOLDERS": {
+      "DNI": "12345678Z",
+      "IBAN": "ES...",
+      "EMAIL": "ejemplo@correo.com",
+      "PASSWORD": "Contraseña"
+    },
+
+    "ERROR": {
+      "REQUIRED": "Obligatorio.",
+      "INVALID_EMAIL": "Email inválido.",
+      "INVALID_DNI_FORMAT": "Formato incorrecto.",
+      "INVALID_DNI_LETTER": "Letra incorrecta.",
+      "UNDER_AGE": "Debes ser mayor de 18.",
+      "INVALID_IBAN": "Formato IBAN inválido (ES + 22 dígitos).",
+      "PASSWORDS_MISMATCH": "Las contraseñas no coinciden."
+    },
+
+    "BACKEND": {
+      "TIMEOUT": "El servidor tarda demasiado en responder. Inténtalo más tarde.",
+      "USER_EXISTS": "El usuario ya existe.",
+      "UNKNOWN": "Ocurrió un error inesperado. Inténtalo de nuevo."
+    }
+  },
+
+  "PROFILE": {
+    "TITLE": "Mis Datos",
+    "SUBTITLE": "Consulta y actualiza tu información personal.",
+    "LOADING": "Cargando datos...",
+    "PERSONAL_DATA": "Datos Personales",
+    "NOT_EDITABLE": "No editable",
+
+    "FIELDS": {
+      "NAME": "Nombre",
+      "LASTNAME": "Apellidos",
+      "DNI": "DNI",
+      "EMAIL": "Email",
+      "BIRTHDATE": "Fecha de nacimiento",
+      "IBAN": "IBAN",
+      "NEW_PASSWORD": "Nueva contraseña",
+      "CONFIRM_PASSWORD": "Confirmar contraseña"
+    },
+
+    "ERROR": {
+      "REQUIRED": "Campo obligatorio.",
+      "UNDER_AGE": "Debes ser mayor de edad.",
+      "INVALID_IBAN": "IBAN inválido.",
+      "PASSWORDS_MISMATCH": "Las contraseñas no coinciden.",
+      "DATA": "No se pudieron cargar los datos del usuario.",
+      "CHANGES": "No se pudieron guardar los cambios. Revisa los datos."
+    },
+
+    "CHANGE_PASSWORD": "Cambiar contraseña",
+    "PASSWORD_NOTE": "Deja estos campos vacíos si no quieres modificar tu clave.",
+
+    "BUTTONS": {
+      "EDIT": "Editar datos",
+      "CANCEL": "Cancelar",
+      "SAVE": "Guardar cambios",
+      "SAVING": "Guardando..."
+    }
+  },
+
+  "SEARCH": {
+    "TITLE": "Busca tu parking",
+    "DESTINATION": "Destino",
+    "PROVINCE": "Provincia",
+    "BUTTON": "Buscar",
+    "LOADING": "Buscando parkings...",
+    "ELECTRICITY": "Toma de electricidad",
+    "RESIDUALS": "Limpieza de aguas residuales",
+    "VIP": "Plazas VIP",
+    "RESULTS": "parking encontrados",
+    "ALL": "Todos",
+    "DETAILS": "Detalles",
+    "NIGHT": "noche",
+    "ERRORS": {
+      "NO_RESULTS": "No se encontraron resultados.",
+      "CONNECTION": "Error de conexión al buscar parkings."
+    }
+  },
+
+  "PARKING": {
+    "SERVICES": "Servicios",
+    "SELECT_SPOT": "Selecciona tu plaza",
+    "DATES": "Fechas seleccionadas",
+    "FREE": "Libre",
+    "OCCUPIED": "Ocupada",
+    "TOTAL": "Total a pagar",
+    "RESERVE_SPOT": "Reservar plaza",
+    "SELECT_FREE": "Selecciona una plaza libre para continuar",
+    "CONTACT": "Contacto",
+    "LOADING": "Cargando información del parking...",
+    "SUCCESS": "¡Reserva realizada con éxito!",
+    "ERRORS": {
+      "NO_RESULTS": "Parking no encontrado o no disponible para estas fechas.",
+      "LOADING": "Error al cargar los detalles del parking.",
+      "BOOKING": "Hubo un error al realizar la reserva."
+    },
+    "AUX": {
+      "FIRST": "Vas a reservar la plaza",
+      "SECOND": "Precio Total:",
+      "THIRD": "Fechas",
+      "FOURTH": "a",
+      "FIFTH": "¿Confirmar?",
+      "SIXTH": "Confirmar Reserva",
+      "SEVENTH": "Cancelar",
+      "EIGHTH": "Confirmar y Pagar"
+    }
+  },
+
+  "HISTORY": {
+    "TITLE": "Historial de reservas",
+    "PARKING": "Parking",
+    "ALL": "Todos",
+    "CONFIRMED": "Confirmada",
+    "CANCELLED": "Cancelada",
+    "FILTER": "Filtrar",
+    "CLEAR": "Limpiar",
+    "LOADING": "Cargando historial...",
+    "EMPTY": "No se encontraron reservas con estos criterios.",
+    "PARKING_GENERIC": "Parking",
+    "REQUEST_DATE": "Solicitada el",
+    "REFERENCE": "Referencia",
+    "DATES": "Fechas",
+    "TOTAL": "Total",
+    "RATING": "Tu valoración",
+    "DETAILS": "Ver detalles y gestionar",
+    "ERROR_LOADING": "Error al cargar el historial."
+  },
+
+  "HISTORY_DETAIL": {
+    "BACK": "Volver al historial",
+    "BOOKING": "Reserva",
+    "CONFIRMED": "Confirmada",
+    "CANCELLED": "Cancelada",
+    "REQUEST_DATE": "Entrada",
+    "GENERAL": "Información general",
+    "STAY": "Estancia",
+    "REFERENCE": "Referencia",
+    "SPOT": "Plaza",
+    "ENTRY": "Entrada",
+    "EXIT": "Salida",
+    "RATING": "Valoración",
+    "TOTAL": "Precio total",
+    "QR": "Ver código QR",
+    "RATE": "Valorar estancia",
+    "CANCEL": "Cancelar reserva",
+    "CANCELLED_MSG": "Esta reserva ha sido cancelada.",
+    "QR_TITLE": "Código QR de acceso",
+    "LOADING_QR": "Cargando QR…",
+    "LOADING_DETAIL": "Cargando detalles…",
+    "SUCCESS_CANCEL": "Reserva cancelada correctamente.",
+    "SUCCESS_RATE": "¡Gracias por tu valoración!",
+    "CONFIRM_CANCEL_TITLE": "Confirmar cancelación",
+    "CONFIRM_CANCEL_TEXT": "¿Estás seguro de que deseas cancelar esta reserva? Esta acción no se puede deshacer.",
+    "CONFIRM_CANCEL_NO": "No, volver",
+    "CONFIRM_CANCEL_YES": "Sí, cancelar",
+    "ERRORS": {
+      "LOADING": "Error al cargar la reserva.",
+      "CANCEL": "Hubo un error al intentar cancelar la reserva.",
+      "RATE": "Error al enviar la valoración.",
+      "QR": "No se pudo obtener el código QR."
+    }
+  },
+
+  "ADMIN_PARKINGS": {
+    "TITLE": "Mis parkings",
+    "ADD": "Añadir parking",
+    "LOADING": "Cargando datos…",
+    "EMPTY": "No tienes parkings registrados.",
+    "SPOTS": "Plazas",
+    "MANAGE": "Gestionar"
+  },
+
+  "MANAGE_PARKING": {
+    "NEW": "Nuevo Parking",
+    "EDIT": "Gestionar Parking",
+    "BACK": "Volver al listado",
+    "GENERAL": "Datos generales",
+    "NAME": "Nombre",
+    "EMAIL": "Email de contacto",
+    "PROVINCE": "Provincia",
+    "CITY": "Municipio",
+    "WEB": "Web",
+    "PHONE": "Teléfono",
+    "ACTIVE": "Activo",
+    "ELECTRICITY": "Electricidad general",
+    "RESIDUALS": "Aguas residuales",
+    "VIP": "Zona VIP",
+    "SAVE": "Guardar datos del parking",
+    "SAVING": "Guardando...",
+    "SPOTS": "Plazas",
+    "ADD_SPOT": "Añadir plaza",
+    "SPOT_NAME": "Nombre",
+    "PRICE": "Precio",
+    "FEATURES": "Características",
+    "STATUS": "Estado",
+    "FREE": "Libre",
+    "OCCUPIED": "Mantenimiento",
+    "EDIT_SPOT": "Editar",
+    "NO_SPOTS": "Este parking no tiene plazas creadas.",
+    "CANCEL": "Cancelar",
+    "SAVE_SPOT": "Guardar plaza",
+    "SUCCESS_UPDATE": "Parking actualizado correctamente",
+    "SUCCESS_CREATE": "Parking creado correctamente",
+    "SUCCESS_CREATE_SPOT": "Plaza creada correctamente",
+    "SUCCESS_UPDATE_SPOT": "Plaza actualizada correctamente",
+    "ERRORS": {
+      "CREATE": "Error al crear el parking",
+      "UPDATE": "Error al actualizar el parking. Inténtalo de nuevo.",
+      "CREATE_SPOT": "Error al crear la plaza en el servidor.",
+      "UPDATE_SPOT": "Error al actualizar la plaza en el servidor."
+    }
+  }
+}

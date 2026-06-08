@@ -1,0 +1,136 @@
+@use "../../../../styles/abstracts/variables" as *;
+
+.manage-parking-page {
+  max-width: 1100px;
+  margin: 0 auto;
+  padding: 2rem 1rem;
+}
+
+.page-title {
+  margin-bottom: 0;
+}
+
+.parking-form {
+  background: $color-white;
+  padding: $space-lg;
+  border-radius: $radius-lg;
+  box-shadow: $shadow-soft;
+}
+
+.free {
+  color: $color-success;
+  font-weight: $font-weight-semibold;
+}
+
+.occupied {
+  color: $color-error;
+  font-weight: $font-weight-semibold;
+}
+
+.spot-modal-backdrop {
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.65);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 9999;
+}
+
+.spot-modal {
+  background: $color-white;
+  padding: $space-lg;
+  border-radius: $radius-lg;
+  width: 100%;
+  max-width: 450px;
+  box-shadow: $shadow-strong;
+}
+
+.spot-modal-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: $space-md;
+
+  h3 {
+    margin-bottom: 0;
+  }
+
+  button {
+    background: none;
+    border: none;
+    font-size: 1.6rem;
+    cursor: pointer;
+    color: $color-grey-soft;
+  }
+}
+
+.plazas-table {
+  width: 100%;
+  border-collapse: collapse;
+  min-width: 650px;
+}
+
+.plazas-table th,
+.plazas-table td {
+  padding: $space-xs $space-sm;
+  text-align: left;
+  white-space: nowrap;
+}
+
+.plazas-table th {
+  font-weight: $font-weight-semibold;
+  color: $color-grey-soft;
+}
+
+.table-wrapper {
+  width: 100%;
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+  border-radius: $radius-md;
+}
+
+.table-wrapper::-webkit-scrollbar {
+  height: 6px;
+}
+
+.table-wrapper::-webkit-scrollbar-thumb {
+  background: $color-primary-soft;
+  border-radius: 4px;
+}
+
+// MOVIL Y TABLET
+@media (max-width: $bp-sm) {
+
+  .parking-header {
+    flex-direction: column;
+  }
+
+  .page-title {
+    margin-bottom: 1.5rem;
+  }
+
+  .parking-form {
+    padding: $space-md;
+  }
+
+  .btn {
+    width: 100%;
+    margin-top: 0;
+  }
+
+  .plazas-div {
+    flex-direction: column;
+  }
+
+  .spot-modal {
+    width: 80%;
+  }
+
+  .table-wrapper {
+    margin-left: -$space-sm;
+    margin-right: -$space-sm;
+    padding-left: $space-sm;
+    padding-right: $space-sm;
+  }
+}

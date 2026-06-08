@@ -1,0 +1,61 @@
+version: '3.8'
+
+services:
+  db:
+    image: postgres:15-alpine
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    environment:
+      POSTGRES_DB: defaultdb
+      POSTGRES_USER: defaultdb_uk1q_user
+      POSTGRES_PASSWORD: password
+    ports:
+      - "5432:5432"
+    # 1. Le añadimos un chequeo de salud a Postgres
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U defaultdb_uk1q_user -d defaultdb"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+  backend:
+    build: ./backend/area_backend
+    # 1. CAMBIAMOS EL COMANDO: Añadimos el flag --debug
+    command: python -m flask run --host=0.0.0.0 --port=5000 --debug
+    volumes:
+      # 2. VERIFICA ESTA RUTA: Asegúrate de que apunta a tu carpeta de código local
+      - ./backend/area_backend:/app
+    ports:
+      - "5000:5000"
+    environment:
+      - FLASK_APP=app.py
+      - PYTHONPATH=.
+      #- MAIL_SERVER=smtp.gmail.com
+      #- MAIL_PORT=587
+      #- MAIL_USE_TLS=True
+      #- MAIL_USERNAME=pruebasenviosmaildesarrollo@gmail.com
+      #- MAIL_PASSWORD=zsvk ophk fkrw ixcr
+      #ft_trancendence
+      # 3. FORZAMOS EL ENTORNO DE DESARROLLO
+      #- FLASK_DEBUG=1
+      #- FLASK_ENV=development
+      #- DATABASE_URL=postgresql://defaultdb_uk1q_user:password@db:5432/defaultdb
+
+    env_file:
+      - .env
+    depends_on:
+      db:
+        condition: service_healthy
+
+  frontend:
+    build: ./frontend
+    # command: npm start # Descoméntalo si tu Dockerfile de Angular no tiene un CMD por defecto
+    volumes:
+      - ./frontend:/app
+    ports:
+      - "4200:80" # Mapea el puerto 4200 de tu PC al puerto 80 del contenedor (Nginx/Angular)
+    stdin_open: true 
+    tty: true
+
+volumes:
+  postgres_data: # Corregido: Quitamos el texto plano que causaba error de sintaxis

@@ -1,0 +1,102 @@
+@use '../abstracts/variables' as *;
+
+@import url('https://fonts.googleapis.com/css2?family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,100..900;1,100..900&display=swap');
+
+// Tipografía base para todo el sitio
+body {
+  font-family: $font-body;
+  font-weight: $font-weight-regular;
+  font-size: 1rem;
+  color: $color-grey-main;
+}
+
+// Títulos generales
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+  margin: 0 0 $space-sm;
+  font-family: $font-body;
+  font-weight: $font-weight-semibold;
+  color: $color-blackish;
+}
+
+// Títulos de página
+.page-title,
+h1.page-title {
+  font-family: $font-heading;
+  font-size: 1.6rem;
+  font-weight: $font-weight-bold;
+  color: $color-primary-dark;
+  margin-bottom: 2rem;
+}
+
+// Subtítulos de sección
+.section-title {
+  font-family: $font-body;
+  font-weight: $font-weight-semibold;
+  font-size: 1.3rem;
+  color: $color-brown-main;
+}
+
+// Subtítulo general
+.page-subtitle {
+  font-size: 1.05rem;
+  color: $color-grey-soft;
+  margin-top: -$space-sm;
+  margin-bottom: $space-lg;
+  font-weight: $font-weight-medium;
+}
+
+// Subtítulo pequeño para secciones internas
+.subtitle-small {
+  font-size: 0.9rem;
+  color: $color-grey-main;
+  margin-bottom: $space-md;
+  font-weight: $font-weight-regular;
+}
+
+// Etiquetas
+.label-tag {
+  background-color: $color-primary-soft;
+  color: $color-white;
+  font-size: 0.75rem;
+  padding: 0.15rem 0.45rem;
+  border-radius: $radius-sm;
+  margin-left: $space-xs;
+}
+
+// Párrafos
+p {
+  margin: 0 0 $space-sm;
+  line-height: 1.6;
+}
+
+// Enlaces
+a {
+  color: $color-primary;
+  text-decoration: none;
+  transition: color 0.2s ease;
+
+  &:hover {
+    color: $color-primary-soft;
+    text-decoration: underline;
+  }
+}
+
+// Texto pequeño
+.small-text {
+  font-size: 0.875rem;
+  color: $color-grey-main;
+}
+
+// Etiquetas/labels
+.form-label-custom {
+  font-weight: $font-weight-medium;
+  color: $color-grey-soft;
+  margin-bottom: $space-xs;
+  display: block;
+}

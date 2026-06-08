@@ -1,0 +1,218 @@
+<div *ngIf="parking; else loadingTpl" class="parking-detail-page">
+  <header class="parking-header">
+    <div>
+      <h1 class="page-title">{{ parking.nombre }}</h1>
+      <p class="location">
+        <i class="fa-solid fa-location-dot"></i>
+        {{ parking.municipio || parking.localidad }}
+      </p>
+    </div>
+
+    <div class="rating" *ngIf="parking.media">
+      {{ parking.media | number:'1.1-1' }}
+    </div>
+  </header>
+
+  <div *ngIf="successMessage" class="alert alert-success alert-dismissible fade show mt-3" role="alert">
+    <i class="fa-solid fa-check-circle me-2"></i> {{ successMessage }}
+    <button type="button" class="btn-close" (click)="successMessage = ''" aria-label="Close"></button>
+  </div>
+
+  <div *ngIf="errorMessage" class="alert alert-danger alert-dismissible fade show mt-3" role="alert">
+    <i class="fa-solid fa-exclamation-circle me-2"></i> {{ errorMessage | translate }}
+    <button type="button" class="btn-close" (click)="errorMessage = ''" aria-label="Close"></button>
+  </div>
+
+  <!-- CARRUSEL MÓVIL -->
+  <div
+    id="parkingCarousel"
+    class="carousel slide"
+    data-bs-touch="true"
+    *ngIf="isMobile"
+  >
+    <div class="carousel-inner">
+      <div
+        class="carousel-item"
+        *ngFor="let img of galleryImages; let i = index"
+        [class.active]="i === 0"
+      >
+        <img [src]="img" class="d-block w-100" alt="Parking">
+      </div>
+    </div>
+
+    <button
+      class="carousel-control-prev"
+      type="button"
+      data-bs-target="#parkingCarousel"
+      data-bs-slide="prev"
+    >
+      <span class="carousel-control-prev-icon"></span>
+    </button>
+
+    <button
+      class="carousel-control-next"
+      type="button"
+      data-bs-target="#parkingCarousel"
+      data-bs-slide="next"
+    >
+      <span class="carousel-control-next-icon"></span>
+    </button>
+  </div>
+
+  <div class="parking-layout">
+    <section class="parking-main">
+      <div class="main-image" *ngIf="!isMobile">
+        <img
+          src="/images/fotos/camper1.jpg"
+          alt="Parking"
+          (click)="openGallery(0)"
+        >
+      </div>
+
+      <div class="services">
+        <h3 class="section-title">{{ 'PARKING.SERVICES' | translate }}</h3>
+
+        <ul>
+          <li *ngIf="parking.tomaElectricidad || parking.tieneElectricidad">
+            <i class="fa-solid fa-check"></i>
+            {{ 'SEARCH.ELECTRICITY' | translate }}
+          </li>
+          <li *ngIf="parking.limpiezaAguasResiduales || parking.tieneResiduales">
+            <i class="fa-solid fa-check"></i>
+            {{ 'SEARCH.RESIDUALS' | translate }}
+          </li>
+          <li *ngIf="parking.plazasVip || parking.tieneVips">
+            <i class="fa-solid fa-check"></i>
+            {{ 'SEARCH.VIP' | translate }}
+          </li>
+        </ul>
+      </div>
+
+      <div class="slots">
+        <h3 class="section-title">{{ 'PARKING.SELECT_SPOT' | translate }}</h3>
+        <p>
+          {{ 'PARKING.DATES' | translate }}:
+          {{ entryDate }} – {{ exitDate }}
+        </p>
+
+        <div class="spots-grid">
+          <div
+            *ngFor="let spot of spots"
+            class="spot-card"
+            [class.selected]="selectedSpot?.id === spot.id"
+            [class.occupied]="spot.estado !== '0'"
+            (click)="selectSpot(spot)"
+          >
+            <div class="spot-header">
+              <strong>{{ spot.nombre }}</strong>
+              <span>{{ spot.precio }}€</span>
+            </div>
+
+            <div class="spot-tags">
+              <span *ngIf="spot.esVip">VIP </span>
+              <span *ngIf="spot.tieneElectricidad">Electr. </span>
+            </div>
+
+            <div class="spot-status">
+              {{ spot.estado === '0'
+                ? ('PARKING.FREE' | translate)
+                : ('PARKING.OCCUPIED' | translate) }}
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <aside class="parking-side">
+      <div class="gallery" *ngIf="!isMobile">
+        <img
+          *ngFor="let img of sideGalleryImages; let i = index"
+          [src]="img"
+          (click)="openGallery(i + 1)"
+          alt="Parking"
+        >
+      </div>
+
+      <div class="contact">
+        <h3 class="section-title">{{ 'PARKING.CONTACT' | translate }}</h3>
+
+        <p>
+          <i class="fa-solid fa-globe"></i>
+          <a [href]="parking.web" target="_blank"> {{ parking.web }}</a>
+        </p>
+
+        <p>
+          <i class="fa-solid fa-phone"></i>
+          {{ parking.telefono }}
+        </p>
+
+        <p>
+          <i class="fa-regular fa-envelope"></i>
+          {{ parking.email }}
+        </p>
+      </div>
+
+        <div class="booking-summary" *ngIf="selectedSpot">
+          <div class="total">
+            {{ 'PARKING.TOTAL' | translate }}:
+            <strong>{{ totalPrice }}€</strong>
+          </div>
+
+          <button class="btn btn-primary" (click)="onBook()">
+            {{ 'PARKING.RESERVE_SPOT' | translate }}
+            {{ selectedSpot.nombre }}
+          </button>
+        </div>
+
+        <p class="hint" *ngIf="!selectedSpot">
+          {{ 'PARKING.SELECT_FREE' | translate }}
+        </p>
+    </aside>
+  </div>
+
+  <!-- LIGHTBOX -->
+  <div class="lightbox" *ngIf="isGalleryOpen" (click)="closeGallery()">
+    <button class="close" (click)="closeGallery(); $event.stopPropagation()">×</button>
+
+    <button class="nav prev" (click)="prevImage($event)">‹</button>
+
+    <img [src]="galleryImages[currentImage]" alt="Parking">
+
+    <button class="nav next" (click)="nextImage($event)">›</button>
+  </div>
+</div>
+
+<div class="lightbox" *ngIf="showConfirmModal" (click)="showConfirmModal = false">
+    <div class="modal-content-wrapper" (click)="$event.stopPropagation()" style="background: white; padding: 2rem; border-radius: 8px; max-width: 500px; width: 90%; color: #333; position: relative;">
+      
+      <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem;">
+        <h3 style="margin: 0; font-size: 1.5rem;">{{ 'PARKING.AUX.SIXTH' | translate }}</h3>
+        <button (click)="showConfirmModal = false" style="background: none; border: none; font-size: 1.5rem; cursor: pointer;">×</button>
+      </div>
+
+      <div style="margin-bottom: 2rem;">
+        <p class="mb-2">{{ 'PARKING.AUX.FIRST' | translate }} <strong>{{ selectedSpot?.nombre }}</strong>.</p>
+        
+        <div style="background: #f8f9fa; padding: 1rem; border-radius: 6px; font-size: 0.95rem;">
+          <p class="mb-1"><strong>{{ 'PARKING.AUX.THIRD' | translate }}</strong> {{ entryDate }} {{ 'PARKING.AUX.FOURTH' | translate }} {{ exitDate }}</p>
+          <p class="mb-0"><strong>{{ 'PARKING.AUX.SECOND' | translate }}</strong> <span style="color: #2c3e50; font-size: 1.2rem; font-weight: bold;">{{ totalPrice }}€</span></p>
+        </div>
+      </div>
+
+      <div style="display: flex; justify-content: flex-end; gap: 10px;">
+        <button class="btn btn-outline-secondary" (click)="showConfirmModal = false">
+          {{ 'PARKING.AUX.SEVENTH' | translate }}
+        </button>
+        <button class="btn btn-primary" (click)="confirmBooking()">
+          {{ 'PARKING.AUX.EIGHTH' | translate }}
+        </button>
+      </div>
+    </div>
+  </div>
+
+<ng-template #loadingTpl>
+  <div class="loading-wrapper">
+    <i class="fa-solid fa-spinner spinner"></i>
+    <p>{{ 'PARKING.LOADING' | translate }}</p>
+  </div>
+</ng-template>

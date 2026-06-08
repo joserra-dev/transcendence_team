@@ -1,0 +1,119 @@
+<div class="form-page-wrapper">
+  <h2 class="page-title">{{ 'PROFILE.TITLE' | translate }}</h2>
+  <p class="page-subtitle">{{ 'PROFILE.SUBTITLE' | translate }}</p>
+
+  <div *ngIf="isLoading && !currentUser" class="loading-msg">
+    <i class="fa-solid fa-spinner loading-icon"></i>
+    {{ 'PROFILE.LOADING' | translate }}
+  </div>
+
+  <div class="success-msg mb-3" *ngIf="successMessage">
+    {{ successMessage | translate }}
+  </div>
+
+  <div class="error-msg-standard mb-3" *ngIf="errorMessage">
+    {{ errorMessage | translate }}
+  </div>
+
+  <form [formGroup]="profileForm" *ngIf="!isLoading || currentUser" (ngSubmit)="saveChanges()" class="form-standard">
+    <h3 class="section-title">{{ 'PROFILE.PERSONAL_DATA' | translate }}</h3>
+
+    <div class="row g-4 mb-3 form-2-group">
+
+      <div class="col-md-6 form-group-standard">
+        <label class="form-label-custom">{{ 'PROFILE.FIELDS.NAME' | translate }}</label>
+        <input type="text" formControlName="nombrePersona" [readonly]="!isEditing">
+        <small class="error-msg-standard" *ngIf="isInvalid('nombrePersona')">
+          {{ 'PROFILE.ERROR.REQUIRED' | translate }}
+        </small>
+      </div>
+
+      <div class="col-md-6 form-group-standard">
+        <label class="form-label-custom">{{ 'PROFILE.FIELDS.LASTNAME' | translate }}</label>
+        <input type="text" formControlName="apellidosPersona" [readonly]="!isEditing">
+        <small class="error-msg-standard" *ngIf="isInvalid('apellidosPersona')">
+          {{ 'PROFILE.ERROR.REQUIRED' | translate }}
+        </small>
+      </div>
+    </div>
+
+    <div class="mb-3 form-group-standard form-group--dni">
+      <label class="form-label-custom">
+        {{ 'PROFILE.FIELDS.DNI' | translate }} <span class="label-tag">{{ 'PROFILE.NOT_EDITABLE' | translate }}</span>
+      </label>
+      <input type="text" formControlName="dniPersona" readonly>
+    </div>
+
+    <div class="mb-3 form-group-standard">
+      <label class="form-label-custom">
+        {{ 'PROFILE.FIELDS.EMAIL' | translate }} <span class="label-tag">{{ 'PROFILE.NOT_EDITABLE' | translate }}</span>
+      </label>
+      <input type="email" formControlName="emailPersona" readonly>
+    </div>
+
+    <div class="row g-4 mb-3 form-2-group">
+
+      <div class="col-md-6 form-group-standard">
+        <label class="form-label-custom">{{ 'PROFILE.FIELDS.BIRTHDATE' | translate }}</label>
+        <input type="date" formControlName="fecNacimientoPersona" [readonly]="!isEditing">
+        <small *ngIf="isInvalid('fecNacimientoPersona')" class="error-msg-standard">
+          {{ 'PROFILE.ERROR.UNDER_AGE' | translate }}
+        </small>
+      </div>
+
+      <div class="col-md-6 form-group-standard">
+        <label class="form-label-custom">{{ 'PROFILE.FIELDS.IBAN' | translate }}</label>
+        <input type="text" formControlName="ibanPersona" [readonly]="!isEditing">
+        <small *ngIf="isInvalid('ibanPersona')" class="error-msg-standard">
+          {{ 'PROFILE.ERROR.INVALID_IBAN' | translate }}
+        </small>
+      </div>
+
+    </div>
+
+    <h3 class="section-title">{{ 'PROFILE.CHANGE_PASSWORD' | translate }}</h3>
+    <p class="subtitle-small">{{ 'PROFILE.PASSWORD_NOTE' | translate }}</p>
+
+    <div class="row g-4 mb-4 form-2-group">
+      <div class="col-md-6 form-group-standard">
+        <label class="form-label-custom">{{ 'PROFILE.FIELDS.NEW_PASSWORD' | translate }}</label>
+        <input type="password" formControlName="passPersona">
+      </div>
+
+      <div class="col-md-6 form-group-standard">
+        <label class="form-label-custom">{{ 'PROFILE.FIELDS.CONFIRM_PASSWORD' | translate }}</label>
+        <input type="password" formControlName="confirmPassPersona">
+        <small *ngIf="profileForm.hasError('passwordsMismatch')" class="error-msg-standard">
+          {{ 'PROFILE.ERROR.PASSWORDS_MISMATCH' | translate }}
+        </small>
+      </div>
+    </div>
+
+    <div class="action-buttons">
+      <button type="button"
+        *ngIf="!isEditing"
+        (click)="enableEdit()"
+        class="btn btn-primary button-wide">
+        {{ 'PROFILE.BUTTONS.EDIT' | translate }}
+      </button>
+
+      <div *ngIf="isEditing" class="edit-buttons">
+        <button type="button" class="btn btn-secondary button-wide" (click)="cancelEdit()">
+          {{ 'PROFILE.BUTTONS.CANCEL' | translate }}
+        </button>
+
+        <button type="submit"
+                class="btn btn-primary button-wide btn-save"
+                [disabled]="profileForm.invalid || isLoading">
+          {{ isLoading ? ('PROFILE.BUTTONS.SAVING' | translate) : ('PROFILE.BUTTONS.SAVE' | translate) }}
+        </button>
+      </div>
+
+      <div *ngIf="isLoading" class="loading-msg">
+        <i class="fa-solid fa-spinner loading-icon"></i>
+        {{ 'PROFILE.LOADING' | translate }}
+      </div>
+
+    </div>
+  </form>
+</div>

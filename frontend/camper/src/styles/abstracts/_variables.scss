@@ -1,0 +1,67 @@
+// COLORES
+$color-white:    #FFFFFF;
+$color-blackish: #2E2E2E;
+
+$color-page-bg:  #FAFAF7;
+
+// Azules
+$color-primary:       #006299;
+$color-primary-soft:  #76B5D4;
+$color-primary-gray:  #5C89A7;
+$color-primary-dark:  #3A8FBF;
+
+// Verdes
+$color-green-main:    #1F3A4D;
+$color-green-deep:    #163C33;
+$color-green-accent:  #8A9C3B;
+
+// Marrones
+$color-brown-main:    #3A2E26;
+$color-brown-soft:    #C8A97E;
+$color-brown-accent:  #C9AA86;
+
+// Grises
+$color-grey-main:     #353535;
+$color-grey-soft:     #5F5B55;
+$color-grey-border:   #9CAEBD;
+
+// Bordes específicos
+$color-border:   #5C89A7;
+
+// Estados
+$color-success: #6fc158;
+$color-warning: #C8A97E;
+$color-error:   #BF3A3A;
+
+
+// TIPOGRAFÍAS
+$font-heading: 'Montserrat', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+$font-body:    'Poppins', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+
+// Pesos tipográficos usados
+$font-weight-regular:  400;
+$font-weight-medium:   500;
+$font-weight-semibold: 600;
+$font-weight-bold:     700;
+
+// ESPACIADOS
+$space-xxs: 0.25rem;
+$space-xs:  0.5rem;
+$space-sm:  0.75rem;
+$space-md:  1rem;
+$space-lg:  1.5rem;
+$space-xl:  2.5rem;
+$space-xxl: 3rem;
+
+// RADIOS Y SOMBRAS
+$radius-sm:  5px;
+$radius-md:  8px;
+$radius-lg:  10px;
+
+$shadow-soft: 0 4px 8px rgba(0, 0, 0, 0.08);
+$shadow-strong: 1px 2px 7px rgba(20, 74, 110, 0.5);
+
+// BREAKPOINTS
+$bp-sm: 576px;  // Móviles grandes
+$bp-md: 768px;  // Tablets
+$bp-lg: 992px;  // Escritorio estándar

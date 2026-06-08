@@ -1,0 +1,32 @@
+@use "../abstracts/mixins" as *;
+
+.page-wrapper {
+  @include responsive-padding;
+  padding-top: 1rem;
+  padding-bottom: 1rem;
+  flex-grow: 1;
+}
+
+html, body {
+  height: 100%;
+}
+
+body {
+  display: flex;
+  flex-direction: column;
+}
+
+app-root {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+}
+
+app-header {
+  flex-shrink: 0;
+}
+
+
+app-footer {
+  flex-shrink: 0;
+}

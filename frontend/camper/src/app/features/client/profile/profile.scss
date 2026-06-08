@@ -1,0 +1,34 @@
+@use "../../../../styles/abstracts/variables" as *;
+
+// BOTONES CANCELAR/GUARDAR
+.edit-buttons {
+  display: flex;
+  gap: 1rem;
+  margin-top: 1rem;
+
+  button {
+    flex: 1;
+  }
+
+  @media (max-width: $bp-sm) {
+    flex-direction: column;
+  }
+}
+
+@media (max-width: $bp-sm) {
+  .form-standard .section-title:nth-of-type(2) {
+    margin-top: $space-xxl;
+  }
+
+  .form-group--dni {
+    margin-top: 2.1rem;
+  }
+
+  .edit-buttons .btn {
+    margin-top: $space-lg;
+  }
+
+  .edit-buttons .btn-save {
+    margin-top: $space-sm;
+  }
+}

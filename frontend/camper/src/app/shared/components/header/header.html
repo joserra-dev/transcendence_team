@@ -1,0 +1,91 @@
+<nav class="header navbar navbar-expand-lg">
+  <div class="container-fluid">
+    <div class="container">
+      <div class="row align-items-center">
+
+        <!-- HAMBURGUESA (solo móvil) -->
+        <div class="col-auto d-lg-none">
+          <i class="fa-solid fa-bars menu-icon" (click)="toggleMobileMenu()"></i>
+        </div>
+
+        <!-- LOGO -->
+        <div class="col-auto">
+          <a routerLink="/" class="logo-wrapper">
+            <img src="/images/logos/logo-horizontal.png" class="logo" alt="Logo Hemen-Go!">
+          </a>
+        </div>
+
+        <!-- ESPACIADOR CENTRAL -->
+        <div class="col"></div>
+
+        <!-- MENÚ SUPERIOR (solo desktop) -->
+        <div class="col-auto d-none d-lg-flex align-items-center gap-3 nav-links position-relative">
+
+          <a routerLink="/" class="nav-link-desktop">{{ 'HEADER.SEARCH' | translate }}</a>
+
+          <select
+            [ngModel]="languageService.currentLang()"
+            (ngModelChange)="onLangChange($event)"
+            class="lang-selector">
+            <option value="es">ES</option>
+            <option value="en">EN</option>
+            <option value="eu">EU</option>
+          </select>
+
+          <!-- NO LOGUEADO -->
+          <ng-container *ngIf="!isLogged">
+            <a routerLink="/auth/login-client" class="btn btn-primary">{{ 'HEADER.LOGIN' | translate }}</a>
+            <a routerLink="/auth/register" class="btn btn-primary">{{ 'HEADER.REGISTER' | translate }}</a>
+          </ng-container>
+
+          <!-- LOGUEADO -->
+          <ng-container *ngIf="isLogged">
+            <div class="user-wrapper" (click)="toggleMenu($event)">
+              <i class="fa-solid fa-circle-user user-icon" [class.icon-active]="menuOpen"></i>
+            </div>
+
+            <div class="user-menu" *ngIf="menuOpen">
+              <a *ngIf="isAdmin" routerLink="/admin/dashboard" (click)="closeMenu()">{{ 'HEADER.DASHBOARD' | translate }}</a>
+              <a routerLink="/client/profile" (click)="closeMenu()">{{ 'HEADER.PROFILE' | translate }}</a>
+              <a *ngIf="!isAdmin" routerLink="/client/history" (click)="closeMenu()">{{ 'HEADER.HISTORY' | translate }}</a>
+              <a (click)="logout(); closeMenu()">{{ 'HEADER.LOGOUT' | translate }}</a>
+            </div>
+          </ng-container>
+
+        </div>
+
+      </div>
+    </div>
+  </div>
+
+  <!-- MENÚ MÓVIL LATERAL -->
+  <div class="mobile-menu" [class.open]="mobileMenuOpen">
+
+    <select
+      [ngModel]="languageService.currentLang()"
+      (ngModelChange)="onLangChange($event)"
+      class="lang-selector mobile-lang">
+      <option value="es">ES</option>
+      <option value="en">EN</option>
+      <option value="eu">EU</option>
+    </select>
+
+    <a routerLink="/" (click)="closeMenu()">{{ 'HEADER.SEARCH' | translate }}</a>
+
+    <ng-container *ngIf="!isLogged">
+      <a routerLink="/auth/register" (click)="closeMobileMenu()">{{ 'HEADER.REGISTER' | translate }}</a>
+      <a routerLink="/auth/login-client" (click)="closeMobileMenu()">{{ 'HEADER.LOGIN' | translate }}</a>
+    </ng-container>
+
+    <ng-container *ngIf="isLogged">
+      <a *ngIf="isAdmin" routerLink="/admin/dashboard" (click)="closeMobileMenu()">{{ 'HEADER.DASHBOARD' | translate }}</a>
+      <a routerLink="/client/profile" (click)="closeMobileMenu()">{{ 'HEADER.PROFILE' | translate }}</a>
+      <a *ngIf="!isAdmin" routerLink="/client/history" (click)="closeMenu()">{{ 'HEADER.HISTORY' | translate }}</a>
+      <a (click)="logout(); closeMobileMenu()">{{ 'HEADER.LOGOUT' | translate }}</a>
+    </ng-container>
+
+  </div>
+
+  <div class="menu-backdrop" *ngIf="mobileMenuOpen" (click)="closeMobileMenu()"></div>
+
+</nav>

@@ -1,0 +1,193 @@
+@use "../../../../styles/abstracts/variables" as *;
+
+.booking-detail-page {
+  max-width: 900px;
+  margin: 0 auto;
+  padding: 2rem 1rem;
+}
+
+.back-row {
+  margin-bottom: 1.5rem;
+}
+
+.booking-card {
+  background: $color-white;
+  border: 1px solid $color-border;
+  border-radius: $radius-lg;
+  padding: 1.5rem;
+  box-shadow: $shadow-soft;
+}
+
+.booking-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: 1.5rem;
+
+  h2 {
+    color: $color-primary;
+    margin-bottom: 0.5rem;
+  }
+
+  small {
+    color: $color-grey-soft;
+  }
+}
+
+.status {
+  padding: 0.4rem 0.8rem;
+  border-radius: $radius-sm;
+  font-size: 0.85rem;
+  font-weight: $font-weight-medium;
+
+  &.confirmed {
+    background: rgba($color-success, 0.15);
+    color: $color-success;
+  }
+
+  &.cancelled {
+    background: rgba($color-error, 0.15);
+    color: $color-error;
+  }
+}
+
+.booking-info {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  gap: 1.5rem;
+  margin-bottom: 1.5rem;
+
+  h3 {
+    font-size: 1.6rem;
+    color: $color-primary-dark;
+    margin-bottom: 0.4rem;
+  }
+
+  p {
+    margin-bottom: 0.3rem;
+  }
+}
+
+.rating {
+  font-size: 1.2rem;
+}
+
+.booking-actions {
+  display: flex;
+  gap: 1rem;
+  justify-content: flex-end;
+}
+
+.cancelled-msg {
+  margin-top: 1rem;
+  color: $color-error;
+  font-style: italic;
+}
+
+// MODAL QR
+.qr-modal {
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.7);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 9999;
+}
+
+.qr-box {
+  background: white;
+  padding: 1.5rem;
+  border-radius: $radius-lg;
+  width: 300px;
+  text-align: center;
+}
+
+.qr-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+
+  button {
+    background: none;
+    border: none;
+    font-size: 1.5rem;
+    cursor: pointer;
+  }
+}
+
+.qr-body img {
+  max-width: 100%;
+}
+
+// LOADING
+.loading-wrapper {
+  text-align: center;
+  padding: 3rem 0;
+}
+
+.spinner {
+  font-size: 2rem;
+  color: $color-primary;
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+
+// MOVIL
+@media (max-width: $bp-sm) {
+
+  .booking-detail-page {
+    padding: 1rem;
+  }
+
+  .booking-header {
+    flex-direction: column;
+    gap: 0.8rem;
+
+    .status {
+      align-self: flex-start;
+    }
+  }
+
+  .booking-info {
+    grid-template-columns: 1fr;
+    margin-bottom: 1rem;
+
+    h3 {
+    font-size: 1.3rem;
+  }
+  }
+
+  .booking-actions {
+    flex-direction: column;
+    align-items: stretch;
+
+    button {
+      width: 100%;
+    }
+  }
+
+  .qr-box {
+    width: 90%;
+    max-width: 320px;
+  }
+
+  .btn {
+    margin-top: 0.5rem;
+  }
+}
+
+// TABLET
+@media (max-width: $bp-md) {
+
+  .booking-card {
+    padding: 1rem;
+  }
+
+  .rating {
+    font-size: 1rem;
+  }
+}

@@ -1,0 +1,23 @@
+@use "../../../../styles/abstracts/variables" as *;
+
+// ERRORES DEL BACKEND
+.error-backend-top {
+  background-color: rgba($color-error, 0.08);
+  border-left: 4px solid $color-error;
+  padding: $space-sm $space-md;
+  border-radius: $radius-sm;
+  margin-bottom: $space-lg;
+  color: $color-error;
+
+  ul {
+    margin: 0;
+    padding-left: 1rem;
+  }
+}
+
+// MENSAJE DE ÉXITO
+.success-msg {
+  color: $color-green-accent;
+  font-weight: $font-weight-medium;
+  text-align: center;
+}

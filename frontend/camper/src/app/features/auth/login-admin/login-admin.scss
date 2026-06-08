@@ -1,0 +1,21 @@
+@use "../../../../styles/abstracts/variables" as *;
+
+// FORMULARIO
+.form-standard {
+  max-width: 420px;
+}
+
+// ERROR
+.error-general {
+  background-color: rgba($color-error, 0.08);
+  border-left: 4px solid $color-error;
+  padding: $space-sm $space-md;
+  border-radius: $radius-sm;
+  margin-bottom: $space-lg;
+  color: $color-error;
+
+  ul {
+    margin: 0;
+    padding-left: 1rem;
+  }
+}

@@ -1,0 +1,266 @@
+{
+  "HEADER": {
+    "SEARCH": "Search parking",
+    "LOGIN": "Log in",
+    "REGISTER": "Sign Up",
+    "PROFILE": "My profile",
+    "DASHBOARD": "Admin Dashboard",
+    "HISTORY": "Booking history",
+    "LOGOUT": "Logout"
+  },
+
+  "FOOTER": {
+    "CONTACT": "Contact Us",
+    "PROJECT": "ft_transcendence"
+  },
+
+  "LOGIN": {
+    "TITLE": "Log in",
+    "EMAIL": "Email",
+    "PASSWORD": "Password",
+    "PLACEHOLDER_EMAIL": "example@mail.com",
+    "PLACEHOLDER_PASSWORD": "******",
+    "BUTTON": "Log in",
+    "LOADING": "Loading...",
+    "ERROR": {
+      "REQUIRED_EMAIL": "Email is required.",
+      "INVALID_EMAIL": "Email format is invalid.",
+      "REQUIRED_PASSWORD": "Password is required.",
+      "INVALID_CREDENTIALS": "Invalid credentials. Check your email and password.",
+      "TIMEOUT": "The server is taking too long to respond. Please try again later.",
+      "UNKNOWN": "An unexpected error occurred. Try again later."
+    }
+  },
+
+  "REGISTER": {
+    "TITLE": "Sign up",
+    "BUTTON": "Create account",
+    "LOADING": "Processing...",
+    "SUCCESS": "Registration completed successfully.",
+
+    "FIELDS": {
+      "NAME": "Name *",
+      "LASTNAME": "Last name *",
+      "DNI": "ID number *",
+      "BIRTHDATE": "Birthdate *",
+      "IBAN": "IBAN (bank account)",
+      "EMAIL": "Email *",
+      "PASSWORD": "Password *",
+      "CONFIRM": "Confirm password *"
+    },
+
+    "PLACEHOLDERS": {
+      "DNI": "12345678Z",
+      "IBAN": "ES...",
+      "EMAIL": "example@mail.com",
+      "PASSWORD": "Password"
+    },
+
+    "ERROR": {
+      "REQUIRED": "Required.",
+      "INVALID_EMAIL": "Invalid email.",
+      "INVALID_DNI_FORMAT": "Invalid format.",
+      "INVALID_DNI_LETTER": "Incorrect letter.",
+      "UNDER_AGE": "You must be at least 18.",
+      "INVALID_IBAN": "Invalid IBAN format (ES + 22 digits).",
+      "PASSWORDS_MISMATCH": "Passwords do not match."
+    },
+
+    "BACKEND": {
+      "TIMEOUT": "The server is taking too long to respond. Please try again later.",
+      "USER_EXISTS": "User already exists.",
+      "UNKNOWN": "An unexpected error occurred. Please try again."
+    }
+  },
+
+  "PROFILE": {
+    "TITLE": "Personal Information",
+    "SUBTITLE": "View and update your personal details.",
+    "LOADING": "Loading user data...",
+    "PERSONAL_DATA": "Personal Data",
+    "NOT_EDITABLE": "Not editable",
+
+    "FIELDS": {
+      "NAME": "First name",
+      "LASTNAME": "Last name",
+      "DNI": "ID number",
+      "EMAIL": "Email",
+      "BIRTHDATE": "Birthdate",
+      "IBAN": "IBAN",
+      "NEW_PASSWORD": "New password",
+      "CONFIRM_PASSWORD": "Confirm password"
+    },
+
+    "ERROR": {
+      "REQUIRED": "Required field.",
+      "UNDER_AGE": "You must be at least 18.",
+      "INVALID_IBAN": "Invalid IBAN.",
+      "PASSWORDS_MISMATCH": "Passwords do not match.",
+      "DATA": "User data could not be loaded.",
+      "CHANGES": "Changes could not be saved. Check your data."
+    },
+
+    "CHANGE_PASSWORD": "Change Password",
+    "PASSWORD_NOTE": "Leave these fields empty if you don't want to change your password.",
+
+    "BUTTONS": {
+      "EDIT": "Edit data",
+      "CANCEL": "Cancel",
+      "SAVE": "Save changes",
+      "SAVING": "Saving..."
+    }
+  },
+
+  "SEARCH": {
+    "TITLE": "Find your parking",
+    "DESTINATION": "Destination",
+    "PROVINCE": "Province",
+    "BUTTON": "Search",
+    "LOADING": "Searching parkings...",
+    "ELECTRICITY": "Electricity",
+    "RESIDUALS": "Waste water",
+    "VIP": "VIP spots",
+    "RESULTS": "parkings found",
+    "ALL": "All",
+    "DETAILS": "Details",
+    "NIGHT": "night",
+    "ERRORS": {
+      "NO_RESULTS": "No results found.",
+      "CONNECTION": "Connection error while looking for parkings."
+    }
+  },
+
+  "PARKING": {
+    "SERVICES": "Services",
+    "SELECT_SPOT": "Select your spot",
+    "DATES": "Selected dates",
+    "FREE": "Free",
+    "OCCUPIED": "Occupied",
+    "TOTAL": "Total price",
+    "RESERVE_SPOT": "Reserve spot",
+    "SELECT_FREE": "Select a free spot to continue",
+    "CONTACT": "Contact",
+    "LOADING": "Loading parking information...",
+    "SUCCESS": "Booking successful",
+    "ERRORS": {
+      "NO_RESULTS": "Parking not found or not available for these dates.",
+      "LOADING": "Error loading parking details.",
+      "BOOKING": "There was an error when making the reservation."
+    },
+    "AUX": {
+      "FIRST": "You will book a spot",
+      "SECOND": "Total price:",
+      "THIRD": "Dates",
+      "FOURTH": "to",
+      "FIFTH": "¿Confirm?",
+      "SIXTH": "Confirmar Booking",
+      "SEVENTH": "Cancel",
+      "EIGHTH": "Confirm and pay"
+    }
+  },
+
+  "HISTORY": {
+    "TITLE": "Booking history",
+    "PARKING": "Parking",
+    "ALL": "All",
+    "CONFIRMED": "Confirmed",
+    "CANCELLED": "Cancelled",
+    "FILTER": "Filter",
+    "CLEAR": "Clear",
+    "LOADING": "Loading booking history...",
+    "EMPTY": "No bookings found with these criteria.",
+    "PARKING_GENERIC": "Parking",
+    "REQUEST_DATE": "Requested on",
+    "REFERENCE": "Reference",
+    "DATES": "Dates",
+    "TOTAL": "Total",
+    "RATING": "Your rating",
+    "DETAILS": "View details and manage",
+    "ERROR_LOADING": "Error loading history."
+  },
+
+  "HISTORY_DETAIL": {
+    "BACK": "Back to history",
+    "BOOKING": "Booking",
+    "CONFIRMED": "Confirmed",
+    "CANCELLED": "Cancelled",
+    "REQUEST_DATE": "Request date",
+    "GENERAL": "General information",
+    "STAY": "Stay",
+    "REFERENCE": "Reference",
+    "SPOT": "Parking spot",
+    "ENTRY": "Entry",
+    "EXIT": "Exit",
+    "RATING": "Rating",
+    "TOTAL": "Total price",
+    "QR": "View QR code",
+    "RATE": "Rate stay",
+    "CANCEL": "Cancel booking",
+    "CANCELLED_MSG": "This booking has been cancelled.",
+    "QR_TITLE": "Access QR code",
+    "LOADING_QR": "Loading QR…",
+    "LOADING_DETAIL": "Loading details…",
+    "SUCCESS_CANCEL": "Booking cancelled",
+    "SUCCESS_RATE": "¡Thank you for rating!",
+    "CONFIRM_CANCEL_TITLE": "Confirm cancellation",
+    "CONFIRM_CANCEL_TEXT": "Are you sure you want to cancel this booking? This action cannot be undone.",
+    "CONFIRM_CANCEL_NO": "No, go back",
+    "CONFIRM_CANCEL_YES": "Yes, cancel",
+    "ERRORS": {
+      "LOADING": "Error loading the booking.",
+      "CANCEL": "There was an error while trying to cancel the booking.",
+      "RATE": "Error submitting the rating.",
+      "QR": "The QR code could not be retrieved."
+    }
+  },
+
+  "ADMIN_PARKINGS": {
+    "TITLE": "My parkings",
+    "ADD": "Add parking",
+    "LOADING": "Loading data…",
+    "EMPTY": "You don't have any registered parkings.",
+    "SPOTS": "Spots",
+    "MANAGE": "Manage"
+  },
+
+  "MANAGE_PARKING": {
+    "NEW": "New Parking",
+    "EDIT": "Manage Parking",
+    "BACK": "Back to list",
+    "GENERAL": "General data",
+    "NAME": "Name",
+    "EMAIL": "Contact email",
+    "PROVINCE": "Province",
+    "CITY": "City",
+    "WEB": "Website",
+    "PHONE": "Phone",
+    "ACTIVE": "Active",
+    "ELECTRICITY": "Electricity",
+    "RESIDUALS": "Waste water",
+    "VIP": "VIP zone",
+    "SAVE": "Save parking",
+    "SAVING": "Saving...",
+    "SPOTS": "Spots",
+    "ADD_SPOT": "Add spot",
+    "SPOT_NAME": "Name",
+    "PRICE": "Price",
+    "FEATURES": "Features",
+    "STATUS": "Status",
+    "FREE": "Free",
+    "OCCUPIED": "Maintenance",
+    "EDIT_SPOT": "Edit",
+    "NO_SPOTS": "This parking has no spots.",
+    "CANCEL": "Delete",
+    "SAVE_SPOT": "Save spot",
+    "SUCCESS_UPDATE": "Parking correctly updated",
+    "SUCCESS_CREATE": "Parking correctly created",
+    "SUCCESS_CREATE_SPOT": "Spot correctly created",
+    "SUCCESS_UPDATE_SPOT": "Spot correctly updated",
+    "ERRORS": {
+      "CREATE": "Error creating the parking",
+      "UPDATE": "Error updating the parking. Try again.",
+      "CREATE_SPOT": "Error creating the spot.",
+      "UPDATE_SPOT": "Error updating the spot."
+    }
+  }
+}

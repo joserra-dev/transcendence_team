@@ -1,0 +1,95 @@
+@use "../abstracts/variables" as *;
+
+.form-page-wrapper {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 4rem 0;
+}
+
+.form-standard {
+  width: 100%;
+  max-width: 600px;
+}
+
+.form-group-standard {
+  margin-bottom: 1.5rem;
+
+  input, select {
+    width: 100%;
+    padding: 0.65rem;
+    border: 1px solid $color-brown-main;
+    border-radius: $radius-sm;
+    font-size: 1rem;
+
+    &:focus {
+      outline: none;
+      border-color: $color-primary;
+    }
+  }
+
+  .error-input {
+    border-color: $color-error;
+  }
+}
+
+.form-2-group {
+  margin-bottom: 0px !important;
+}
+
+@media (max-width: $bp-sm) {
+  .form-2-group {
+    margin-bottom: $space-lg !important;
+  }
+
+  .form-2-group .form-group-standard {
+    margin-bottom: -1rem !important;
+  }
+
+  .btn {
+    margin-top: $space-xxl;
+  }
+}
+
+.error-msg-standard {
+  margin-top: $space-xxs;
+  color: $color-error;
+  font-size: .85rem;
+}
+
+.success-msg {
+  margin-top: $space-xxs;
+  color: $color-success;
+  font-size: .85rem;
+}
+
+.button-wide {
+  width: 100%;
+  padding: 0.6rem;
+  font-size: 1.1rem;
+  border-radius: $radius-md;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: .6rem;
+}
+
+.loading-msg {
+  margin-top: $space-sm;
+  color: $color-primary;
+  font-size: 0.95rem;
+  display: flex;
+  align-items: center;
+  gap: $space-xs;
+  justify-content: center;
+}
+
+.loading-icon {
+  animation: spin 0.9s linear infinite;
+  font-size: 1.1rem;
+}
+
+@keyframes spin {
+  from { transform: rotate(0deg); }
+  to   { transform: rotate(360deg); }
+}

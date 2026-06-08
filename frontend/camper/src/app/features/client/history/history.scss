@@ -1,0 +1,261 @@
+@use "../../../../styles/abstracts/variables" as *;
+
+.history-page {
+  max-width: 1100px;
+  margin: 0 auto;
+  padding: 2rem 1rem;
+}
+
+i {
+  color: $color-primary;
+}
+
+.history-search {
+  margin-bottom: 2rem;
+}
+
+.search-bar-wrapper {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.search-bar {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  background: $color-white;
+  padding: 0.75rem 1rem;
+  border-radius: $radius-lg;
+  border: 1px solid $color-border;
+  box-shadow: $shadow-strong;
+  width: 100%;
+}
+
+.search-field {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  flex: 1;
+
+  input {
+    border: none;
+    outline: none;
+    width: 100%;
+    font-size: 0.95rem;
+    background: transparent;
+  }
+
+  .search-select {
+    width: 70%;
+    border: none;
+    outline: none;
+    appearance: none;
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    background: transparent;
+    cursor: pointer;
+  }
+
+  .select-field {
+    position: relative;
+    display: flex;
+    align-items: center;
+  }
+
+  .select-arrow {
+    pointer-events: none;
+    font-size: 1rem;
+  }
+}
+
+.search-field input[type="date"] {
+  cursor: pointer;
+}
+
+input[type="date"]::-webkit-calendar-picker-indicator {
+  opacity: 0;
+  cursor: pointer;
+}
+
+.divider {
+  width: 1px;
+  height: 36px;
+  background-color: $color-border;
+}
+
+.btn-primary {
+  margin-right: $space-xs;
+}
+
+.search-button {
+  white-space: nowrap;
+}
+
+.search-actions {
+  margin-top: 0.75rem;
+  align-self: flex-end;
+}
+
+.history-card {
+  background: $color-white;
+  border: 1px solid $color-border;
+  border-radius: $radius-md;
+  padding: 1.2rem;
+  margin-bottom: 1.5rem;
+  box-shadow: $shadow-soft;
+
+  &.cancelled {
+    opacity: 0.7;
+  }
+}
+
+.card-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: 0.75rem;
+
+  h3 {
+    margin: 0;
+    font-size: 1.1rem;
+  }
+
+  small {
+    color: $color-grey-soft;
+  }
+}
+
+.status {
+  padding: 0.25rem 0.6rem;
+  border-radius: $radius-sm;
+  font-size: 0.8rem;
+  font-weight: $font-weight-medium;
+
+  &.confirmed {
+    background: rgba($color-success, 0.15);
+    color: $color-success;
+  }
+
+  &.cancelled {
+    background: rgba($color-error, 0.15);
+    color: $color-error;
+  }
+}
+
+.card-body {
+  font-size: 0.95rem;
+
+  p {
+    margin-bottom: 0.4rem;
+  }
+}
+
+.card-actions {
+  margin-top: 1rem;
+  text-align: right;
+}
+
+.empty-msg {
+  text-align: center;
+  font-style: italic;
+  color: $color-grey-soft;
+}
+
+// TABLET
+@media (max-width: $bp-md) {
+
+  .search-bar {
+    flex-wrap: wrap;
+    gap: 0.75rem;
+  }
+
+  .search-field {
+    flex: 1 1 calc(50% - 0.75rem);
+    min-width: 180px;
+  }
+
+  .select-field {
+    flex: 1 1 100%;
+  }
+
+  .botones {
+    flex: 1 1 100%;
+    display: flex;
+    justify-content: flex-end;
+    gap: 0.5rem;
+    margin-top: 0.5rem;
+  }
+
+  .divider {
+    display: none;
+  }
+}
+
+// MOVIL
+@media (max-width: $bp-sm) {
+
+  .history-page {
+    padding: 1.25rem 1rem;
+  }
+
+  .search-bar {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 0.6rem;
+    padding: 0.75rem;
+  }
+
+  .search-field {
+    width: 100%;
+    flex: none;
+  }
+
+  .search-field input,
+  .search-select {
+    font-size: 1rem;
+    padding: 0.4rem 0;
+  }
+
+  .divider {
+    display: none;
+  }
+
+  .btn {
+    margin-top: 0.5rem;
+  }
+
+  .botones {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+    margin-top: 0.5rem;
+  }
+
+  .botones .btn {
+    width: 100%;
+    font-size: 1rem;
+    padding: 0.6rem;
+  }
+
+  .history-card {
+    padding: 1rem;
+  }
+
+  .card-header {
+    flex-direction: column;
+    gap: 0.4rem;
+  }
+
+  .status {
+    align-self: flex-start;
+  }
+
+  .card-actions {
+    text-align: stretch;
+  }
+
+  .card-actions .btn {
+    width: 100%;
+  }
+}

@@ -1,0 +1,55 @@
+<main class="admin-dashboard">
+  <header class="dashboard-header">
+    <h1>{{ 'ADMIN_PARKINGS.TITLE' | translate }}</h1>
+
+    <a routerLink="/admin/parking/new" class="btn btn-primary">
+      + {{ 'ADMIN_PARKINGS.ADD' | translate }}
+    </a>
+  </header>
+
+  <div *ngIf="isLoading" class="loading-msg">
+    {{ 'ADMIN_PARKINGS.LOADING' | translate }}
+  </div>
+
+  <p
+    *ngIf="!isLoading && parkings.length === 0" class="empty-msg">
+    {{ 'ADMIN_PARKINGS.EMPTY' | translate }}
+  </p>
+
+  <section class="parking-list">
+    <article *ngFor="let parking of parkings" class="parking-card">
+      <div class="card-header">
+        <h3>{{ parking.nombre }}</h3>
+      </div>
+
+      <div class="card-info">
+        <p class="location">
+          {{ parking.localidad }}
+        </p>
+
+        <p>
+          <strong>{{ 'ADMIN_PARKINGS.SPOTS' | translate }}:</strong>
+          {{ parking.numeroPlazas }}
+        </p>
+      </div>
+
+      <div class="services">
+        <span *ngIf="parking.tomaElectricidad">
+          {{ 'SEARCH.ELECTRICITY' | translate }}
+        </span>
+        <span *ngIf="parking.limpiezaAguasResiduales">
+          {{ 'SEARCH.RESIDUALS' | translate }}
+        </span>
+        <span *ngIf="parking.plazasVip">
+          {{ 'SEARCH.VIP' | translate }}
+        </span>
+      </div>
+
+      <div class="card-actions">
+        <a class="btn btn-secondary" [routerLink]="['/admin/parking', parking.id]">
+          {{ 'ADMIN_PARKINGS.MANAGE' | translate }}
+        </a>
+      </div>
+    </article>
+  </section>
+</main>

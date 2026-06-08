@@ -1,0 +1,10 @@
+
+Flask
+Flask-SQLAlchemy
+Flask-JWT-Extended
+psycopg2-binary
+flasgger==0.9.7.1
+flask-cors
+Flask-Mailman==1.0.0
+pytest
+pytest-mock

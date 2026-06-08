@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Restablecer Contraseña</title>
+</head>
+<body style="margin: 0; padding: 0; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background-color: #f4f6f8; color: #333333;">
+
+    <table role="presentation" cellspacing="0" cellpadding="0" border="0" align="center" width="100%" style="max-width: 600px; margin: 40px auto; background-color: #ffffff; border-radius: 8px; box-shadow: 0 4px 10px rgba(0,0,0,0.05); overflow: hidden;">
+        
+        <tr>
+            <td style="background-color: #1F2937; padding: 40px 20px; text-align: center;">
+                <h1 style="margin: 0; color: #ffffff; font-size: 26px; font-weight: 700; letter-spacing: -0.5px;">
+                    Restablecer Contraseña
+                </h1>
+            </td>
+        </tr>
+
+        <tr>
+            <td style="padding: 40px 30px;">
+                <p style="margin: 0 0 16px 0; font-size: 18px; line-height: 1.5; font-weight: 600; color: #111827;">
+                    Hola, {{ user_name }}
+                </p>
+                <p style="margin: 0 0 24px 0; font-size: 16px; line-height: 1.6; color: #4B5563;">
+                    Hemos recibido una solicitud para restablecer la contraseña de tu cuenta. No te preocupes, puedes generar una nueva haciendo clic en el siguiente botón:
+                </p>
+
+                <table role="presentation" cellspacing="0" cellpadding="0" border="0" align="center" style="margin: 30px auto;">
+                    <tr>
+                        <td style="border-radius: 6px; background-color: #4F46E5; text-align: center;">
+                            <a href="{{ recovery_url }}" target="_blank" style="background-color: #4F46E5; border: 1px solid #4F46E5; border-radius: 6px; color: #ffffff; display: inline-block; font-size: 16px; font-weight: 600; line-height: 1; padding: 15px 30px; text-decoration: none; text-transform: uppercase; letter-spacing: 0.5px;">
+                                Cambiar Contraseña
+                            </a>
+                        </td>
+                    </tr>
+                </table>
+
+                <p style="margin: 24px 0 0 0; font-size: 14px; line-height: 1.6; color: #6B7280; text-align: center;">
+                    Este enlace expirará en <strong>1 hora</strong> por motivos de seguridad.
+                </p>
+                
+                <hr style="border: 0; border-top: 1px solid #E5E7EB; margin: 30px 0;">
+
+                <p style="margin: 0 0 20px 0; font-size: 14px; line-height: 1.5; color: #DC2626; background-color: #FEF2F2; padding: 12px; border-radius: 6px;">
+                    <strong>¿No solicitaste este cambio?</strong> Si no has sido tú, puedes ignorar este correo de forma segura. Tu contraseña actual seguirá funcionando perfectamente.
+                </p>
+
+                <p style="margin: 0; font-size: 12px; line-height: 1.5; color: #9CA3AF; word-break: break-all;">
+                    Si el botón no funciona, copia y pega esta URL en tu navegador:<br>
+                    <a href="{{ recovery_url }}" style="color: #4F46E5; text-decoration: underline;">{{ recovery_url }}</a>
+                </p>
+            </td>
+        </tr>
+
+        <tr>
+            <td style="background-color: #F9FAFB; padding: 24px 30px; text-align: center; font-size: 12px; line-height: 1.5; color: #9CA3AF;">
+                <p style="margin: 0 0 8px 0;">Este correo fue enviado de manera automática tras tu solicitud de soporte.</p>
+                <p style="margin: 0;">© 2026 Tu Empresa. Todos los derechos reservados.</p>
+            </td>
+        </tr>
+
+    </table>
+
+</body>
+</html>

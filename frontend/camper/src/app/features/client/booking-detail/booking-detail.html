@@ -1,0 +1,145 @@
+<main class="booking-detail-page">
+  <div class="back-row">
+    <button class="btn btn-secondary" (click)="goBack()">
+      ← {{ 'HISTORY_DETAIL.BACK' | translate }}
+    </button>
+  </div>
+
+  <div *ngIf="successMessage" class="alert alert-success alert-dismissible fade show mt-3" role="alert">
+    <i class="fa-solid fa-check-circle me-2"></i> {{ successMessage }}
+    <button type="button" class="btn-close" (click)="successMessage = ''" aria-label="Close"></button>
+  </div>
+
+  <div *ngIf="errorMessage" class="alert alert-danger alert-dismissible fade show mt-3" role="alert">
+    <i class="fa-solid fa-exclamation-circle me-2"></i> {{ errorMessage | translate }}
+    <button type="button" class="btn-close" (click)="errorMessage = ''" aria-label="Close"></button>
+  </div>
+
+
+  <div *ngIf="isLoading" class="loading-wrapper">
+    <i class="fa-solid fa-spinner spinner"></i>
+    <p>{{ 'HISTORY_DETAIL.LOADING_DETAIL' | translate }}</p>
+  </div>
+
+  <div *ngIf="!isLoading && booking" class="booking-card">
+    <header class="booking-header">
+      <div>
+        <h2>{{ booking.parkingNombre }}</h2>
+        <small>
+          {{ 'HISTORY_DETAIL.REQUEST_DATE' | translate }}:
+          {{ booking.fecAlta | date:'dd/MM/yyyy HH:mm' }}
+        </small>
+      </div>
+
+      <span
+        class="status"
+        [class.confirmed]="booking.estado === '1'"
+        [class.cancelled]="booking.estado === '0'"
+      >
+        {{ getStatusLabel(booking.estado) | translate }}
+      </span>
+    </header>
+
+    <div class="booking-info">
+      <section>
+        <h3>{{ 'HISTORY_DETAIL.GENERAL' | translate }}</h3>
+        <p><strong>{{ 'HISTORY_DETAIL.REFERENCE' | translate }}:</strong> #{{ booking.id }}</p>
+        <p><strong>{{ 'HISTORY_DETAIL.SPOT' | translate }}:</strong> {{ booking.plazaNombre }}</p>
+      </section>
+
+      <section>
+        <h3>{{ 'HISTORY_DETAIL.STAY' | translate }}</h3>
+        <p><strong>{{ 'HISTORY_DETAIL.ENTRY' | translate }}:</strong> {{ booking.fecInicio | date:'dd/MM/yyyy' }}</p>
+        <p><strong>{{ 'HISTORY_DETAIL.EXIT' | translate }}:</strong> {{ booking.fecFin | date:'dd/MM/yyyy' }}</p>
+        <p><strong>{{ 'HISTORY_DETAIL.TOTAL' | translate }}:</strong> {{ booking.precioTotal | currency:'EUR' }}</p>
+      </section>
+
+      <section *ngIf="booking.puntuacion">
+        <h3>{{ 'HISTORY_DETAIL.RATING' | translate }}</h3>
+        <p class="rating">
+          {{ booking.puntuacion }} / 10 ★
+        </p>
+      </section>
+    </div>
+
+    <div class="booking-actions" *ngIf="booking.estado === '1'">
+      <button class="btn btn-secondary" (click)="viewQr()">
+        {{ 'HISTORY_DETAIL.QR' | translate }}
+      </button>
+
+      <button class="btn btn-secondary" (click)="rateBooking()">
+        {{ 'HISTORY_DETAIL.RATE' | translate }}
+      </button>
+
+      <button class="btn btn-danger" (click)="cancelBooking()">
+        {{ 'HISTORY_DETAIL.CANCEL' | translate }}
+      </button>
+    </div>
+
+    <p *ngIf="booking.estado === '0'" class="cancelled-msg">
+      {{ 'HISTORY_DETAIL.CANCELLED_MSG' | translate }}
+    </p>
+  </div>
+</main>
+
+<div *ngIf="showQrModal" class="qr-modal" (click)="closeQrModal()">
+  <div class="qr-box" (click)="$event.stopPropagation()">
+    <div class="qr-header">
+      <h2>{{ 'HISTORY_DETAIL.QR_TITLE' | translate }}</h2>
+      <button (click)="closeQrModal()"></button>
+    </div>
+
+    <div class="qr-body">
+      <img *ngIf="currentQrCode" [src]="'data:image/png;base64,' + currentQrCode">
+      <p *ngIf="!currentQrCode">{{ 'HISTORY_DETAIL.LOADING_QR' | translate }}</p>
+    </div>
+  </div>
+</div>
+
+<div *ngIf="showRateModal" class="qr-modal" (click)="showRateModal = false">
+  <div class="qr-box" (click)="$event.stopPropagation()">
+
+    <div class="qr-header">
+      <h2>{{ 'HISTORY_DETAIL.RATING' | translate }}</h2>
+      <button (click)="showRateModal = false"></button>
+    </div>
+
+    <div class="qr-body">
+      <p><strong>{{ rateValue }}</strong> / 10</p>
+
+      <input
+        type="range"
+        class="form-range"
+        min="0"
+        max="10"
+        step="1"
+        [(ngModel)]="rateValue"
+      >
+
+      <button class="btn btn-primary mt-3 w-100" (click)="confirmRating()">
+        {{ 'HISTORY_DETAIL.RATE' | translate }}
+      </button>
+    </div>
+
+  </div>
+</div>
+
+<div *ngIf="showCancelModal" class="qr-modal" (click)="showCancelModal = false">
+  <div class="qr-box confirmation-box" (click)="$event.stopPropagation()">
+    <div class="qr-header">
+      <h2>{{ 'HISTORY_DETAIL.CONFIRM_CANCEL_TITLE' | translate }}</h2>
+      <button (click)="showCancelModal = false"></button>
+    </div>
+    <div class="qr-body">
+      <p class="mb-4">{{ 'HISTORY_DETAIL.CONFIRM_CANCEL_TEXT' | translate }}</p>
+      <div class="d-flex gap-2 justify-content-end">
+        <button class="btn btn-secondary" (click)="showCancelModal = false">
+          {{ 'HISTORY_DETAIL.CONFIRM_CANCEL_NO' | translate }}
+        </button>
+        <button class="btn btn-danger" (click)="confirmCancellation()">
+          {{ 'HISTORY_DETAIL.CONFIRM_CANCEL_YES' | translate }}
+        </button>
+      </div>
+    </div>
+  </div>
+</div>

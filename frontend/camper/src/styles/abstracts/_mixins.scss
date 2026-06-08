@@ -1,0 +1,19 @@
+@mixin responsive-padding {
+  padding-left: 2rem;
+  padding-right: 2rem;
+
+  @media (min-width: 768px) {
+    padding-left: 8rem;
+    padding-right: 8rem;
+  }
+
+  @media (min-width: 1200px) {
+    padding-left: 18rem;
+    padding-right: 18rem;
+  }
+
+  @media (min-width: 1500px) {
+    padding-left: 25rem;
+    padding-right: 25rem;
+  }
+}

@@ -1,0 +1,149 @@
+<div class="search-page">
+
+  <h1 class="page-title">{{ 'SEARCH.TITLE' | translate }}</h1>
+
+  <!-- BARRA DE BÚSQUEDA -->
+  <form
+    class="search-bar-wrapper"
+    [formGroup]="searchForm"
+    (ngSubmit)="onSearch()"
+  >
+    <div class="search-bar">
+
+      <!-- DESTINO -->
+      <div class="search-field">
+        <i class="fa-solid fa-location-dot"></i>
+        <input
+          type="text"
+          formControlName="localidad"
+          placeholder="{{ 'SEARCH.DESTINATION' | translate }}"
+        >
+      </div>
+
+      <div class="divider"></div>
+
+      <!-- PROVINCIA -->
+      <div class="search-field">
+        <i class="fa-solid fa-map"></i>
+        <input
+          type="text"
+          formControlName="provincia"
+          placeholder="{{ 'SEARCH.PROVINCE' | translate }}"
+        >
+      </div>
+
+      <div class="divider"></div>
+
+      <!-- FECHA ENTRADA -->
+      <div class="search-field date">
+        <i class="fa-regular fa-calendar"></i>
+        <input type="date" formControlName="fechaDesde" (click)="openDatePicker($event)">
+      </div>
+
+      <div class="divider"></div>
+
+      <!-- FECHA SALIDA -->
+      <div class="search-field date">
+        <i class="fa-regular fa-calendar"></i>
+        <input type="date" formControlName="fechaHasta" (click)="openDatePicker($event)">
+      </div>
+
+      <!-- BOTÓN -->
+      <button
+        type="submit"
+        class="btn btn-primary search-button"
+        [disabled]="isLoading"
+      >
+        {{ 'SEARCH.BUTTON' | translate }}
+      </button>
+
+    </div>
+
+    <!-- FILTROS -->
+    <div class="form-check form-switch filters-row">
+      <label class="form-check-label">
+        <input type="checkbox" formControlName="tomaElectricidad" class="form-check-input">
+        {{ 'SEARCH.ELECTRICITY' | translate }}
+      </label>
+
+      <label class="form-check-label">
+        <input type="checkbox" formControlName="limpiezaAguasResiduales" class="form-check-input">
+        {{ 'SEARCH.RESIDUALS' | translate }}
+      </label>
+
+      <label class="form-check-label">
+        <input type="checkbox" formControlName="plazasVip" class="form-check-input">
+        {{ 'SEARCH.VIP' | translate }}
+      </label>
+    </div>
+  </form>
+
+  <!-- MENSAJE ERROR -->
+  <p class="error-msg-standard" *ngIf="errorMessage">
+    {{ errorMessage | translate }}
+  </p>
+
+  <!-- TÍTULO RESULTADOS -->
+  <h2 class="results-title" *ngIf="parkings.length > 0">
+    {{ searchForm.value.localidad || ('SEARCH.ALL' | translate) }}:
+    <span>{{ parkings.length }} {{ 'SEARCH.RESULTS' | translate }}</span>
+  </h2>
+
+  <!-- RESULTADOS -->
+  <div *ngIf="isLoading" class="loading-msg">
+    <i class="fa-solid fa-spinner loading-icon"></i>
+    {{ 'SEARCH.LOADING' | translate }}
+  </div>
+
+  <section class="results-list" *ngIf="!isLoading">
+
+    <article class="parking-card" *ngFor="let parking of parkings; let i = index">
+      <div class="image-wrapper">
+        <img
+          [src]="'/images/fotos/camper' + ((i % 5) + 1) + '.jpg'"
+          alt="Parking"
+        >
+      </div>
+
+      <div class="parking-content">
+
+        <div class="parking-main">
+          <h3>{{ parking.nombre }}</h3>
+
+          <p class="location">
+            <i class="fa-solid fa-location-dot"></i>
+            {{ parking.municipio }}, {{ parking.provincia }}
+          </p>
+
+          <p class="services small-text" *ngIf="getServices(parking) as services">
+            <ng-container *ngIf="services.length">
+              <ng-container *ngFor="let service of services; let last = last">
+                {{ service | translate }}<span *ngIf="!last">, </span>
+              </ng-container>
+            </ng-container>
+          </p>
+        </div>
+
+        <div class="parking-actions">
+          <div class="price">
+            {{ getMinPrice(parking) }}€
+            <small class="small-text">{{ 'SEARCH.NIGHT' | translate }}</small>
+          </div>
+
+          <a
+            class="btn btn-primary"
+            [routerLink]="['/parking', parking.id]"
+            [queryParams]="{
+              fechaDesde: searchForm.value.fechaDesde,
+              fechaHasta: searchForm.value.fechaHasta
+            }"
+          >
+            {{ 'SEARCH.DETAILS' | translate }}
+          </a>
+        </div>
+
+      </div>
+    </article>
+  </section>
+</div>
+
