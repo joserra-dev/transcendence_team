@@ -11,3 +11,5 @@ all:
 	@echo "$(COLOR_GREEN)✓ Compilación exitosa$(COLOR_RESET)"
 	@echo "$(COLOR_YELLOW)Advertencia: El proceso tardó más de lo normal$(COLOR_RESET)"
 	@echo "$(COLOR_RED)Error: Archivo no encontrado$(COLOR_RESET)"
+
+.PHONY: all
