@@ -5,6 +5,10 @@
   @media (min-width: 768px) {
     padding-left: 8rem;
     padding-right: 8rem;
+    .justify-content-md-end {
+      justify-content: flex-end !important;
+      padding-top: 1.5%;
+    }
   }
 
   @media (min-width: 1200px) {

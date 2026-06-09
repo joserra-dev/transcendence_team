@@ -5,6 +5,31 @@
   padding-top: 1rem;
   padding-bottom: 1rem;
   flex-grow: 1;
+  
+  // 1. Necesitamos posicionamiento relativo para contener el pseudoelemento
+  position: relative; 
+  // 2. Asegura que el contenido quede por encima de la imagen de fondo
+  z-index: 1; 
+
+  &::before {
+    content: "";
+    // 3. Lo posicionamos para que ocupe todo el ancho y alto del contenedor
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    
+    // 4. Añadimos la imagen y la opacidad que quieras (ej: 0.3 para un 30%)
+    // Borra lo anterior y déjalo así:
+    background-image: url("/images/logos/background.png");
+    background-size: cover;
+    background-position: center;
+    opacity: 0.3; 
+    
+    // 5. Lo mandamos al fondo para que no tape el texto
+    z-index: -1; 
+  }
 }
 
 html, body {
