@@ -69,13 +69,10 @@ app.register_blueprint(booking_bp)
 # 4. INICIALIZADOR DE BASE DE DATOS
 with app.app_context():
     import models
-    #from models.users import Users
-    #from models.company import Company
-    #from models.parking import Parking
-    #from models.space import Space
-    #from models.booking import Booking
+    from seed import seed_database
+
     db.create_all()
-    # Tu lógica de inserción de Juan y María si la necesitas...
+    seed_database()
 
 if __name__ == '__main__':
     # Leemos la variable 'FLASK_DEBUG'. Si no existe, por defecto será 'False'

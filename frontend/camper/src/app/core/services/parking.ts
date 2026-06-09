@@ -9,15 +9,14 @@ import { map } from 'rxjs/operators';
 })
 export class ParkingService {
   private http = inject(HttpClient);
-  private apiUrl = 'http://localhost:8000/api';
+  private apiUrl = 'http://localhost:5000/api';
 
   /**
    * Buscar parkings con filtro específico
    * POST /find
    */
   searchParkings(filters: SearchFilters): Observable<any[]> {
-    //return this.http.get<any[]>(`${this.apiUrl}/mock-prueba`);
-    return this.http.get<any[]>('http://localhost:8000/api/mock-prueba/');
+    return this.http.post<any[]>(`${this.apiUrl}/find`, filters);
   }
 
   /**
