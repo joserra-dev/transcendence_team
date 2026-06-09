@@ -1,0 +1,194 @@
+from datetime import date
+
+from werkzeug.security import generate_password_hash
+
+from database import db
+from models.company import Company
+from models.parking import Parking
+from models.space import Space
+from models.users import Profiles, UserRole, Users
+
+DEFAULT_PASSWORD = "password123"
+
+SEED_USERS = [
+    {
+        "email": "superadmin@birt.eus",
+        "profile": {
+            "name": "Super",
+            "last_name": "Admin",
+            "dni": "00000000S",
+            "birth_day": date(1980, 1, 1),
+            "role": UserRole.SUPER_ADMIN,
+            "company_id": None,
+        },
+    },
+    {
+        "email": "admin@birt.eus",
+        "profile": {
+            "name": "Admin",
+            "last_name": "BIRT",
+            "dni": "11111111H",
+            "birth_day": date(1981, 6, 1),
+            "role": UserRole.ADMIN,
+            "company_name": "BIRT",
+            "company_cif": "B12345678",
+        },
+    },
+    {
+        "email": "jon.doe@example.com",
+        "profile": {
+            "name": "Jon",
+            "last_name": "Doe",
+            "dni": "12345678A",
+            "birth_day": date(1990, 5, 12),
+            "role": UserRole.USER,
+            "company_id": None,
+        },
+    },
+    {
+        "email": "usuario@example.com",
+        "profile": {
+            "name": "María",
+            "last_name": "García",
+            "dni": "87654321B",
+            "birth_day": date(1995, 3, 20),
+            "role": UserRole.USER,
+            "company_id": None,
+        },
+    },
+]
+
+SEED_PARKINGS = [
+    {
+        "company_name": "BIRT",
+        "company_cif": "B12345678",
+        "name": "Parking La Galea beach",
+        "provincia_parking": "Bizkaia",
+        "municipio_parking": "Getxo",
+        "isactive": True,
+        "web_parking": "https://www.la-galea-caravaning.com",
+        "telephone": "688745692",
+        "email": "info@la-galea-caravaning.com",
+        "contact_person": "Mikel Basurko",
+        "tiene_electricidad_parking": True,
+        "tiene_residuales_parking": True,
+        "tiene_plazas_vip_parking": True,
+        "spaces": [
+            {"name": "A1", "isvip_plaza": True, "tiene_electricidad_plaza": True, "estado_plaza": "0", "precio_plaza": 25.0},
+            {"name": "A2", "isvip_plaza": False, "tiene_electricidad_plaza": True, "estado_plaza": "0", "precio_plaza": 27.5},
+            {"name": "B1", "isvip_plaza": False, "tiene_electricidad_plaza": False, "estado_plaza": "0", "precio_plaza": 20.0},
+        ],
+    },
+    {
+        "company_name": "BIRT",
+        "name": "Parking Zarautz Costa",
+        "provincia_parking": "Gipuzkoa",
+        "municipio_parking": "Zarautz",
+        "isactive": True,
+        "web_parking": "https://www.zarautz-camper.com",
+        "telephone": "943123456",
+        "email": "info@zarautz-camper.com",
+        "contact_person": "Ane Mendizabal",
+        "tiene_electricidad_parking": True,
+        "tiene_residuales_parking": False,
+        "tiene_plazas_vip_parking": True,
+        "spaces": [
+            {"name": "C1", "isvip_plaza": True, "tiene_electricidad_plaza": True, "estado_plaza": "0", "precio_plaza": 30.0},
+            {"name": "C2", "isvip_plaza": False, "tiene_electricidad_plaza": True, "estado_plaza": "0", "precio_plaza": 22.0},
+        ],
+    },
+    {
+        "company_name": "BIRT",
+        "name": "Parking Hondarribia Puerto",
+        "provincia_parking": "Gipuzkoa",
+        "municipio_parking": "Hondarribia",
+        "isactive": True,
+        "telephone": "943654321",
+        "email": "info@hondarribia-parking.com",
+        "contact_person": "Iñaki Agirre",
+        "tiene_electricidad_parking": False,
+        "tiene_residuales_parking": True,
+        "tiene_plazas_vip_parking": False,
+        "spaces": [
+            {"name": "D1", "isvip_plaza": False, "tiene_electricidad_plaza": False, "estado_plaza": "0", "precio_plaza": 18.0},
+        ],
+    },
+]
+
+
+def _get_or_create_company(name: str, cif: str | None = None) -> Company:
+    company = Company.query.filter_by(name=name).first()
+    if company:
+        return company
+
+    company = Company(name=name, cif=cif)
+    db.session.add(company)
+    db.session.flush()
+    return company
+
+
+def _seed_users() -> int:
+    if Users.query.first():
+        return 0
+
+    password_hash = generate_password_hash(DEFAULT_PASSWORD)
+    created = 0
+
+    for user_data in SEED_USERS:
+        profile_data = user_data["profile"].copy()
+        company_name = profile_data.pop("company_name", None)
+        company_cif = profile_data.pop("company_cif", None)
+
+        if company_name:
+            company = _get_or_create_company(company_name, company_cif)
+            profile_data["company_id"] = company.id
+
+        user = Users(email=user_data["email"], pass_user=password_hash)
+        db.session.add(user)
+        db.session.flush()
+
+        profile = Profiles(user_id=user.id, **profile_data)
+        db.session.add(profile)
+        created += 1
+
+    return created
+
+
+def _seed_parkings() -> int:
+    if Parking.query.first():
+        return 0
+
+    created = 0
+
+    for parking_data in SEED_PARKINGS:
+        data = parking_data.copy()
+        spaces_data = data.pop("spaces")
+        company_name = data.pop("company_name")
+        company_cif = data.pop("company_cif", None)
+
+        company = _get_or_create_company(company_name, company_cif)
+        parking = Parking(id_company=company.id, **data)
+        db.session.add(parking)
+        db.session.flush()
+
+        for space_data in spaces_data:
+            space = Space(id_parking=parking.id, **space_data)
+            db.session.add(space)
+
+        created += 1
+
+    return created
+
+
+def seed_database() -> None:
+    """Inserta datos de desarrollo si las tablas están vacías."""
+    users_created = _seed_users()
+    parkings_created = _seed_parkings()
+
+    if users_created or parkings_created:
+        db.session.commit()
+
+    if users_created:
+        print(f" * {users_created} usuarios creados (contraseña: {DEFAULT_PASSWORD!r})")
+    if parkings_created:
+        print(f" * {parkings_created} parkings creados con sus plazas")

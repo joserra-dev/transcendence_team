@@ -21,19 +21,21 @@ class Parking(db.Model):
     # Relación hacia las plazas
     plazas = db.relationship('Space', backref='parking', cascade="all, delete-orphan", lazy=True)
 
-    def to_dict(self):
-        return {
-            "id_parking": self.id_parking,
-            "id_empresa_parking": self.id_empresa_parking,
-            "nombre_parking": self.nombre_parking,
-            "provincia_parking": self.provincia_parking,
-            "municipio_parking": self.municipio_parking,
-            "isactivo_parking": self.isactivo_parking,
-            "web_parking": self.web_parking,
-            "telefono_parking": self.telefono_parking,
-            "email_parking": self.email_parking,
-            "persona_contacto_parking": self.persona_contacto_parking,
-            "tiene_electricidad_parking": self.tiene_electricidad_parking,
-            "tiene_residuales_parking": self.tiene_residuales_parking,
-            "tiene_plazas_vip_parking": self.tiene_plazas_vip_parking
+    def to_dict(self, include_spaces=True):
+        data = {
+            "id": self.id,
+            "nombre": self.name,
+            "municipio": self.municipio_parking,
+            "provincia": self.provincia_parking,
+            "activo": self.isactive,
+            "web": self.web_parking,
+            "telefono": self.telephone,
+            "email": self.email,
+            "personaContacto": self.contact_person,
+            "tieneElectricidad": self.tiene_electricidad_parking,
+            "tieneResiduales": self.tiene_residuales_parking,
+            "tieneVips": self.tiene_plazas_vip_parking,
         }
+        if include_spaces:
+            data["plazas"] = [plaza.to_dict() for plaza in self.plazas]
+        return data

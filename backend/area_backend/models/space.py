@@ -19,9 +19,10 @@ class Space(db.Model):
         return {
             "id": self.id,
             "id_parking": self.id_parking,
-            "name": self.name,
-            "isvip_plaza": self.isvip_plaza,
-            "tiene_electricidad_plaza": self.tiene_electricidad_plaza,
-            "estado_plaza": self.estado_plaza,
-            "precio_plaza": self.precio_plaza
+            "nombre": self.name,
+            "esVip": self.isvip_plaza,
+            "tieneElectricidad": self.tiene_electricidad_plaza,
+            "estado": self.estado_plaza,
+            "precio": self.precio_plaza,
+            "parkingNombre": self.parking.name if self.parking else None,
         }
