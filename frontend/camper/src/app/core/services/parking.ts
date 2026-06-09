@@ -9,15 +9,14 @@ import { map } from 'rxjs/operators';
 })
 export class ParkingService {
   private http = inject(HttpClient);
-  private apiUrl = 'http://localhost:8000/api';
+  private apiUrl = 'http://localhost:5000';
 
   /**
    * Buscar parkings con filtro específico
    * POST /find
    */
   searchParkings(filters: SearchFilters): Observable<any[]> {
-    //return this.http.get<any[]>(`${this.apiUrl}/mock-prueba`);
-    return this.http.get<any[]>('http://localhost:8000/api/mock-prueba/');
+    return this.http.get<any[]>(`${this.apiUrl}/api/parking/search`);
   }
 
   /**
@@ -27,7 +26,7 @@ export class ParkingService {
   getParkingById(id: string | number): Observable<Parking> {
     const filter = { id: id };
 
-    return this.http.post<Parking[]>(`${this.apiUrl}/find`, filter).pipe(
+    return this.http.post<Parking[]>(`${this.apiUrl}/api/find`, filter).pipe(
       map(parkings => {
         if (parkings && parkings.length > 0) {
           return parkings[0];

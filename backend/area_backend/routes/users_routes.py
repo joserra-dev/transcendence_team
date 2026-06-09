@@ -130,8 +130,6 @@ def get_current_user():
         return jsonify({
             "id": user.id,
             "email": user.email,
-
-            # Añade aquí más campos si tu modelo los tiene (nombre, biografía, etc.)
         }), 200
 
     except Exception as e:

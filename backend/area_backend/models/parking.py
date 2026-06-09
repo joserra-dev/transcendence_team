@@ -23,16 +23,16 @@ class Parking(db.Model):
 
     def to_dict(self):
         return {
-            "id_parking": self.id_parking,
-            "id_empresa_parking": self.id_empresa_parking,
-            "nombre_parking": self.nombre_parking,
+            "id": self.id,
+            "id_company": self.id_company,
+            "name": self.name,
             "provincia_parking": self.provincia_parking,
             "municipio_parking": self.municipio_parking,
-            "isactivo_parking": self.isactivo_parking,
+            "isactive": self.isactive,
             "web_parking": self.web_parking,
-            "telefono_parking": self.telefono_parking,
-            "email_parking": self.email_parking,
-            "persona_contacto_parking": self.persona_contacto_parking,
+            "telephone": self.telephone,
+            "email": self.email,
+            "contact_person": self.contact_person,
             "tiene_electricidad_parking": self.tiene_electricidad_parking,
             "tiene_residuales_parking": self.tiene_residuales_parking,
             "tiene_plazas_vip_parking": self.tiene_plazas_vip_parking
