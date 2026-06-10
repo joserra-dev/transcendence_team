@@ -5,6 +5,8 @@ export interface User {
   fecNacimientoPersona: string;
   dniPersona: string;
   ibanPersona: string;
+  metodoPago?: string;
+  tarjeta?: string;
   emailPersona: string | null;
   empresaNombre: string | null;
   admin: boolean;

@@ -9,7 +9,7 @@ import { map } from 'rxjs/operators';
 })
 export class BookingService {
   private http = inject(HttpClient);
-  private apiUrl = 'https://camperapi.onrender.com/api';
+  private apiUrl = 'http://localhost:5000/api';
 
   /**
    * Ver historial de reservas completo

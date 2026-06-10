@@ -72,6 +72,15 @@ with app.app_context():
     from seed import seed_database
 
     db.create_all()
+    try:
+        db.session.execute(db.text("ALTER TABLE public.profiles ADD COLUMN IF NOT EXISTS iban VARCHAR(34);"))
+        db.session.execute(db.text("ALTER TABLE public.profiles ADD COLUMN IF NOT EXISTS metodo_pago VARCHAR(50);"))
+        db.session.execute(db.text("ALTER TABLE public.profiles ADD COLUMN IF NOT EXISTS tarjeta VARCHAR(50);"))
+        db.session.commit()
+    except Exception as e:
+        db.session.rollback()
+        print(f" * Error al alterar la tabla profiles: {e}")
+        
     seed_database()
 
 if __name__ == '__main__':
