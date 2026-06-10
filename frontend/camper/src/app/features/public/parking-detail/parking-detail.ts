@@ -112,7 +112,11 @@ export class ParkingDetail implements OnInit {
     }
 
     const user = this.authService.getUser();
-    if (!user?.ibanPersona) {
+    const hasIban = (user?.metodoPago === 'iban' || !user?.metodoPago) && user?.ibanPersona;
+    const hasCard = user?.metodoPago === 'tarjeta' && user?.tarjeta;
+    const hasCash = user?.metodoPago === 'efectivo';
+
+    if (!hasIban && !hasCard && !hasCash) {
       this.router.navigate(['/client/profile']);
       return;
     }
@@ -180,6 +184,22 @@ export class ParkingDetail implements OnInit {
     this.currentImage =
       (this.currentImage - 1 + this.galleryImages.length) %
       this.galleryImages.length;
+  }
+
+  getPaymentMethodLabel(): string {
+    const user = this.authService.getUser();
+    if (!user) return '';
+    const metodo = user.metodoPago || 'iban';
+    if (metodo === 'iban' && user.ibanPersona) {
+      const lastDigits = user.ibanPersona.slice(-4);
+      return `Cuenta Bancaria (ES...${lastDigits})`;
+    } else if (metodo === 'tarjeta' && user.tarjeta) {
+      const lastDigits = user.tarjeta.slice(-4);
+      return `Tarjeta de Crédito (**** **** **** ${lastDigits})`;
+    } else if (metodo === 'efectivo') {
+      return 'Pago en Efectivo (Se abonará al llegar)';
+    }
+    return '';
   }
 
   // Para detectar el movil

@@ -22,7 +22,7 @@
 
       <div class="col-md-6 form-group-standard">
         <label class="form-label-custom">{{ 'PROFILE.FIELDS.NAME' | translate }}</label>
-        <input type="text" formControlName="nombrePersona" [readonly]="!isEditing">
+        <input type="text" formControlName="nombrePersona">
         <small class="error-msg-standard" *ngIf="isInvalid('nombrePersona')">
           {{ 'PROFILE.ERROR.REQUIRED' | translate }}
         </small>
@@ -30,7 +30,7 @@
 
       <div class="col-md-6 form-group-standard">
         <label class="form-label-custom">{{ 'PROFILE.FIELDS.LASTNAME' | translate }}</label>
-        <input type="text" formControlName="apellidosPersona" [readonly]="!isEditing">
+        <input type="text" formControlName="apellidosPersona">
         <small class="error-msg-standard" *ngIf="isInvalid('apellidosPersona')">
           {{ 'PROFILE.ERROR.REQUIRED' | translate }}
         </small>
@@ -55,20 +55,49 @@
 
       <div class="col-md-6 form-group-standard">
         <label class="form-label-custom">{{ 'PROFILE.FIELDS.BIRTHDATE' | translate }}</label>
-        <input type="date" formControlName="fecNacimientoPersona" [readonly]="!isEditing">
-        <small *ngIf="isInvalid('fecNacimientoPersona')" class="error-msg-standard">
+        <input type="date" formControlName="fecNacimientoPersona">
+        <small *ngIf="profileForm.get('fecNacimientoPersona')?.hasError('required') && profileForm.get('fecNacimientoPersona')?.touched" class="error-msg-standard">
+          {{ 'PROFILE.ERROR.REQUIRED' | translate }}
+        </small>
+        <small *ngIf="profileForm.get('fecNacimientoPersona')?.hasError('menorDeEdad')" class="error-msg-standard">
           {{ 'PROFILE.ERROR.UNDER_AGE' | translate }}
         </small>
       </div>
 
+    </div>
+
+    <div class="row g-4 mb-3 form-2-group">
       <div class="col-md-6 form-group-standard">
+        <label class="form-label-custom">Método de Pago</label>
+        <select formControlName="metodoPago" style="width: 100%; padding: 0.75rem; border-radius: 4px; border: 1px solid #ccc; font-size: 1rem; background-color: #fff; color: #333;">
+          <option value="iban">Cuenta Bancaria (IBAN)</option>
+          <option value="tarjeta">Tarjeta de Crédito</option>
+          <option value="efectivo">Efectivo</option>
+        </select>
+      </div>
+
+      <div class="col-md-6 form-group-standard" *ngIf="profileForm.get('metodoPago')?.value === 'iban'">
         <label class="form-label-custom">{{ 'PROFILE.FIELDS.IBAN' | translate }}</label>
-        <input type="text" formControlName="ibanPersona" [readonly]="!isEditing">
+        <input type="text" formControlName="ibanPersona" placeholder="ES0000000000000000000000">
         <small *ngIf="isInvalid('ibanPersona')" class="error-msg-standard">
           {{ 'PROFILE.ERROR.INVALID_IBAN' | translate }}
         </small>
       </div>
 
+      <div class="col-md-6 form-group-standard" *ngIf="profileForm.get('metodoPago')?.value === 'tarjeta'">
+        <label class="form-label-custom">Número de Tarjeta</label>
+        <input type="text" formControlName="tarjeta" placeholder="1234567812345678">
+        <small *ngIf="isInvalid('tarjeta')" class="error-msg-standard">
+          Número de tarjeta inválido (debe tener 16 dígitos).
+        </small>
+      </div>
+
+      <div class="col-md-6 form-group-standard" *ngIf="profileForm.get('metodoPago')?.value === 'efectivo'">
+        <label class="form-label-custom">Información de Pago</label>
+        <div style="padding: 0.75rem; border-radius: 4px; border: 1px solid #ffeeba; background-color: #fff3cd; color: #856404; font-size: 0.95rem; line-height: 1.4;">
+          Has seleccionado pago en efectivo. Abonarás el precio total directamente en el establecimiento/camping al llegar.
+        </div>
+      </div>
     </div>
 
     <h3 class="section-title">{{ 'PROFILE.CHANGE_PASSWORD' | translate }}</h3>

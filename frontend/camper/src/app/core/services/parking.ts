@@ -16,7 +16,32 @@ export class ParkingService {
    * POST /find
    */
   searchParkings(filters: SearchFilters): Observable<any[]> {
-    return this.http.get<any[]>(`${this.apiUrl}/api/parking/search`);
+    let params: any = {};
+    if (filters.id) {
+      params.id = filters.id.toString();
+    }
+    if (filters.fechaDesde) {
+      params.fechaDesde = filters.fechaDesde;
+    }
+    if (filters.fechaHasta) {
+      params.fechaHasta = filters.fechaHasta;
+    }
+    if (filters.localidad) {
+      params.municipio = filters.localidad;
+    }
+    if (filters.provincia) {
+      params.provincia = filters.provincia;
+    }
+    if (filters.tomaElectricidad !== undefined) {
+      params.electricidad = filters.tomaElectricidad.toString();
+    }
+    if (filters.limpiezaAguasResiduales !== undefined) {
+      params.residuales = filters.limpiezaAguasResiduales.toString();
+    }
+    if (filters.plazasVip !== undefined) {
+      params.vip = filters.plazasVip.toString();
+    }
+    return this.http.get<any[]>(`${this.apiUrl}/api/parking/search`, { params });
   }
 
   /**

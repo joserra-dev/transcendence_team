@@ -55,6 +55,9 @@ def search_parkings():
     # 2. Capturamos los parámetros de texto de la URL
     provincia = request.args.get('provincia')
     municipio = request.args.get('municipio')
+    id_parking = request.args.get('id')
+    fecha_desde = request.args.get('fechaDesde')
+    fecha_hasta = request.args.get('fechaHasta')
     
     # 3. Capturamos los booleanos (Flask los recibe como string, hay que convertirlos)
     isactive = request.args.get('isactive', default='true') # Por defecto 'true' para no mostrar parkings caídos
@@ -63,6 +66,9 @@ def search_parkings():
     tiene_vip = request.args.get('vip')
 
     # 4. Aplicamos los filtros dinámicamente si vienen en la petición
+    if id_parking:
+        query = query.filter(Parking.id == id_parking)
+
     if provincia:
         # ilike hace que no importen las mayúsculas/minúsculas
         query = query.filter(Parking.provincia_parking.ilike(f"%{provincia}%"))
@@ -86,7 +92,7 @@ def search_parkings():
     # 5. Ejecutamos la consulta y formateamos la respuesta
     parkings_filtrados = query.all()
     
-    return jsonify([p.to_dict() for p in parkings_filtrados]), 200
+    return jsonify([p.to_dict(fecha_desde=fecha_desde, fecha_hasta=fecha_hasta) for p in parkings_filtrados]), 200
 
 @parking_bp.route('/api/parking', methods=['GET'])
 def get_pakings():

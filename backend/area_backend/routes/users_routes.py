@@ -6,7 +6,47 @@ from services.email_services import EmailService
 
 
 from database import db
-from models.users import Users
+from models.users import Users, Profiles
+
+def _user_to_frontend_dict(user):
+    profile = user.profile
+    is_admin = False
+    company_name = None
+    
+    nombre = ""
+    apellidos = ""
+    fec_nac = ""
+    dni = ""
+    iban = ""
+    metodo_pago = "iban"
+    tarjeta = ""
+    
+    if profile:
+        nombre = profile.name or ""
+        apellidos = profile.last_name or ""
+        fec_nac = profile.birth_day.isoformat() if profile.birth_day else ""
+        dni = profile.dni or ""
+        iban = profile.iban or ""
+        metodo_pago = profile.metodo_pago or "iban"
+        tarjeta = profile.tarjeta or ""
+        is_admin = profile.role.value in ['admin', 'super_admin']
+        company = profile.company
+        if company:
+            company_name = company.name
+            
+    return {
+        "id": user.id,
+        "nombrePersona": nombre,
+        "apellidosPersona": apellidos,
+        "fecNacimientoPersona": fec_nac,
+        "dniPersona": dni,
+        "ibanPersona": iban,
+        "metodoPago": metodo_pago,
+        "tarjeta": tarjeta,
+        "emailPersona": user.email,
+        "empresaNombre": company_name,
+        "admin": is_admin
+    }
 
 # Creamos el Blueprint
 users_bp = Blueprint('users_bp', __name__, url_prefix='/api/users')
@@ -127,13 +167,59 @@ def get_current_user():
             return jsonify({"error": "Usuario no encontrado"}), 404
             
         # 3. Devolvemos los datos necesarios para el perfil
-        return jsonify({
-            "id": user.id,
-            "email": user.email,
-        }), 200
+        return jsonify(_user_to_frontend_dict(user)), 200
 
     except Exception as e:
         return jsonify({"error": "Error al obtener los datos del usuario", "details": str(e)}), 500
+
+@users_bp.route('/update', methods=['PUT'])
+@jwt_required()
+def update_profile():
+    try:
+        current_user_id = get_jwt_identity()
+        user = Users.query.get(current_user_id)
+        if not user:
+            return "Usuario no encontrado", 404
+            
+        data = request.get_json()
+        if not data:
+            return "Petición inválida", 400
+            
+        profile = user.profile
+        if not profile:
+            from datetime import date
+            profile = Profiles(
+                user_id=user.id,
+                name=data.get("nombrePersona", "Usuario"),
+                birth_day=date(2000, 1, 1)
+            )
+            db.session.add(profile)
+            
+        profile.name = data.get("nombrePersona", profile.name or "")
+        profile.last_name = data.get("apellidosPersona", profile.last_name or "")
+        profile.metodo_pago = data.get("metodoPago", profile.metodo_pago or "iban")
+        profile.iban = data.get("ibanPersona", profile.iban)
+        profile.tarjeta = data.get("tarjeta", profile.tarjeta)
+        profile.dni = data.get("dniPersona", profile.dni)
+        
+        fec_nac_str = data.get("fecNacimientoPersona")
+        if fec_nac_str:
+            from datetime import datetime
+            try:
+                profile.birth_day = datetime.strptime(fec_nac_str, "%Y-%m-%d").date()
+            except ValueError:
+                pass
+                
+        new_password = data.get("passPersona")
+        if new_password and new_password.strip() != "":
+            user.pass_user = generate_password_hash(new_password)
+            
+        db.session.commit()
+        return "Perfil actualizado correctamente", 200
+        
+    except Exception as e:
+        db.session.rollback()
+        return f"Error interno: {str(e)}", 500
 
     
 @users_bp.route('/login', methods=['POST'])
@@ -222,21 +308,14 @@ def obtener_perfil():
       401:
         description: Token faltante, inválido o expirado.
     """
-      # get_jwt_identity() recupera el ID que guardaste en str(usuario_existente.id) durante el login
       usuario_id = get_jwt_identity()
-      
-      # Buscamos al usuario en la base de datos con ese ID
       usuario = Users.query.get(usuario_id)
       
       if not usuario:
           return jsonify({"error": "Usuario no encontrado"}), 404
           
       return jsonify({
-          "usuario": {
-              "id": usuario.id,
-              
-              "email": usuario.email
-          }
+          "usuario": _user_to_frontend_dict(usuario)
       }), 200
 
       

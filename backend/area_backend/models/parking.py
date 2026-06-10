@@ -21,7 +21,7 @@ class Parking(db.Model):
     # Relación hacia las plazas
     plazas = db.relationship('Space', backref='parking', cascade="all, delete-orphan", lazy=True)
 
-    def to_dict(self, include_spaces=True):
+    def to_dict(self, include_spaces=True, fecha_desde=None, fecha_hasta=None):
         data = {
             "id": self.id,
             "nombre": self.name,
@@ -37,5 +37,33 @@ class Parking(db.Model):
             "tieneVips": self.tiene_plazas_vip_parking,
         }
         if include_spaces:
-            data["plazas"] = [plaza.to_dict() for plaza in self.plazas]
+            plazas_list = []
+            for plaza in self.plazas:
+                plaza_data = plaza.to_dict()
+                if fecha_desde and fecha_hasta:
+                    from datetime import datetime
+                    try:
+                        if isinstance(fecha_desde, str):
+                            fd = datetime.strptime(fecha_desde, "%Y-%m-%d").date()
+                        else:
+                            fd = fecha_desde
+                        if isinstance(fecha_hasta, str):
+                            fh = datetime.strptime(fecha_hasta, "%Y-%m-%d").date()
+                        else:
+                            fh = fecha_hasta
+                        
+                        from models.booking import Booking
+                        overlap = Booking.query.filter(
+                            Booking.id_space == plaza.id,
+                            Booking.fecha_inicio_reserva <= fh,
+                            Booking.fecha_fin_reserva >= fd
+                        ).first()
+                        if overlap:
+                            plaza_data["estado"] = "1"
+                        else:
+                            plaza_data["estado"] = "0"
+                    except Exception as e:
+                        print(f"Error checking space occupancy: {e}")
+                plazas_list.append(plaza_data)
+            data["plazas"] = plazas_list
         return data

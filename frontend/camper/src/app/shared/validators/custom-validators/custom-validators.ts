@@ -1,12 +1,4 @@
-import { Component } from '@angular/core';
 import { AbstractControl, ValidationErrors, ValidatorFn } from '@angular/forms';
-
-@Component({
-  selector: 'app-custom-validators',
-  imports: [],
-  templateUrl: './custom-validators.html',
-  styleUrl: './custom-validators.scss',
-})
 
 export class CustomValidators {
 
@@ -44,10 +36,16 @@ export class CustomValidators {
   }
 
   // 3. Comparar Contraseñas (Password y ConfirmPassword)
+  // Solo valida si al menos uno de los campos tiene valor; si ambos están vacíos, es válido
+  // (el usuario no quiere cambiar la contraseña)
   static matchPasswords(passwordKey: string, confirmPasswordKey: string): ValidatorFn {
     return (group: AbstractControl): ValidationErrors | null => {
-      const password = group.get(passwordKey)?.value;
-      const confirmPassword = group.get(confirmPasswordKey)?.value;
+      const password = group.get(passwordKey)?.value ?? '';
+      const confirmPassword = group.get(confirmPasswordKey)?.value ?? '';
+
+      // Si ambos están vacíos, no hay nada que validar
+      if (!password && !confirmPassword) return null;
+
       return password === confirmPassword ? null : { passwordsMismatch: true };
     };
   }
