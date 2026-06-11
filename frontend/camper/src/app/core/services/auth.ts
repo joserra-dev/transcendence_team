@@ -28,7 +28,7 @@ export class Auth {
   private http = inject(HttpClient);
   private router = inject(Router);
 
-  private apiUrl = `${window.env.URL_BACK}/users`;
+  private apiUrl = `${window.env.URL_BACK}/api/users`;
 
   login(credentials: LoginRequest): Observable<LoginResponse> {
     return this.http.post<LoginResponse>(

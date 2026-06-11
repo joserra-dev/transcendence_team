@@ -246,10 +246,10 @@ def autenticar_usuario():
               type: string
               example: "mi_clave_segura123"
     responses:
-      201:
-        description: Usuario creado exitosamente.
+      200:
+        description: Autentificación exitosa.
       400:
-        description: Error de validación (contraseñas no coinciden, email duplicado o faltan datos).
+        description: Autentificación fallida.
     """
     datos = request.get_json()
 
