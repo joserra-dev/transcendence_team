@@ -7,6 +7,7 @@ COLOR_BLUE   = \033[34m
 
 # Detectar el hostname de forma automática
 HOST := $(shell hostname)
+HOST := $(if $(HOST),$(HOST),localhost)
 
 # Comando por defecto
 make: .env
@@ -19,11 +20,11 @@ make: .env
 	@echo "$(COLOR_BLUE)🙋 Por favor, introduce los siguientes datos:$(COLOR_RESET)"
 	@echo "FLASK_ENV=development" >> .env
 	@echo "FLASK_DEBUG=1" >> .env
-
 	@read -p "Introduce el puerto para el Front-end: " port; \
-	echo "URL_FRONT=http://$(HOST):$$port" >> .env
-
-	@read -p "Introduce el puerto para el Back-end: " portback; \
+	echo "FRONT_PORT=$$port" >> .env; \
+	echo "URL_FRONT=http://$(HOST):$$port" >> .env; \
+	read -p "Introduce el puerto para el Back-end: " portback; \
+	echo "BACK_PORT=$$portback" >> .env; \
 	echo "URL_BACK=http://$(HOST):$$portback" >> .env
 	
 	
