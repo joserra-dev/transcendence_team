@@ -20,10 +20,10 @@ make: .env
 	@echo "$(COLOR_BLUE)🙋 Por favor, introduce los siguientes datos:$(COLOR_RESET)"
 	@echo "FLASK_ENV=development" >> .env
 	@echo "FLASK_DEBUG=1" >> .env
-	@read -p "Introduce el puerto para el Front-end: " port; \
+	@read -p "Introduce el puerto para el Front-end (ej. 4200): " port; \
 	echo "FRONT_PORT=$$port" >> .env; \
 	echo "URL_FRONT=http://$(HOST):$$port" >> .env; \
-	read -p "Introduce el puerto para el Back-end: " portback; \
+	read -p "Introduce el puerto para el Back-end (ej. 5000): " portback; \
 	echo "BACK_PORT=$$portback" >> .env; \
 	echo "URL_BACK=http://$(HOST):$$portback" >> .env
 	
@@ -32,9 +32,9 @@ make: .env
 	@echo "$(COLOR_BLUE)🐘 Configuración de conexión a PostgreSQL:$(COLOR_RESET)"
 	@read -p "Host de la Base de Datos (ej. localhost o db): " db_host; \
 	read -p "Puerto de Postgres (ej. 5432): " db_port; \
-	read -p "Usuario de Postgres: " db_user; \
+	read -p "Usuario de Postgres (ej. defaultdb_uk1q_user): " db_user; \
 	read -p "Contraseña de Postgres: " db_pass; \
-	read -p "Nombre de la Base de Datos: " db_name; \
+	read -p "Nombre de la Base de Datos (ej. defaultdb): " db_name; \
 	echo "DATABASE_URL=postgresql://$$db_user:$$db_pass@$$db_host:$$db_port/$$db_name" >> .env
 
 	@echo ""
@@ -42,9 +42,9 @@ make: .env
 	@echo "MAIL_SERVER=smtp.gmail.com" >> .env
 	@echo "MAIL_PORT=587" >> .env
 	@echo "MAIL_USE_TLS=True" >> .env
-	@read -p "Tu correo de Gmail (MAIL_USERNAME): " mail_user; \
+	@read -p "Tu correo de Gmail (MAIL_USERNAME) (ej. pruebasenviosmaildesarrollo@gmail.com): " mail_user; \
 	read -p "Tu contraseña de aplicación de Gmail (MAIL_PASSWORD): " mail_pass; \
-	read -p "Correo remitente por defecto (MAIL_DEFAULT_SENDER): " mail_sender; \
+	read -p "Correo remitente por defecto (MAIL_DEFAULT_SENDER) (ej. pruebasenviosmaildesarrollo@gmail.com): " mail_sender; \
 	echo "MAIL_USERNAME=$$mail_user" >> .env; \
 	echo "MAIL_PASSWORD=$$mail_pass" >> .env; \
 	echo "MAIL_DEFAULT_SENDER=$$mail_sender" >> .env
