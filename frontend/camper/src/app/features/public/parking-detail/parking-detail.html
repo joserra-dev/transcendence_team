@@ -194,10 +194,25 @@
       <div style="margin-bottom: 2rem;">
         <p class="mb-2">{{ 'PARKING.AUX.FIRST' | translate }} <strong>{{ selectedSpot?.nombre }}</strong>.</p>
         
-        <div style="background: #f8f9fa; padding: 1rem; border-radius: 6px; font-size: 0.95rem;">
+        <div style="background: #f8f9fa; padding: 1rem; border-radius: 6px; font-size: 0.95rem; margin-bottom: 1.5rem;">
           <p class="mb-1"><strong>{{ 'PARKING.AUX.THIRD' | translate }}</strong> {{ entryDate }} {{ 'PARKING.AUX.FOURTH' | translate }} {{ exitDate }}</p>
           <p class="mb-1"><strong>{{ 'PARKING.AUX.SECOND' | translate }}</strong> <span style="color: #2c3e50; font-size: 1.2rem; font-weight: bold;">{{ totalPrice }}€</span></p>
-          <p class="mb-0"><strong>Método de pago:</strong> {{ getPaymentMethodLabel() }}</p>
+          <p class="mb-1"><strong>Método de pago:</strong> {{ getPaymentMethodLabel() }}</p>
+        </div>
+
+        <div style="margin-bottom: 1rem;">
+          <label style="display: block; font-weight: bold; margin-bottom: 0.5rem; font-size: 0.95rem;">
+            Introduce la matrícula de tu vehículo:
+          </label>
+          <input 
+            type="text" 
+            [(ngModel)]="licensePlate" 
+            placeholder="Ej: 1234BBB" 
+            style="width: 100%; padding: 0.6rem; border: 1px solid #ccc; border-radius: 4px; font-size: 1.1rem; text-transform: uppercase; box-sizing: border-box;"
+          />
+          <small *ngIf="licensePlate && !isLicensePlateValid()" style="color: #dc3545; display: block; margin-top: 0.25rem;">
+            Por favor, introduce una matrícula válida (4 números y 3 letras, sin espacios).
+          </small>
         </div>
       </div>
 
@@ -205,12 +220,18 @@
         <button class="btn btn-outline-secondary" (click)="showConfirmModal = false">
           {{ 'PARKING.AUX.SEVENTH' | translate }}
         </button>
-        <button class="btn btn-primary" (click)="confirmBooking()">
+        <button 
+          class="btn btn-primary" 
+          (click)="confirmBooking()" 
+          [disabled]="!isLicensePlateValid()"
+          [style.opacity]="!isLicensePlateValid() ? '0.5' : '1'"
+          [style.cursor]="!isLicensePlateValid() ? 'not-allowed' : 'pointer'"
+        >
           {{ 'PARKING.AUX.EIGHTH' | translate }}
         </button>
       </div>
     </div>
-  </div>
+</div>
 
 <ng-template #loadingTpl>
   <div class="loading-wrapper">

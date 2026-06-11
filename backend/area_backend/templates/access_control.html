@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Lector de Matrículas - Backend View</title>
+    <style>
+        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; text-align: center; background: #1e293b; color: #f8fafc; margin: 0; padding: 20px; }
+        .container { max-width: 700px; margin: 0 auto; background: #0f172a; padding: 30px; border-radius: 12px; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.5); }
+        h1 { margin-top: 0; color: #38bdf8; font-size: 1.8rem; }
+        #video { border: 4px solid #334155; border-radius: 8px; background: black; width: 100%; max-width: 600px; transform: scaleX(1); }
+        .btn { padding: 14px 28px; font-size: 1.1rem; color: white; background: #0284c7; border: none; border-radius: 6px; cursor: pointer; margin-top: 20px; font-weight: bold; width: 100%; max-width: 400px; transition: background 0.2s; }
+        .btn:hover { background: #0369a1; }
+        #result { margin-top: 25px; padding: 15px; border-radius: 6px; font-size: 1.4rem; font-weight: bold; background: #1e293b; border: 1px solid #334155; min-height: 50px; display: flex; flex-direction: column; justify-content: center; align-items: center; }
+        .access-granted { color: #4ade80; border-color: #22c55e !important; background: rgba(34, 197, 94, 0.1) !important; }
+        .access-denied { color: #f87171; border-color: #ef4444 !important; background: rgba(239, 68, 68, 0.1) !important; }
+        small { font-size: 0.9rem; color: #94a3b8; margin-top: 5px; }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <h1>Control de Acceso - Escáner LPR</h1>
+        <video id="video" autoplay playsinline></video>
+        <br>
+        <button class="btn" id="capture-btn">📷 ESCANEAR Y VERIFICAR</button>
+        <canvas id="canvas" style="display:none;" width="640" height="480"></canvas>
+
+        <div id="result">Sistema listo. Enfoque una matrícula.</div>
+    </div>
+
+    <script>
+        const video = document.getElementById('video');
+        const canvas = document.getElementById('canvas');
+        const captureButton = document.getElementById('capture-btn');
+        const resultDiv = document.getElementById('result');
+
+        // 1. Iniciar la cámara apuntando preferiblemente hacia atrás (entorno)
+        navigator.mediaDevices.getUserMedia({ video: { facingMode: "environment", width: 1280, height: 720 } })
+            .then(stream => { video.srcObject = stream; })
+            .catch(err => { 
+                resultDiv.innerHTML = "❌ Error: No se puede acceder a la cámara.";
+                console.error(err); 
+            });
+
+        // 2. Capturar y enviar por AJAX a las rutas del Backend
+        captureButton.addEventListener('click', () => {
+            const context = canvas.getContext('2d');
+            // Capturamos el frame actual del video
+            context.drawImage(video, 0, 0, canvas.width, canvas.height);
+            const imageDataUrl = canvas.toDataURL('image/jpeg');
+
+            resultDiv.innerHTML = "⏳ Procesando imagen e identificando matrícula...";
+            resultDiv.className = "";
+
+            // Llamada al endpoint relativo en tu propio backend Flask
+            fetch('/api/access/verify-plate', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ image: imageDataUrl })
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.access) {
+                    resultDiv.innerHTML = `✅ ACCESO PERMITIDO<br><small>Matrícula leída: <strong>${data.plate}</strong></small>`;
+                    resultDiv.className = "access-granted";
+                } else {
+                    const plateText = data.plate ? `(${data.plate})` : '(No detectada)';
+                    resultDiv.innerHTML = `❌ ACCESO DENEGADO<br><small>Matrícula: <strong>${plateText}</strong> - ${data.message}</small>`;
+                    resultDiv.className = "access-denied";
+                }
+            })
+            .catch(err => {
+                resultDiv.innerHTML = "❌ Error crítico de red o servidor.";
+                console.error(err);
+            });
+        });
+    </script>
+</body>
+</html>

@@ -12,13 +12,21 @@ class Space(db.Model):
     estado_plaza = db.Column(db.String(1), nullable=True) # Guarda '0' o '1'
     precio_plaza = db.Column(db.Float, nullable=True)
 
-    # Relación hacia las reservas
-    booking = db.relationship('Booking', backref='Space', cascade="all, delete-orphan", lazy=True)
+    # 1. RELACIÓN HACIA PARKING (Necesaria para self.parking.name en to_dict)
+    #parking = db.relationship('Parking', backref=db.backref('spaces', lazy=True))
+    parking = db.relationship('Parking', back_populates='spaces')
+
+    # 2. RELACIÓN HACIA RESERVAS (Corregida sin backref duplicado, usando cascade limpio)
+    # SQLAlchemy ya sabe mapear esto gracias al backref='bookings' que pusimos en Booking.
+    # Solo dejamos esta línea si queremos controlar el borrado en cascada (delete-orphan).
+    bookings_rel = db.relationship('Booking', cascade="all, delete-orphan", lazy=True)
+    
 
     def to_dict(self):
         return {
             "id": self.id,
             "id_parking": self.id_parking,
+            # Mapeos exactos para que hagan match perfecto con tu Angular actual:
             "nombre": self.name,
             "esVip": self.isvip_plaza,
             "tieneElectricidad": self.tiene_electricidad_plaza,

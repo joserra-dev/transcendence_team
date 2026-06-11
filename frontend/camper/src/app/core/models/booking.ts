@@ -18,10 +18,11 @@ export interface BookingFilters {
 }
 
 export interface BookingRequest {
-  idPlaza: number;
+  idSpace: number;
   idParking: number;
-  fecInicio: string; 
-  fecFin: string;    
+  startDate: string; 
+  endDate: string;
+  licensePlate: string;    
 }
 
 export interface BookingHistoryResponse {
