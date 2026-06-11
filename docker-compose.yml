@@ -6,14 +6,14 @@ services:
     volumes:
       - postgres_data:/var/lib/postgresql/data
     environment:
-      POSTGRES_DB: defaultdb
-      POSTGRES_USER: defaultdb_uk1q_user
-      POSTGRES_PASSWORD: password
+      POSTGRES_DB: ${POSTGRES_DB}
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
     ports:
       - "5432:5432"
     # 1. Le añadimos un chequeo de salud a Postgres
     healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U defaultdb_uk1q_user -d defaultdb"]
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER} -d ${POSTGRES_DB}"]
       interval: 5s
       timeout: 5s
       retries: 5
