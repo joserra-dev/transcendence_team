@@ -9,18 +9,15 @@ class Booking(db.Model):
     id_user = db.Column(db.BigInteger, db.ForeignKey('public.users.id', ondelete='CASCADE'), nullable=False)
     id_space = db.Column(db.BigInteger, db.ForeignKey('public.space.id', ondelete='CASCADE'), nullable=False)
     
-    # Campos traducidos a inglés
     start_date = db.Column(db.Date, nullable=True)
     end_date = db.Column(db.Date, nullable=True)
     created_at = db.Column(db.DateTime, default=datetime.utcnow)
     status = db.Column(db.String(1), nullable=True)
     rating = db.Column(db.Numeric(2, 0), nullable=True)
-    
-    # Nuevo campo añadido para la matrícula
     license_plate = db.Column(db.String(15), nullable=False)
     
-    user = db.relationship('Users', backref=db.backref('bookings', lazy=True))
-    space = db.relationship('Space', backref=db.backref('bookings', lazy=True))
+    user = db.relationship('Users', back_populates='bookings')
+    space = db.relationship('Space', back_populates='bookings_rel')
 
     def to_dict(self):
         return {

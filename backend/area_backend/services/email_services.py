@@ -1,5 +1,6 @@
 from flask import current_app, render_template
 from flask_mailman import EmailMessage
+import os
 
 class EmailService:
     @staticmethod
@@ -32,15 +33,18 @@ class EmailService:
         return cls._send(msg)
 
     @classmethod
-    def welcome(cls, destinatario: str, asunto: str = "Bienvenido a nuestra plataforma"):
+    def welcome(cls, destinatario: str, token: str, asunto: str = "Bienvenido a nuestra plataforma"):
         """
         Método especializado (ejemplo) para correos de bienvenida.
         Mantiene limpia la lógica de tus vistas/rutas.
         """
+        base_url = os.getenv('URL_BACK')
+        verification_url = f"{base_url}/api/users/verify?token={token}"
         html_content = render_template(
             'email/bienvenida.html', 
             nombre=destinatario, 
-            email=destinatario
+            email=destinatario,
+            verification_url=verification_url
         )
         return cls.base_mail(destinatario, asunto, html_content)
 

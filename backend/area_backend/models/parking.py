@@ -18,6 +18,7 @@ class Parking(db.Model):
     tiene_residuales_parking = db.Column(db.Boolean, nullable=True)
     tiene_plazas_vip_parking = db.Column(db.Boolean, nullable=True)
 
+    company = db.relationship('Company', back_populates='parkings')
     spaces = db.relationship('Space', back_populates='parking', lazy=True)
 
     def to_dict(self, include_spaces=True, fecha_desde=None, fecha_hasta=None):

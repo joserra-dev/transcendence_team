@@ -8,10 +8,8 @@ class Company(db.Model):
     name = db.Column(db.String(50), nullable=False)
     cif = db.Column(db.String(15), nullable=True)
 
-    # Relaciones para acceder fácilmente desde el objeto
-    users = db.relationship('Profiles', backref='company', lazy=True)
-    
-    parkings = db.relationship('Parking', backref='company', lazy=True)
+    users = db.relationship('Profiles', back_populates='company', lazy=True)
+    parkings = db.relationship('Parking', back_populates='company', lazy=True)
 
     def to_dict(self):
         return {

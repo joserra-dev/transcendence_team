@@ -12,29 +12,30 @@ def _get_booking_details(booking):
     if booking.start_date and booking.end_date:
         days = (booking.end_date - booking.start_date).days + 1
     
-    plaza = booking.space
-    parking_nombre = ""
-    plaza_nombre = ""
-    precio_plaza = 0
-    if plaza:
-        plaza_nombre = plaza.name or ""
-        precio_plaza = plaza.precio_plaza or 0
-        parking = plaza.parking
+    space = booking.space
+    parking_name = ""
+    spaceName = ""
+    price = 0
+    if space:
+        spaceName = space.name or ""
+        price = space.price or 0
+        parking = space.parking
         if parking:
-            parking_nombre = parking.name or ""
+            parking_name = parking.name or ""
             
-    precio_total = days * precio_plaza
+    total_price = days * price
     
     return {
         "id": booking.id,
-        "fecAlta": booking.created_at.strftime('%Y-%m-%d') if booking.created_at else None,
-        "fecInicio": booking.start_date.isoformat() if booking.start_date else None,
-        "fecFin": booking.end_date.isoformat() if booking.end_date else None,
-        "parkingNombre": parking_nombre,
-        "estado": booking.status,
-        "plazaNombre": plaza_nombre,
-        "precioTotal": float(precio_total),
-        "qrData": f"Reserva #{booking.id} - Plaza {plaza_nombre} en {parking_nombre}"
+        "createDate": booking.created_at.strftime('%Y-%m-%d') if booking.created_at else None,
+        "starDate": booking.start_date.isoformat() if booking.start_date else None,
+        "endDate": booking.end_date.isoformat() if booking.end_date else None,
+        "parkingName": parking_name,
+        "status": booking.status,
+        "spaceName": spaceName,
+        "totalPrice": float(total_price),
+        "license_plate":booking.license_plate,
+        "qrData": f"Reserva #{booking.id} - Plaza {spaceName} en {parking_name}"
     }
 
 @booking_bp.route('/api/booking', methods=['GET'])
@@ -85,41 +86,41 @@ def get_history():
         # CORRECCIÓN CLAVE: Accedemos directamente a la relación 'space' del modelo Booking
         plaza = b.space 
         
-        parking_nombre = ""
+        parking_name = ""
         parking_id = 0
-        precio = 0
+        price = 0
         
         if plaza:
-            precio = plaza.precio_plaza or 0
+            price = plaza.price or 0
             # Accedemos a la relación 'parking' desde el modelo Space
             parking = plaza.parking 
             if parking:
-                parking_nombre = parking.name or parking.nombre or ""
+                parking_name = parking.name or parking.name or ""
                 parking_id = parking.id
         
         # 2. Cálculo de días usando los nuevos campos en inglés de Booking (start_date y end_date)
         days = 1
         if b.start_date and b.end_date:
             days = (b.end_date - b.start_date).days + 1
-        precio_total = days * precio
+        total_price = days * price
         
         # 3. Mapeo del diccionario. Mantenemos las claves antiguas que Angular espera,
         # pero leyendo las propiedades nuevas de los modelos.
         history.append({
             "id": b.id,
-            "usuarioId": int(user_id),
-            "usuarioEmail": user_email,
-            "plazaId": b.id_space,
+            "userId": int(user_id),
+            "userEmail": user_email,
+            "spaceId": b.id_space,
             "parkingId": parking_id,
-            "parkingNombre": parking_nombre,
-            "precio": float(precio),
-            "precioTotal": float(precio_total),
+            "parkingName": parking_name,
+            "price": float(price),
+            "totalPrice": float(total_price),
             # Propiedades de fecha y estado cambiadas a inglés:
-            "fecInicio": b.start_date.isoformat() if b.start_date else None,
-            "fecFin": b.end_date.isoformat() if b.end_date else None,
-            "fecAlta": b.created_at.strftime('%Y-%m-%d %H:%M:%S') if b.created_at else None,
-            "estado": b.status,
-            "puntuacion": float(b.rating) if b.rating is not None else None,
+            "startDate": b.start_date.isoformat() if b.start_date else None,
+            "endDate": b.end_date.isoformat() if b.end_date else None,
+            "createDate": b.created_at.strftime('%Y-%m-%d %H:%M:%S') if b.created_at else None,
+            "status": b.status,
+            "range": float(b.rating) if b.rating is not None else None,
             # NUEVO: Enviamos la matrícula al Frontend para el historial
             "licensePlate": b.license_plate
         })

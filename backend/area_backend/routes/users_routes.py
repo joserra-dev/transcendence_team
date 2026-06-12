@@ -1,7 +1,7 @@
 from flask import Blueprint, jsonify, request,current_app
 from werkzeug.security import generate_password_hash, check_password_hash 
 from flask_jwt_extended import create_access_token, jwt_required, get_jwt_identity
-from flask_mailman import EmailMessage
+import secrets
 from services.email_services import EmailService
 
 
@@ -134,16 +134,17 @@ def registrar_usuario():
 
     # 4. Si todo está correcto, encriptamos y guardamos
     password_encriptada = generate_password_hash(password)
-
+    verification_token=secrets.token_urlsafe(32)
     nuevo_usuario = Users(
-        email=email,
-        pass_user=password_encriptada
+        email = email,
+        pass_user = password_encriptada,
+        is_verified = False,
+        verification_token = verification_token
     )
-
     try:
         db.session.add(nuevo_usuario)
         db.session.commit()
-        EmailService.welcome(email, email)
+        EmailService.welcome(email, verification_token)
         return jsonify({
             "mensaje": "Usuario registrado con éxito",
             "usuario": nuevo_usuario.to_dict()
@@ -267,7 +268,7 @@ def autenticar_usuario():
     # 3. Verificar si el email ya existe en PostgreSQL
     usuario_existente = Users.query.filter_by(email=email).first()
     
-    if not usuario_existente:
+    if not usuario_existente or usuario_existente.is_verified == False:
         return jsonify({"error": "Usuario no existe "}), 400
     
     coincide = check_password_hash(usuario_existente.pass_user, password)
@@ -381,3 +382,50 @@ def solicitar_recuperacion():
         
     except Exception as e:
         return jsonify({"error": "Error interno al procesar la solicitud", "details": str(e)}), 500
+      
+@users_bp.route('/verify', methods=['GET'])
+def verify_account():
+    """
+    Endpoint para verificar la cuenta de usuario mediante el token enviado por correo.
+    Se accede mediante un GET (ej: /api/users/verify?token=XYZ...)
+    """
+    # 1. Obtenemos el token de los parámetros de la URL (?token=...)
+    token = request.args.get('token')
+    
+    if not token:
+        return jsonify({
+            "status": "error",
+            "message": "Falta el token de verificación."
+        }), 400
+
+    # 2. Buscamos al usuario que tenga asignado ese token exacto
+    user = Users.query.filter_by(verification_token=token).first()
+
+    if not user:
+        return jsonify({
+            "status": "error",
+            "message": "El token no es válido o ya ha sido utilizado."
+        }), 400
+
+    try:
+        # 3. Activamos la cuenta del usuario
+        user.is_verified = True
+        
+        # 4. Limpiamos el token por seguridad (así el enlace expira y no se puede reutilizar)
+        user.verification_token = None
+        
+        # 5. CRUCIAL: Guardamos los cambios en la base de datos
+        db.session.commit()
+
+        return jsonify({
+            "status": "success",
+            "message": "¡Cuenta verificada con éxito! Ya puedes iniciar sesión."
+        }), 200
+
+    except Exception as e:
+        # Si algo falla con la base de datos, cancelamos la operación
+        db.session.rollback()
+        return jsonify({
+            "status": "error",
+            "message": f"Hubo un problema al verificar la cuenta: {str(e)}"
+        }), 500
