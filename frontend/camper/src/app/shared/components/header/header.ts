@@ -1,6 +1,7 @@
 import { Component, HostListener, inject } from '@angular/core';
-import { CommonModule, NgIf } from '@angular/common';
-import { RouterLink } from '@angular/router';
+import { CommonModule, Location, NgIf } from '@angular/common';
+import { NavigationEnd, Router, RouterLink } from '@angular/router';
+import { filter, map, merge, of, startWith } from 'rxjs';
 import { Auth } from '../../../core/services/auth';
 import { LanguageService, Language } from '../../../core/services/language';
 import { FormsModule } from '@angular/forms';
@@ -15,8 +16,32 @@ import { TranslateModule } from '@ngx-translate/core';
 export class Header {
   authService = inject(Auth);
   languageService = inject(LanguageService);
+  private location = inject(Location);
+  private router = inject(Router);
   menuOpen = false;
   mobileMenuOpen = false;
+
+  showNavHistory$ = merge(
+    of(this.router.url),
+    this.router.events.pipe(
+      filter((event): event is NavigationEnd => event instanceof NavigationEnd),
+      map((event) => event.urlAfterRedirects)
+    )
+  ).pipe(
+    startWith(this.router.url),
+    map((url) => {
+      const path = (url.split('?')[0].split('#')[0] || '/').replace(/\/+$/, '') || '/';
+      return path !== '/';
+    })
+  );
+
+  goBack(): void {
+    this.location.back();
+  }
+
+  goForward(): void {
+    this.location.forward();
+  }
 
   logout() {
     this.authService.logout();

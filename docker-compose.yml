@@ -45,6 +45,7 @@ services:
       - .env
     environment:
     - URL_FRONT=${URL_FRONT}
+    - URL_BACK=${URL_BACK}
     ports:
       - "${FRONT_PORT}:80" # Mapea el puerto 4200 de tu PC al puerto 80 del contenedor (Nginx/Angular)
     stdin_open: true 

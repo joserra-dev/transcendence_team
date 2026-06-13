@@ -1,5 +1,7 @@
 {
   "HEADER": {
+    "BACK": "Previous page",
+    "FORWARD": "Next page",
     "SEARCH": "Search parking",
     "LOGIN": "Log in",
     "REGISTER": "Sign Up",
@@ -22,6 +24,18 @@
     "PLACEHOLDER_PASSWORD": "******",
     "BUTTON": "Log in",
     "LOADING": "Loading...",
+    "FORGOT_PASSWORD": "Forgot your password?",
+    "RECOVERY": {
+      "TITLE": "Recover password",
+      "DESCRIPTION": "Enter your email and we'll send you a link to create a new password.",
+      "SEND": "Send link",
+      "CANCEL": "Cancel",
+      "SUCCESS": "If the email exists, you'll receive a recovery link.",
+      "ERROR": {
+        "TIMEOUT": "The server is taking too long to respond. Please try again later.",
+        "UNKNOWN": "The email could not be sent. Please try again."
+      }
+    },
     "ERROR": {
       "REQUIRED_EMAIL": "Email is required.",
       "INVALID_EMAIL": "Email format is invalid.",
@@ -29,6 +43,26 @@
       "INVALID_CREDENTIALS": "Invalid credentials. Check your email and password.",
       "TIMEOUT": "The server is taking too long to respond. Please try again later.",
       "UNKNOWN": "An unexpected error occurred. Try again later."
+    }
+  },
+
+  "RESET_PASSWORD": {
+    "TITLE": "Reset password",
+    "FIELDS": {
+      "PASSWORD": "New password",
+      "CONFIRM_PASSWORD": "Confirm new password"
+    },
+    "BUTTON": "Save new password",
+    "BACK": "Back to login",
+    "SUCCESS": "Password updated successfully.",
+    "ERRORS": {
+      "REQUIRED_PASSWORD": "The new password is required.",
+      "MIN_LENGTH": "The password must contain at least 8 characters.",
+      "REQUIRED_CONFIRM": "You must confirm the new password.",
+      "TOKEN_MISSING": "No valid recovery link was found.",
+      "INVALID_TOKEN": "The recovery link is invalid or has expired.",
+      "TIMEOUT": "The server is taking too long to respond. Please try again later.",
+      "UNKNOWN": "The password could not be updated. Please try again."
     }
   },
 

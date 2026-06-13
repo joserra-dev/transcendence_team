@@ -1,5 +1,7 @@
 {
   "HEADER": {
+    "BACK": "Página anterior",
+    "FORWARD": "Página siguiente",
     "SEARCH": "Buscar parking",
     "LOGIN": "Identifícate",
     "REGISTER": "Registrarse",
@@ -22,6 +24,18 @@
     "PLACEHOLDER_PASSWORD": "******",
     "BUTTON": "Entrar",
     "LOADING": "Cargando...",
+    "FORGOT_PASSWORD": "¿Has olvidado tu contraseña?",
+    "RECOVERY": {
+      "TITLE": "Recuperar contraseña",
+      "DESCRIPTION": "Escribe tu correo y te enviaremos un enlace para crear una nueva contraseña.",
+      "SEND": "Enviar enlace",
+      "CANCEL": "Cancelar",
+      "SUCCESS": "Si el correo existe, recibirás un enlace de recuperación.",
+      "ERROR": {
+        "TIMEOUT": "El servidor tarda demasiado en responder. Inténtalo más tarde.",
+        "UNKNOWN": "No se pudo enviar el correo. Inténtalo de nuevo."
+      }
+    },
     "ERROR": {
       "REQUIRED_EMAIL": "El email es obligatorio.",
       "INVALID_EMAIL": "Formato de email incorrecto.",
@@ -29,6 +43,26 @@
       "INVALID_CREDENTIALS": "Credenciales inválidas. Comprueba tu email y contraseña.",
       "TIMEOUT": "El servidor tarda demasiado en responder. Inténtalo más tarde.",
       "UNKNOWN": "Ocurrió un error inesperado. Inténtalo más tarde."
+    }
+  },
+
+  "RESET_PASSWORD": {
+    "TITLE": "Restablecer contraseña",
+    "FIELDS": {
+      "PASSWORD": "Nueva contraseña",
+      "CONFIRM_PASSWORD": "Confirmar nueva contraseña"
+    },
+    "BUTTON": "Guardar nueva contraseña",
+    "BACK": "Volver al inicio de sesión",
+    "SUCCESS": "Contraseña actualizada correctamente.",
+    "ERRORS": {
+      "REQUIRED_PASSWORD": "La nueva contraseña es obligatoria.",
+      "MIN_LENGTH": "La contraseña debe tener al menos 8 caracteres.",
+      "REQUIRED_CONFIRM": "Debes confirmar la nueva contraseña.",
+      "TOKEN_MISSING": "No se ha encontrado un enlace válido de recuperación.",
+      "INVALID_TOKEN": "El enlace de recuperación no es válido o ha caducado.",
+      "TIMEOUT": "El servidor tarda demasiado en responder. Inténtalo más tarde.",
+      "UNKNOWN": "No se pudo actualizar la contraseña. Inténtalo de nuevo."
     }
   },
 
