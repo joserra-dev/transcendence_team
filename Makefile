@@ -10,6 +10,16 @@ COLOR_YELLOW = \033[33m
 COLOR_BLUE   = \033[34m
 
 # Automatically detect host
+# Detect operating system
+OS := $(shell uname -s)
+
+HOST := $(shell hostname)
+ifeq ($(OS), Darwin)
+    HOST := localhost
+else
+    HOST := $(if $(HOST),$(HOST),localhost)
+endif
+
 HOST := $(shell hostname)
 HOST := $(if $(HOST),$(HOST),localhost)
 
