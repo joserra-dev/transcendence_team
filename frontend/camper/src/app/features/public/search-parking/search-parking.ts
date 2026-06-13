@@ -98,7 +98,7 @@ export class SearchParking implements OnInit {
 
   getMinPrice(parking: Parking): number {
     if (!parking.plazas || parking.plazas.length === 0) return 0;
-    return Math.min(...parking.plazas.map(p => p.precio));
+    return Math.min(...parking.plazas.map(p => p.price));
   }
 
   clearFilters() {

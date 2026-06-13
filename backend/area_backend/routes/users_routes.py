@@ -278,7 +278,7 @@ def autenticar_usuario():
     usuario_existente = Users.query.filter_by(email=email).first()
     
     if not usuario_existente or usuario_existente.is_verified == False:
-        return jsonify({"error": "Usuario no existe "}), 400
+        return jsonify({"error": "Usuario no existe "}), 401
     
     coincide = check_password_hash(usuario_existente.pass_user, password)
     if not coincide:

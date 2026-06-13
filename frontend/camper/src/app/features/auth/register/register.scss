@@ -21,3 +21,14 @@
   font-weight: $font-weight-medium;
   text-align: center;
 }
+
+.parking-card {
+    background: $color-white;
+    border: 1px solid $color-border;
+    border-radius: $radius-md;
+    padding: 1.2rem;
+    box-shadow: $shadow-soft;
+    display: flex;
+    flex-direction: column;
+    gap: 0.8rem;
+}

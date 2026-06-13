@@ -4,7 +4,7 @@ export interface Plaza {
   esVip: boolean;
   tieneElectricidad: boolean;
   estado: string; // "0" = Libre, "1" = Ocupada
-  precio: number;
+  price: number;
   parkingNombre: string;
 }
 

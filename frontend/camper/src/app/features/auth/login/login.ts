@@ -12,6 +12,7 @@ import { TranslateModule } from '@ngx-translate/core';
   templateUrl: './login.html',
   styleUrl: './login.scss',
 })
+
 export class Login {
   private fb = inject(FormBuilder);
   private authService = inject(Auth);
@@ -118,11 +119,9 @@ export class Login {
         })
       ).subscribe({
       next: (response) => {
-        console.log('Login exitoso:', response);
         this.router.navigateByUrl(this.returnUrl);
       },
       error: (err) => {
-        console.error('Error en login:', err);
         if (err instanceof TimeoutError) {
              this.errorMessage = 'LOGIN.ERROR.TIMEOUT';
         } else if (err.status === 401 || err.status === 404) {
