@@ -1,5 +1,5 @@
 from datetime import timedelta
-from flask import Blueprint, jsonify, request,current_app
+from flask import Blueprint, jsonify, request, current_app, redirect
 from sqlalchemy import func
 from werkzeug.security import generate_password_hash, check_password_hash 
 from flask_jwt_extended import create_access_token, decode_token,jwt_required, get_jwt_identity
@@ -153,14 +153,40 @@ def registrar_usuario():
     try:
         db.session.add(nuevo_usuario)
         db.session.commit()
-        EmailService.welcome(email, email)
-        return jsonify({
-            "mensaje": "Usuario registrado con éxito",
-            "usuario": nuevo_usuario.to_dict()
-        }), 201
-    except Exception as e:
+    except Exception:
         db.session.rollback()
         return jsonify({"error": "Error interno al guardar en la base de datos"}), 500
+
+    try:
+        EmailService.welcome(email, verification_token)
+    except Exception as e:
+        current_app.logger.error(f"Error enviando correo de bienvenida a {email}: {e}")
+
+    return jsonify({
+        "mensaje": "Usuario registrado con éxito. Revisa tu correo para verificar la cuenta.",
+        "usuario": nuevo_usuario.to_dict()
+    }), 201
+
+
+@users_bp.route('/verify', methods=['GET'])
+def verificar_cuenta():
+    token = request.args.get('token')
+    if not token:
+        return redirect(_build_frontend_url('auth/login-client?verified=0'))
+
+    usuario = Users.query.filter_by(verification_token=token).first()
+    if not usuario:
+        return redirect(_build_frontend_url('auth/login-client?verified=0'))
+
+    usuario.is_verified = True
+    usuario.verification_token = None
+    try:
+        db.session.commit()
+    except Exception:
+        db.session.rollback()
+        return redirect(_build_frontend_url('auth/login-client?verified=0'))
+
+    return redirect(_build_frontend_url('auth/login-client?verified=1'))
 
 
 @users_bp.route('/me', methods=['GET'])
@@ -277,12 +303,15 @@ def autenticar_usuario():
     # 3. Verificar si el email ya existe en PostgreSQL
     usuario_existente = Users.query.filter_by(email=email).first()
     
-    if not usuario_existente or usuario_existente.is_verified == False:
-        return jsonify({"error": "Usuario no existe "}), 400
-    
+    if not usuario_existente:
+        return jsonify({"error": "Credenciales incorrectas"}), 401
+
     coincide = check_password_hash(usuario_existente.pass_user, password)
     if not coincide:
-       return jsonify({"error": "Credenciales incorrectas"}), 401
+        return jsonify({"error": "Credenciales incorrectas"}), 401
+
+    if not usuario_existente.is_verified:
+        return jsonify({"error": "Debes verificar tu correo electrónico antes de iniciar sesión"}), 403
    
     # Modifica la línea 162 para pasarle el ID como string:
     token_acceso = create_access_token(identity=str(usuario_existente.id))

@@ -40,6 +40,33 @@ export class Register {
     return !!(control && control.invalid && (control.dirty || control.touched));
   }
 
+  private extractBackendErrors(err: { error?: unknown; status?: number }): string[] {
+    const body = err?.error;
+    if (!body) {
+      return ['REGISTER.BACKEND.UNKNOWN'];
+    }
+    if (typeof body === 'string') {
+      try {
+        const parsed = JSON.parse(body) as { error?: string } | string;
+        if (typeof parsed === 'string') {
+          return [parsed];
+        }
+        if (parsed.error) {
+          return [parsed.error];
+        }
+      } catch {
+        return [body];
+      }
+    }
+    if (typeof body === 'object' && body !== null && 'error' in body && typeof (body as { error: unknown }).error === 'string') {
+      return [(body as { error: string }).error];
+    }
+    if (Array.isArray(body)) {
+      return body.map((item) => (typeof item === 'string' ? item : 'REGISTER.BACKEND.UNKNOWN'));
+    }
+    return ['REGISTER.BACKEND.UNKNOWN'];
+  }
+
   onSubmit() {
     if (this.registerForm.invalid) {
       this.registerForm.markAllAsTouched();
@@ -83,26 +110,12 @@ export class Register {
         console.error('Error registro:', err);
 
         if (err instanceof TimeoutError) {
-             this.apiErrors = ['REGISTER.BACKEND.TIMEOUT'];
-          }
-        else if (err.status === 409) {
-          this.apiErrors = [err.error || 'REGISTER.BACKEND.USER_EXISTS'];
-        }
-
-        else if (err.status === 400) {
-          if (typeof err.error === 'string') {
-             try {
-                const parsedError = JSON.parse(err.error);
-                this.apiErrors = Array.isArray(parsedError) ? parsedError : [parsedError];
-             } catch (e) {
-                this.apiErrors = [err.error];
-             }
-          } else if (Array.isArray(err.error)) {
-             this.apiErrors = err.error;
-          }
-        }
-
-        else {
+          this.apiErrors = ['REGISTER.BACKEND.TIMEOUT'];
+        } else if (err.status === 409) {
+          this.apiErrors = ['REGISTER.BACKEND.USER_EXISTS'];
+        } else if (err.status === 400) {
+          this.apiErrors = this.extractBackendErrors(err);
+        } else {
           this.apiErrors = ['REGISTER.BACKEND.UNKNOWN'];
         }
       }

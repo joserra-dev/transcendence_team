@@ -27,6 +27,11 @@ export interface ResetPasswordRequest {
   confirmPassword: string;
 }
 
+export interface RegisterResponse {
+  mensaje: string;
+  usuario: { id: number; email: string };
+}
+
 @Injectable({
   providedIn: 'root'
 })
@@ -45,11 +50,10 @@ export class Auth {
     );
   }
 
-  register(data: RegisterRequest): Observable<string> {
-    return this.http.post(
+  register(data: RegisterRequest): Observable<RegisterResponse> {
+    return this.http.post<RegisterResponse>(
       `${this.apiUrl}/register`,
-      data,
-      { responseType: 'text' }
+      data
     );
   }
 

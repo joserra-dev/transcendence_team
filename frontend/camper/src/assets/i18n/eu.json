@@ -41,8 +41,13 @@
       "INVALID_EMAIL": "Posta elektronikoaren formatua okerra da.",
       "REQUIRED_PASSWORD": "Pasahitza derrigorrezkoa da.",
       "INVALID_CREDENTIALS": "Kredentzial baliogabeak. Egiaztatu posta eta pasahitza.",
+      "NOT_VERIFIED": "Saioa hasi baino lehen zure posta egiaztatu behar duzu.",
       "TIMEOUT": "Zerbitzariak denbora gehiegi behar du erantzuteko. Saiatu geroago.",
       "UNKNOWN": "Ustekabeko errorea gertatu da. Saiatu geroago."
+    },
+    "VERIFY": {
+      "SUCCESS": "Kontua behar bezala egiaztatu da. Orain saioa has dezakezu.",
+      "ERROR": "Egiaztapen-esteka baliogabea da edo iraungi egin da."
     }
   },
 
@@ -70,7 +75,7 @@
     "TITLE": "Erabiltzaile-erregistroa",
     "BUTTON": "Kontua sortu",
     "LOADING": "Prozesatzen...",
-    "SUCCESS": "Erregistroa recte burutu da.",
+    "SUCCESS": "Erregistroa osatuta. Egiaztatu zure posta eta egiaztapen-estekan klik egin kontua aktibatzeko.",
 
     "FIELDS": {
       "NAME": "Izena *",

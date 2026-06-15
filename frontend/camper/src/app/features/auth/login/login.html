@@ -2,6 +2,14 @@
 
   <h2 class="page-title">{{ 'LOGIN.TITLE' | translate }}</h2>
 
+  <div
+    class="error-msg-standard"
+    [ngClass]="verifyMessageType === 'success' ? 'success-general' : 'error-general'"
+    *ngIf="verifyMessage"
+  >
+    {{ verifyMessage | translate }}
+  </div>
+
   <div class="error-msg-standard error-general" *ngIf="errorMessage">
     {{ errorMessage | translate}}
   </div>

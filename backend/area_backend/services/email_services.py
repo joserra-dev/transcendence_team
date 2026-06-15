@@ -63,7 +63,10 @@ class EmailService:
             email=destinatario,
             verification_url=verification_url
         )
-        plain_txt = f"Hola {destinatario}, bienvenido a HEMEN-GO. Accede aquí: {login_url}"
+        plain_txt = (
+            f"Hola {destinatario}, bienvenido a HEMEN-GO.\n\n"
+            f"Verifica tu cuenta accediendo a este enlace:\n{verification_url}"
+        )
         return cls.base_mail(destinatario, asunto, html_content, plain_txt)
 
     @classmethod
