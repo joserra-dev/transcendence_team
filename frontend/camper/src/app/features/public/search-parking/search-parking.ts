@@ -97,8 +97,8 @@ export class SearchParking implements OnInit {
   }
 
   getMinPrice(parking: Parking): number {
-    if (!parking.plazas || parking.plazas.length === 0) return 0;
-    return Math.min(...parking.plazas.map(p => p.price));
+    if (!parking.spaces || parking.spaces.length === 0) return 0;
+    return Math.min(...parking.spaces.map(p => p.price));
   }
 
   clearFilters() {
@@ -128,15 +128,15 @@ export class SearchParking implements OnInit {
   getServices(parking: Parking): string[] {
     const services: string[] = [];
 
-    if (parking.tieneElectricidad) {
+    if (parking.has_electricity) {
       services.push('SEARCH.ELECTRICITY');
     }
 
-    if (parking.tieneResiduales) {
+    if (parking.has_waste_disposal) {
       services.push('SEARCH.RESIDUALS');
     }
 
-    if (parking.tieneVips) {
+    if (parking.has_vip_spots) {
       services.push('SEARCH.VIP');
     }
 

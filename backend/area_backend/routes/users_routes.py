@@ -6,6 +6,7 @@ from flask_jwt_extended import create_access_token, decode_token,jwt_required, g
 from flask_mailman import EmailMessage
 
 from services.email_services import EmailService
+from utils.password_validator import PasswordValidator
 
 import secrets
 
@@ -136,6 +137,10 @@ def registrar_usuario():
     if password != confirmPassword:
         return jsonify({"error": "Las contraseñas introducidas no coinciden"}), 400
 
+    is_valid, mensagge = PasswordValidator.validar(password)
+    if not is_valid:
+        return jsonify({"error": mensagge}), 400
+      
     # 3. Verificar si el email ya existe en PostgreSQL
     usuario_existente = Users.query.filter_by(email=email).first()
     if usuario_existente:
@@ -222,7 +227,10 @@ def update_profile():
                 
         new_password = data.get("passPersona")
         if new_password and new_password.strip() != "":
-            user.pass_user = generate_password_hash(new_password)
+          is_valid, mensagge = PasswordValidator.validar(new_password)
+          if not is_valid:
+            return jsonify({"error": mensagge}), 400
+          user.pass_user = generate_password_hash(new_password)
             
         db.session.commit()
         return "Perfil actualizado correctamente", 200

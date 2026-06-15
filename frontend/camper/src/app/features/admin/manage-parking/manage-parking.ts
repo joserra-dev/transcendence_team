@@ -3,7 +3,7 @@ import { CommonModule } from '@angular/common';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { Admin } from '../../../core/services/admin';
-import { Parking, Plaza } from '../../../core/models/parking';
+import { Parking, Space } from '../../../core/models/parking';
 import { TranslateModule } from '@ngx-translate/core';
 
 @Component({
@@ -40,7 +40,7 @@ export class ManageParking implements OnInit {
     tienePlazasVipParking: [false]
   });
 
-  plazas: Plaza[] = [];
+  plazas: Space[] = [];
   showSpotModal = false;
   currentSpotId: number | null = null;
 
@@ -68,25 +68,25 @@ export class ManageParking implements OnInit {
     this.adminService.getParkingById(id).subscribe({
       next: (data) => {
         this.parkingForm.patchValue({
-          nombreParking: data.nombre,
-          municipioParking: data.localidad || data.municipio,
-          provinciaParking: data.provincia,
+          nombreParking: data.name,
+          municipioParking: data.localidad || data.municipality,
+          provinciaParking: data.province,
 
           webParking: data.web,
-          telefonoParking: data.telefono,
+          telefonoParking: data.telephone,
           emailParking: data.email,
-          personaContactoParking: data.personaContacto,
+          personaContactoParking: data.contact_person,
 
-          tieneElectricidadParking: data.tomaElectricidad || data.tieneElectricidad,
+          tieneElectricidadParking: data.tomaElectricidad || data.has_electricity,
 
-          tieneResidualesParking: data.limpiezaAguasResiduales || data.tieneResiduales,
+          tieneResidualesParking: data.limpiezaAguasResiduales || data.has_waste_disposal,
 
-          tienePlazasVipParking: data.plazasVip || data.tieneVips,
+          tienePlazasVipParking: data.plazasVip || data.has_vip_spots,
 
-          isActivoParking: data.activo !== undefined ? data.activo : true
+          isActivoParking: data.isActive !== undefined ? data.isActive : true
         });
 
-        this.plazas = data.plazasResponse || data.plazas || [];
+        this.plazas = data.plazasResponse || data.spaces || [];
         this.isLoading = false;
       },
       error: (err) => {
@@ -143,7 +143,7 @@ export class ManageParking implements OnInit {
 
   // --- GESTIÓN DE PLAZAS ---
 
-  openSpotModal(spot?: Plaza) {
+  openSpotModal(spot?: Space) {
     this.spotErrorMessage = '';
     this.showSpotModal = true;
     if (spot) {

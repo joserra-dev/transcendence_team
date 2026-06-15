@@ -144,7 +144,9 @@
       "SAVING": "Guardando..."
     }
   },
-
+  "PAPID": {
+    "LICENCE":"Introduce la matrícula de tu vehículo:"
+  },
   "SEARCH": {
     "TITLE": "Busca tu parking",
     "DESTINATION": "Destino",

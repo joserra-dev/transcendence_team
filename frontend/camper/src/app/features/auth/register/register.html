@@ -57,19 +57,19 @@
 
     <div class="mb-3 form-group-standard">
       <label for="email" class="form-label-custom">{{ 'REGISTER.FIELDS.EMAIL' | translate }}</label>
-      <input id="email" type="email" formControlName="email" placeholder="{{ 'REGISTER.PLACEHOLDERS.EMAIL' | translate }}" [class.error-input]="isInvalid('email')">
+      <input id="email" maxlength="254" type="email" formControlName="email" placeholder="{{ 'REGISTER.PLACEHOLDERS.EMAIL' | translate }}" [class.error-input]="isInvalid('email')">
       <small class="error-msg-standard" *ngIf="isInvalid('email')">{{ 'REGISTER.ERROR.INVALID_EMAIL' | translate }}</small>
     </div>
 
     <div class="row g-4 mb-3 form-2-group">
       <div class="col-md-6 form-group-standard">
         <label for="password" class="form-label-custom">{{ 'REGISTER.FIELDS.PASSWORD' | translate }}</label>
-        <input id="password" type="password" formControlName="password" [class.error-input]="isInvalid('password')">
+        <input id="password" minlength="8" maxlength="254" type="password" formControlName="password" [class.error-input]="isInvalid('password')">
         <small class="error-msg-standard" *ngIf="isInvalid('password')">{{ 'REGISTER.ERROR.REQUIRED' | translate }}</small>
       </div>
       <div class="col-md-6 form-group-standard">
         <label for="confirmPassword" class="form-label-custom">{{ 'REGISTER.FIELDS.CONFIRM' | translate }}</label>
-        <input id="confirmPassword" type="password" formControlName="confirmPassword" [class.error-input]="isInvalid('confirmPassword')">
+        <input id="confirmPassword" minlength="8" maxlength="254" type="password" formControlName="confirmPassword" [class.error-input]="isInvalid('confirmPassword')">
         <small class="error-msg-standard" *ngIf="registerForm.hasError('passwordsMismatch') && registerForm.get('confirmPassword')?.touched">
           {{ 'REGISTER.ERROR.PASSWORDS_MISMATCH' | translate }}
         </small>

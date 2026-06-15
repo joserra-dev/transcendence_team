@@ -144,7 +144,9 @@
       "SAVING": "Gordetzen..."
     }
   },
-
+  "PAPID": {
+    "LICENCE":"Sartu zure ibilgailuaren matrikula:"
+  },
   "SEARCH": {
     "TITLE": "Bilatu zure aparkalekua",
     "DESTINATION": "Helmuga",

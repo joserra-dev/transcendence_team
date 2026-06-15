@@ -3,7 +3,7 @@ import { CommonModule } from '@angular/common';
 import { ActivatedRoute, Router } from '@angular/router';
 import { TranslateModule } from '@ngx-translate/core';
 import { ParkingService } from '../../../core/services/parking';
-import { Parking, Plaza, SearchFilters } from '../../../core/models/parking';
+import { Parking, Space, SearchFilters } from '../../../core/models/parking';
 import { FormsModule } from '@angular/forms';
 import { Auth } from '../../../core/services/auth';
 import { BookingService } from '../../../core/services/booking';
@@ -24,7 +24,7 @@ export class ParkingDetail implements OnInit {
   private bookingService = inject(BookingService);
 
   parking: Parking | null = null;
-  selectedSpot: Plaza | null = null;
+  selectedSpot: Space | null = null;
   isLoading = true;
 
   errorMessage = '';
@@ -84,8 +84,8 @@ export class ParkingDetail implements OnInit {
     });
   }
 
-  get spots(): Plaza[] {
-    return this.parking?.plazasResponse || this.parking?.plazas || [];
+  get spots(): Space[] {
+    return this.parking?.plazasResponse || this.parking?.spaces || [];
   }
 
   get totalPrice(): number {
@@ -99,8 +99,8 @@ export class ParkingDetail implements OnInit {
     return (diffDays+1) * this.selectedSpot.price;
   }
 
-  selectSpot(spot: Plaza) {
-    if (spot.estado !== '0') return;
+  selectSpot(spot: Space) {
+    if (spot.status !== '0') return;
     this.selectedSpot = spot;
   }
 

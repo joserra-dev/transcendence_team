@@ -108,16 +108,16 @@
           </thead>
           <tbody>
             <tr *ngFor="let plaza of plazas">
-              <td><strong>{{ plaza.nombre }}</strong></td>
+              <td><strong>{{ plaza.name }}</strong></td>
               <td>{{ plaza.price }}€</td>
               <td>
-                <span *ngIf="plaza.esVip">VIP </span>
-                <span *ngIf="plaza.tieneElectricidad">Electricidad</span>
-                <span *ngIf="!plaza.esVip && !plaza.tieneElectricidad">-</span>
+                <span *ngIf="plaza.isVip">VIP </span>
+                <span *ngIf="plaza.hasElectr">Electricidad</span>
+                <span *ngIf="!plaza.isVip && !plaza.hasElectr">-</span>
               </td>
               <td>
-                <span [class.free]="plaza.estado === '0'" [class.occupied]="plaza.estado !== '0'">
-                  {{ plaza.estado === '0' ? ('MANAGE_PARKING.FREE' | translate) : ('MANAGE_PARKING.OCCUPIED' | translate) }}
+                <span [class.free]="plaza.status === '0'" [class.occupied]="plaza.status !== '0'">
+                  {{ plaza.status === '0' ? ('MANAGE_PARKING.FREE' | translate) : ('MANAGE_PARKING.OCCUPIED' | translate) }}
                 </span>
               </td>
               <td>

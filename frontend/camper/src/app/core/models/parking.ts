@@ -1,43 +1,44 @@
-export interface Plaza {
+export interface Space {
   id: number;
-  nombre: string;
-  esVip: boolean;
-  tieneElectricidad: boolean;
-  estado: string; // "0" = Libre, "1" = Ocupada
+  name: string;
+  isVip: boolean;
+  hasElectr: boolean;
+  status: string;
   price: number;
-  parkingNombre: string;
+  parkingName: string;
+  id_parking: number;
 }
 
 export interface Parking {
   id: number;
-  nombre: string;
+  name: string;
 
   web?: string;           
-  telefono?: string;      
+  telephone?: string;      
   email?: string;         
-  personaContacto?: string;
+  contact_person?: string;
   descripcion?: string;    
 
-  municipio?: string;
+  municipality?: string;
   localidad?: string; 
-  provincia?: string;
+  province?: string;
   
-  tieneElectricidad?: boolean;
+  has_electricity?: boolean;
   tomaElectricidad?: boolean;
   
-  tieneResiduales?: boolean;
+  has_waste_disposal?: boolean;
   limpiezaAguasResiduales?: boolean;
   
-  tieneVips?: boolean;
+  has_vip_spots?: boolean;
   plazasVip?: boolean;
 
   media?: number; 
   numeroPlazas?: number;
   
-  plazas?: Plaza[];        
-  plazasResponse?: Plaza[]; 
+  spaces?: Space[];        
+  plazasResponse?: Space[]; 
   
-  activo?: boolean;
+  isActive?: boolean;
   imagen?: string; 
 }
 

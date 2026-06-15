@@ -11,7 +11,7 @@
         <label class="form-label-custom" for="email">{{ 'LOGIN.EMAIL' | translate }}</label>
         <input
             id="email"
-            type="email"
+            type="email" maxlength="254"
             formControlName="email"
             placeholder="ejemplo@correo.com"
             [class.error-input]="isFieldInvalid('email')"
@@ -26,7 +26,7 @@
         <label class="form-label-custom" for="password">{{ 'LOGIN.PASSWORD' | translate }}</label>
         <input
             id="password"
-            type="password"
+            type="password" minlength="8" maxlength="254"
             formControlName="password"
             placeholder="******"
             [class.error-input]="isFieldInvalid('password')"

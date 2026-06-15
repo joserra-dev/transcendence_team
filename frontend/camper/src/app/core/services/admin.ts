@@ -2,7 +2,7 @@ import { Injectable, inject } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
 
-import { Parking, Plaza } from '../models/parking';
+import { Parking, Space } from '../models/parking';
 
 @Injectable({
   providedIn: 'root',
@@ -39,9 +39,9 @@ export class Admin {
     );
   }
 
-  createSpot(parkingId: number, spot: Partial<Plaza>): Observable<Plaza> {
-    return this.http.post<Plaza>(
-      `${this.apiUrl}/parking/${parkingId}/plazas`,
+  createSpot(parkingId: number, spot: Partial<Space>): Observable<Space> {
+    return this.http.post<Space>(
+      `${this.apiUrl}/parking/${parkingId}/space`,
       spot
     );
   }
@@ -49,17 +49,17 @@ export class Admin {
   updateSpot(
     parkingId: number,
     spotId: number,
-    spot: Partial<Plaza>
-  ): Observable<Plaza> {
-    return this.http.put<Plaza>(
-      `${this.apiUrl}/parking/${parkingId}/plazas/${spotId}`,
+    spot: Partial<Space>
+  ): Observable<Space> {
+    return this.http.put<Space>(
+      `${this.apiUrl}/parking/${parkingId}/space/${spotId}`,
       spot
     );
   }
 
-  getSpotById(spotId: number): Observable<Plaza> {
-    return this.http.get<Plaza>(
-      `${this.apiUrl}/parking/plaza/${spotId}`
+  getSpotById(spotId: number): Observable<Space> {
+    return this.http.get<Space>(
+      `${this.apiUrl}/parking/space/${spotId}`
     );
   }
 }

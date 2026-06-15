@@ -53,46 +53,46 @@ def search_parkings():
     query = Parking.query
 
     # 2. Capturamos los parámetros de texto de la URL
-    provincia = request.args.get('provincia')
-    municipio = request.args.get('municipio')
+    province = request.args.get('provincia')
+    municipality = request.args.get('municipio')
     id_parking = request.args.get('id')
-    fecha_desde = request.args.get('fechaDesde')
-    fecha_hasta = request.args.get('fechaHasta')
+    from_date = request.args.get('fechaDesde')
+    to_date = request.args.get('fechaHasta')
     
     # 3. Capturamos los booleanos (Flask los recibe como string, hay que convertirlos)
     isactive = request.args.get('isactive', default='true') # Por defecto 'true' para no mostrar parkings caídos
-    tiene_electricidad = request.args.get('electricidad')
-    tiene_residuales = request.args.get('residuales')
-    tiene_vip = request.args.get('vip')
+    has_electricity = request.args.get('electricidad')
+    has_waste_disposal = request.args.get('residuales')
+    has_vip_spots = request.args.get('vip')
 
     # 4. Aplicamos los filtros dinámicamente si vienen en la petición
     if id_parking:
         query = query.filter(Parking.id == id_parking)
 
-    if provincia:
+    if province:
         # ilike hace que no importen las mayúsculas/minúsculas
-        query = query.filter(Parking.provincia_parking.ilike(f"%{provincia}%"))
+        query = query.filter(Parking.province.ilike(f"%{province}%"))
         
-    if municipio:
-        query = query.filter(Parking.municipio_parking.ilike(f"%{municipio}%"))
+    if municipality:
+        query = query.filter(Parking.municipality.ilike(f"%{municipality}%"))
         
     if isactive:
         # Convertimos el string 'true'/'false' a booleano real de Python
         query = query.filter(Parking.isactive == (isactive.lower() == 'true'))
         
-    if tiene_electricidad:
-        query = query.filter(Parking.tiene_electricidad_parking == (tiene_electricidad.lower() == 'true'))
+    if has_electricity:
+        query = query.filter(Parking.has_electricity == (has_electricity.lower() == 'true'))
         
-    if tiene_residuales:
-        query = query.filter(Parking.tiene_residuales_parking == (tiene_residuales.lower() == 'true'))
+    if has_waste_disposal:
+        query = query.filter(Parking.has_waste_disposal == (has_waste_disposal.lower() == 'true'))
         
-    if tiene_vip:
-        query = query.filter(Parking.tiene_plazas_vip_parking == (tiene_vip.lower() == 'true'))
+    if has_vip_spots:
+        query = query.filter(Parking.has_vip_spots == (has_vip_spots.lower() == 'true'))
 
     # 5. Ejecutamos la consulta y formateamos la respuesta
-    parkings_filtrados = query.all()
-    print(parkings_filtrados)
-    return jsonify([p.to_dict(fecha_desde=fecha_desde, fecha_hasta=fecha_hasta) for p in parkings_filtrados]), 200
+    filtered_parking = query.all()
+    print(filtered_parking)
+    return jsonify([p.to_dict(from_date=from_date, to_date=to_date) for p in filtered_parking]), 200
 
 @parking_bp.route('/api/parking', methods=['GET'])
 def get_pakings():

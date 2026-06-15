@@ -144,6 +144,9 @@
       "SAVING": "Saving..."
     }
   },
+  "PAPID": {
+    "LICENCE":"Enter your vehicle's number plate:"
+  },
 
   "SEARCH": {
     "TITLE": "Find your parking",

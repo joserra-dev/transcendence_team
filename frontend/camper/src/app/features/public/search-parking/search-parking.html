@@ -108,11 +108,11 @@
       <div class="parking-content">
 
         <div class="parking-main">
-          <h3>{{ parking.nombre }}</h3>
+          <h3>{{ parking.name }}</h3>
 
           <p class="location">
             <i class="fa-solid fa-location-dot"></i>
-            {{ parking.municipio }}, {{ parking.provincia }}
+            {{ parking.municipality }}, {{ parking.province }}
           </p>
 
           <p class="services small-text" *ngIf="getServices(parking) as services">
