@@ -118,7 +118,7 @@ Los cambios serían:
 
 
 
-### 26/06/11analisis_login_sesion.md
+### 26/06/11 analisis_login_sesion.md
 
 ## Estado del Login y Sesiones
 
@@ -185,4 +185,5 @@ Backend (booking_routes.py): He añadido una validación adicional durante la cr
 Frontend (parking-detail.ts): He modificado cómo se maneja el error al confirmar una reserva. Ahora el frontend comprobará si el servidor devolvió un mensaje de texto con el error, lo asignará a la variable de error de la vista y lanzará un agresivo popup de alerta usando alert("⚠️ ATENCIÓN: " + errorMsg) en el navegador, asegurando que el usuario lo vea de inmediato.
 
 
-### 7. 
+### 7. guardamos sesion en localsession en vez de localstorage
+
