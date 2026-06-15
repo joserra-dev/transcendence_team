@@ -1,9 +1,13 @@
+from datetime import timedelta
 from flask import Blueprint, jsonify, request,current_app
+from sqlalchemy import func
 from werkzeug.security import generate_password_hash, check_password_hash 
-from flask_jwt_extended import create_access_token, jwt_required, get_jwt_identity
+from flask_jwt_extended import create_access_token, decode_token,jwt_required, get_jwt_identity
 from flask_mailman import EmailMessage
+
 from services.email_services import EmailService
 
+import secrets
 
 from database import db
 from models.users import Users, Profiles
@@ -50,6 +54,11 @@ def _user_to_frontend_dict(user):
 
 # Creamos el Blueprint
 users_bp = Blueprint('users_bp', __name__, url_prefix='/api/users')
+
+
+def _build_frontend_url(path: str) -> str:
+    frontend_url = current_app.config.get('FRONTEND_URL', 'http://localhost:8001').rstrip('/')
+    return f"{frontend_url}/{path.lstrip('/')}"
 
 @users_bp.route('', methods=['GET'])
 def obtener_usuarios():
@@ -134,12 +143,13 @@ def registrar_usuario():
 
     # 4. Si todo está correcto, encriptamos y guardamos
     password_encriptada = generate_password_hash(password)
-
+    verification_token=secrets.token_urlsafe(32)
     nuevo_usuario = Users(
-        email=email,
-        pass_user=password_encriptada
+        email = email,
+        pass_user = password_encriptada,
+        is_verified = False,
+        verification_token = verification_token
     )
-
     try:
         db.session.add(nuevo_usuario)
         db.session.commit()
@@ -267,7 +277,7 @@ def autenticar_usuario():
     # 3. Verificar si el email ya existe en PostgreSQL
     usuario_existente = Users.query.filter_by(email=email).first()
     
-    if not usuario_existente:
+    if not usuario_existente or usuario_existente.is_verified == False:
         return jsonify({"error": "Usuario no existe "}), 400
     
     coincide = check_password_hash(usuario_existente.pass_user, password)
@@ -352,28 +362,71 @@ def solicitar_recuperacion():
     """
     data = request.get_json() or {}
     email = data.get('email')
-    
+
     if not email:
         return jsonify({"error": "El campo email es obligatorio"}), 400
-    
-    # 1. Buscar al usuario en la Base de Datos...
-    # usuario = Usuario.query.filter_by(email=email).first()
-    
-    # Supongamos que encontramos al usuario
-    nombre_usuario = "Carlos" 
-    token_seguro = "abc789xyz" # Token JWT o secreto generado temporalmente
-    
-    # 2. Construir la ruta hacia tu vista del Frontend donde cambiará la clave
-    url_recuperacion = f"https://tuapp.com/reset-password?token={token_seguro}"
-    
-    try:
-        # 3. Mandar el correo de manera ultra limpia
-        EmailService.forgot(
-            destinatario=email,
-            user_name=nombre_usuario,
-            recovery_url=url_recuperacion
+
+    normalized_email = email.strip().lower()
+    usuario = Users.query.filter(func.lower(Users.email) == normalized_email).first()
+
+    if usuario:
+        token_seguro = create_access_token(
+            identity=str(usuario.id),
+            expires_delta=timedelta(hours=1),
+            additional_claims={"purpose": "password_reset"}
         )
-        return jsonify({"message": "Si el correo existe, se enviarán las instrucciones."}), 200
-        
+        url_recuperacion = _build_frontend_url(f"auth/reset-password?token={token_seguro}")
+
+        try:
+            EmailService.forgot(
+                destinatario=usuario.email,
+                user_name=usuario.email,
+                recovery_url=url_recuperacion
+            )
+            current_app.logger.info(f"Correo de recuperación enviado a {usuario.email}")
+        except Exception as e:
+            current_app.logger.error(f"Error enviando correo de recuperación: {e}")
+            return jsonify({"error": "Error interno al procesar la solicitud", "details": str(e)}), 500
+
+    return jsonify({"message": "Si el correo existe, se enviarán las instrucciones."}), 200
+
+
+@users_bp.route('/reset-password', methods=['POST'])
+def restablecer_password():
+    data = request.get_json() or {}
+    token = data.get('token')
+    new_password = data.get('password')
+    confirm_password = data.get('confirmPassword')
+
+    if not token or not new_password or not confirm_password:
+        return jsonify({"error": "token, password y confirmPassword son obligatorios"}), 400
+
+    if new_password != confirm_password:
+        return jsonify({"error": "Las contraseñas introducidas no coinciden"}), 400
+
+    try:
+        decoded_token = decode_token(token)
+    except Exception:
+        return jsonify({"error": "El enlace de recuperación no es válido o ha caducado"}), 400
+
+    if decoded_token.get('purpose') != 'password_reset':
+        return jsonify({"error": "El enlace de recuperación no es válido o ha caducado"}), 400
+
+    user_id = decoded_token.get('sub')
+    try:
+        user_id = int(user_id)
+    except (TypeError, ValueError):
+        return jsonify({"error": "El enlace de recuperación no es válido o ha caducado"}), 400
+
+    usuario = Users.query.get(user_id)
+
+    if not usuario:
+        return jsonify({"error": "Usuario no encontrado"}), 404
+
+    usuario.pass_user = generate_password_hash(new_password)
+
+    try:
+        db.session.commit()
+        return jsonify({"message": "Contraseña actualizada correctamente"}), 200
     except Exception as e:
         return jsonify({"error": "Error interno al procesar la solicitud", "details": str(e)}), 500

@@ -75,9 +75,9 @@ SEED_PARKINGS = [
         "tiene_residuales_parking": True,
         "tiene_plazas_vip_parking": True,
         "spaces": [
-            {"name": "A1", "isvip_plaza": True, "tiene_electricidad_plaza": True, "estado_plaza": "0", "precio_plaza": 25.0},
-            {"name": "A2", "isvip_plaza": False, "tiene_electricidad_plaza": True, "estado_plaza": "0", "precio_plaza": 27.5},
-            {"name": "B1", "isvip_plaza": False, "tiene_electricidad_plaza": False, "estado_plaza": "0", "precio_plaza": 20.0},
+            {"name": "A1", "isvip": True, "has_electr": True, "status": "0", "price": 25.0},
+            {"name": "A2", "isvip": False, "has_electr": True, "status": "0", "price": 27.5},
+            {"name": "B1", "isvip": False, "has_electr": False, "status": "0", "price": 20.0},
         ],
     },
     {
@@ -94,8 +94,8 @@ SEED_PARKINGS = [
         "tiene_residuales_parking": False,
         "tiene_plazas_vip_parking": True,
         "spaces": [
-            {"name": "C1", "isvip_plaza": True, "tiene_electricidad_plaza": True, "estado_plaza": "0", "precio_plaza": 30.0},
-            {"name": "C2", "isvip_plaza": False, "tiene_electricidad_plaza": True, "estado_plaza": "0", "precio_plaza": 22.0},
+            {"name": "C1", "isvip": True, "has_electr": True, "status": "0", "price": 30.0},
+            {"name": "C2", "isvip": False, "has_electr": True, "status": "0", "price": 22.0},
         ],
     },
     {
@@ -111,7 +111,7 @@ SEED_PARKINGS = [
         "tiene_residuales_parking": True,
         "tiene_plazas_vip_parking": False,
         "spaces": [
-            {"name": "D1", "isvip_plaza": False, "tiene_electricidad_plaza": False, "estado_plaza": "0", "precio_plaza": 18.0},
+            {"name": "D1", "isvip": False, "has_electr": False, "status": "0", "price": 18.0},
         ],
     },
 ]

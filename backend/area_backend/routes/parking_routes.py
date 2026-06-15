@@ -91,7 +91,7 @@ def search_parkings():
 
     # 5. Ejecutamos la consulta y formateamos la respuesta
     parkings_filtrados = query.all()
-    
+    print(parkings_filtrados)
     return jsonify([p.to_dict(fecha_desde=fecha_desde, fecha_hasta=fecha_hasta) for p in parkings_filtrados]), 200
 
 @parking_bp.route('/api/parking', methods=['GET'])

@@ -8,20 +8,26 @@ class Booking(db.Model):
     id = db.Column(db.BigInteger, primary_key=True)
     id_user = db.Column(db.BigInteger, db.ForeignKey('public.users.id', ondelete='CASCADE'), nullable=False)
     id_space = db.Column(db.BigInteger, db.ForeignKey('public.space.id', ondelete='CASCADE'), nullable=False)
-    fecha_inicio_reserva = db.Column(db.Date, nullable=True)
-    fecha_fin_reserva = db.Column(db.Date, nullable=True)
-    fecha_alta_reserva = db.Column(db.DateTime, default=datetime.utcnow)
-    estado_reserva = db.Column(db.String(1), nullable=True)
-    puntuacion_reserva = db.Column(db.Numeric(2, 0), nullable=True)
+    
+    start_date = db.Column(db.Date, nullable=True)
+    end_date = db.Column(db.Date, nullable=True)
+    created_at = db.Column(db.DateTime, default=datetime.utcnow)
+    status = db.Column(db.String(1), nullable=True)
+    rating = db.Column(db.Numeric(2, 0), nullable=True)
+    license_plate = db.Column(db.String(15), nullable=False)
+    
+    user = db.relationship('Users', back_populates='bookings')
+    space = db.relationship('Space', back_populates='bookings_rel')
 
     def to_dict(self):
         return {
             "id": self.id,
             "id_user": self.id_user,
             "id_space": self.id_space,
-            "fecha_inicio_reserva": self.fecha_inicio_reserva.isoformat() if self.fecha_inicio_reserva else None,
-            "fecha_fin_reserva": self.fecha_fin_reserva.isoformat() if self.fecha_fin_reserva else None,
-            "fecha_alta_reserva": self.fecha_alta_reserva.strftime('%Y-%m-%d %H:%M:%S') if self.fecha_alta_reserva else None,
-            "estado_reserva": self.estado_reserva,
-            "puntuacion_reserva": float(self.puntuacion_reserva) if self.puntuacion_reserva else None
+            "start_date": self.start_date.isoformat() if self.start_date else None,
+            "end_date": self.end_date.isoformat() if self.end_date else None,
+            "created_at": self.created_at.strftime('%Y-%m-%d %H:%M:%S') if self.created_at else None,
+            "status": self.status,
+            "rating": float(self.rating) if self.rating is not None else None,
+            "license_plate": self.license_plate
         }

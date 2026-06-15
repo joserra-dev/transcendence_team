@@ -1,63 +1,84 @@
+from email.mime.multipart import MIMEMultipart
+from email.mime.text import MIMEText
+import smtplib
+
 from flask import current_app, render_template
 from flask_mailman import EmailMessage
+import os
 
 class EmailService:
     @staticmethod
-    def _send(msg: EmailMessage) -> bool:
-        """
-        Método interno privado para manejar el envío y capturar errores.
-        """
+    def _get_sender() -> str:
+        sender = current_app.config.get('MAIL_DEFAULT_SENDER') or current_app.config.get('MAIL_USERNAME')
+        return f"HEMEN-GO <{sender}>"
+
+    @staticmethod
+    def _send(msg: MIMEMultipart) -> bool:
+        server = current_app.config.get('MAIL_SERVER')
+        port = int(current_app.config.get('MAIL_PORT', 587))
+        username = current_app.config.get('MAIL_USERNAME')
+        password = current_app.config.get('MAIL_PASSWORD')
+        use_tls = current_app.config.get('MAIL_USE_TLS', True)
+
         try:
-            msg.send()
+            with smtplib.SMTP(server, port, timeout=20) as smtp:
+                smtp.ehlo()
+                if use_tls:
+                    smtp.starttls()
+                    smtp.ehlo()
+                smtp.login(username, password)
+                refused = smtp.send_message(msg)
+                if refused:
+                    raise smtplib.SMTPException(f"Destinatarios rechazados: {refused}")
+            current_app.logger.info(
+                f"Correo enviado correctamente desde {username} a {msg['To']}"
+            )
             return True
         except Exception as e:
-            # Aquí podrías usar el logger de Flask para registrar el error real
-            current_app.logger.error(f"Error enviando correo: {str(e)}")
+            current_app.logger.error(f"Error enviando correo a {msg.get('To')}: {e}")
             raise e
 
     @classmethod
     def base_mail(cls, destinatario: str, asunto: str, content_html: str, plain_txt: str = "Texto plano alternativo"):
-        """
-        Método genérico para send cualquier tipo de correo electrónico.
-        """
-        msg = EmailMessage(
-            subject=asunto,
-            body=content_html,
-            from_email=current_app.config.get('MAIL_DEFAULT_SENDER'),
-            to=[destinatario]
-        )
-        msg.content_subtype = "html"
-        msg.body = content_html
-        
+        sender = cls._get_sender()
+        msg = MIMEMultipart('alternative')
+        msg['Subject'] = asunto
+        msg['From'] = sender
+        msg['To'] = destinatario
+        msg.attach(MIMEText(plain_txt, 'plain', 'utf-8'))
+        msg.attach(MIMEText(content_html, 'html', 'utf-8'))
         return cls._send(msg)
 
     @classmethod
-    def welcome(cls, destinatario: str, asunto: str = "Bienvenido a nuestra plataforma"):
+    def welcome(cls, destinatario: str, token: str, asunto: str = "Bienvenido a nuestra plataforma"):
         """
         Método especializado (ejemplo) para correos de bienvenida.
         Mantiene limpia la lógica de tus vistas/rutas.
         """
+        base_url = os.getenv('URL_BACK')
+        verification_url = f"{base_url}/api/users/verify?token={token}"
         html_content = render_template(
             'email/bienvenida.html', 
             nombre=destinatario, 
-            email=destinatario
+            email=destinatario,
+            verification_url=verification_url
         )
-        return cls.base_mail(destinatario, asunto, html_content)
+        plain_txt = f"Hola {destinatario}, bienvenido a HEMEN-GO. Accede aquí: {login_url}"
+        return cls.base_mail(destinatario, asunto, html_content, plain_txt)
 
     @classmethod
     def forgot(cls, destinatario: str, user_name: str, recovery_url: str):
-        """
-        Envía el correo para restablecer la contraseña utilizando su respectivo template.
-        """
-        asunto = "Restablecer tu contraseña"
-        
-        # Renderizamos la nueva plantilla pasando las variables requeridas
+        asunto = "HEMEN-GO - Recuperar acceso a tu cuenta"
         html_content = render_template(
-            'email/recuperar_password.html', 
-            user_name=user_name, 
-            recovery_link=recovery_url
+            'email/forgot.html',
+            user_name=user_name,
+            recovery_url=recovery_url
         )
-        
-        plain_txt = f"Hola {user_name}, restablece tu contraseña ingresando aquí: {recovery_url}"
-        
+        plain_txt = (
+            f"Hola {user_name},\n\n"
+            f"Hemos recibido una solicitud para restablecer tu contraseña en HEMEN-GO.\n"
+            f"Abre este enlace para crear una nueva contraseña:\n{recovery_url}\n\n"
+            f"El enlace caduca en 1 hora.\n"
+            f"Si no solicitaste este cambio, ignora este correo."
+        )
         return cls.base_mail(destinatario, asunto, html_content, plain_txt)

@@ -18,7 +18,7 @@ export class BookingService {
    */
   getHistory(): Observable<BookingHistoryResponse[]> {
     return this.http.get<BookingHistoryResponse[]>(
-      `${this.apiUrl}/historico/listado`
+      `${this.apiUrl}/historic/list`
     );
   }
 
@@ -27,7 +27,7 @@ export class BookingService {
    */
   getBookingById(id: string | number): Observable<Booking> {
     return this.http.get<Booking>(
-      `${this.apiUrl}/reserva/${id}`
+      `${this.apiUrl}/booking/${id}`
     );
   }
 
@@ -36,7 +36,7 @@ export class BookingService {
    */
   cancelBooking(id: number): Observable<any> {
     return this.http.put(
-      `${this.apiUrl}/reserva/cancelar`,
+      `${this.apiUrl}/booking/cancel`,
       { idReserva: id }
     );
   }
@@ -46,7 +46,7 @@ export class BookingService {
    */
   createBooking(bookingData: BookingRequest): Observable<any> {
     return this.http.post(
-      `${this.apiUrl}/reserva`,
+      `${this.apiUrl}/booking`,
       bookingData,
       { responseType: 'text' }
     );
@@ -57,7 +57,7 @@ export class BookingService {
    */
   getQrCode(id: number): Observable<string> {
     return this.http.post<{ qrBase64: string }>(
-      `${this.apiUrl}/reserva/qr`,
+      `${this.apiUrl}/booking/qr`,
       { idReserva: id }
     ).pipe(
       map(response => response.qrBase64)
@@ -69,7 +69,7 @@ export class BookingService {
    */
   rateBooking(id: number, score: number): Observable<any> {
     return this.http.put(
-      `${this.apiUrl}/reserva/puntuar`,
+      `${this.apiUrl}/booking/rate`,
       { idReserva: id, puntuacion: score }
     );
   }

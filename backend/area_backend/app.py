@@ -11,6 +11,8 @@ from routes.users_routes import users_bp
 from routes.parking_routes import parking_bp
 from routes.space_routes import space_bp
 from routes.booking_routes import booking_bp
+from routes.access_routes import access_bp
+
 
 app = Flask(__name__)
 
@@ -27,7 +29,11 @@ app.config['MAIL_PORT'] = int(os.environ.get('MAIL_PORT', 587))
 app.config['MAIL_USE_TLS'] = os.environ.get('MAIL_USE_TLS') == 'True'
 app.config['MAIL_USERNAME'] = os.environ.get('MAIL_USERNAME')
 app.config['MAIL_PASSWORD'] = os.environ.get('MAIL_PASSWORD')
-app.config['MAIL_DEFAULT_SENDER'] = os.environ.get('MAIL_USERNAME') # Remitente por defecto
+app.config['MAIL_DEFAULT_SENDER'] = os.environ.get(
+    'MAIL_DEFAULT_SENDER',
+    os.environ.get('MAIL_USERNAME', 'noreply@local.test')
+)
+app.config['FRONTEND_URL'] = os.environ.get('URL_FRONT', 'http://localhost:8001')
 
 # Inicializamos Mail
 mail = Mail(app)
@@ -65,6 +71,7 @@ app.register_blueprint(parking_bp)
 
 app.register_blueprint(space_bp)
 app.register_blueprint(booking_bp)
+app.register_blueprint(access_bp)
 
 # 4. INICIALIZADOR DE BASE DE DATOS
 with app.app_context():

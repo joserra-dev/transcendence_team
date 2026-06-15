@@ -5,8 +5,6 @@ class UserRole(enum.Enum):
     USER = 'user'                  # Usuario normal (No pertenece a ninguna empresa)
     ADMIN = 'admin'                # Admin de una empresa (DEBE tener company_id)
     SUPER_ADMIN = 'super_admin'
-
-
         
 class Users(db.Model):
     __tablename__ = 'users'
@@ -16,15 +14,19 @@ class Users(db.Model):
     email = db.Column(db.String(255), unique=True, nullable=False)
     pass_user = db.Column(db.String(255), nullable=True)
     
-    profile = db.relationship('Profiles', backref='user', uselist=False, cascade="all, delete-orphan")
-    reservas = db.relationship('Booking', backref='users', cascade="all, delete-orphan", lazy=True)
+    is_verified = db.Column(db.Boolean, default=False, nullable=False)
+    verification_token = db.Column(db.String(255), unique=True, nullable=True)
+
+    reset_password_token = db.Column(db.String(255), unique=True, nullable=True)
+    reset_password_expires = db.Column(db.DateTime, nullable=True)
+    
+    profile = db.relationship('Profiles', back_populates='user', uselist=False, cascade="all, delete-orphan")
+    bookings = db.relationship('Booking', back_populates='user', cascade="all, delete-orphan", lazy=True)
     
     def to_dict(self):
         return {
             "id": self.id,
             "email": self.email,
-            # Evitamos incluir 'pass_user' por seguridad
-            # Si tiene perfil, lo serializamos; si no, devolvemos None
             "profile": self.profile.to_dict() if self.profile else None
         }
 
@@ -34,8 +36,6 @@ class Profiles(db.Model):
 
     id = db.Column(db.BigInteger, primary_key=True)
     user_id = db.Column(db.BigInteger, db.ForeignKey('public.users.id'), unique=True, nullable=False)
-    
-    # COMPAÑÍA OPCIONAL: nullable=True permite que los usuarios normales y super_admins tengan esto en NULL
     company_id = db.Column(db.Integer, db.ForeignKey('public.company.id'), nullable=True)
     
     dni = db.Column(db.String(255), nullable=True)
@@ -48,15 +48,18 @@ class Profiles(db.Model):
     metodo_pago = db.Column(db.String(50), nullable=True, default='iban')
     tarjeta = db.Column(db.String(50), nullable=True)
     
+    user = db.relationship('Users', back_populates='profile')
+    company = db.relationship('Company', back_populates='users')
+    
     def to_dict(self):
         return {
             "id": self.id,
             "dni": self.dni,
             "name": self.name,
             "last_name": self.last_name,
-            "birth_day": self.birth_day.isoformat() if self.birth_day else None, # Las fechas deben ser strings en JSON
+            "birth_day": self.birth_day.isoformat() if self.birth_day else None,
             "avatar": self.avatar,
-            "role": self.role.value, # .value extrae el string ('user', 'admin') del Enum
+            "role": self.role.value,
             "company_id": self.company_id,
             "iban": self.iban,
             "metodoPago": self.metodo_pago or "iban",

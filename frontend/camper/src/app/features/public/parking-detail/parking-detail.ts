@@ -4,6 +4,7 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { TranslateModule } from '@ngx-translate/core';
 import { ParkingService } from '../../../core/services/parking';
 import { Parking, Plaza, SearchFilters } from '../../../core/models/parking';
+import { FormsModule } from '@angular/forms';
 import { Auth } from '../../../core/services/auth';
 import { BookingService } from '../../../core/services/booking';
 import { BookingRequest } from '../../../core/models/booking';
@@ -11,7 +12,7 @@ import { BookingRequest } from '../../../core/models/booking';
 @Component({
   selector: 'app-parking-detail',
   standalone: true,
-  imports: [CommonModule, TranslateModule],
+  imports: [CommonModule, TranslateModule, FormsModule],
   templateUrl: './parking-detail.html',
   styleUrls: ['./parking-detail.scss']
 })
@@ -35,6 +36,7 @@ export class ParkingDetail implements OnInit {
 
   entryDate: string = '';
   exitDate: string = '';
+  licensePlate: string = '';
 
   ngOnInit() {
     this.checkViewport();
@@ -130,10 +132,11 @@ export class ParkingDetail implements OnInit {
     this.showConfirmModal = false;
     this.isLoading = true;
     const bookingData: BookingRequest = {
-      idPlaza: this.selectedSpot.id,
+      idSpace: this.selectedSpot.id,
       idParking: this.parking!.id,
-      fecInicio: this.entryDate,
-      fecFin: this.exitDate
+      startDate: this.entryDate,
+      endDate: this.exitDate,
+      licensePlate: this.licensePlate
     };
 
     this.bookingService.createBooking(bookingData).subscribe({
@@ -226,6 +229,21 @@ export class ParkingDetail implements OnInit {
     }
     return '';
   }
+
+  isLicensePlateValid(): boolean {
+  if (!this.licensePlate) {
+    return false;
+  }
+  
+  // 1. Limpieza total: quitamos espacios, guiones, barras, puntos y pasamos a mayúsculas
+  const cleanedPlate = this.licensePlate.replace(/[\s\-_.]/g, '').toUpperCase();
+  
+  // 2. Patrón internacional: alfanumérico de entre 3 y 15 caracteres
+  const globalPlateRegex = /^[A-Z0-9]{3,15}$/;
+  
+  // 3. Devolvemos el resultado de la validación
+  return globalPlateRegex.test(cleanedPlate);
+}
 
   // Para detectar el movil
   checkViewport() {

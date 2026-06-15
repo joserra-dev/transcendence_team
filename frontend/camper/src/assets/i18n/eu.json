@@ -1,5 +1,7 @@
 {
   "HEADER": {
+    "BACK": "Aurreko orria",
+    "FORWARD": "Hurrengo orria",
     "SEARCH": "Aparkalekua bilatu",
     "LOGIN": "Saioa Hasi",
     "REGISTER": "Erregistratu",
@@ -22,6 +24,18 @@
     "PLACEHOLDER_PASSWORD": "******",
     "BUTTON": "Sartu",
     "LOADING": "Kargatzen...",
+    "FORGOT_PASSWORD": "Pasahitza ahaztu duzu?",
+    "RECOVERY": {
+      "TITLE": "Pasahitza berreskuratu",
+      "DESCRIPTION": "Sartu zure posta eta pasahitz berria sortzeko esteka bat bidaliko dizugu.",
+      "SEND": "Esteka bidali",
+      "CANCEL": "Utzi",
+      "SUCCESS": "Posta badago, berreskuratze-esteka jasoko duzu.",
+      "ERROR": {
+        "TIMEOUT": "Zerbitzariak denbora gehiegi behar du erantzuteko. Saiatu geroago.",
+        "UNKNOWN": "Ezin izan da posta bidali. Saiatu berriro."
+      }
+    },
     "ERROR": {
       "REQUIRED_EMAIL": "Posta elektronikoa derrigorrezkoa da.",
       "INVALID_EMAIL": "Posta elektronikoaren formatua okerra da.",
@@ -29,6 +43,26 @@
       "INVALID_CREDENTIALS": "Kredentzial baliogabeak. Egiaztatu posta eta pasahitza.",
       "TIMEOUT": "Zerbitzariak denbora gehiegi behar du erantzuteko. Saiatu geroago.",
       "UNKNOWN": "Ustekabeko errorea gertatu da. Saiatu geroago."
+    }
+  },
+
+  "RESET_PASSWORD": {
+    "TITLE": "Pasahitza berrezarri",
+    "FIELDS": {
+      "PASSWORD": "Pasahitz berria",
+      "CONFIRM_PASSWORD": "Berretsi pasahitz berria"
+    },
+    "BUTTON": "Pasahitz berria gorde",
+    "BACK": "Saio hasierara itzuli",
+    "SUCCESS": "Pasahitza behar bezala eguneratu da.",
+    "ERRORS": {
+      "REQUIRED_PASSWORD": "Pasahitz berria derrigorrezkoa da.",
+      "MIN_LENGTH": "Pasahitzak gutxienez 8 karaktere izan behar ditu.",
+      "REQUIRED_CONFIRM": "Pasahitz berria berretsi behar duzu.",
+      "TOKEN_MISSING": "Ez da baliozko berreskuratze estekarik aurkitu.",
+      "INVALID_TOKEN": "Berreskuratze esteka ez da baliozkoa edo iraungi da.",
+      "TIMEOUT": "Zerbitzariak denbora gehiegi behar du erantzuteko. Saiatu geroago.",
+      "UNKNOWN": "Ezin izan da pasahitza eguneratu. Saiatu berriro."
     }
   },
 

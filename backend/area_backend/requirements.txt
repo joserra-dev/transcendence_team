@@ -8,3 +8,5 @@ flask-cors
 Flask-Mailman==1.0.0
 pytest
 pytest-mock
+opencv-python-headless
+easyocr

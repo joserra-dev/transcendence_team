@@ -18,8 +18,8 @@ class Parking(db.Model):
     tiene_residuales_parking = db.Column(db.Boolean, nullable=True)
     tiene_plazas_vip_parking = db.Column(db.Boolean, nullable=True)
 
-    # Relación hacia las plazas
-    plazas = db.relationship('Space', backref='parking', cascade="all, delete-orphan", lazy=True)
+    company = db.relationship('Company', back_populates='parkings')
+    spaces = db.relationship('Space', back_populates='parking', lazy=True)
 
     def to_dict(self, include_spaces=True, fecha_desde=None, fecha_hasta=None):
         data = {
@@ -38,7 +38,7 @@ class Parking(db.Model):
         }
         if include_spaces:
             plazas_list = []
-            for plaza in self.plazas:
+            for plaza in self.spaces:
                 plaza_data = plaza.to_dict()
                 if fecha_desde and fecha_hasta:
                     from datetime import datetime
