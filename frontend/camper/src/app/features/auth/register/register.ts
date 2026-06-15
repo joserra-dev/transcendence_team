@@ -71,9 +71,8 @@ export class Register {
           this.registerForm.enable();
         })
       ).subscribe({
-      next: (response) => {
-        this.successMessage = response;
-        this.isLoading = false;
+      next: () => {
+        this.successMessage = 'REGISTER.SUCCESS';
         this.registerForm.reset();
 
         setTimeout(() => {

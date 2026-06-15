@@ -9,7 +9,7 @@
   </div>
 
   <div class="success-msg mb-3" *ngIf="successMessage">
-    {{ successMessage }}
+    {{ successMessage | translate }}
     <br>
     <a routerLink="/auth/login-client">{{ 'LOGIN.BUTTON' | translate }}</a>
   </div>
