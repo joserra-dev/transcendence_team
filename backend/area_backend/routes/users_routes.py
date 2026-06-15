@@ -281,11 +281,7 @@ def autenticar_usuario():
         return jsonify({
         "mensaje": "¡Login exitoso!",
         "token": token_acceso,
-        "user": {
-            "id": usuario_existente.id,
-            #"nombre": usuario_existente.nombre,
-            "email": usuario_existente.email
-        }
+        "user": _user_to_frontend_dict(usuario_existente)
         }), 200
     except Exception as e:
         db.session.rollback()
