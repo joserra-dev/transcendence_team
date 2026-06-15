@@ -150,7 +150,7 @@ export class Profile implements OnInit {
         this.successMessage = responseMessage;
         const updatedUser = { ...this.currentUser!, ...formData };
         this.currentUser = updatedUser;
-        localStorage.setItem('user', JSON.stringify(updatedUser));
+        sessionStorage.setItem('user', JSON.stringify(updatedUser));
         this.isEditing = false;
         this.isLoading = false;
         this.profileForm.patchValue({ passPersona: '', confirmPassPersona: '' });

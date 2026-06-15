@@ -57,22 +57,42 @@ export class Auth {
   }
 
   private saveSession(data: LoginResponse): void {
-    localStorage.setItem('token', data.token);
-    localStorage.setItem('user', JSON.stringify(data.user));
+    sessionStorage.setItem('token', data.token);
+    sessionStorage.setItem('user', JSON.stringify(data.user));
   }
 
   logout(): void {
-    localStorage.removeItem('token');
-    localStorage.removeItem('user');
+    sessionStorage.removeItem('token');
+    sessionStorage.removeItem('user');
     this.router.navigate(['/auth/login-client']);
   }
 
   isLoggedIn(): boolean {
-    return !!localStorage.getItem('token');
+    const token = sessionStorage.getItem('token');
+    if (!token) return false;
+
+    try {
+      // Decodifica la parte del payload del JWT (índice 1) sin librería externa
+      const payload = JSON.parse(atob(token.split('.')[1]));
+      const now = Math.floor(Date.now() / 1000);
+
+      if (payload.exp && payload.exp < now) {
+        // Token expirado → limpiar sessionStorage
+        sessionStorage.removeItem('token');
+        sessionStorage.removeItem('user');
+        return false;
+      }
+      return true;
+    } catch {
+      // Token malformado → limpiar por seguridad
+      sessionStorage.removeItem('token');
+      sessionStorage.removeItem('user');
+      return false;
+    }
   }
 
   getUser(): User | null {
-    const userStr = localStorage.getItem('user');
+    const userStr = sessionStorage.getItem('user');
     return userStr ? JSON.parse(userStr) : null;
   }
 

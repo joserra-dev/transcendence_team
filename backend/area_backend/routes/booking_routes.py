@@ -1,4 +1,6 @@
+# pyrefly: ignore [missing-import]
 from flask import Blueprint, jsonify, request
+# pyrefly: ignore [missing-import]
 from flask_jwt_extended import jwt_required, get_jwt_identity
 from datetime import datetime
 
@@ -136,7 +138,7 @@ def create_booking():
     except ValueError:
         return "Formato de fecha inválido", 400
         
-    # Validar solapamiento
+    # Validar solapamiento de plaza
     overlap = Booking.query.filter(
         Booking.id_space == id_plaza,
         Booking.fecha_inicio_reserva <= fec_fin,
@@ -146,6 +148,17 @@ def create_booking():
     
     if overlap:
         return "La plaza ya está ocupada en las fechas seleccionadas", 400
+
+    # Validar solapamiento de usuario (el usuario ya tiene una reserva en esas fechas en cualquier plaza)
+    user_overlap = Booking.query.filter(
+        Booking.id_user == int(user_id),
+        Booking.fecha_inicio_reserva <= fec_fin,
+        Booking.fecha_fin_reserva >= fec_inicio,
+        Booking.estado_reserva == "1" # Solo solapa con reservas activas/confirmadas
+    ).first()
+
+    if user_overlap:
+        return jsonify({"error": "Ya tienes una reserva para ti en estas fechas. No puedes reservar más de una plaza a la vez."}), 400
         
     new_booking = Booking(
         id_user=int(user_id),

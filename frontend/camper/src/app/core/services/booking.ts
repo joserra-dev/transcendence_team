@@ -11,7 +11,7 @@ import { Booking, BookingHistoryResponse, BookingRequest } from '../models/booki
 export class BookingService {
   private http = inject(HttpClient);
 
-  private apiUrl = `${window.env.URL_BACK}`;
+  private apiUrl = `${window.env.URL_BACK}/api`;
 
   /**
    * Ver historial de reservas completo

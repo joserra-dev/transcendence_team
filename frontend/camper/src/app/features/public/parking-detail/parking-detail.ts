@@ -28,6 +28,7 @@ export class ParkingDetail implements OnInit {
 
   errorMessage = '';
   successMessage = '';
+  spamMessage = ''; // NUEVO SPAM EN HTML DIRECTO
   showConfirmModal = false;
 
   isMobile = false;
@@ -141,8 +142,32 @@ export class ParkingDetail implements OnInit {
         this.router.navigate(['/client/history']);
       },
       error: (err) => {
-        console.error(err);
-        this.errorMessage = 'PARKING.ERRORS.BOOKING';
+        console.error("Booking Error Objeto Completo:", err);
+        let errorMsg = 'PARKING.ERRORS.BOOKING';
+        
+        if (err.error) {
+            if (typeof err.error === 'string') {
+                try {
+                    const parsed = JSON.parse(err.error);
+                    errorMsg = parsed.error || parsed.message || err.error;
+                } catch(e) {
+                    errorMsg = err.error;
+                }
+            } else if (err.error.error) {
+                errorMsg = err.error.error;
+            } else if (err.error.message) {
+                errorMsg = err.error.message;
+            } else {
+                try { errorMsg = JSON.stringify(err.error); } catch(e) {}
+            }
+        } else if (err.message) {
+            errorMsg = err.message;
+        }
+
+        // Set spamMessage to show a giant HTML modal/banner
+        this.spamMessage = "🚨 AVISO 🚨\n\n" + errorMsg;
+
+        this.errorMessage = errorMsg;
         this.isLoading = false;
       }
     });

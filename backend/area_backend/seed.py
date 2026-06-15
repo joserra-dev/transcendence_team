@@ -1,5 +1,6 @@
 from datetime import date
 
+# pyrefly: ignore [missing-import]
 from werkzeug.security import generate_password_hash
 
 from database import db

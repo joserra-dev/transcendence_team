@@ -70,8 +70,7 @@
       elegida.                                                                                                                                                          
       • Modifiqué el guardado de perfil exitoso para actualizar la sesión en  localStorage  inmediatamente para evitar problemas de caché.                              
   5. Flujo de Reserva (Frontend):                                                                                                                                       
-      • En parking-detail.ts, restauré y amplié el bloqueo de reserva: ahora comprueba si el usuario tiene configurado un método de pago válido completo (IBAN válido,    
-      Tarjeta válida, o Efectivo). Si no tiene ninguno, lo redirige al perfil para configurarlo antes de permitirle reservar.  
+      • En parking-detail.ts, restauré y amplié el bloqueo de reserva: ahora comprueba si el usuario tiene configurado un método de pago válido completo (IBAN válido, tarjeta válida, o efectivo). Si no tiene ninguno, lo redirige al perfil para configurarlo antes de permitirle reservar.  
 
       ### Resumen de adiciones para Pago en Efectivo:
   
@@ -116,3 +115,74 @@ Los cambios serían:
 1. **`custom-validators.ts`** → Quitar `@Component`, hacer `matchPasswords` condicional (solo valida si alguna contraseña tiene valor)
 2. **`profile.ts`** → Usar `.disable()` / `.enable()` para el select en lugar de `[disabled]` en el template
 3. **`profile.html`** → Distinguir mensajes de error en el campo fecha (requerido vs menor de edad)
+
+
+
+### 26/06/11analisis_login_sesion.md
+
+## Estado del Login y Sesiones
+
+### ✅ Lo que funciona bien
+- Login/logout básico con `localStorage` (token + user)
+- El interceptor añade el `Bearer token` a las peticiones
+- Al intentar reservar sin sesión, redirige al login con `returnUrl`
+
+### 🚨 Problemas encontrados (por prioridad) 
+
+**1. No hay Route Guards (crítico)**  
+Las rutas `/client/history`, `/client/profile`, `/admin/*` son accesibles directamente desde la URL sin estar logueado. No existe ningún `canActivate` en `client.routes.ts` ni en `admin.routes.ts`.
+
+**2. El interceptor no maneja el 401 (crítico para inactividad)**  
+Si el token expira (el backend usa flask-jwt-extended con 15 min por defecto), el interceptor simplemente deja pasar el error. El usuario queda en estado zombie: la UI muestra que está logueado pero todas las peticiones fallan. **Este es el problema principal con la inactividad.**
+
+**3. El login devuelve un usuario incompleto**  
+El endpoint `/api/users/login` solo devuelve `id` y `email`, pero el frontend necesita `admin`, `metodoPago`, `ibanPersona`, etc. Hay que usar `_user_to_frontend_dict()` también en el login.
+
+**4. `isLoggedIn()` no valida expiración**  
+Solo comprueba si existe el string en `localStorage`, no si el JWT ha expirado.
+
+
+
+🆕 Archivos nuevos
+Archivo	                    Qué hace
+core/guards/auth.guard.ts	Si no hay sesión → redirige a /auth/login-client con returnUrl
+core/guards/admin.guard.ts	Si no es admin → redirige al home (o login si no hay sesión)
+
+
+✏️ Archivos modificados
+client.routes.ts — Las 3 rutas (history, profile, booking/:id) ahora tienen canActivate: [authGuard].
+
+admin.routes.ts — Las 3 rutas (dashboard, parking/new, parking/:id) ahora tienen canActivate: [adminGuard].
+
+auth-interceptor.ts — Ahora captura errores HTTP 401. Si el backend responde con 401 (token expirado por inactividad), llama automáticamente a authService.logout(), que limpia el localStorage y redirige al login.
+
+auth.ts → isLoggedIn() — Ahora decodifica el payload del JWT con atob() (sin librerías extra) y comprueba el campo exp. Si el token ha expirado, lo elimina del localStorage y devuelve false inmediatamente.
+
+users_routes.py → /login — Ahora devuelve el usuario completo (nombre, apellidos, admin, iban, metodoPago, etc.) usando _user_to_frontend_dict(), la misma función que ya se usaba en /me.
+
+
+
+### 5. 26/06/12 he instalado node.js
+
+
+# Instalar Node.js (incluye npm) vía nvm (más limpio)
+curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.39.7/install.sh | bash
+# Reabrir terminal, luego:
+nvm install --lts
+# Luego en la carpeta del proyecto:
+cd /home/jrc/Escritorio/transcendence_team/frontend/camper
+npm install
+
+"NO ME GUSTA COMO FUNCIONA EL LOGIN DESPUES DE HACER VARIOS RETOQUES"
+
+### 6. 26/06/14 deberiamos lanzar un spam en caso de que el usuario tenga una reserva activa en las mismas fechas
+
+He añadido la comprobación para que no se puedan reservar varias plazas solapando las fechas y, si ocurre, mostrará una alerta (un "spam" de advertencia) en la pantalla.
+
+He realizado dos modificaciones:
+
+Backend (booking_routes.py): He añadido una validación adicional durante la creación de la reserva (POST /api/reserva). Ahora, además de comprobar si la plaza concreta está ocupada, se busca en la base de datos si el mismo usuario (id_user) ya tiene una reserva con el estado confirmado ("1") en esas fechas. Si es así, devolverá el error: "Ya tienes una reserva para ti en estas fechas. No puedes reservar más de una plaza a la vez." con un código HTTP 400.
+Frontend (parking-detail.ts): He modificado cómo se maneja el error al confirmar una reserva. Ahora el frontend comprobará si el servidor devolvió un mensaje de texto con el error, lo asignará a la variable de error de la vista y lanzará un agresivo popup de alerta usando alert("⚠️ ATENCIÓN: " + errorMsg) en el navegador, asegurando que el usuario lo vea de inmediato.
+
+
+### 7. 
