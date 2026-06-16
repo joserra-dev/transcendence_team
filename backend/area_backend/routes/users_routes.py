@@ -1,4 +1,5 @@
-from datetime import timedelta
+from datetime import timedelta, datetime
+import os
 from flask import Blueprint, jsonify, request, current_app, redirect
 from sqlalchemy import func
 from werkzeug.security import generate_password_hash, check_password_hash 
@@ -59,6 +60,28 @@ users_bp = Blueprint('users_bp', __name__, url_prefix='/api/users')
 def _build_frontend_url(path: str) -> str:
     frontend_url = current_app.config.get('FRONTEND_URL', 'http://localhost:8001').rstrip('/')
     return f"{frontend_url}/{path.lstrip('/')}"
+
+
+def _build_backend_url(path: str) -> str:
+    backend_url = os.getenv('URL_BACK', 'http://localhost:5000').rstrip('/')
+    return f"{backend_url}/{path.lstrip('/')}"
+
+
+def _find_user_by_reset_token(token: str):
+    if not token:
+        return None
+    usuario = Users.query.filter_by(reset_password_token=token).first()
+    if not usuario or not usuario.reset_password_expires:
+        return None
+    if usuario.reset_password_expires < datetime.utcnow():
+        return None
+    return usuario
+
+
+def _clear_reset_token(usuario: Users) -> None:
+    usuario.reset_password_token = None
+    usuario.reset_password_expires = None
+    usuario.password_reset_verified = False
 
 @users_bp.route('', methods=['GET'])
 def obtener_usuarios():
@@ -403,12 +426,18 @@ def solicitar_recuperacion():
     usuario = Users.query.filter(func.lower(Users.email) == normalized_email).first()
 
     if usuario:
-        token_seguro = create_access_token(
-            identity=str(usuario.id),
-            expires_delta=timedelta(hours=1),
-            additional_claims={"purpose": "password_reset"}
-        )
-        url_recuperacion = _build_frontend_url(f"auth/reset-password?token={token_seguro}")
+        reset_token = secrets.token_urlsafe(32)
+        usuario.reset_password_token = reset_token
+        usuario.reset_password_expires = datetime.utcnow() + timedelta(hours=1)
+        usuario.password_reset_verified = False
+        try:
+            db.session.commit()
+        except Exception as e:
+            db.session.rollback()
+            current_app.logger.error(f"Error guardando token de recuperación: {e}")
+            return jsonify({"error": "Error interno al procesar la solicitud"}), 500
+
+        url_recuperacion = _build_backend_url(f"api/users/reset-password/verify?token={reset_token}")
 
         try:
             EmailService.forgot(
@@ -424,6 +453,30 @@ def solicitar_recuperacion():
     return jsonify({"message": "Si el correo existe, se enviarán las instrucciones."}), 200
 
 
+@users_bp.route('/reset-password/verify', methods=['GET'])
+def verificar_reset_password():
+    token = request.args.get('token')
+    if not token:
+        return redirect(_build_frontend_url('auth/reset-password?reset=0'))
+
+    usuario = Users.query.filter_by(reset_password_token=token).first()
+    if not usuario or not usuario.reset_password_expires or usuario.reset_password_expires < datetime.utcnow():
+        return redirect(_build_frontend_url('auth/reset-password?reset=0'))
+
+    form_token = secrets.token_urlsafe(32)
+    usuario.password_reset_verified = True
+    usuario.reset_password_token = form_token
+    usuario.reset_password_expires = datetime.utcnow() + timedelta(hours=1)
+
+    try:
+        db.session.commit()
+    except Exception:
+        db.session.rollback()
+        return redirect(_build_frontend_url('auth/reset-password?reset=0'))
+
+    return redirect(_build_frontend_url(f'auth/reset-password?token={form_token}'))
+
+
 @users_bp.route('/reset-password', methods=['POST'])
 def restablecer_password():
     data = request.get_json() or {}
@@ -437,26 +490,12 @@ def restablecer_password():
     if new_password != confirm_password:
         return jsonify({"error": "Las contraseñas introducidas no coinciden"}), 400
 
-    try:
-        decoded_token = decode_token(token)
-    except Exception:
+    usuario = _find_user_by_reset_token(token)
+    if not usuario or not usuario.password_reset_verified:
         return jsonify({"error": "El enlace de recuperación no es válido o ha caducado"}), 400
-
-    if decoded_token.get('purpose') != 'password_reset':
-        return jsonify({"error": "El enlace de recuperación no es válido o ha caducado"}), 400
-
-    user_id = decoded_token.get('sub')
-    try:
-        user_id = int(user_id)
-    except (TypeError, ValueError):
-        return jsonify({"error": "El enlace de recuperación no es válido o ha caducado"}), 400
-
-    usuario = Users.query.get(user_id)
-
-    if not usuario:
-        return jsonify({"error": "Usuario no encontrado"}), 404
 
     usuario.pass_user = generate_password_hash(new_password)
+    _clear_reset_token(usuario)
 
     try:
         db.session.commit()

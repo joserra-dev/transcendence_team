@@ -19,6 +19,7 @@ class Users(db.Model):
 
     reset_password_token = db.Column(db.String(255), unique=True, nullable=True)
     reset_password_expires = db.Column(db.DateTime, nullable=True)
+    password_reset_verified = db.Column(db.Boolean, default=False, nullable=False)
     
     profile = db.relationship('Profiles', back_populates='user', uselist=False, cascade="all, delete-orphan")
     bookings = db.relationship('Booking', back_populates='user', cascade="all, delete-orphan", lazy=True)
