@@ -157,15 +157,19 @@ def registrar_usuario():
     )
     try:
         db.session.add(nuevo_usuario)
-        db.session.commit()
+    except Exception as e:
+        db.session.rollback()
+        return jsonify({"error": "Error al registrar el usuario"}), 500
+    try:
         EmailService.welcome(email, email)
+        db.session.commit()
         return jsonify({
             "mensaje": "Usuario registrado con éxito",
             "usuario": nuevo_usuario.to_dict()
         }), 201
     except Exception as e:
         db.session.rollback()
-        return jsonify({"error": "Error interno al guardar en la base de datos"}), 500
+        return jsonify({"error": "Error al enviar el mail de bienvenida"}), 500
 
 
 @users_bp.route('/me', methods=['GET'])
