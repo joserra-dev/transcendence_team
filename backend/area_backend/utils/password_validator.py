@@ -1,19 +1,39 @@
 # utils/validators.py
 import re
 
+import re
+
 class PasswordValidator:
-    # Standard regular expression (min. 8 characters, 1 uppercase, 1 lowercase, 1 number, 1 special character)
+    # Expresión regular estándar (mín. 8 caracteres, 1 mayúscula, 1 minúscula, 1 número, 1 carácter especial)
     PASSWORD_REGEX = r"^(?=.*[A-Z])(?=.*[a-z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$"
 
     @classmethod
-    def validar(cls, password: str) -> tuple[bool, str]:
+    def validar(cls, password: str, email: str = "") -> tuple[bool, str]:
         """
-        Validates if a password meets the minimum security requirements.
-        Returns a tuple: (is_valid, "error or success message")
+        Valida si una contraseña cumple con los requisitos mínimos de seguridad.
+        Evita el uso de la palabra 'password' y partes del email.
+        Retorna un tuple: (is_valid, "mensaje de error o éxito")
         """
         if not password:
             return False, "La contraseña no puede estar vacía."
         
+        # Pasamos a minúsculas para comparaciones insensibles a mayúsculas/minúsculas
+        password_lower = password.lower()
+
+        # 1. Validación: No contener la palabra 'password'
+        if "password" in password_lower:
+            return False, "La contraseña no puede contener la palabra 'password'."
+
+        # 2. Validación: No contener el nombre de usuario del email
+        if email and "@" in email:
+            # Extraemos la parte anterior al @ (ej. "pruebamail" de "pruebamail@gmail.com")
+            email_username = email.split("@")[0].lower()
+            
+            # Validamos si el username está dentro de la contraseña
+            if email_username and email_username in password_lower:
+                return False, "La contraseña no puede contener partes de tu correo electrónico."
+
+        # 3. Validaciones de estructura clásica
         if len(password) < 8:
             return False, "La contraseña debe tener al menos 8 caracteres."
             
@@ -29,7 +49,7 @@ class PasswordValidator:
         if not re.search(r"[@$!%*?&]", password):
             return False, "La contraseña debe contener al menos un carácter especial (@$!%*?&)."
 
-        # Si pasa todos los filtros individuales, verificamos el regex completo por seguridad
+        # Verificación del regex completo por seguridad final
         if not re.match(cls.PASSWORD_REGEX, password):
             return False, "La contraseña no cumple con el formato de seguridad requerido."
 
