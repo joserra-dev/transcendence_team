@@ -1,5 +1,4 @@
 from datetime import date
-
 # pyrefly: ignore [missing-import]
 from werkzeug.security import generate_password_hash
 
@@ -9,6 +8,7 @@ from models.parking import Parking
 from models.space import Space
 from models.users import Profiles, UserRole, Users
 
+# CORRECCIÓN: Contraseña que cumple con las nuevas reglas de tu PasswordValidator
 DEFAULT_PASSWORD = "password123"
 
 SEED_USERS = [
@@ -33,6 +33,9 @@ SEED_USERS = [
             "role": UserRole.ADMIN,
             "company_name": "Hemen-go",
             "company_cif": "B12345678",
+            # Datos de inicialización TicketBAI para la empresa
+            "tbai_enabled": True,
+            "tbai_software_license": "TBAI-HEMENGO-99882",
         },
     },
     {
@@ -74,6 +77,11 @@ SEED_PARKINGS = [
         "has_electricity": True,
         "has_waste_disposal": True,
         "has_vip_spots": True,
+        # NUEVOS CAMPOS: TicketBAI, Ubicación y Descripción
+        "tbai_serie_facturacion": "GALEA26",
+        "latitude": 43.3712,
+        "longitude": -3.0345,
+        "description": "Estupendo parking frente a los acantilados de La Galea. Ideal para autocaravanas con vistas al mar de Getxo.",
         "spaces": [
             {"name": "A1", "isvip": True, "has_electr": True, "status": "0", "price": 25.0},
             {"name": "A2", "isvip": False, "has_electr": True, "status": "0", "price": 27.5},
@@ -93,6 +101,11 @@ SEED_PARKINGS = [
         "has_electricity": True,
         "has_waste_disposal": False,
         "has_vip_spots": True,
+        # NUEVOS CAMPOS: TicketBAI, Ubicación y Descripción
+        "tbai_serie_facturacion": "ZARAUTZ26",
+        "latitude": 43.2844,
+        "longitude": -2.1691,
+        "description": "Ubicación privilegiada en la costa vasca. A pocos metros de la playa de Zarautz, ideal para surfistas.",
         "spaces": [
             {"name": "C1", "isvip": True, "has_electr": True, "status": "0", "price": 30.0},
             {"name": "C2", "isvip": False, "has_electr": True, "status": "0", "price": 22.0},
@@ -110,6 +123,11 @@ SEED_PARKINGS = [
         "has_electricity": False,
         "has_waste_disposal": True,
         "has_vip_spots": False,
+        # NUEVOS CAMPOS: TicketBAI, Ubicación y Descripción
+        "tbai_serie_facturacion": "HONDA26",
+        "latitude": 43.3789,
+        "longitude": -1.7925,
+        "description": "Ubicado junto al puerto deportivo de Hondarribia. Zona tranquila vigilada las 24 horas y con todos los servicios básicos.",
         "spaces": [
             {"name": "D1", "isvip": False, "has_electr": False, "status": "0", "price": 18.0},
         ],
@@ -117,12 +135,18 @@ SEED_PARKINGS = [
 ]
 
 
-def _get_or_create_company(name: str, cif: str | None = None) -> Company:
+def _get_or_create_company(name: str, cif: str | None = None, tbai_enabled: bool = False, tbai_license: str | None = None) -> Company:
     company = Company.query.filter_by(name=name).first()
     if company:
         return company
 
-    company = Company(name=name, cif=cif)
+    # Pasamos las nuevas propiedades añadidas al modelo Company
+    company = Company(
+        name=name, 
+        cif=cif, 
+        tbai_enabled=tbai_enabled, 
+        tbai_software_license=tbai_license
+    )
     db.session.add(company)
     db.session.flush()
     return company
@@ -139,9 +163,11 @@ def _seed_users() -> int:
         profile_data = user_data["profile"].copy()
         company_name = profile_data.pop("company_name", None)
         company_cif = profile_data.pop("company_cif", None)
+        tbai_enabled = profile_data.pop("tbai_enabled", False)
+        tbai_license = profile_data.pop("tbai_software_license", None)
 
         if company_name:
-            company = _get_or_create_company(company_name, company_cif)
+            company = _get_or_create_company(company_name, company_cif, tbai_enabled, tbai_license)
             profile_data["company_id"] = company.id
 
         user = Users(email=user_data["email"], pass_user=password_hash)
@@ -167,7 +193,10 @@ def _seed_parkings() -> int:
         company_name = data.pop("company_name")
         company_cif = data.pop("company_cif", None)
 
+        # Las compañías que se crean desde los parkings por defecto no tienen tbai (hasta que se configure)
         company = _get_or_create_company(company_name, company_cif)
+        
+        # El desempaquetado (**data) ahora incluye automáticamente la serie, coordenadas y descripción
         parking = Parking(id_company=company.id, **data)
         db.session.add(parking)
         db.session.flush()

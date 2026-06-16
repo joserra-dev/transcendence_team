@@ -17,6 +17,11 @@ class Parking(db.Model):
     has_electricity = db.Column(db.Boolean, nullable=True)
     has_waste_disposal = db.Column(db.Boolean, nullable=True)
     has_vip_spots = db.Column(db.Boolean, nullable=True)
+    tbai_serie_facturacion = db.Column(db.String(20), nullable=True)
+    
+    latitude = db.Column(db.Float, nullable=True)
+    longitude = db.Column(db.Float, nullable=True)
+    description = db.Column(db.String(255), nullable=True)
 
     company = db.relationship('Company', back_populates='parkings')
     spaces = db.relationship('Space', back_populates='parking', lazy=True)
@@ -24,6 +29,7 @@ class Parking(db.Model):
     def to_dict(self, include_spaces=True, from_date=None, to_date=None):
         data = {
             "id": self.id,
+            "id_company": self.id_company,
             "name": self.name,
             "municipality": self.municipality,
             "province": self.province,
@@ -31,10 +37,14 @@ class Parking(db.Model):
             "web": self.web_parking,
             "telephone": self.telephone,
             "email": self.email,
+             "description": self.description,
+            "longitude": self.longitude,
+            "latitude": self.latitude,
             "personaContacto": self.contact_person,
             "has_electricity": self.has_electricity,
             "has_waste_disposal": self.has_waste_disposal,
-            "has_waste_disposal": self.has_vip_spots,
+            "has_vip_spots": self.has_vip_spots,
+            "tbai_serie_facturacion": self.tbai_serie_facturacion # Enviamos la serie al front
         }
         if include_spaces:
             space_list = []

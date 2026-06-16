@@ -13,7 +13,6 @@ class Space(db.Model):
     price = db.Column(db.Float, nullable=True)
 
     parking = db.relationship('Parking', back_populates='spaces')
-
     bookings_rel = db.relationship('Booking', back_populates='space', cascade="all, delete-orphan", lazy=True)
     
     def to_dict(self):

@@ -1,12 +1,15 @@
-import { Component, OnInit, inject } from '@angular/core';
+import { Component, OnInit, OnDestroy, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ActivatedRoute, Router } from '@angular/router';
-import { TranslateModule } from '@ngx-translate/core';
-import { ParkingService } from '../../../core/services/parking';
-import { Parking, Space, SearchFilters } from '../../../core/models/parking';
+import { TranslateModule, TranslateService } from '@ngx-translate/core';
+import { DomSanitizer, SafeResourceUrl } from '@angular/platform-browser';
 import { FormsModule } from '@angular/forms';
-import { Auth } from '../../../core/services/auth';
+import { Subscription } from 'rxjs';
+
+import { ParkingService } from '../../../core/services/parking';
 import { BookingService } from '../../../core/services/booking';
+import { Auth } from '../../../core/services/auth';
+import { Parking, Space, SearchFilters } from '../../../core/models/parking';
 import { BookingRequest } from '../../../core/models/booking';
 
 @Component({
@@ -16,12 +19,14 @@ import { BookingRequest } from '../../../core/models/booking';
   templateUrl: './parking-detail.html',
   styleUrls: ['./parking-detail.scss']
 })
-export class ParkingDetail implements OnInit {
+export class ParkingDetail implements OnInit, OnDestroy {
   private route = inject(ActivatedRoute);
   private router = inject(Router);
   private parkingService = inject(ParkingService);
   private authService = inject(Auth);
   private bookingService = inject(BookingService);
+  private translate = inject(TranslateService);
+  private sanitizer = inject(DomSanitizer);
 
   parking: Parking | null = null;
   selectedSpot: Space | null = null;
@@ -29,8 +34,9 @@ export class ParkingDetail implements OnInit {
 
   errorMessage = '';
   successMessage = '';
-  spamMessage = ''; // NUEVO SPAM EN HTML DIRECTO
+  spamMessage = '';
   showConfirmModal = false;
+  showMapModal = false;
 
   isMobile = false;
 
@@ -38,12 +44,22 @@ export class ParkingDetail implements OnInit {
   exitDate: string = '';
   licensePlate: string = '';
 
+  dateFormat: string = 'dd/MM/yyyy';
+  mapUrl: SafeResourceUrl | null = null;
+  private langFormatSub!: Subscription;
+
   ngOnInit() {
     this.checkViewport();
 
     window.addEventListener('resize', () => {
       this.checkViewport();
     });
+
+    this.langFormatSub = this.translate.onLangChange.subscribe((event) => {
+      this.definirFormatoFecha(event.lang);
+    });
+
+    this.definirFormatoFecha(this.translate.currentLang || this.translate.defaultLang || 'es');
 
     const parkingId = this.route.snapshot.paramMap.get('id');
     this.route.queryParams.subscribe(params => {
@@ -54,8 +70,18 @@ export class ParkingDetail implements OnInit {
       this.entryDate = params['fechaDesde'] || today.toISOString().split('T')[0];
       this.exitDate = params['fechaHasta'] || tomorrow.toISOString().split('T')[0];
     });
+
     if (parkingId) {
       this.loadParkingDetails(parkingId);
+    }
+  }
+
+  private definirFormatoFecha(lang: string) {
+    const idioma = lang.toLowerCase();
+    if (idioma === 'eu' || idioma === 'en') {
+      this.dateFormat = 'yyyy/MM/dd';
+    } else {
+      this.dateFormat = 'dd/MM/yyyy';
     }
   }
 
@@ -96,7 +122,7 @@ export class ParkingDetail implements OnInit {
 
     const diffTime = Math.abs(end.getTime() - start.getTime());
     const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
-    return (diffDays+1) * this.selectedSpot.price;
+    return (diffDays + 1) * this.selectedSpot.price;
   }
 
   selectSpot(spot: Space) {
@@ -124,8 +150,8 @@ export class ParkingDetail implements OnInit {
       return;
     }
     this.showConfirmModal = true;
-
   }
+
   confirmBooking() {
     if (!this.selectedSpot || !this.parking) return;
 
@@ -167,16 +193,30 @@ export class ParkingDetail implements OnInit {
             errorMsg = err.message;
         }
 
-        // Set spamMessage to show a giant HTML modal/banner
         this.spamMessage = "🚨 AVISO 🚨\n\n" + errorMsg;
-
         this.errorMessage = errorMsg;
         this.isLoading = false;
       }
     });
   }
 
-  // Para la galería
+  openMapModal() {
+    if (!this.parking || !this.parking.latitude || !this.parking.longitude) return;
+    const lat = this.parking.latitude;
+    const lon = this.parking.longitude;
+    
+    // 💡 URL configurada para Google Maps con marcador centrado (Zoom z=15)
+    const rawUrl = `https://maps.google.com/maps?q=${lat},${lon}&z=15&output=embed&t=m`;
+    this.mapUrl = this.sanitizer.bypassSecurityTrustResourceUrl(rawUrl);
+    this.showMapModal = true;
+  }
+
+  closeMapModal() {
+    this.showMapModal = false;
+    this.mapUrl = null;
+  }
+
+  // Galerías de imágenes
   galleryImages: string[] = [
     '/images/fotos/camper1.jpg',
     '/images/fotos/camper2.jpg',
@@ -203,15 +243,12 @@ export class ParkingDetail implements OnInit {
 
   nextImage(event: Event) {
     event.stopPropagation();
-    this.currentImage =
-      (this.currentImage + 1) % this.galleryImages.length;
+    this.currentImage = (this.currentImage + 1) % this.galleryImages.length;
   }
 
   prevImage(event: Event) {
     event.stopPropagation();
-    this.currentImage =
-      (this.currentImage - 1 + this.galleryImages.length) %
-      this.galleryImages.length;
+    this.currentImage = (this.currentImage - 1 + this.galleryImages.length) % this.galleryImages.length;
   }
 
   getPaymentMethodLabel(): string {
@@ -231,22 +268,19 @@ export class ParkingDetail implements OnInit {
   }
 
   isLicensePlateValid(): boolean {
-  if (!this.licensePlate) {
-    return false;
+    if (!this.licensePlate) return false;
+    const cleanedPlate = this.licensePlate.replace(/[\s\-_.]/g, '').toUpperCase();
+    const globalPlateRegex = /^[A-Z0-9]{3,15}$/;
+    return globalPlateRegex.test(cleanedPlate);
   }
-  
-  // 1. Limpieza total: quitamos espacios, guiones, barras, puntos y pasamos a mayúsculas
-  const cleanedPlate = this.licensePlate.replace(/[\s\-_.]/g, '').toUpperCase();
-  
-  // 2. Patrón internacional: alfanumérico de entre 3 y 15 caracteres
-  const globalPlateRegex = /^[A-Z0-9]{3,15}$/;
-  
-  // 3. Devolvemos el resultado de la validación
-  return globalPlateRegex.test(cleanedPlate);
-}
 
-  // Para detectar el movil
   checkViewport() {
     this.isMobile = window.innerWidth <= 768;
+  }
+
+  ngOnDestroy() {
+    if (this.langFormatSub) {
+      this.langFormatSub.unsubscribe();
+    }
   }
 }

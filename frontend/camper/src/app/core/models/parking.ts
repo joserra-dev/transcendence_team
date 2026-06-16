@@ -17,8 +17,12 @@ export interface Parking {
   telephone?: string;      
   email?: string;         
   contact_person?: string;
-  descripcion?: string;    
-
+  
+  description?: string;
+  
+  longitude?: number;
+  latitude?: number;
+  
   municipality?: string;
   localidad?: string; 
   province?: string;

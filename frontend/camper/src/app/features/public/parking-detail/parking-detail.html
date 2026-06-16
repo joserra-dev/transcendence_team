@@ -5,10 +5,13 @@
       <p class="location">
         <i class="fa-solid fa-location-dot"></i>
         {{ parking.municipality || parking.localidad }}
+        
+        <button *ngIf="parking.latitude && parking.longitude" class="btn btn-sm btn-outline-primary ms-3" (click)="openMapModal()">
+          <i class="fa-solid fa-map-location-dot me-1"></i> Ver en Google Maps
+        </button>
       </p>
     </div>
 
-    
     <div class="rating" *ngIf="parking.media">
       {{ parking.media | number:'1.1-1' }}
     </div>
@@ -32,38 +35,16 @@
     <button type="button" class="btn-close" (click)="errorMessage = ''" aria-label="Close"></button>
   </div>
 
-  <!-- CARRUSEL MÓVIL -->
-  <div
-    id="parkingCarousel"
-    class="carousel slide"
-    data-bs-touch="true"
-    *ngIf="isMobile"
-  >
+  <div id="parkingCarousel" class="carousel slide" data-bs-touch="true" *ngIf="isMobile">
     <div class="carousel-inner">
-      <div
-        class="carousel-item"
-        *ngFor="let img of galleryImages; let i = index"
-        [class.active]="i === 0"
-      >
+      <div class="carousel-item" *ngFor="let img of galleryImages; let i = index" [class.active]="i === 0">
         <img [src]="img" class="d-block w-100" alt="Parking">
       </div>
     </div>
-
-    <button
-      class="carousel-control-prev"
-      type="button"
-      data-bs-target="#parkingCarousel"
-      data-bs-slide="prev"
-    >
+    <button class="carousel-control-prev" type="button" data-bs-target="#parkingCarousel" data-bs-slide="prev">
       <span class="carousel-control-prev-icon"></span>
     </button>
-
-    <button
-      class="carousel-control-next"
-      type="button"
-      data-bs-target="#parkingCarousel"
-      data-bs-slide="next"
-    >
+    <button class="carousel-control-next" type="button" data-bs-target="#parkingCarousel" data-bs-slide="next">
       <span class="carousel-control-next-icon"></span>
     </button>
   </div>
@@ -71,28 +52,25 @@
   <div class="parking-layout">
     <section class="parking-main">
       <div class="main-image" *ngIf="!isMobile">
-        <img
-          src="/images/fotos/camper1.jpg"
-          alt="Parking"
-          (click)="openGallery(0)"
-        >
+        <img src="/images/fotos/camper1.jpg" alt="Parking" (click)="openGallery(0)">
+      </div>
+
+      <div class="services" *ngIf="parking.description">
+        <h3 class="section-title">{{ 'PARKING.DESCRIPTION' | translate }}</h3>
+        <p style="white-space: pre-line; color: #555; line-height: 1.6;">{{ parking.description }}</p>
       </div>
 
       <div class="services">
         <h3 class="section-title">{{ 'PARKING.SERVICES' | translate }}</h3>
-
         <ul>
           <li *ngIf="parking.tomaElectricidad || parking.has_electricity">
-            <i class="fa-solid fa-check"></i>
-            {{ 'SEARCH.ELECTRICITY' | translate }}
+            <i class="fa-solid fa-check"></i> {{ 'SEARCH.ELECTRICITY' | translate }}
           </li>
           <li *ngIf="parking.limpiezaAguasResiduales || parking.has_waste_disposal">
-            <i class="fa-solid fa-check"></i>
-            {{ 'SEARCH.RESIDUALS' | translate }}
+            <i class="fa-solid fa-check"></i> {{ 'SEARCH.RESIDUALS' | translate }}
           </li>
           <li *ngIf="parking.plazasVip || parking.has_vip_spots">
-            <i class="fa-solid fa-check"></i>
-            {{ 'SEARCH.VIP' | translate }}
+            <i class="fa-solid fa-check"></i> {{ 'SEARCH.VIP' | translate }}
           </li>
         </ul>
       </div>
@@ -101,31 +79,21 @@
         <h3 class="section-title">{{ 'PARKING.SELECT_SPOT' | translate }}</h3>
         <p>
           {{ 'PARKING.DATES' | translate }}:
-          {{ entryDate }} – {{ exitDate }}
+          {{ entryDate | date: dateFormat }} – {{ exitDate | date: dateFormat }}
         </p>
 
         <div class="spots-grid">
-          <div
-            *ngFor="let spot of spots"
-            class="spot-card"
-            [class.selected]="selectedSpot?.id === spot.id"
-            [class.occupied]="spot.status !== '0'"
-            (click)="selectSpot(spot)"
-          >
+          <div *ngFor="let spot of spots" class="spot-card" [class.selected]="selectedSpot?.id === spot.id" [class.occupied]="spot.status !== '0'" (click)="selectSpot(spot)">
             <div class="spot-header">
               <strong>{{ spot.name }}</strong>
               <span>{{ spot.price }}€</span>
             </div>
-
             <div class="spot-tags">
               <span *ngIf="spot.isVip">VIP </span>
               <span *ngIf="spot.hasElectr">Electr. </span>
             </div>
-
             <div class="spot-status">
-              {{ spot.status === '0'
-                ? ('PARKING.FREE' | translate)
-                : ('PARKING.OCCUPIED' | translate) }}
+              {{ spot.status === '0' ? ('PARKING.FREE' | translate) : ('PARKING.OCCUPIED' | translate) }}
             </div>
           </div>
         </div>
@@ -134,111 +102,84 @@
 
     <aside class="parking-side">
       <div class="gallery" *ngIf="!isMobile">
-        <img
-          *ngFor="let img of sideGalleryImages; let i = index"
-          [src]="img"
-          (click)="openGallery(i + 1)"
-          alt="Parking"
-        >
+        <img *ngFor="let img of sideGalleryImages; let i = index" [src]="img" (click)="openGallery(i + 1)" alt="Parking">
       </div>
 
       <div class="contact">
         <h3 class="section-title">{{ 'PARKING.CONTACT' | translate }}</h3>
-
-        <p>
-          <i class="fa-solid fa-globe"></i>
-          <a [href]="parking.web" target="_blank"> {{ parking.web }}</a>
-        </p>
-
-        <p>
-          <i class="fa-solid fa-phone"></i>
-          {{ parking.telephone }}
-        </p>
-
-        <p>
-          <i class="fa-regular fa-envelope"></i>
-          {{ parking.email }}
-        </p>
+        <p><i class="fa-solid fa-globe"></i><a [href]="parking.web" target="_blank"> {{ parking.web }}</a></p>
+        <p><i class="fa-solid fa-phone"></i> {{ parking.telephone }}</p>
+        <p><i class="fa-regular fa-envelope"></i> {{ parking.email }}</p>
       </div>
 
-        <div class="booking-summary" *ngIf="selectedSpot">
-          <div class="total">
-            {{ 'PARKING.TOTAL' | translate }}:
-            <strong>{{ totalPrice }}€</strong>
-          </div>
-
-          <button class="btn btn-primary" (click)="onBook()">
-            {{ 'PARKING.RESERVE_SPOT' | translate }}
-            {{ selectedSpot.name }}
-          </button>
+      <div class="booking-summary" *ngIf="selectedSpot">
+        <div class="total">
+          {{ 'PARKING.TOTAL' | translate }}: <strong>{{ totalPrice }}€</strong>
         </div>
-
-        <p class="hint" *ngIf="!selectedSpot">
-          {{ 'PAPID.LICENCE' | translate }}
-        </p>
+        <button class="btn btn-primary" (click)="onBook()">
+          {{ 'PARKING.RESERVE_SPOT' | translate }} {{ selectedSpot.name }}
+        </button>
+      </div>
+      <p class="hint" *ngIf="!selectedSpot">{{ 'PARKING.SELECT_FREE' | translate }}</p>
     </aside>
   </div>
 
-  <!-- LIGHTBOX -->
   <div class="lightbox" *ngIf="isGalleryOpen" (click)="closeGallery()">
     <button class="close" (click)="closeGallery(); $event.stopPropagation()">×</button>
-
     <button class="nav prev" (click)="prevImage($event)">‹</button>
-
     <img [src]="galleryImages[currentImage]" alt="Parking">
-
     <button class="nav next" (click)="nextImage($event)">›</button>
   </div>
 </div>
 
 <div class="lightbox" *ngIf="showConfirmModal" (click)="showConfirmModal = false">
-    <div class="modal-content-wrapper" (click)="$event.stopPropagation()" style="background: white; padding: 2rem; border-radius: 8px; max-width: 500px; width: 90%; color: #333; position: relative;">
-      
-      <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem;">
-        <h3 style="margin: 0; font-size: 1.5rem;">{{ 'PARKING.AUX.SIXTH' | translate }}</h3>
-        <button (click)="showConfirmModal = false" style="background: none; border: none; font-size: 1.5rem; cursor: pointer;">×</button>
+  <div class="modal-content-wrapper" (click)="$event.stopPropagation()" style="background: white; padding: 2rem; border-radius: 8px; max-width: 500px; width: 90%; color: #333; position: relative;">
+    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem;">
+      <h3 style="margin: 0; font-size: 1.5rem;">{{ 'PARKING.AUX.SIXTH' | translate }}</h3>
+      <button (click)="showConfirmModal = false" style="background: none; border: none; font-size: 1.5rem; cursor: pointer;">×</button>
+    </div>
+
+    <div style="margin-bottom: 2rem;">
+      <p class="mb-2">{{ 'PARKING.AUX.FIRST' | translate }} <strong>{{ selectedSpot?.name }}</strong>.</p>
+      <div style="background: #f8f9fa; padding: 1rem; border-radius: 6px; font-size: 0.95rem; margin-bottom: 1.5rem;">
+        <p class="mb-1"><strong>{{ 'PARKING.AUX.THIRD' | translate }}</strong> {{ entryDate | date: dateFormat }} {{ 'PARKING.AUX.FOURTH' | translate }} {{ exitDate | date: dateFormat }}</p>
+        <p class="mb-1"><strong>{{ 'PARKING.AUX.SECOND' | translate }}</strong> <span style="color: #2c3e50; font-size: 1.2rem; font-weight: bold;">{{ totalPrice }}€</span></p>
+        <p class="mb-1"><strong>Método de pago:</strong> {{ getPaymentMethodLabel() }}</p>
       </div>
 
-      <div style="margin-bottom: 2rem;">
-        <p class="mb-2">{{ 'PARKING.AUX.FIRST' | translate }} <strong>{{ selectedSpot?.name }}</strong>.</p>
-        
-        <div style="background: #f8f9fa; padding: 1rem; border-radius: 6px; font-size: 0.95rem; margin-bottom: 1.5rem;">
-          <p class="mb-1"><strong>{{ 'PARKING.AUX.THIRD' | translate }}</strong> {{ entryDate }} {{ 'PARKING.AUX.FOURTH' | translate }} {{ exitDate }}</p>
-          <p class="mb-1"><strong>{{ 'PARKING.AUX.SECOND' | translate }}</strong> <span style="color: #2c3e50; font-size: 1.2rem; font-weight: bold;">{{ totalPrice }}€</span></p>
-          <p class="mb-1"><strong>Método de pago:</strong> {{ getPaymentMethodLabel() }}</p>
-        </div>
-
-        <div style="margin-bottom: 1rem;">
-          <label style="display: block; font-weight: bold; margin-bottom: 0.5rem; font-size: 0.95rem;">
-            {{ 'PARKING.SELECT_FREE' | translate }}
-          </label>
-          <input 
-            type="text" 
-            [(ngModel)]="licensePlate" 
-            placeholder="Ej: 1234BBB" 
-            style="width: 100%; padding: 0.6rem; border: 1px solid #ccc; border-radius: 4px; font-size: 1.1rem; text-transform: uppercase; box-sizing: border-box;"
-          />
-          <small *ngIf="licensePlate && !isLicensePlateValid()" style="color: #dc3545; display: block; margin-top: 0.25rem;">
-            Por favor, introduce una matrícula válida (4 números y 3 letras, sin espacios).
-          </small>
-        </div>
-      </div>
-
-      <div style="display: flex; justify-content: flex-end; gap: 10px;">
-        <button class="btn btn-outline-secondary" (click)="showConfirmModal = false">
-          {{ 'PARKING.AUX.SEVENTH' | translate }}
-        </button>
-        <button 
-          class="btn btn-primary" 
-          (click)="confirmBooking()" 
-          [disabled]="!isLicensePlateValid()"
-          [style.opacity]="!isLicensePlateValid() ? '0.5' : '1'"
-          [style.cursor]="!isLicensePlateValid() ? 'not-allowed' : 'pointer'"
-        >
-          {{ 'PARKING.AUX.EIGHTH' | translate }}
-        </button>
+      <div style="margin-bottom: 1rem;">
+        <label style="display: block; font-weight: bold; margin-bottom: 0.5rem; font-size: 0.95rem;">{{ 'PAPID.LICENCE' | translate }}</label>
+        <input type="text" [(ngModel)]="licensePlate" placeholder="Ej: 1234BBB" style="width: 100%; padding: 0.6rem; border: 1px solid #ccc; border-radius: 4px; font-size: 1.1rem; text-transform: uppercase; box-sizing: border-box;" />
+        <small *ngIf="licensePlate && !isLicensePlateValid()" style="color: #dc3545; display: block; margin-top: 0.25rem;">
+          Por favor, introduce una matrícula válida (4 números y 3 letras, sin espacios).
+        </small>
       </div>
     </div>
+
+    <div style="display: flex; justify-content: flex-end; gap: 10px;">
+      <button class="btn btn-outline-secondary" (click)="showConfirmModal = false">{{ 'PARKING.AUX.SEVENTH' | translate }}</button>
+      <button class="btn btn-primary" (click)="confirmBooking()" [disabled]="!isLicensePlateValid()" [style.opacity]="!isLicensePlateValid() ? '0.5' : '1'" [style.cursor]="!isLicensePlateValid() ? 'not-allowed' : 'pointer'">
+        {{ 'PARKING.AUX.EIGHTH' | translate }}
+      </button>
+    </div>
+  </div>
+</div>
+
+<div class="lightbox" *ngIf="showMapModal" (click)="closeMapModal()">
+  <div class="modal-content-wrapper" (click)="$event.stopPropagation()" style="background: white; padding: 1.5rem; border-radius: 8px; max-width: 700px; width: 95%; position: relative;">
+    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem;">
+      <h3 style="margin: 0; font-size: 1.3rem;"><i class="fa-solid fa-map"></i> Ubicación de {{ parking?.name }}</h3>
+      <button (click)="closeMapModal()" style="background: none; border: none; font-size: 1.8rem; cursor: pointer; line-height: 1;">&times;</button>
+    </div>
+
+    <div style="width: 100%; height: 450px; border-radius: 6px; overflow: hidden; border: 1px solid #ccc;">
+      <iframe *ngIf="mapUrl" width="100%" height="100%" frameborder="0" style="border:0;" allowfullscreen="" loading="lazy" referrerpolicy="no-referrer-when-downgrade" [src]="mapUrl"></iframe>
+    </div>
+
+    <div style="display: flex; justify-content: flex-end; margin-top: 1rem;">
+      <button class="btn btn-secondary" (click)="closeMapModal()">Cerrar</button>
+    </div>
+  </div>
 </div>
 
 <ng-template #loadingTpl>
