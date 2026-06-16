@@ -63,9 +63,9 @@ class EmailService:
             email=destinatario,
             verification_url=verification_url
         )
-        plain_txt = f"Hola {destinatario}, bienvenido a HEMEN-GO. Accede aquí: {login_url}"
+        plain_txt = f"Hola {destinatario}, bienvenido a HEMEN-GO. Accede aquí: {verification_url}"
         return cls.base_mail(destinatario, asunto, html_content, plain_txt)
-
+    
     @classmethod
     def forgot(cls, destinatario: str, user_name: str, recovery_url: str):
         asunto = "HEMEN-GO - Recuperar acceso a tu cuenta"

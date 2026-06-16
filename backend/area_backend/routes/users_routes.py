@@ -137,7 +137,7 @@ def registrar_usuario():
     if password != confirmPassword:
         return jsonify({"error": "Las contraseñas introducidas no coinciden"}), 400
 
-    is_valid, mensagge = PasswordValidator.validar(password)
+    is_valid, mensagge = PasswordValidator.validar(password, email)
     if not is_valid:
         return jsonify({"error": mensagge}), 400
       
@@ -161,7 +161,7 @@ def registrar_usuario():
         db.session.rollback()
         return jsonify({"error": "Error al registrar el usuario"}), 500
     try:
-        EmailService.welcome(email, email)
+        EmailService.welcome(email,verification_token)
         db.session.commit()
         return jsonify({
             "mensaje": "Usuario registrado con éxito",
@@ -442,3 +442,42 @@ def restablecer_password():
         return jsonify({"message": "Contraseña actualizada correctamente"}), 200
     except Exception as e:
         return jsonify({"error": "Error interno al procesar la solicitud", "details": str(e)}), 500
+      
+@users_bp.route('/verify', methods=['GET'])
+def verify_account():
+    """
+    Endpoint para verificar la cuenta de usuario mediante el token enviado por correo.
+    Se accede mediante un GET (ej: /api/users/verify?token=XYZ...)
+    """
+    token = request.args.get('token')
+    
+    if not token:
+        return jsonify({
+            "status": "error",
+            "message": "Falta el token de verificación."
+        }), 400
+
+    user = Users.query.filter_by(verification_token=token).first()
+
+    if not user:
+        return jsonify({
+            "status": "error",
+            "message": "El token no es válido o ya ha sido utilizado."
+        }), 400
+
+    try:
+        user.is_verified = True
+        user.verification_token = None
+        db.session.commit()
+
+        return jsonify({
+            "status": "success",
+            "message": "¡Cuenta verificada con éxito! Ya puedes iniciar sesión."
+        }), 200
+
+    except Exception as e:
+        db.session.rollback()
+        return jsonify({
+            "status": "error",
+            "message": f"Hubo un problema al verificar la cuenta: {str(e)}"
+        }), 500
