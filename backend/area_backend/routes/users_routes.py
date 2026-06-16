@@ -325,13 +325,17 @@ def autenticar_usuario():
 
     # 3. Verificar si el email ya existe en PostgreSQL
     usuario_existente = Users.query.filter_by(email=email).first()
-    
     if not usuario_existente:
         return jsonify({"error": "Credenciales incorrectas"}), 401
 
     coincide = check_password_hash(usuario_existente.pass_user, password)
     if not coincide:
         return jsonify({"error": "Credenciales incorrectas"}), 401
+
+    # 3.1 Impedir que admins entren por el login de cliente
+    perfil = usuario_existente.profile
+    if perfil and perfil.role.value in ['admin', 'super_admin']:
+        return jsonify({"error": "Debes iniciar sesión desde el acceso de administrador"}), 403
 
     if not usuario_existente.is_verified:
         return jsonify({"error": "Debes verificar tu correo electrónico antes de iniciar sesión"}), 403
@@ -343,16 +347,43 @@ def autenticar_usuario():
         return jsonify({
         "mensaje": "¡Login exitoso!",
         "token": token_acceso,
-        "user": {
-            "id": usuario_existente.id,
-            #"nombre": usuario_existente.nombre,
-            "email": usuario_existente.email
-        }
+        "user": _user_to_frontend_dict(usuario_existente)
         }), 200
     except Exception as e:
         db.session.rollback()
         return jsonify({"error": "Error interno al guardar en la base de datos"}), 500
       
+@users_bp.route('/admin-login', methods=['POST'])
+def autenticar_admin():
+    datos = request.get_json() or {}
+    email = datos.get('email')
+    password = datos.get('password')
+
+    if not email or not password:
+        return jsonify({"error": "Todos los campos son obligatorios (email, password)"}), 400
+
+    usuario = Users.query.filter_by(email=email).first()
+    if not usuario:
+        return jsonify({"error": "Credenciales incorrectas"}), 401
+
+    if not check_password_hash(usuario.pass_user, password):
+        return jsonify({"error": "Credenciales incorrectas"}), 401
+
+    if not usuario.is_verified:
+        return jsonify({"error": "Debes verificar tu correo electrónico antes de iniciar sesión"}), 403
+
+    profile = usuario.profile
+    if not profile or profile.role.value not in ['admin', 'super_admin']:
+        return jsonify({"error": "No tienes permisos de administrador"}), 403
+
+    token_acceso = create_access_token(identity=str(usuario.id))
+    return jsonify({
+        "mensaje": "¡Login exitoso!",
+        "token": token_acceso,
+        "user": _user_to_frontend_dict(usuario)
+    }), 200
+
+
 @users_bp.route('/perfil', methods=['GET'])
 @jwt_required() # <--- Este decorador obliga a que la petición lleve un token válido
 def obtener_perfil():
