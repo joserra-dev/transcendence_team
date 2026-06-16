@@ -18,7 +18,7 @@ export class Login {
   private authService = inject(Auth);
   private router = inject(Router);
   private route = inject(ActivatedRoute);
-
+  hidePassword = true;
   errorMessage: string = '';
   isLoading: boolean = false;
   isRecoveryLoading: boolean = false;

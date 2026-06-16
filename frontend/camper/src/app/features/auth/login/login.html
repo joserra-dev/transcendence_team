@@ -23,18 +23,31 @@
     </div>
 
     <div class="form-group-standard">
-        <label class="form-label-custom" for="password">{{ 'LOGIN.PASSWORD' | translate }}</label>
+    <label class="form-label-custom" for="password">{{ 'LOGIN.PASSWORD' | translate }}</label>
+    
+    <div class="password-wrapper">
         <input
             id="password"
-            type="password" minlength="8" maxlength="254"
+            [type]="hidePassword ? 'password' : 'text'" 
+            minlength="8" 
+            maxlength="254"
             formControlName="password"
             placeholder="******"
-            [class.error-input]="isFieldInvalid('password')"
-        >
-        <div class="error-msg-standard" *ngIf="isFieldInvalid('password')">
-            <small>{{ 'LOGIN.ERROR.REQUIRED_PASSWORD' | translate }}</small>
-        </div>
+            [class.error-input]="isFieldInvalid('password')">
+        
+        <button 
+            type="button" 
+            class="toggle-password-btn" 
+            (click)="hidePassword = !hidePassword"
+            [attr.aria-label]="hidePassword ? 'Mostrar contraseña' : 'Ocultar contraseña'">
+            <i class="fa" [ngClass]="hidePassword ? 'fa-eye-slash' : 'fa-eye'"></i>
+        </button>
     </div>
+
+    <div class="error-msg-standard" *ngIf="isFieldInvalid('password')">
+        <small>{{ 'LOGIN.ERROR.REQUIRED_PASSWORD' | translate }}</small>
+    </div>
+</div>
 
     <button type="button" class="btn-link-recovery" (click)="openRecoveryModal()">
       {{ 'LOGIN.FORGOT_PASSWORD' | translate }}
