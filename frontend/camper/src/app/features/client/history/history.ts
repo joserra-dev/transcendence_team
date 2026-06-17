@@ -72,7 +72,7 @@ export class History implements OnInit {
 
       if (filters.nombreParking) {
         const searchStr = filters.nombreParking.toLowerCase();
-        const pName = booking.parkingNombre ? booking.parkingNombre.toLowerCase() : '';
+        const pName = booking.parkingName ? booking.parkingName.toLowerCase() : '';
         matches = matches && pName.includes(searchStr);
       }
 

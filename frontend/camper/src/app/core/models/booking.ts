@@ -31,7 +31,7 @@ export interface BookingHistoryResponse {
   usuarioEmail: string;
   plazaId: number;
   parkingId: number;
-  parkingNombre: string;
+  parkingName: string;
   precio: number;
   precioTotal: number;
   fecInicio: string | null;

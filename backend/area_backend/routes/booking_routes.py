@@ -166,9 +166,9 @@ def create_booking():
     # Validar solapamiento de usuario (el usuario ya tiene una reserva en esas fechas en cualquier plaza)
     user_overlap = Booking.query.filter(
         Booking.id_user == int(user_id),
-        Booking.fecha_inicio_reserva <= fec_fin,
-        Booking.fecha_fin_reserva >= fec_inicio,
-        Booking.estado_reserva == "1" # Solo solapa con reservas activas/confirmadas
+        Booking.start_date <= start_date,
+        Booking.end_date >= end_date,
+        Booking.status == "1" # Solo solapa con reservas activas/confirmadas
     ).first()
 
     if user_overlap:

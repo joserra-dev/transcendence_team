@@ -37,7 +37,7 @@
           <i class="fa-solid fa-location-dot"></i>
           <input
             type="text"
-            formControlName="nombreParking"
+            formControlName="parkingName"
             placeholder="{{ 'HISTORY.PARKING' | translate }}"
           >
         </div>
@@ -94,7 +94,7 @@
     >
       <div class="card-header">
         <div>
-          <h3>{{ booking.parkingNombre || ('HISTORY.PARKING_GENERIC' | translate) }}</h3>
+          <h3>{{ booking.parkingName || ('HISTORY.PARKING_GENERIC' | translate) }}</h3>
           <small>
             {{ 'HISTORY.REQUEST_DATE' | translate }}:
             {{ booking.fecAlta | date:'dd/MM/yyyy' }}
