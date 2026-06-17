@@ -29,6 +29,12 @@ export class ResetPassword {
   });
 
   ngOnInit(): void {
+    const resetStatus = this.route.snapshot.queryParamMap.get('reset');
+    if (resetStatus === '0') {
+      this.errorMessage = 'RESET_PASSWORD.ERRORS.INVALID_TOKEN';
+      return;
+    }
+
     this.token = this.route.snapshot.queryParamMap.get('token') ?? '';
     if (!this.token) {
       this.errorMessage = 'RESET_PASSWORD.ERRORS.TOKEN_MISSING';

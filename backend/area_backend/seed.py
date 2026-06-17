@@ -170,7 +170,11 @@ def _seed_users() -> int:
             company = _get_or_create_company(company_name, company_cif, tbai_enabled, tbai_license)
             profile_data["company_id"] = company.id
 
-        user = Users(email=user_data["email"], pass_user=password_hash)
+        user = Users(
+            email=user_data["email"],
+            pass_user=password_hash,
+            is_verified=True,
+        )
         db.session.add(user)
         db.session.flush()
 
@@ -210,10 +214,23 @@ def _seed_parkings() -> int:
     return created
 
 
+def _ensure_seed_users_verified() -> None:
+    seed_emails = [user_data["email"] for user_data in SEED_USERS]
+    updated = False
+    for email in seed_emails:
+        user = Users.query.filter_by(email=email).first()
+        if user and not user.is_verified:
+            user.is_verified = True
+            updated = True
+    if updated:
+        db.session.commit()
+
+
 def seed_database() -> None:
     """Inserta datos de desarrollo si las tablas están vacías."""
     users_created = _seed_users()
     parkings_created = _seed_parkings()
+    _ensure_seed_users_verified()
 
     if users_created or parkings_created:
         db.session.commit()

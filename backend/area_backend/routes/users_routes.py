@@ -1,5 +1,6 @@
-from datetime import timedelta
-from flask import Blueprint, jsonify, request,current_app
+from datetime import timedelta, datetime
+import os
+from flask import Blueprint, jsonify, request, current_app, redirect
 from sqlalchemy import func
 from werkzeug.security import generate_password_hash, check_password_hash 
 from flask_jwt_extended import create_access_token, decode_token,jwt_required, get_jwt_identity
@@ -60,6 +61,28 @@ users_bp = Blueprint('users_bp', __name__, url_prefix='/api/users')
 def _build_frontend_url(path: str) -> str:
     frontend_url = current_app.config.get('FRONTEND_URL', 'http://localhost:8001').rstrip('/')
     return f"{frontend_url}/{path.lstrip('/')}"
+
+
+def _build_backend_url(path: str) -> str:
+    backend_url = os.getenv('URL_BACK', 'http://localhost:5000').rstrip('/')
+    return f"{backend_url}/{path.lstrip('/')}"
+
+
+def _find_user_by_reset_token(token: str):
+    if not token:
+        return None
+    usuario = Users.query.filter_by(reset_password_token=token).first()
+    if not usuario or not usuario.reset_password_expires:
+        return None
+    if usuario.reset_password_expires < datetime.utcnow():
+        return None
+    return usuario
+
+
+def _clear_reset_token(usuario: Users) -> None:
+    usuario.reset_password_token = None
+    usuario.reset_password_expires = None
+    usuario.password_reset_verified = False
 
 @users_bp.route('', methods=['GET'])
 def obtener_usuarios():
@@ -163,13 +186,48 @@ def registrar_usuario():
     try:
         EmailService.welcome(email,verification_token)
         db.session.commit()
+<<<<<<< HEAD
         return jsonify({
             "mensaje": "Usuario registrado con éxito",
             "usuario": nuevo_usuario.to_dict()
         }), 201
     except Exception as e:
+=======
+    except Exception:
+>>>>>>> feature/PanelAdmin
         db.session.rollback()
         return jsonify({"error": "Error al enviar el mail de bienvenida"}), 500
+
+    try:
+        EmailService.welcome(email, verification_token)
+    except Exception as e:
+        current_app.logger.error(f"Error enviando correo de bienvenida a {email}: {e}")
+
+    return jsonify({
+        "mensaje": "Usuario registrado con éxito. Revisa tu correo para verificar la cuenta.",
+        "usuario": nuevo_usuario.to_dict()
+    }), 201
+
+
+@users_bp.route('/verify', methods=['GET'])
+def verificar_cuenta():
+    token = request.args.get('token')
+    if not token:
+        return redirect(_build_frontend_url('auth/login-client?verified=0'))
+
+    usuario = Users.query.filter_by(verification_token=token).first()
+    if not usuario:
+        return redirect(_build_frontend_url('auth/login-client?verified=0'))
+
+    usuario.is_verified = True
+    usuario.verification_token = None
+    try:
+        db.session.commit()
+    except Exception:
+        db.session.rollback()
+        return redirect(_build_frontend_url('auth/login-client?verified=0'))
+
+    return redirect(_build_frontend_url('auth/login-client?verified=1'))
 
 
 @users_bp.route('/me', methods=['GET'])
@@ -288,13 +346,27 @@ def autenticar_usuario():
 
     # 3. Verificar si el email ya existe en PostgreSQL
     usuario_existente = Users.query.filter_by(email=email).first()
+<<<<<<< HEAD
     
     if not usuario_existente or usuario_existente.is_verified == False:
         return jsonify({"error": "Usuario no existe "}), 401
     
+=======
+    if not usuario_existente:
+        return jsonify({"error": "Credenciales incorrectas"}), 401
+
+>>>>>>> feature/PanelAdmin
     coincide = check_password_hash(usuario_existente.pass_user, password)
     if not coincide:
-       return jsonify({"error": "Credenciales incorrectas"}), 401
+        return jsonify({"error": "Credenciales incorrectas"}), 401
+
+    # 3.1 Impedir que admins entren por el login de cliente
+    perfil = usuario_existente.profile
+    if perfil and perfil.role.value in ['admin', 'super_admin']:
+        return jsonify({"error": "Debes iniciar sesión desde el acceso de administrador"}), 403
+
+    if not usuario_existente.is_verified:
+        return jsonify({"error": "Debes verificar tu correo electrónico antes de iniciar sesión"}), 403
    
     # Modifica la línea 162 para pasarle el ID como string:
     token_acceso = create_access_token(identity=str(usuario_existente.id))
@@ -309,6 +381,37 @@ def autenticar_usuario():
         db.session.rollback()
         return jsonify({"error": "Error interno al guardar en la base de datos"}), 500
       
+@users_bp.route('/admin-login', methods=['POST'])
+def autenticar_admin():
+    datos = request.get_json() or {}
+    email = datos.get('email')
+    password = datos.get('password')
+
+    if not email or not password:
+        return jsonify({"error": "Todos los campos son obligatorios (email, password)"}), 400
+
+    usuario = Users.query.filter_by(email=email).first()
+    if not usuario:
+        return jsonify({"error": "Credenciales incorrectas"}), 401
+
+    if not check_password_hash(usuario.pass_user, password):
+        return jsonify({"error": "Credenciales incorrectas"}), 401
+
+    if not usuario.is_verified:
+        return jsonify({"error": "Debes verificar tu correo electrónico antes de iniciar sesión"}), 403
+
+    profile = usuario.profile
+    if not profile or profile.role.value not in ['admin', 'super_admin']:
+        return jsonify({"error": "No tienes permisos de administrador"}), 403
+
+    token_acceso = create_access_token(identity=str(usuario.id))
+    return jsonify({
+        "mensaje": "¡Login exitoso!",
+        "token": token_acceso,
+        "user": _user_to_frontend_dict(usuario)
+    }), 200
+
+
 @users_bp.route('/perfil', methods=['GET'])
 @jwt_required() # <--- Este decorador obliga a que la petición lleve un token válido
 def obtener_perfil():
@@ -382,12 +485,18 @@ def solicitar_recuperacion():
     usuario = Users.query.filter(func.lower(Users.email) == normalized_email).first()
 
     if usuario:
-        token_seguro = create_access_token(
-            identity=str(usuario.id),
-            expires_delta=timedelta(hours=1),
-            additional_claims={"purpose": "password_reset"}
-        )
-        url_recuperacion = _build_frontend_url(f"auth/reset-password?token={token_seguro}")
+        reset_token = secrets.token_urlsafe(32)
+        usuario.reset_password_token = reset_token
+        usuario.reset_password_expires = datetime.utcnow() + timedelta(hours=1)
+        usuario.password_reset_verified = False
+        try:
+            db.session.commit()
+        except Exception as e:
+            db.session.rollback()
+            current_app.logger.error(f"Error guardando token de recuperación: {e}")
+            return jsonify({"error": "Error interno al procesar la solicitud"}), 500
+
+        url_recuperacion = _build_backend_url(f"api/users/reset-password/verify?token={reset_token}")
 
         try:
             EmailService.forgot(
@@ -403,6 +512,30 @@ def solicitar_recuperacion():
     return jsonify({"message": "Si el correo existe, se enviarán las instrucciones."}), 200
 
 
+@users_bp.route('/reset-password/verify', methods=['GET'])
+def verificar_reset_password():
+    token = request.args.get('token')
+    if not token:
+        return redirect(_build_frontend_url('auth/reset-password?reset=0'))
+
+    usuario = Users.query.filter_by(reset_password_token=token).first()
+    if not usuario or not usuario.reset_password_expires or usuario.reset_password_expires < datetime.utcnow():
+        return redirect(_build_frontend_url('auth/reset-password?reset=0'))
+
+    form_token = secrets.token_urlsafe(32)
+    usuario.password_reset_verified = True
+    usuario.reset_password_token = form_token
+    usuario.reset_password_expires = datetime.utcnow() + timedelta(hours=1)
+
+    try:
+        db.session.commit()
+    except Exception:
+        db.session.rollback()
+        return redirect(_build_frontend_url('auth/reset-password?reset=0'))
+
+    return redirect(_build_frontend_url(f'auth/reset-password?token={form_token}'))
+
+
 @users_bp.route('/reset-password', methods=['POST'])
 def restablecer_password():
     data = request.get_json() or {}
@@ -416,26 +549,12 @@ def restablecer_password():
     if new_password != confirm_password:
         return jsonify({"error": "Las contraseñas introducidas no coinciden"}), 400
 
-    try:
-        decoded_token = decode_token(token)
-    except Exception:
+    usuario = _find_user_by_reset_token(token)
+    if not usuario or not usuario.password_reset_verified:
         return jsonify({"error": "El enlace de recuperación no es válido o ha caducado"}), 400
-
-    if decoded_token.get('purpose') != 'password_reset':
-        return jsonify({"error": "El enlace de recuperación no es válido o ha caducado"}), 400
-
-    user_id = decoded_token.get('sub')
-    try:
-        user_id = int(user_id)
-    except (TypeError, ValueError):
-        return jsonify({"error": "El enlace de recuperación no es válido o ha caducado"}), 400
-
-    usuario = Users.query.get(user_id)
-
-    if not usuario:
-        return jsonify({"error": "Usuario no encontrado"}), 404
 
     usuario.pass_user = generate_password_hash(new_password)
+    _clear_reset_token(usuario)
 
     try:
         db.session.commit()

@@ -41,8 +41,13 @@
       "INVALID_EMAIL": "Email format is invalid.",
       "REQUIRED_PASSWORD": "Password is required.",
       "INVALID_CREDENTIALS": "Invalid credentials. Check your email and password.",
+      "NOT_VERIFIED": "You must verify your email before logging in.",
       "TIMEOUT": "The server is taking too long to respond. Please try again later.",
       "UNKNOWN": "An unexpected error occurred. Try again later."
+    },
+    "VERIFY": {
+      "SUCCESS": "Account verified successfully. You can now log in.",
+      "ERROR": "The verification link is invalid or has expired."
     }
   },
 
@@ -70,7 +75,7 @@
     "TITLE": "Sign up",
     "BUTTON": "Create account",
     "LOADING": "Processing...",
-    "SUCCESS": "Registration completed successfully.",
+    "SUCCESS": "Registration complete. Check your email and click the verification link to activate your account.",
 
     "FIELDS": {
       "NAME": "Name *",

@@ -20,6 +20,8 @@ export class Login {
   private route = inject(ActivatedRoute);
   hidePassword = true;
   errorMessage: string = '';
+  verifyMessage: string = '';
+  verifyMessageType: 'success' | 'error' | '' = '';
   isLoading: boolean = false;
   isRecoveryLoading: boolean = false;
   recoveryMessage: string = '';
@@ -39,6 +41,15 @@ export class Login {
 
   ngOnInit(): void {
     this.returnUrl = this.route.snapshot.queryParams['returnUrl'] || '/public';
+
+    const verified = this.route.snapshot.queryParams['verified'];
+    if (verified === '1') {
+      this.verifyMessage = 'LOGIN.VERIFY.SUCCESS';
+      this.verifyMessageType = 'success';
+    } else if (verified === '0') {
+      this.verifyMessage = 'LOGIN.VERIFY.ERROR';
+      this.verifyMessageType = 'error';
+    }
   }
 
   isFieldInvalid(fieldName: string): boolean {
@@ -124,6 +135,8 @@ export class Login {
       error: (err) => {
         if (err instanceof TimeoutError) {
              this.errorMessage = 'LOGIN.ERROR.TIMEOUT';
+        } else if (err.status === 403) {
+          this.errorMessage = err.error?.error || 'LOGIN.ERROR.NOT_VERIFIED';
         } else if (err.status === 401 || err.status === 404) {
           this.errorMessage = 'LOGIN.ERROR.INVALID_CREDENTIALS';
         } else {

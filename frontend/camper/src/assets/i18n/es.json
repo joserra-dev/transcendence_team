@@ -41,8 +41,13 @@
       "INVALID_EMAIL": "Formato de email incorrecto.",
       "REQUIRED_PASSWORD": "La contraseña es obligatoria.",
       "INVALID_CREDENTIALS": "Credenciales inválidas. Comprueba tu email y contraseña.",
+      "NOT_VERIFIED": "Debes verificar tu correo electrónico antes de iniciar sesión.",
       "TIMEOUT": "El servidor tarda demasiado en responder. Inténtalo más tarde.",
       "UNKNOWN": "Ocurrió un error inesperado. Inténtalo más tarde."
+    },
+    "VERIFY": {
+      "SUCCESS": "Cuenta verificada correctamente. Ya puedes iniciar sesión.",
+      "ERROR": "El enlace de verificación no es válido o ha caducado."
     }
   },
 
@@ -70,7 +75,7 @@
     "TITLE": "Registro de Usuario",
     "BUTTON": "Crear cuenta",
     "LOADING": "Procesando...",
-    "SUCCESS": "Registro completado correctamente.",
+    "SUCCESS": "Registro completado. Revisa tu correo y haz clic en el enlace de verificación para activar tu cuenta.",
 
     "FIELDS": {
       "NAME": "Nombre *",
