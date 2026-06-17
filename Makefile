@@ -96,6 +96,7 @@ env:
 		echo "POSTGRES_DB=$$db_name" >> .env;\
 		echo "POSTGRES_USER=$$db_user" >> .env;\
 		echo "POSTGRES_PASSWORD=$$db_pass" >> .env;\
+		echo "POSTGRES_PORT=$$db_port" >> .env;\
 		echo "DATABASE_URL=postgresql://$$db_user:$$db_pass@db:$$db_port/$$db_name" >> .env; \
 		\
 		echo ""; \
