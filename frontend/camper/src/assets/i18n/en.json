@@ -11,6 +11,22 @@
     "LOGOUT": "Logout"
   },
 
+  "BREADCRUMB": {
+    "ARIA_LABEL": "Breadcrumb",
+    "HOME": "Home",
+    "PARKING_DETAIL": "Parking details",
+    "LOGIN": "Log in",
+    "LOGIN_ADMIN": "Admin login",
+    "REGISTER": "Sign up",
+    "RESET_PASSWORD": "Reset password",
+    "HISTORY": "Booking history",
+    "PROFILE": "My profile",
+    "BOOKING_DETAIL": "Booking details",
+    "DASHBOARD": "Admin dashboard",
+    "NEW_PARKING": "New parking",
+    "MANAGE_PARKING": "Manage parking"
+  },
+
   "FOOTER": {
     "CONTACT": "Contact Us",
     "PROJECT": "ft_transcendence"

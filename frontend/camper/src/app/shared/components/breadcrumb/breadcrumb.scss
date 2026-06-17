@@ -1,0 +1,45 @@
+@use "../../../../styles/abstracts/variables" as *;
+
+.breadcrumb-nav {
+  background-color: $color-page-bg;
+  border-bottom: 1px solid rgba($color-border, 0.35);
+  padding: 0.5rem 0;
+}
+
+.breadcrumb {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.35rem;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  font-family: $font-body;
+  font-size: 0.875rem;
+}
+
+.breadcrumb-item {
+  display: inline-flex;
+  align-items: center;
+  color: $color-grey-soft;
+
+  &:not(:last-child)::after {
+    content: '>';
+    margin-left: 0.35rem;
+    color: $color-primary-gray;
+  }
+
+  a {
+    color: $color-primary;
+    text-decoration: none;
+
+    &:hover {
+      text-decoration: underline;
+    }
+  }
+
+  &.active span {
+    color: $color-grey-main;
+    font-weight: $font-weight-medium;
+  }
+}

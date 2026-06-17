@@ -14,18 +14,27 @@ export const CLIENT_ROUTES: Routes = [
     path: 'history', // URL: /client/history
     component: History,
     title: 'Mis Reservas',
-    canActivate: [authGuard]
+    canActivate: [authGuard],
+    data: { breadcrumb: 'BREADCRUMB.HISTORY' },
   },
   {
     path: 'profile', // URL: /client/profile
     component: Profile,
     title: 'Mis Datos',
-    canActivate: [authGuard]
+    canActivate: [authGuard],
+    data: { breadcrumb: 'BREADCRUMB.PROFILE' },
   },
   {
     path: 'booking/:id', // Ruta para el detalle
     component: BookingDetail,
     title: 'Detalle de Reserva',
-    canActivate: [authGuard]
+    canActivate: [authGuard],
+    data: {
+      breadcrumbs: [
+        { labelKey: 'BREADCRUMB.HOME', url: '/' },
+        { labelKey: 'BREADCRUMB.HISTORY', url: '/client/history' },
+        { labelKey: 'BREADCRUMB.BOOKING_DETAIL' },
+      ],
+    },
   }
 ];

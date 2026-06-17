@@ -11,6 +11,22 @@
     "LOGOUT": "Cerrar sesión"
   },
 
+  "BREADCRUMB": {
+    "ARIA_LABEL": "Migas de pan",
+    "HOME": "Inicio",
+    "PARKING_DETAIL": "Detalle del parking",
+    "LOGIN": "Identifícate",
+    "LOGIN_ADMIN": "Acceso administrador",
+    "REGISTER": "Registrarse",
+    "RESET_PASSWORD": "Restablecer contraseña",
+    "HISTORY": "Historial de reservas",
+    "PROFILE": "Mis datos",
+    "BOOKING_DETAIL": "Detalle de reserva",
+    "DASHBOARD": "Panel de administración",
+    "NEW_PARKING": "Nuevo parking",
+    "MANAGE_PARKING": "Gestionar parking"
+  },
+
   "FOOTER": {
     "CONTACT": "Contáctanos",
     "PROJECT": "ft_transcendence "

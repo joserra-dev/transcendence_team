@@ -8,7 +8,15 @@ export const PUBLIC_ROUTES: Routes = [
     component: SearchParking,
     title: 'Buscar Parking'
   },
-  { path: 'parking/:id', 
+  {
+    path: 'parking/:id',
     component: ParkingDetail,
-    title: 'Detalles Parking' }
+    title: 'Detalles Parking',
+    data: {
+      breadcrumbs: [
+        { labelKey: 'BREADCRUMB.HOME', url: '/' },
+        { labelKey: 'BREADCRUMB.PARKING_DETAIL' },
+      ],
+    },
+  }
 ];
