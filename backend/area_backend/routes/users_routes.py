@@ -186,15 +186,11 @@ def registrar_usuario():
     try:
         EmailService.welcome(email,verification_token)
         db.session.commit()
-<<<<<<< HEAD
         return jsonify({
             "mensaje": "Usuario registrado con éxito",
             "usuario": nuevo_usuario.to_dict()
         }), 201
     except Exception as e:
-=======
-    except Exception:
->>>>>>> feature/PanelAdmin
         db.session.rollback()
         return jsonify({"error": "Error al enviar el mail de bienvenida"}), 500
 
@@ -346,16 +342,10 @@ def autenticar_usuario():
 
     # 3. Verificar si el email ya existe en PostgreSQL
     usuario_existente = Users.query.filter_by(email=email).first()
-<<<<<<< HEAD
-    
+
     if not usuario_existente or usuario_existente.is_verified == False:
         return jsonify({"error": "Usuario no existe "}), 401
     
-=======
-    if not usuario_existente:
-        return jsonify({"error": "Credenciales incorrectas"}), 401
-
->>>>>>> feature/PanelAdmin
     coincide = check_password_hash(usuario_existente.pass_user, password)
     if not coincide:
         return jsonify({"error": "Credenciales incorrectas"}), 401
