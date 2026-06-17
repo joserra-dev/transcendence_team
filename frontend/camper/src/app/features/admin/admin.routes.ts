@@ -13,18 +13,33 @@ export const ADMIN_ROUTES: Routes = [
     path: 'dashboard',
     component: Dashboard,
     title: 'Admin Dashboard',
-    canActivate: [adminGuard]
+    canActivate: [adminGuard],
+    data: { breadcrumb: 'BREADCRUMB.DASHBOARD' },
   },
   {
     path: 'parking/new',
     component: ManageParking,
     title: 'Nuevo Parking',
-    canActivate: [adminGuard]
+    canActivate: [adminGuard],
+    data: {
+      breadcrumbs: [
+        { labelKey: 'BREADCRUMB.HOME', url: '/' },
+        { labelKey: 'BREADCRUMB.DASHBOARD', url: '/admin/dashboard' },
+        { labelKey: 'BREADCRUMB.NEW_PARKING' },
+      ],
+    },
   },
   {
     path: 'parking/:id',
     component: ManageParking,
     title: 'Gestionar Parking',
-    canActivate: [adminGuard]
+    canActivate: [adminGuard],
+    data: {
+      breadcrumbs: [
+        { labelKey: 'BREADCRUMB.HOME', url: '/' },
+        { labelKey: 'BREADCRUMB.DASHBOARD', url: '/admin/dashboard' },
+        { labelKey: 'BREADCRUMB.MANAGE_PARKING' },
+      ],
+    },
   }
 ];

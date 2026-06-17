@@ -11,6 +11,22 @@
     "LOGOUT": "Irten"
   },
 
+  "BREADCRUMB": {
+    "ARIA_LABEL": "Ogi-harrak",
+    "HOME": "Hasiera",
+    "PARKING_DETAIL": "Aparkalekuaren xehetasunak",
+    "LOGIN": "Saioa hasi",
+    "LOGIN_ADMIN": "Administratzaile sarbidea",
+    "REGISTER": "Erregistratu",
+    "RESET_PASSWORD": "Pasahitza berrezarri",
+    "HISTORY": "Erreserben historia",
+    "PROFILE": "Nire datuak",
+    "BOOKING_DETAIL": "Erreserbaren xehetasunak",
+    "DASHBOARD": "Administrazio panela",
+    "NEW_PARKING": "Aparkaleku berria",
+    "MANAGE_PARKING": "Aparkalekua kudeatu"
+  },
+
   "FOOTER": {
     "CONTACT": "Jarri gurekin harremanetan",
     "PROJECT": "ft_transcendence"
