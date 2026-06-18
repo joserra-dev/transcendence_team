@@ -194,17 +194,6 @@ def registrar_usuario():
         db.session.rollback()
         return jsonify({"error": "Error al enviar el mail de bienvenida"}), 500
 
-    try:
-        EmailService.welcome(email, verification_token)
-    except Exception as e:
-        current_app.logger.error(f"Error enviando correo de bienvenida a {email}: {e}")
-
-    return jsonify({
-        "mensaje": "Usuario registrado con éxito. Revisa tu correo para verificar la cuenta.",
-        "usuario": nuevo_usuario.to_dict()
-    }), 201
-
-
 @users_bp.route('/verify', methods=['GET'])
 def verificar_cuenta():
     token = request.args.get('token')
