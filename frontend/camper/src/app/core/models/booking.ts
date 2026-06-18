@@ -27,16 +27,16 @@ export interface BookingRequest {
 
 export interface BookingHistoryResponse {
   id: number;
-  usuarioId: number;
-  usuarioEmail: string;
-  plazaId: number;
+  userId: number;
+  userEmail: string;
+  spaceId: number;
   parkingId: number;
   parkingName: string;
-  precio: number;
-  precioTotal: number;
-  fecInicio: string | null;
-  fecFin: string | null;
-  fecAlta: string;
-  estado: string;
-  puntuacion: number | null;
+  price: number;
+  totalPrice: number;
+  startDate: string | null;
+  endDate: string | null;
+  createDate: string;
+  status: string;
+  range: number | null;
 }

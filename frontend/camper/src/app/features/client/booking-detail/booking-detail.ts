@@ -25,8 +25,8 @@ export class BookingDetail implements OnInit {
   errorMessage = '';
   successMessage = '';
 
-  showQrModal = false;
-  currentQrCode: string | null = null;
+  showlPlateModal = false;
+  licensePlate: string | null = null;
 
   showRateModal = false;
   rateValue = 5;
@@ -84,27 +84,18 @@ export class BookingDetail implements OnInit {
   private handleCancelSuccess() {
     this.showSuccess('Reserva cancelada correctamente.');
     if (this.booking) {
-      this.booking.estado = '0';
+      this.booking.status = '0';
     }
     this.loadBooking(this.booking.id);
   }
 
 
-  viewQr() {
+  viewLicensePlate() {
     if (!this.booking) return;
     this.isLoading = true;
-
-    this.bookingService.getQrCode(this.booking.id).subscribe({
-      next: (qrBase64) => {
-        this.currentQrCode = qrBase64;
-        this.showQrModal = true;
-        this.isLoading = false;
-      },
-      error: (err) => {
-        this.handleError(err, 'No se pudo obtener el código QR.', true);
-        this.isLoading = false;
-      }
-    });
+    this.licensePlate = this.booking.licensePlate
+    this.showlPlateModal = true
+    this.isLoading = false;
   }
 
   rateBooking() {
@@ -135,9 +126,9 @@ export class BookingDetail implements OnInit {
     });
   }
 
-  closeQrModal() {
-    this.showQrModal = false;
-    this.currentQrCode = null;
+  closePlateModal() {
+    this.showlPlateModal = false;
+    this.licensePlate = null;
   }
 
   goBack() {
@@ -171,7 +162,7 @@ export class BookingDetail implements OnInit {
     this.errorMessage = errorMsg;
   }
 
-  getStatusLabel(estado: string): string {
-    return estado === '1' ? 'HISTORY_DETAIL.CONFIRMED' : 'HISTORY_DETAIL.CANCELLED';
+  getStatusLabel(status: string): string {
+    return status === '1' ? 'HISTORY_DETAIL.CONFIRMED' : 'HISTORY_DETAIL.CANCELLED';
   }
 }

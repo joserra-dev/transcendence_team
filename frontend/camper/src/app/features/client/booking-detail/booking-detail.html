@@ -24,19 +24,19 @@
   <div *ngIf="!isLoading && booking" class="booking-card">
     <header class="booking-header">
       <div>
-        <h2>{{ booking.parkingNombre }}</h2>
+        <h2>{{ booking.parkingName }}</h2>
         <small>
           {{ 'HISTORY_DETAIL.REQUEST_DATE' | translate }}:
-          {{ booking.fecAlta | date:'dd/MM/yyyy HH:mm' }}
+          {{ booking.createDate | date:'dd/MM/yyyy HH:mm' }}
         </small>
       </div>
 
       <span
         class="status"
-        [class.confirmed]="booking.estado === '1'"
-        [class.cancelled]="booking.estado === '0'"
+        [class.confirmed]="booking.status === '1'"
+        [class.cancelled]="booking.status === '0'"
       >
-        {{ getStatusLabel(booking.estado) | translate }}
+        {{ getStatusLabel(booking.status) | translate }}
       </span>
     </header>
 
@@ -44,27 +44,27 @@
       <section>
         <h3>{{ 'HISTORY_DETAIL.GENERAL' | translate }}</h3>
         <p><strong>{{ 'HISTORY_DETAIL.REFERENCE' | translate }}:</strong> #{{ booking.id }}</p>
-        <p><strong>{{ 'HISTORY_DETAIL.SPOT' | translate }}:</strong> {{ booking.plazaNombre }}</p>
+        <p><strong>{{ 'HISTORY_DETAIL.SPOT' | translate }}:</strong> {{ booking.spaceName }}</p>
       </section>
 
       <section>
         <h3>{{ 'HISTORY_DETAIL.STAY' | translate }}</h3>
-        <p><strong>{{ 'HISTORY_DETAIL.ENTRY' | translate }}:</strong> {{ booking.fecInicio | date:'dd/MM/yyyy' }}</p>
-        <p><strong>{{ 'HISTORY_DETAIL.EXIT' | translate }}:</strong> {{ booking.fecFin | date:'dd/MM/yyyy' }}</p>
-        <p><strong>{{ 'HISTORY_DETAIL.TOTAL' | translate }}:</strong> {{ booking.precioTotal | currency:'EUR' }}</p>
+        <p><strong>{{ 'HISTORY_DETAIL.ENTRY' | translate }}:</strong> {{ booking.starDate | date:'dd/MM/yyyy' }}</p>
+        <p><strong>{{ 'HISTORY_DETAIL.EXIT' | translate }}:</strong> {{ booking.endDate | date:'dd/MM/yyyy' }}</p>
+        <p><strong>{{ 'HISTORY_DETAIL.TOTAL' | translate }}:</strong> {{ booking.totalPrice | currency:'EUR' }}</p>
       </section>
 
       <section *ngIf="booking.puntuacion">
         <h3>{{ 'HISTORY_DETAIL.RATING' | translate }}</h3>
         <p class="rating">
-          {{ booking.puntuacion }} / 10 ★
+          {{ booking.range }} / 10 ★
         </p>
       </section>
     </div>
 
-    <div class="booking-actions" *ngIf="booking.estado === '1'">
-      <button class="btn btn-secondary" (click)="viewQr()">
-        {{ 'HISTORY_DETAIL.QR' | translate }}
+    <div class="booking-actions" *ngIf="booking.status === '1'">
+      <button class="btn btn-secondary" (click)="viewLicensePlate()">
+        {{ 'HISTORY_DETAIL.PLATE' | translate }}
       </button>
 
       <button class="btn btn-secondary" (click)="rateBooking()">
@@ -76,22 +76,23 @@
       </button>
     </div>
 
-    <p *ngIf="booking.estado === '0'" class="cancelled-msg">
+    <p *ngIf="booking.status === '0'" class="cancelled-msg">
       {{ 'HISTORY_DETAIL.CANCELLED_MSG' | translate }}
     </p>
   </div>
 </main>
 
-<div *ngIf="showQrModal" class="qr-modal" (click)="closeQrModal()">
+<div *ngIf="showlPlateModal" class="qr-modal" (click)="closePlateModal()">
   <div class="qr-box" (click)="$event.stopPropagation()">
     <div class="qr-header">
-      <h2>{{ 'HISTORY_DETAIL.QR_TITLE' | translate }}</h2>
-      <button (click)="closeQrModal()"></button>
+      <h2>{{ 'HISTORY_DETAIL.PLATE_TITLE' | translate }}</h2>
+      <button (click)="closePlateModal()"></button>
     </div>
 
     <div class="qr-body">
-      <img *ngIf="currentQrCode" [src]="'data:image/png;base64,' + currentQrCode">
-      <p *ngIf="!currentQrCode">{{ 'HISTORY_DETAIL.LOADING_QR' | translate }}</p>
+      
+      <p *ngIf="licensePlate">{{ booking.licensePlate }}</p>
+      <p *ngIf="!licensePlate">{{ 'HISTORY_DETAIL.LOADING_PLATE' | translate }}</p>
     </div>
   </div>
 </div>

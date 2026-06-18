@@ -42,7 +42,7 @@ export class History implements OnInit {
     this.bookingService.getHistory().subscribe({
       next: (data) => {
         this.allBookings = data.sort((a, b) => {
-          return new Date(b.fecAlta).getTime() - new Date(a.fecAlta).getTime();
+          return new Date(b.createDate).getTime() - new Date(a.createDate).getTime();
         });
 
         this.filteredBookings = [...this.allBookings];
@@ -62,12 +62,12 @@ export class History implements OnInit {
     this.filteredBookings = this.allBookings.filter(booking => {
       let matches = true;
 
-      if (filters.fechaDesde && booking.fecInicio) {
-        matches = matches && new Date(booking.fecInicio) >= new Date(filters.fechaDesde);
+      if (filters.fechaDesde && booking.startDate) {
+        matches = matches && new Date(booking.startDate) >= new Date(filters.fechaDesde);
       }
 
-      if (filters.fechaHasta && booking.fecFin) {
-        matches = matches && new Date(booking.fecFin) <= new Date(filters.fechaHasta);
+      if (filters.fechaHasta && booking.endDate) {
+        matches = matches && new Date(booking.endDate) <= new Date(filters.fechaHasta);
       }
 
       if (filters.nombreParking) {
@@ -76,8 +76,8 @@ export class History implements OnInit {
         matches = matches && pName.includes(searchStr);
       }
 
-      if (filters.estado && filters.estado !== '') {
-        matches = matches && booking.estado === filters.estado;
+      if (filters.status && filters.status !== '') {
+        matches = matches && booking.status === filters.estado;
       }
 
       return matches;

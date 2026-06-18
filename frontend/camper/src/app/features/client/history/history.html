@@ -90,23 +90,23 @@
     <article
       *ngFor="let booking of filteredBookings"
       class="history-card"
-      [class.cancelled]="booking.estado === '0'"
+      [class.cancelled]="booking.status === '0'"
     >
       <div class="card-header">
         <div>
           <h3>{{ booking.parkingName || ('HISTORY.PARKING_GENERIC' | translate) }}</h3>
           <small>
             {{ 'HISTORY.REQUEST_DATE' | translate }}:
-            {{ booking.fecAlta | date:'dd/MM/yyyy' }}
+            {{ booking.createDate | date:'dd/MM/yyyy' }}
           </small>
         </div>
 
         <span
           class="status"
-          [class.confirmed]="booking.estado === '1'"
-          [class.cancelled]="booking.estado === '0'"
+          [class.confirmed]="booking.status === '1'"
+          [class.cancelled]="booking.status === '0'"
         >
-          {{ getStatusLabel(booking.estado) | translate }}
+          {{ getStatusLabel(booking.status) | translate }}
         </span>
       </div>
 
@@ -116,21 +116,21 @@
           #{{ booking.id }}
         </p>
 
-        <p *ngIf="booking.fecInicio && booking.fecFin">
+        <p *ngIf="booking.startDate && booking.endDate">
           <strong>{{ 'HISTORY.DATES' | translate }}:</strong>
-          {{ booking.fecInicio | date:'dd/MM/yyyy' }}
+          {{ booking.startDate | date:'dd/MM/yyyy' }}
           –
-          {{ booking.fecFin | date:'dd/MM/yyyy' }}
+          {{ booking.endDate | date:'dd/MM/yyyy' }}
         </p>
 
         <p>
           <strong>{{ 'HISTORY.TOTAL' | translate }}:</strong>
-          {{ (booking.precioTotal > 0 ? booking.precioTotal : booking.precio) | currency:'EUR' }}
+          {{ (booking.totalPrice > 0 ? booking.totalPrice : booking.price) | currency:'EUR' }}
         </p>
 
-        <p *ngIf="booking.puntuacion">
+        <p *ngIf="booking.range">
           <strong>{{ 'HISTORY.RATING' | translate }}:</strong>
-          {{ booking.puntuacion }}/10
+          {{ booking.range }}/10
         </p>
       </div>
 
