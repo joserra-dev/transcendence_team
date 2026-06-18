@@ -153,13 +153,11 @@ def _get_or_create_company(name: str, cif: str | None = None, tbai_enabled: bool
 
 
 def _seed_users() -> int:
-    if Users.query.first():
-        return 0
-
     password_hash = generate_password_hash(DEFAULT_PASSWORD)
     created = 0
 
     for user_data in SEED_USERS:
+        existing = Users.query.filter_by(email=user_data["email"]).first()
         profile_data = user_data["profile"].copy()
         company_name = profile_data.pop("company_name", None)
         company_cif = profile_data.pop("company_cif", None)
@@ -169,6 +167,16 @@ def _seed_users() -> int:
         if company_name:
             company = _get_or_create_company(company_name, company_cif, tbai_enabled, tbai_license)
             profile_data["company_id"] = company.id
+
+        if existing:
+            existing.pass_user = password_hash
+            existing.is_verified = True
+            if existing.profile:
+                for key, value in profile_data.items():
+                    setattr(existing.profile, key, value)
+            else:
+                db.session.add(Profiles(user_id=existing.id, **profile_data))
+            continue
 
         user = Users(
             email=user_data["email"],
@@ -233,6 +241,8 @@ def seed_database() -> None:
     _ensure_seed_users_verified()
 
     if users_created or parkings_created:
+        db.session.commit()
+    elif Users.query.filter(Users.email.in_([u["email"] for u in SEED_USERS])).count():
         db.session.commit()
 
     if users_created:

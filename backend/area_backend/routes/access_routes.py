@@ -3,14 +3,21 @@ import re
 from datetime import date
 import cv2
 import numpy as np
-import easyocr
 # Importante añadir 'render_template'
 from flask import Blueprint, request, jsonify, render_template 
 from models.booking import Booking
 
 
 access_bp = Blueprint('access_bp', __name__)
-reader = easyocr.Reader(['es', 'en'], gpu=False)
+_reader = None
+
+
+def _get_reader():
+    global _reader
+    if _reader is None:
+        import easyocr
+        _reader = easyocr.Reader(['es', 'en'], gpu=False)
+    return _reader
 
 def clean_plate_text(text):
     return re.sub(r'[\s\-_.]', '', text).upper()
@@ -46,7 +53,7 @@ def verify_plate():
         gray = cv2.bilateralFilter(gray, 11, 17, 17)
 
         # Pasar OCR
-        results = reader.readtext(gray)
+        results = _get_reader().readtext(gray)
         detected_plate = ""
         for (bbox, text, prob) in results:
             cleaned = clean_plate_text(text)

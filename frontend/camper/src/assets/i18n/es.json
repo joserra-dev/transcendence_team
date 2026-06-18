@@ -24,7 +24,8 @@
     "BOOKING_DETAIL": "Detalle de reserva",
     "DASHBOARD": "Panel de administración",
     "NEW_PARKING": "Nuevo parking",
-    "MANAGE_PARKING": "Gestionar parking"
+    "MANAGE_PARKING": "Gestionar parking",
+    "MANAGE_USERS": "Gestionar usuarios"
   },
 
   "FOOTER": {
@@ -58,6 +59,7 @@
       "REQUIRED_PASSWORD": "La contraseña es obligatoria.",
       "INVALID_CREDENTIALS": "Credenciales inválidas. Comprueba tu email y contraseña.",
       "NOT_VERIFIED": "Debes verificar tu correo electrónico antes de iniciar sesión.",
+      "NO_ADMIN": "No tienes permisos de administrador.",
       "TIMEOUT": "El servidor tarda demasiado en responder. Inténtalo más tarde.",
       "UNKNOWN": "Ocurrió un error inesperado. Inténtalo más tarde."
     },
@@ -268,6 +270,53 @@
       "CANCEL": "Hubo un error al intentar cancelar la reserva.",
       "RATE": "Error al enviar la valoración.",
       "QR": "No se pudo obtener el código QR."
+    }
+  },
+
+  "ADMIN_DASHBOARD": {
+    "SUPER_TITLE": "Panel de superadministrador",
+    "ADMIN_TITLE": "Panel de administrador",
+    "WELCOME": "Hola, {{name}}",
+    "SUPER_DESC": "Gestiona anuncios, usuarios, permisos de admin y clientes finales.",
+    "ADMIN_DESC": "Gestiona los anuncios de tu empresa y las reservas de clientes.",
+    "MANAGE_ADS": "Anuncios de parkings",
+    "MANAGE_ADS_DESC": "Crear, editar y publicar anuncios de autocaravanas.",
+    "MANAGE_USERS": "Usuarios y permisos",
+    "MANAGE_USERS_DESC": "Crear usuarios, asignar admins y gestionar accesos.",
+    "ACTIVE": "Activo",
+    "INACTIVE": "Inactivo"
+  },
+
+  "ADMIN_USERS": {
+    "TITLE": "Usuarios y permisos",
+    "SUBTITLE": "Crea usuarios finales y concede permisos de administrador.",
+    "BACK": "Volver al panel",
+    "ADD": "Crear usuario",
+    "CANCEL": "Cancelar",
+    "CREATE_TITLE": "Nuevo usuario",
+    "EMAIL": "Email",
+    "PASSWORD": "Contraseña",
+    "NAME": "Nombre",
+    "LASTNAME": "Apellidos",
+    "DNI": "DNI",
+    "ROLE": "Rol",
+    "COMPANY": "Empresa",
+    "SELECT_COMPANY": "Selecciona empresa",
+    "SAVE": "Guardar usuario",
+    "LOADING": "Cargando usuarios...",
+    "ROLE_SUPER": "Superadmin",
+    "ROLE_ADMIN": "Admin",
+    "ROLE_USER": "Usuario",
+    "GRANT_ADMIN": "Dar permisos de admin",
+    "REVOKE_ADMIN": "Quitar permisos de admin",
+    "SUCCESS_CREATE": "Usuario creado correctamente.",
+    "SUCCESS_PROMOTE": "Permisos de admin concedidos.",
+    "SUCCESS_REVOKE": "Permisos de admin revocados.",
+    "ERRORS": {
+      "LOAD": "No se pudieron cargar los usuarios.",
+      "CREATE": "Error al crear el usuario.",
+      "UPDATE": "Error al actualizar permisos.",
+      "NO_COMPANY": "No hay empresas disponibles para asignar al admin."
     }
   },
 

@@ -1,7 +1,8 @@
 import { Routes } from '@angular/router';
 import { Dashboard } from './dashboard/dashboard';
 import { ManageParking } from './manage-parking/manage-parking';
-import { adminGuard } from '../../core/guards/admin.guard';
+import { ManageUsers } from './manage-users/manage-users';
+import { adminGuard, superAdminGuard } from '../../core/guards/admin.guard';
 
 export const ADMIN_ROUTES: Routes = [
   {
@@ -15,6 +16,13 @@ export const ADMIN_ROUTES: Routes = [
     title: 'Admin Dashboard',
     canActivate: [adminGuard],
     data: { breadcrumb: 'BREADCRUMB.DASHBOARD' },
+  },
+  {
+    path: 'users',
+    component: ManageUsers,
+    title: 'Gestionar usuarios',
+    canActivate: [superAdminGuard],
+    data: { breadcrumb: 'BREADCRUMB.MANAGE_USERS' },
   },
   {
     path: 'parking/new',

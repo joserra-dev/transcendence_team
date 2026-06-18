@@ -1,0 +1,112 @@
+@use "../../../../styles/abstracts/variables" as *;
+
+.admin-users {
+  max-width: 1100px;
+  margin: 0 auto;
+  padding: 2rem 1rem;
+}
+
+.page-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 1rem;
+  margin-bottom: 1.5rem;
+}
+
+.back-link {
+  display: inline-block;
+  margin-bottom: 0.5rem;
+  color: $color-primary;
+  text-decoration: none;
+}
+
+.subtitle {
+  color: $color-grey-soft;
+  margin: 0.25rem 0 0;
+}
+
+.alert {
+  padding: 0.75rem 1rem;
+  border-radius: $radius-sm;
+  margin-bottom: 1rem;
+
+  &.success {
+    background: rgba($color-primary, 0.1);
+    color: $color-primary;
+  }
+
+  &.error {
+    background: rgba(#c0392b, 0.1);
+    color: #c0392b;
+  }
+}
+
+.create-form {
+  background: $color-white;
+  border: 1px solid $color-border;
+  border-radius: $radius-md;
+  padding: 1.25rem;
+  margin-bottom: 1.5rem;
+}
+
+.form-grid {
+  display: grid;
+  gap: 1rem;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+
+  label {
+    display: flex;
+    flex-direction: column;
+    gap: 0.35rem;
+    font-size: 0.9rem;
+  }
+
+  input,
+  select {
+    padding: 0.5rem 0.65rem;
+    border: 1px solid $color-border;
+    border-radius: $radius-sm;
+  }
+}
+
+.users-table {
+  display: grid;
+  gap: 1rem;
+}
+
+.user-card {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 1rem;
+  background: $color-white;
+  border: 1px solid $color-border;
+  border-radius: $radius-md;
+  padding: 1rem 1.25rem;
+}
+
+.meta {
+  color: $color-grey-soft;
+  font-size: 0.9rem;
+}
+
+.badge {
+  background: rgba($color-primary, 0.12);
+  color: $color-primary;
+  padding: 0.15rem 0.5rem;
+  border-radius: $radius-sm;
+}
+
+.loading-msg {
+  text-align: center;
+  color: $color-grey-soft;
+}
+
+@media (max-width: $bp-sm) {
+  .page-header,
+  .user-card {
+    flex-direction: column;
+    align-items: stretch;
+  }
+}

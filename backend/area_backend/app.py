@@ -11,6 +11,7 @@ from routes.users_routes import users_bp
 from routes.parking_routes import parking_bp
 from routes.space_routes import space_bp
 from routes.booking_routes import booking_bp
+from routes.admin_routes import admin_bp
 from routes.access_routes import access_bp
 
 
@@ -71,6 +72,7 @@ app.register_blueprint(parking_bp)
 
 app.register_blueprint(space_bp)
 app.register_blueprint(booking_bp)
+app.register_blueprint(admin_bp)
 app.register_blueprint(access_bp)
 
 # 4. INICIALIZADOR DE BASE DE DATOS

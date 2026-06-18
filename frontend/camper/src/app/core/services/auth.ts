@@ -3,7 +3,7 @@ import { HttpClient } from '@angular/common/http';
 import { Router } from '@angular/router';
 import { Observable, tap } from 'rxjs';
 
-import { User } from '../models/user';
+import { User, AdminUser, Company } from '../models/user';
 
 export interface LoginRequest {
   email: string;
@@ -115,6 +115,17 @@ export class Auth {
   }
 
   isAdmin(): boolean {
-    return this.getUser()?.admin === true;
+    const role = this.getUser()?.role;
+    return role === 'admin' || role === 'super_admin' || this.getUser()?.admin === true;
+  }
+
+  isSuperAdmin(): boolean {
+    return this.getUser()?.role === 'super_admin';
+  }
+
+  logoutAdmin(): void {
+    sessionStorage.removeItem('token');
+    sessionStorage.removeItem('user');
+    this.router.navigate(['/auth/login-admin']);
   }
 }

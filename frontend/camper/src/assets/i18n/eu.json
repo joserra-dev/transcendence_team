@@ -24,7 +24,8 @@
     "BOOKING_DETAIL": "Erreserbaren xehetasunak",
     "DASHBOARD": "Administrazio panela",
     "NEW_PARKING": "Aparkaleku berria",
-    "MANAGE_PARKING": "Aparkalekua kudeatu"
+    "MANAGE_PARKING": "Aparkalekua kudeatu",
+    "MANAGE_USERS": "Erabiltzaileak kudeatu"
   },
 
   "FOOTER": {
@@ -58,6 +59,7 @@
       "REQUIRED_PASSWORD": "Pasahitza derrigorrezkoa da.",
       "INVALID_CREDENTIALS": "Kredentzial baliogabeak. Egiaztatu posta eta pasahitza.",
       "NOT_VERIFIED": "Saioa hasi baino lehen zure posta egiaztatu behar duzu.",
+      "NO_ADMIN": "Ez duzu administratzaile baimenik.",
       "TIMEOUT": "Zerbitzariak denbora gehiegi behar du erantzuteko. Saiatu geroago.",
       "UNKNOWN": "Ustekabeko errorea gertatu da. Saiatu geroago."
     },
@@ -268,6 +270,53 @@
       "CANCEL": "Errorea gertatu da erreserba bertan behera uzten saiatzean.",
       "RATE": "Errorea balorazioa bidaltzean.",
       "QR": "Ezin izan da QR kodea lortu."
+    }
+  },
+
+  "ADMIN_DASHBOARD": {
+    "SUPER_TITLE": "Superadministrazio panela",
+    "ADMIN_TITLE": "Administratzaile panela",
+    "WELCOME": "Kaixo, {{name}}",
+    "SUPER_DESC": "Iragarkiak, erabiltzaileak, admin baimenak eta bezeroak kudeatu.",
+    "ADMIN_DESC": "Zure enpresaren iragarkiak eta erreserbak kudeatu.",
+    "MANAGE_ADS": "Aparkaleku iragarkiak",
+    "MANAGE_ADS_DESC": "Sortu, editatu eta argitaratu iragarkiak.",
+    "MANAGE_USERS": "Erabiltzaileak eta baimenak",
+    "MANAGE_USERS_DESC": "Sortu erabiltzaileak eta esleitu admin baimenak.",
+    "ACTIVE": "Aktibo",
+    "INACTIVE": "Inaktibo"
+  },
+
+  "ADMIN_USERS": {
+    "TITLE": "Erabiltzaileak eta baimenak",
+    "SUBTITLE": "Sortu erabiltzaileak eta eman admin baimenak.",
+    "BACK": "Panelera itzuli",
+    "ADD": "Erabiltzailea sortu",
+    "CANCEL": "Utzi",
+    "CREATE_TITLE": "Erabiltzaile berria",
+    "EMAIL": "Emaila",
+    "PASSWORD": "Pasahitza",
+    "NAME": "Izena",
+    "LASTNAME": "Abizenak",
+    "DNI": "NAN",
+    "ROLE": "Rola",
+    "COMPANY": "Enpresa",
+    "SELECT_COMPANY": "Hautatu enpresa",
+    "SAVE": "Gorde erabiltzailea",
+    "LOADING": "Erabiltzaileak kargatzen...",
+    "ROLE_SUPER": "Superadmin",
+    "ROLE_ADMIN": "Admin",
+    "ROLE_USER": "Erabiltzailea",
+    "GRANT_ADMIN": "Eman admin baimenak",
+    "REVOKE_ADMIN": "Kendu admin baimenak",
+    "SUCCESS_CREATE": "Erabiltzailea ongi sortu da.",
+    "SUCCESS_PROMOTE": "Admin baimenak ongi eman dira.",
+    "SUCCESS_REVOKE": "Admin baimenak ongi kendu dira.",
+    "ERRORS": {
+      "LOAD": "Ezin izan dira erabiltzaileak kargatu.",
+      "CREATE": "Errorea erabiltzailea sortzean.",
+      "UPDATE": "Errorea baimenak eguneratzean.",
+      "NO_COMPANY": "Ez dago enpresarik adminari esleitzeko."
     }
   },
 

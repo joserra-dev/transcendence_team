@@ -66,6 +66,8 @@ export class LoginAdmin {
         console.error('Error en login Admin:', err);
         if (err instanceof TimeoutError) {
              this.errorMessage = 'LOGIN.ERROR.TIMEOUT';
+        } else if (err.status === 403) {
+          this.errorMessage = err.error?.error || 'LOGIN.ERROR.NO_ADMIN';
         } else if (err.status === 401 || err.status === 404) {
           this.errorMessage = 'LOGIN.ERROR.INVALID_CREDENTIALS';
         } else {

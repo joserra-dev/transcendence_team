@@ -10,4 +10,24 @@ export interface User {
   emailPersona: string | null;
   empresaNombre: string | null;
   admin: boolean;
+  role?: 'user' | 'admin' | 'super_admin';
+  companyId?: number | null;
+}
+
+export interface AdminUser {
+  id: number;
+  email: string;
+  isVerified: boolean;
+  nombre: string;
+  apellidos: string;
+  dni: string;
+  role: string;
+  companyId: number | null;
+  companyName: string | null;
+}
+
+export interface Company {
+  id: number;
+  name: string;
+  cif?: string;
 }

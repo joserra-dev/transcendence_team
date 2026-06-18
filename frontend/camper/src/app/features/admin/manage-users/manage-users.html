@@ -1,0 +1,87 @@
+<main class="admin-users">
+  <header class="page-header">
+    <div>
+      <a routerLink="/admin/dashboard" class="back-link">← {{ 'ADMIN_USERS.BACK' | translate }}</a>
+      <h1>{{ 'ADMIN_USERS.TITLE' | translate }}</h1>
+      <p class="subtitle">{{ 'ADMIN_USERS.SUBTITLE' | translate }}</p>
+    </div>
+    <button class="btn btn-primary" type="button" (click)="toggleForm()">
+      {{ showForm ? ('ADMIN_USERS.CANCEL' | translate) : ('ADMIN_USERS.ADD' | translate) }}
+    </button>
+  </header>
+
+  <div class="alert success" *ngIf="successMessage">{{ successMessage | translate }}</div>
+  <div class="alert error" *ngIf="errorMessage">{{ errorMessage | translate }}</div>
+
+  <section class="create-form" *ngIf="showForm">
+    <h2>{{ 'ADMIN_USERS.CREATE_TITLE' | translate }}</h2>
+    <form [formGroup]="userForm" (ngSubmit)="createUser()" class="form-grid">
+      <label>
+        {{ 'ADMIN_USERS.EMAIL' | translate }}
+        <input type="email" formControlName="email" />
+      </label>
+      <label>
+        {{ 'ADMIN_USERS.PASSWORD' | translate }}
+        <input type="password" formControlName="password" />
+      </label>
+      <label>
+        {{ 'ADMIN_USERS.NAME' | translate }}
+        <input type="text" formControlName="nombre" />
+      </label>
+      <label>
+        {{ 'ADMIN_USERS.LASTNAME' | translate }}
+        <input type="text" formControlName="apellidos" />
+      </label>
+      <label>
+        {{ 'ADMIN_USERS.DNI' | translate }}
+        <input type="text" formControlName="dni" />
+      </label>
+      <label>
+        {{ 'ADMIN_USERS.ROLE' | translate }}
+        <select formControlName="role">
+          <option value="user">{{ 'ADMIN_USERS.ROLE_USER' | translate }}</option>
+          <option value="admin">{{ 'ADMIN_USERS.ROLE_ADMIN' | translate }}</option>
+        </select>
+      </label>
+      <label *ngIf="userForm.get('role')?.value === 'admin'">
+        {{ 'ADMIN_USERS.COMPANY' | translate }}
+        <select formControlName="companyId">
+          <option [ngValue]="null">{{ 'ADMIN_USERS.SELECT_COMPANY' | translate }}</option>
+          <option *ngFor="let company of companies" [ngValue]="company.id">{{ company.name }}</option>
+        </select>
+      </label>
+      <button class="btn btn-primary" type="submit">{{ 'ADMIN_USERS.SAVE' | translate }}</button>
+    </form>
+  </section>
+
+  <div *ngIf="isLoading" class="loading-msg">{{ 'ADMIN_USERS.LOADING' | translate }}</div>
+
+  <section class="users-table" *ngIf="!isLoading">
+    <article *ngFor="let user of users" class="user-card">
+      <div>
+        <h3>{{ user.nombre }} {{ user.apellidos }}</h3>
+        <p>{{ user.email }}</p>
+        <p class="meta">
+          <span class="badge">{{ roleLabel(user.role) | translate }}</span>
+          <span *ngIf="user.companyName"> · {{ user.companyName }}</span>
+        </p>
+      </div>
+      <div class="actions" *ngIf="user.role !== 'super_admin'">
+        <button
+          *ngIf="user.role === 'user'"
+          class="btn btn-secondary"
+          type="button"
+          (click)="promoteToAdmin(user)">
+          {{ 'ADMIN_USERS.GRANT_ADMIN' | translate }}
+        </button>
+        <button
+          *ngIf="user.role === 'admin'"
+          class="btn btn-secondary"
+          type="button"
+          (click)="revokeAdmin(user)">
+          {{ 'ADMIN_USERS.REVOKE_ADMIN' | translate }}
+        </button>
+      </div>
+    </article>
+  </section>
+</main>

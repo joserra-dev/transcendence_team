@@ -51,7 +51,9 @@ def _user_to_frontend_dict(user):
         "tarjeta": tarjeta,
         "emailPersona": user.email,
         "empresaNombre": company_name,
-        "admin": is_admin
+        "admin": is_admin,
+        "role": profile.role.value if profile else "user",
+        "companyId": profile.company_id if profile else None,
     }
 
 # Creamos el Blueprint

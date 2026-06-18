@@ -1,7 +1,31 @@
 <main class="admin-dashboard">
-  <header class="dashboard-header">
-    <h1>{{ 'ADMIN_PARKINGS.TITLE' | translate }}</h1>
+  <header class="dashboard-hero">
+    <div>
+      <p class="eyebrow">{{ isSuperAdmin ? ('ADMIN_DASHBOARD.SUPER_TITLE' | translate) : ('ADMIN_DASHBOARD.ADMIN_TITLE' | translate) }}</p>
+      <h1>{{ 'ADMIN_DASHBOARD.WELCOME' | translate:{ name: userName } }}</h1>
+      <p class="subtitle">
+        {{ isSuperAdmin ? ('ADMIN_DASHBOARD.SUPER_DESC' | translate) : ('ADMIN_DASHBOARD.ADMIN_DESC' | translate) }}
+      </p>
+    </div>
+    <button class="btn btn-secondary" type="button" (click)="logout()">
+      {{ 'HEADER.LOGOUT' | translate }}
+    </button>
+  </header>
 
+  <section class="quick-actions">
+    <a routerLink="/admin/parking/new" class="action-card">
+      <h3>{{ 'ADMIN_DASHBOARD.MANAGE_ADS' | translate }}</h3>
+      <p>{{ 'ADMIN_DASHBOARD.MANAGE_ADS_DESC' | translate }}</p>
+    </a>
+
+    <a *ngIf="isSuperAdmin" routerLink="/admin/users" class="action-card highlight">
+      <h3>{{ 'ADMIN_DASHBOARD.MANAGE_USERS' | translate }}</h3>
+      <p>{{ 'ADMIN_DASHBOARD.MANAGE_USERS_DESC' | translate }}</p>
+    </a>
+  </section>
+
+  <header class="dashboard-header">
+    <h2>{{ 'ADMIN_PARKINGS.TITLE' | translate }}</h2>
     <a routerLink="/admin/parking/new" class="btn btn-primary">
       + {{ 'ADMIN_PARKINGS.ADD' | translate }}
     </a>
@@ -11,8 +35,7 @@
     {{ 'ADMIN_PARKINGS.LOADING' | translate }}
   </div>
 
-  <p
-    *ngIf="!isLoading && parkings.length === 0" class="empty-msg">
+  <p *ngIf="!isLoading && parkings.length === 0" class="empty-msg">
     {{ 'ADMIN_PARKINGS.EMPTY' | translate }}
   </p>
 
@@ -20,27 +43,27 @@
     <article *ngFor="let parking of parkings" class="parking-card">
       <div class="card-header">
         <h3>{{ parking.name }}</h3>
+        <span class="status" [class.inactive]="parking.isActive === false">
+          {{ parking.isActive === false ? ('ADMIN_DASHBOARD.INACTIVE' | translate) : ('ADMIN_DASHBOARD.ACTIVE' | translate) }}
+        </span>
       </div>
 
       <div class="card-info">
-        <p class="location">
-          {{ parking.localidad }}
-        </p>
-
+        <p class="location">{{ parking.localidad || parking.municipality }}</p>
         <p>
           <strong>{{ 'ADMIN_PARKINGS.SPOTS' | translate }}:</strong>
-          {{ parking.numeroPlazas }}
+          {{ parking.numeroPlazas || parking.spaces?.length || 0 }}
         </p>
       </div>
 
       <div class="services">
-        <span *ngIf="parking.tomaElectricidad">
+        <span *ngIf="parking.tomaElectricidad || parking.has_electricity">
           {{ 'SEARCH.ELECTRICITY' | translate }}
         </span>
-        <span *ngIf="parking.limpiezaAguasResiduales">
+        <span *ngIf="parking.limpiezaAguasResiduales || parking.has_waste_disposal">
           {{ 'SEARCH.RESIDUALS' | translate }}
         </span>
-        <span *ngIf="parking.plazasVip">
+        <span *ngIf="parking.plazasVip || parking.has_vip_spots">
           {{ 'SEARCH.VIP' | translate }}
         </span>
       </div>

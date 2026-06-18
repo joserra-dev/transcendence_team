@@ -24,7 +24,8 @@
     "BOOKING_DETAIL": "Booking details",
     "DASHBOARD": "Admin dashboard",
     "NEW_PARKING": "New parking",
-    "MANAGE_PARKING": "Manage parking"
+    "MANAGE_PARKING": "Manage parking",
+    "MANAGE_USERS": "Manage users"
   },
 
   "FOOTER": {
@@ -58,6 +59,7 @@
       "REQUIRED_PASSWORD": "Password is required.",
       "INVALID_CREDENTIALS": "Invalid credentials. Check your email and password.",
       "NOT_VERIFIED": "You must verify your email before logging in.",
+      "NO_ADMIN": "You do not have administrator permissions.",
       "TIMEOUT": "The server is taking too long to respond. Please try again later.",
       "UNKNOWN": "An unexpected error occurred. Try again later."
     },
@@ -269,6 +271,53 @@
       "CANCEL": "There was an error while trying to cancel the booking.",
       "RATE": "Error submitting the rating.",
       "QR": "The QR code could not be retrieved."
+    }
+  },
+
+  "ADMIN_DASHBOARD": {
+    "SUPER_TITLE": "Superadmin panel",
+    "ADMIN_TITLE": "Admin panel",
+    "WELCOME": "Hello, {{name}}",
+    "SUPER_DESC": "Manage listings, users, admin permissions and end customers.",
+    "ADMIN_DESC": "Manage your company listings and customer bookings.",
+    "MANAGE_ADS": "Parking listings",
+    "MANAGE_ADS_DESC": "Create, edit and publish campervan listings.",
+    "MANAGE_USERS": "Users and permissions",
+    "MANAGE_USERS_DESC": "Create users, assign admins and manage access.",
+    "ACTIVE": "Active",
+    "INACTIVE": "Inactive"
+  },
+
+  "ADMIN_USERS": {
+    "TITLE": "Users and permissions",
+    "SUBTITLE": "Create end users and grant administrator permissions.",
+    "BACK": "Back to dashboard",
+    "ADD": "Create user",
+    "CANCEL": "Cancel",
+    "CREATE_TITLE": "New user",
+    "EMAIL": "Email",
+    "PASSWORD": "Password",
+    "NAME": "First name",
+    "LASTNAME": "Last name",
+    "DNI": "ID number",
+    "ROLE": "Role",
+    "COMPANY": "Company",
+    "SELECT_COMPANY": "Select company",
+    "SAVE": "Save user",
+    "LOADING": "Loading users...",
+    "ROLE_SUPER": "Superadmin",
+    "ROLE_ADMIN": "Admin",
+    "ROLE_USER": "User",
+    "GRANT_ADMIN": "Grant admin permissions",
+    "REVOKE_ADMIN": "Revoke admin permissions",
+    "SUCCESS_CREATE": "User created successfully.",
+    "SUCCESS_PROMOTE": "Admin permissions granted.",
+    "SUCCESS_REVOKE": "Admin permissions revoked.",
+    "ERRORS": {
+      "LOAD": "Could not load users.",
+      "CREATE": "Error creating user.",
+      "UPDATE": "Error updating permissions.",
+      "NO_COMPANY": "No companies available to assign to admin."
     }
   },
 
