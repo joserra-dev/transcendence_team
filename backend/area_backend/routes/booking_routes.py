@@ -206,7 +206,7 @@ def cancel_booking():
     if str(booking.id_user) != str(user_id):
         return jsonify({"error": "No tienes permiso para cancelar esta reserva"}), 403
         
-    booking.estado_reserva = "0" # 0 = Cancelada
+    booking.status = "0" # 0 = Cancelada
     db.session.commit()
     
     return jsonify({"message": "Reserva cancelada correctamente"}), 200
