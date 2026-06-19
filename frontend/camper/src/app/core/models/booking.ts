@@ -39,4 +39,5 @@ export interface BookingHistoryResponse {
   createDate: string;
   status: string;
   range: number | null;
+  licensePlate?: string;
 }

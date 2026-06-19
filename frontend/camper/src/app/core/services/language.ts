@@ -22,6 +22,5 @@ export class LanguageService {
     this.currentLang.set(lang);
     localStorage.setItem('lang', lang)
     this.translate.use(lang);
-    console.log('Language changed to:', lang);
   }
 }

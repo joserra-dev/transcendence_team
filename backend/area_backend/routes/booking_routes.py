@@ -3,11 +3,23 @@ from flask import Blueprint, jsonify, request
 # pyrefly: ignore [missing-import]
 from flask_jwt_extended import jwt_required, get_jwt_identity
 from datetime import datetime
+import os
 
 from database import db
 from models.booking import Booking
+from models.users import Users
+from models.space import Space
+from models.parking import Parking
+from services.email_services import EmailService
 
 booking_bp = Blueprint('booking_bp', __name__)
+
+
+def clean_license_plate(license_plate):
+    if not license_plate:
+        return ""
+    return str(license_plate).replace(" ", "").replace("-", "").replace("_", "").replace(".", "").upper()
+
 
 def _get_booking_details(booking):
     days = 1
@@ -36,7 +48,8 @@ def _get_booking_details(booking):
         "status": booking.status,
         "spaceName": spaceName,
         "totalPrice": float(total_price),
-        "license_plate":booking.license_plate,
+        "license_plate": booking.license_plate,
+        "licensePlate": booking.license_plate,
         "qrData": f"Reserva #{booking.id} - Plaza {spaceName} en {parking_name}"
     }
 
@@ -141,10 +154,13 @@ def create_booking():
     id_parking = data.get("idParking")
     start_date = data.get("startDate")
     end_date = data.get("endDate")
-    licensePlate = data.get("licensePlate")
+    licensePlate = clean_license_plate(data.get("licensePlate"))
     
     if not id_space or not start_date or not end_date:
         return "Faltan campos obligatorios", 400
+
+    if not licensePlate:
+        return "La matrícula del vehículo es obligatoria", 400
         
     try:
         startDate = datetime.strptime(start_date, "%Y-%m-%d").date()
@@ -153,39 +169,61 @@ def create_booking():
         return "Formato de fecha inválido", 400
         
     # Validar solapamiento de plaza
-    overlap = Booking.query.filter(
-        Booking.id_space == id_space,
-        Booking.start_date <= startDate,
-        Booking.end_date >= endDate,
-        Booking.status == "1" # Solo solapa con reservas activas/confirmadas
+    # Permitimos reservas coincidentes en la misma plaza si la matrícula es diferente.
+    # Solo bloqueamos duplicados de la misma matrícula en fechas solapadas.
+    same_vehicle_overlap = Booking.query.filter(
+        Booking.license_plate == licensePlate,
+        Booking.start_date <= endDate,
+        Booking.end_date >= startDate,
+        Booking.status == "1"
     ).first()
     
-    if overlap:
-        return "La plaza ya está ocupada en las fechas seleccionadas", 400
-
-    # Validar solapamiento de usuario (el usuario ya tiene una reserva en esas fechas en cualquier plaza)
-    user_overlap = Booking.query.filter(
-        Booking.id_user == int(user_id),
-        Booking.start_date <= start_date,
-        Booking.end_date >= end_date,
-        Booking.status == "1" # Solo solapa con reservas activas/confirmadas
-    ).first()
-
-    if user_overlap:
-        return jsonify({"error": "Ya tienes una reserva para ti en estas fechas. No puedes reservar más de una plaza a la vez."}), 400
+    if same_vehicle_overlap:
+        return jsonify({"error": "Ya existe una reserva para esta matrícula en las fechas seleccionadas. Usa otra matrícula o cambia las fechas."}), 400
         
+    try:
+        from models.space import Space
+        space = Space.query.get(id_space)
+        total_price = 0.0
+        if space:
+            days = max((endDate - startDate).days + 1, 0)
+            total_price = days * float(space.price or 0)
+    except Exception:
+        total_price = 0.0
+
     new_booking = Booking(
         id_user=int(user_id),
         id_space=id_space,
         start_date=startDate,
         end_date=endDate,
         status="1", # 1 = Confirmada
-        license_plate=licensePlate.upper()
+        license_plate=licensePlate.upper() if licensePlate else "",
+        total_price=total_price
     )
     db.session.add(new_booking)
     db.session.commit()
-    
+
+    try:
+        user = Users.query.get(new_booking.id_user)
+        space = Space.query.get(new_booking.id_space)
+        parking = space.parking if space else None
+        if user and parking:
+            management_url = f"{os.getenv('URL_FRONT', 'http://localhost:4200').rstrip('/')}/client/booking/{new_booking.id}"
+            EmailService.booking(
+                destinatario=user.email,
+                user_name=user.profile.name if user.profile else user.email,
+                booking_code=str(new_booking.id),
+                service_detail=f"{parking.name} - {space.name if space else ''}",
+                booking_date=f"{new_booking.start_date} a {new_booking.end_date}",
+                total_paid=f"{new_booking.total_price:.2f}€",
+                management_url=management_url
+            )
+    except Exception as exc:
+        db.session.rollback()
+        print(f"Error enviando correo de reserva: {exc}")
+
     return str(new_booking.id), 200
+
 
 @booking_bp.route('/api/booking/cancel', methods=['PUT'])
 @jwt_required()

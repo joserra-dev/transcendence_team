@@ -56,10 +56,10 @@ export class ParkingDetail implements OnInit, OnDestroy {
     });
 
     this.langFormatSub = this.translate.onLangChange.subscribe((event) => {
-      this.definirFormatoFecha(event.lang);
+      this.dateformatdefine(event.lang);
     });
 
-    this.definirFormatoFecha(this.translate.currentLang || this.translate.defaultLang || 'es');
+    this.dateformatdefine(this.translate.currentLang || this.translate.defaultLang || 'es');
 
     const parkingId = this.route.snapshot.paramMap.get('id');
     this.route.queryParams.subscribe(params => {
@@ -76,7 +76,7 @@ export class ParkingDetail implements OnInit, OnDestroy {
     }
   }
 
-  private definirFormatoFecha(lang: string) {
+  private dateformatdefine(lang: string) {
     const idioma = lang.toLowerCase();
     if (idioma === 'eu' || idioma === 'en') {
       this.dateFormat = 'yyyy/MM/dd';
@@ -126,7 +126,6 @@ export class ParkingDetail implements OnInit, OnDestroy {
   }
 
   selectSpot(spot: Space) {
-    if (spot.status !== '0') return;
     this.selectedSpot = spot;
   }
 

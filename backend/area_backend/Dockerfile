@@ -12,4 +12,4 @@ RUN pip install --no-cache-dir -r requirements.txt
 # Copiamos todo lo que hay en esta carpeta (area_backend) a /app
 COPY . .
 
-CMD ["python", "manage.py", "runserver", "0.0.0.0:8000"]
+CMD ["python", "app.py"]

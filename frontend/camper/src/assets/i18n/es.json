@@ -29,7 +29,17 @@
 
   "FOOTER": {
     "CONTACT": "Contáctanos",
-    "PROJECT": "ft_transcendence "
+    "PROJECT": "ft_transcendence ",
+    "PRIVACY": "Política de privacidad",
+    "TERMS": "Términos de servicio"
+  },
+
+  "LEGAL": {
+    "UPDATED": "Última actualización",
+    "PRIVACY_TITLE": "Política de privacidad",
+    "PRIVACY_BODY": "<p>Hemen-Go respeta tu privacidad y trata los datos personales conforme a la normativa aplicable de protección de datos.</p><ul><li>Recopilamos datos necesarios para crear cuentas, gestionar reservas de plazas de autocaravana, procesar pagos configurados por el usuario y enviar comunicaciones de servicio.</li><li>Los datos se almacenan en una base de datos segura y solo son accesibles por el equipo autorizado y por los administradores responsables del parking correspondiente.</li><li>Puedes solicitar acceso, corrección o eliminación de tus datos contactando con el equipo del proyecto.</li><li>Las cookies y preferencias locales se usan para mantener el idioma seleccionado y la sesión del usuario.</li></ul><p>Esta política se aplica únicamente a la aplicación de reservas Hemen-Go desarrollada para este proyecto académico.</p>",
+    "TERMS_TITLE": "Términos de servicio",
+    "TERMS_BODY": "<p>Al usar Hemen-Go aceptas utilizar la aplicación de forma responsable y proporcionar información verdadera para crear reservas.</p><ul><li>Las reservas están sujetas a disponibilidad y pueden ser rechazadas si las fechas o la plaza no son válidas.</li><li>El usuario es responsable de introducir correctamente la matrícula y las fechas de estancia.</li><li>Las cancelaciones dependen de la política del parking seleccionado.</li><li>El acceso al parking mediante matrícula o código QR es una funcionalidad de control y no sustituye la normativa interna del establecimiento.</li><li>El proyecto puede contener datos de prueba y no debe usarse para operaciones comerciales reales sin una configuración adecuada.</li></ul>"
   },
 
   "LOGIN": {
@@ -202,8 +212,10 @@
     "ERRORS": {
       "NO_RESULTS": "Parking no encontrado o no disponible para estas fechas.",
       "LOADING": "Error al cargar los detalles del parking.",
-      "BOOKING": "Hubo un error al realizar la reserva."
+      "BOOKING": "Hubo un error al realizar la reserva.",
+      "SAME_PLATE": "Ya existe una reserva para esta matrícula en las fechas seleccionadas. Usa otra matrícula o cambia las fechas."
     },
+    "PLATE_WARNING": "Esta plaza ya tiene una reserva en esas fechas. Puedes continuar si la matrícula del vehículo es diferente.",
     "AUX": {
       "FIRST": "Vas a reservar la plaza",
       "SECOND": "Precio Total:",
@@ -232,6 +244,7 @@
     "DATES": "Fechas",
     "TOTAL": "Total",
     "RATING": "Tu valoración",
+    "LICENSE_PLATE": "Matrícula",
     "DETAILS": "Ver detalles y gestionar",
     "ERROR_LOADING": "Error al cargar el historial."
   },
@@ -251,6 +264,7 @@
     "RATING": "Valoración",
     "TOTAL": "Precio total",
     "PLATE": "Ver matrícula",
+    "LICENSE_PLATE": "Matrícula de la reserva",
     "RATE": "Valorar estancia",
     "CANCEL": "Cancelar reserva",
     "CANCELLED_MSG": "Esta reserva ha sido cancelada.",

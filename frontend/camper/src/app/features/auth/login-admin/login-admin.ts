@@ -59,7 +59,6 @@ export class LoginAdmin {
         })
       ).subscribe({
       next: (response) => {
-        console.log('Login Admin exitoso:', response);
         this.router.navigateByUrl(this.returnUrl);
       },
       error: (err) => {

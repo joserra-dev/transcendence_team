@@ -28,6 +28,7 @@ def test_enviar_bienvenida_exitoso(app, mocker):
     # Ejecutamos la acción de nuestra clase
     resultado = EmailService.welcome(
         destinatario="cliente@test.com",
+        token="test-token"
         ##url_verificacion="https://link-de-prueba.com"
     )
 
@@ -36,8 +37,8 @@ def test_enviar_bienvenida_exitoso(app, mocker):
     mock_enviar.assert_called_once()
     
     msg_generado = mock_enviar.call_args[0][0]
-    assert msg_generado.subject == "Bienvenido a nuestra plataforma"
-    assert msg_generado.to == ["cliente@test.com"]
+    assert msg_generado['Subject'] == "Bienvenido a nuestra plataforma"
+    assert msg_generado['To'] == "cliente@test.com"
     
 
 

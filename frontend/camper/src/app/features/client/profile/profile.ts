@@ -29,6 +29,7 @@ export class Profile implements OnInit {
     apellidosPersona: [{ value: '', disabled: true }, Validators.required],
     fecNacimientoPersona: [{ value: '', disabled: true }, [Validators.required, CustomValidators.mayorDeEdad]],
     metodoPago: [{ value: 'iban', disabled: true }, Validators.required],
+    avatarPersona: [{ value: '', disabled: true }],
     ibanPersona: [{ value: '', disabled: true }],
     tarjeta: [{ value: '', disabled: true }],
     passPersona: [{ value: '', disabled: true }],
@@ -101,8 +102,9 @@ export class Profile implements OnInit {
     this.successMessage = '';
     this.errorMessage = '';
     // Habilitamos todos los campos editables
-    ['nombrePersona', 'apellidosPersona', 'fecNacimientoPersona',
-     'metodoPago', 'ibanPersona', 'tarjeta', 'passPersona', 'confirmPassPersona'
+    [
+      'nombrePersona', 'apellidosPersona', 'fecNacimientoPersona',
+      'metodoPago', 'avatarPersona', 'ibanPersona', 'tarjeta', 'passPersona', 'confirmPassPersona'
     ].forEach(field => this.profileForm.get(field)?.enable());
   }
 
@@ -119,6 +121,7 @@ export class Profile implements OnInit {
         apellidosPersona: this.currentUser.apellidosPersona,
         fecNacimientoPersona: this.currentUser.fecNacimientoPersona,
         metodoPago: this.currentUser.metodoPago || 'iban',
+        avatarPersona: this.currentUser.avatar,
         ibanPersona: this.currentUser.ibanPersona,
         tarjeta: this.currentUser.tarjeta,
         passPersona: '',
@@ -127,8 +130,9 @@ export class Profile implements OnInit {
     }
 
     // Deshabilitamos todos los campos editables al cancelar
-    ['nombrePersona', 'apellidosPersona', 'fecNacimientoPersona',
-     'metodoPago', 'ibanPersona', 'tarjeta', 'passPersona', 'confirmPassPersona'
+    [
+      'nombrePersona', 'apellidosPersona', 'fecNacimientoPersona',
+      'metodoPago', 'avatarPersona', 'ibanPersona', 'tarjeta', 'passPersona', 'confirmPassPersona'
     ].forEach(field => this.profileForm.get(field)?.disable());
   }
 
@@ -148,7 +152,11 @@ export class Profile implements OnInit {
     this.userService.updateProfile(updateData).subscribe({
       next: (responseMessage: string) => {
         this.successMessage = responseMessage;
-        const updatedUser = { ...this.currentUser!, ...formData };
+        const updatedUser = {
+          ...this.currentUser!,
+          ...formData,
+          avatar: formData.avatarPersona
+        };
         this.currentUser = updatedUser;
         sessionStorage.setItem('user', JSON.stringify(updatedUser));
         this.isEditing = false;
@@ -167,5 +175,4 @@ export class Profile implements OnInit {
     const control = this.profileForm.get(field);
     return !!(control && control.invalid && (control.dirty || control.touched));
   }
-
 }

@@ -1,4 +1,5 @@
 import { Routes } from '@angular/router';
+import { LegalPage } from './features/legal/legal-page';
 
 export const routes: Routes = [
   // RUTA POR DEFECTO (Home)
@@ -29,6 +30,12 @@ export const routes: Routes = [
   {
     path: 'admin',
     loadChildren: () => import('./features/admin/admin.routes').then(m => m.ADMIN_ROUTES)
+  },
+
+  {
+    path: 'legal/:type',
+    component: LegalPage,
+    title: 'Legal',
   },
 
   // Si no se encuentra la ruta, redirige al home.

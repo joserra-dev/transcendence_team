@@ -1,0 +1,11 @@
+<main class="legal-page">
+  <article class="parking-card">
+    <h1 class="page-title">{{ titleKey | translate }}</h1>
+
+    <section class="legal-content" [innerHTML]="bodyKey | translate"></section>
+
+    <p class="legal-updated">
+      {{ 'LEGAL.UPDATED' | translate }}: 19/06/2026
+    </p>
+  </article>
+</main>

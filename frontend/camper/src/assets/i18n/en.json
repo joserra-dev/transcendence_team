@@ -29,7 +29,17 @@
 
   "FOOTER": {
     "CONTACT": "Contact Us",
-    "PROJECT": "ft_transcendence"
+    "PROJECT": "ft_transcendence",
+    "PRIVACY": "Privacy Policy",
+    "TERMS": "Terms of Service"
+  },
+
+  "LEGAL": {
+    "UPDATED": "Last updated",
+    "PRIVACY_TITLE": "Privacy Policy",
+    "PRIVACY_BODY": "<p>Hemen-Go respects your privacy and processes personal data in accordance with applicable data protection rules.</p><ul><li>We collect the data needed to create accounts, manage camper parking bookings, process configured payment methods, and send service communications.</li><li>Data is stored in a secure database and is only accessible to authorized staff and administrators responsible for the relevant parking area.</li><li>You may request access, correction, or deletion of your data by contacting the project team.</li><li>Local storage and cookies are used to keep the selected language and user session.</li></ul><p>This policy applies only to the Hemen-Go booking application developed for this academic project.</p>",
+    "TERMS_TITLE": "Terms of Service",
+    "TERMS_BODY": "<p>By using Hemen-Go, you agree to use the application responsibly and to provide accurate information when creating bookings.</p><ul><li>Bookings are subject to availability and may be rejected if the selected dates or spot are invalid.</li><li>Users are responsible for entering the correct license plate and stay dates.</li><li>Cancellations depend on the policy of the selected parking area.</li><li>Access control by license plate or QR code is a control feature and does not replace the internal rules of the establishment.</li><li>The project may contain test data and must not be used for real commercial operations without proper configuration.</li></ul>"
   },
 
   "LOGIN": {
@@ -203,8 +213,10 @@
     "ERRORS": {
       "NO_RESULTS": "Parking not found or not available for these dates.",
       "LOADING": "Error loading parking details.",
-      "BOOKING": "There was an error when making the reservation."
+      "BOOKING": "There was an error when making the reservation.",
+      "SAME_PLATE": "There is already a booking for this license plate on the selected dates. Use another plate or change the dates."
     },
+    "PLATE_WARNING": "This spot already has a booking on those dates. You can continue if the vehicle license plate is different.",
     "AUX": {
       "FIRST": "You will book a spot",
       "SECOND": "Total price:",
@@ -233,6 +245,7 @@
     "DATES": "Dates",
     "TOTAL": "Total",
     "RATING": "Your rating",
+    "LICENSE_PLATE": "Licence plate",
     "DETAILS": "View details and manage",
     "ERROR_LOADING": "Error loading history."
   },
@@ -252,6 +265,7 @@
     "RATING": "Rating",
     "TOTAL": "Total price",
     "PLATE": "View Licence plate",
+    "LICENSE_PLATE": "Booking licence plate",
     "RATE": "Rate stay",
     "CANCEL": "Cancel booking",
     "CANCELLED_MSG": "This booking has been cancelled.",

@@ -29,7 +29,17 @@
 
   "FOOTER": {
     "CONTACT": "Jarri gurekin harremanetan",
-    "PROJECT": "ft_transcendence"
+    "PROJECT": "ft_transcendence",
+    "PRIVACY": "Pribatutasun-politika",
+    "TERMS": "Zerbitzu-baldintzak"
+  },
+
+  "LEGAL": {
+    "UPDATED": "Azken eguneraketa",
+    "PRIVACY_TITLE": "Pribatutasun-politika",
+    "PRIVACY_BODY": "<p>Hemen-Go-k zure pribatutasuna errespetatzen du eta datu pertsonalak aplikagarriak diren datu-babes arauen arabera tratatzen ditu.</p><ul><li>Kontuak sortzeko, autocarabana aparkalekuetako erreserbak kudeatzeko, konfiguratu diren ordainketa-metodoak prozesatzeko eta zerbitzu-komunikazioak bidaltzeko beharrezkoak diren datuak biltzen ditugu.</li><li>Datuak datu-base seguru batean gordetzen dira, eta langile baimenduek eta dagokion aparkalekuaren arduradun diren administratzaileek bakarrik sar ditzakete.</li><li>Zure datuetara sartzeko, zuzentzeko edo ezabatzeko eskatu dezakezu proiektu-taldearekin harremanetan jarriz.</li><li>Biltegiratze lokala eta cookieak erabiltzen dira hautatutako hizkuntza eta erabiltzailearen saioa mantentzeko.</li></ul><p>Politika hau proiektu akademiko honetarako garatutako Hemen-Go erreserba-aplikazioari soilik aplikatzen zaio.</p>",
+    "TERMS_TITLE": "Zerbitzu-baldintzak",
+    "TERMS_BODY": "<p>Hemen-Go erabiltzean, aplikazioa arduraz erabiltzea eta erreserbak sortzean informazio zehatza ematea onartzen duzu.</p><ul><li>Erreserbak eskuragarritasunaren mende daude, eta datak edo plaza baliogabeak badira baztertu daitezke.</li><li>Erabiltzailea da matrikula eta egonaldia data zuzenak sartzearen arduraduna.</li><li>Ezeztapenak hautatutako aparkalekuaren politikaren mende daude.</li><li>Matrikularen edo QR kodearen bidezko sarbide-kontrola kontrol-funtzio bat da, eta ez du establezimenduaren barne-araudia ordezkatzen.</li><li>Proiektuak proba-datuak izan ditzake eta ez da erabili behar benetako eragiketa komertzialetarako konfigurazio egokirik gabe.</li></ul>"
   },
 
   "LOGIN": {
@@ -202,8 +212,10 @@
     "ERRORS": {
       "NO_RESULTS": "Ez da aparkalekurik aurkitu edo ez dago erabilgarri data hauetarako.",
       "LOADING": "Errorea aparkalekuaren xehetasunak kargatzean.",
-      "BOOKING": "Errorea gertatu da erreserba egitean."
+      "BOOKING": "Errorea gertatu da erreserba egitean.",
+      "SAME_PLATE": "Matrikula honek jada erreserba bat dauka hautatutako datetan. Erabili beste matrikula bat edo aldatu datak."
     },
+    "PLATE_WARNING": "Plaza honek jada erreserba bat dauka datetan. Jarrai dezakezu ibilgailuaren matrikula desberdina bada.",
     "AUX": {
       "FIRST": "Plaza hau erreserbatuko duzu:",
       "SECOND": "Prezio osoa",
@@ -232,6 +244,7 @@
     "DATES": "Datak",
     "TOTAL": "Guztira",
     "RATING": "Zure balorazioa",
+    "LICENSE_PLATE": "Matrikula",
     "DETAILS": "Ikusi xehetasunak eta kudeatu",
     "ERROR_LOADING": "Errorea historia kargatzean."
   },
@@ -251,6 +264,7 @@
     "RATING": "Balorazioa",
     "TOTAL": "Prezio osoa",
     "PLATE": "Ikusi Matrikula",
+    "LICENSE_PLATE": "Erreserbaren matrikula",
     "RATE": "Baloratu egonaldia",
     "CANCEL": "Erreserba bertan behera utzi",
     "CANCELLED_MSG": "Erreserba hau bertan behera utzi da.",
