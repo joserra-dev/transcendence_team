@@ -213,6 +213,7 @@
       "NO_RESULTS": "Parking no encontrado o no disponible para estas fechas.",
       "LOADING": "Error al cargar los detalles del parking.",
       "BOOKING": "Hubo un error al realizar la reserva.",
+      "INVALID_DATES": "La fecha de salida debe ser al menos un día después de la fecha de entrada.",
       "SAME_PLATE": "Ya existe una reserva para esta matrícula en las fechas seleccionadas. Usa otra matrícula o cambia las fechas."
     },
     "PLATE_WARNING": "Esta plaza ya tiene una reserva en esas fechas. Puedes continuar si la matrícula del vehículo es diferente.",

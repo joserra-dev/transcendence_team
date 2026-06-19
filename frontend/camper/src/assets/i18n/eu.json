@@ -213,6 +213,7 @@
       "NO_RESULTS": "Ez da aparkalekurik aurkitu edo ez dago erabilgarri data hauetarako.",
       "LOADING": "Errorea aparkalekuaren xehetasunak kargatzean.",
       "BOOKING": "Errorea gertatu da erreserba egitean.",
+      "INVALID_DATES": "Irteera-data sarrera-data baino gutxienez egun bat beranduago izan behar da.",
       "SAME_PLATE": "Matrikula honek jada erreserba bat dauka hautatutako datetan. Erabili beste matrikula bat edo aldatu datak."
     },
     "PLATE_WARNING": "Plaza honek jada erreserba bat dauka datetan. Jarrai dezakezu ibilgailuaren matrikula desberdina bada.",

@@ -167,6 +167,9 @@ def create_booking():
         endDate = datetime.strptime(end_date, "%Y-%m-%d").date()
     except ValueError:
         return "Formato de fecha inválido", 400
+
+    if endDate <= startDate:
+        return jsonify({"error": "La fecha de salida debe ser al menos un día después de la fecha de entrada."}), 400
         
     # Validar solapamiento de plaza
     # Permitimos reservas coincidentes en la misma plaza si la matrícula es diferente.

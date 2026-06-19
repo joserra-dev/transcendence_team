@@ -115,14 +115,25 @@ export class ParkingDetail implements OnInit, OnDestroy {
   }
 
   get totalPrice(): number {
-    if (!this.selectedSpot || !this.entryDate || !this.exitDate) return 0;
+    if (!this.selectedSpot || !this.entryDate || !this.exitDate || !this.isDateRangeValid()) return 0;
 
     const start = new Date(this.entryDate);
     const end = new Date(this.exitDate);
 
-    const diffTime = Math.abs(end.getTime() - start.getTime());
+    const diffTime = end.getTime() - start.getTime();
     const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
     return (diffDays + 1) * this.selectedSpot.price;
+  }
+
+  isDateRangeValid(): boolean {
+    if (!this.entryDate || !this.exitDate) return false;
+
+    const start = new Date(this.entryDate);
+    const expectedExit = new Date(start);
+    expectedExit.setDate(expectedExit.getDate() + 1);
+    const end = new Date(this.exitDate);
+
+    return end >= expectedExit;
   }
 
   selectSpot(spot: Space) {
@@ -131,6 +142,15 @@ export class ParkingDetail implements OnInit, OnDestroy {
 
   onBook() {
     if (!this.selectedSpot) return;
+
+    if (!this.isDateRangeValid()) {
+      this.errorMessage = 'PARKING.ERRORS.INVALID_DATES';
+      this.successMessage = '';
+      this.showConfirmModal = false;
+      return;
+    }
+
+    this.errorMessage = '';
 
     if (!this.authService.isLoggedIn()) {
       this.router.navigate(['/auth/login-client'], {
@@ -153,6 +173,14 @@ export class ParkingDetail implements OnInit, OnDestroy {
 
   confirmBooking() {
     if (!this.selectedSpot || !this.parking) return;
+
+    if (!this.isDateRangeValid()) {
+      this.errorMessage = 'PARKING.ERRORS.INVALID_DATES';
+      this.successMessage = '';
+      this.isLoading = false;
+      this.showConfirmModal = false;
+      return;
+    }
 
     this.showConfirmModal = false;
     this.isLoading = true;

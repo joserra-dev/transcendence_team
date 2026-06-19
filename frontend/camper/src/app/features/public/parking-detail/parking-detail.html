@@ -116,9 +116,13 @@
         <div class="total">
           {{ 'PARKING.TOTAL' | translate }}: <strong>{{ totalPrice }}€</strong>
         </div>
-        <button class="btn btn-primary" (click)="onBook()">
-          {{ 'PARKING.RESERVE_SPOT' | translate }} {{ selectedSpot.name }}
-        </button>
+      <button class="btn btn-primary" (click)="onBook()" [disabled]="!isDateRangeValid()">
+        {{ 'PARKING.RESERVE_SPOT' | translate }} {{ selectedSpot.name }}
+      </button>
+      <p *ngIf="!isDateRangeValid()" style="color: #dc3545; margin-top: 0.75rem;">
+        {{ 'PARKING.ERRORS.INVALID_DATES' | translate }}
+      </p>
+
       </div>
       <p class="hint" *ngIf="!selectedSpot">{{ 'PARKING.SELECT_FREE' | translate }}</p>
     </aside>
@@ -161,7 +165,7 @@
 
     <div style="display: flex; justify-content: flex-end; gap: 10px;">
       <button class="btn btn-outline-secondary" (click)="showConfirmModal = false">{{ 'PARKING.AUX.SEVENTH' | translate }}</button>
-      <button class="btn btn-primary" (click)="confirmBooking()" [disabled]="!isLicensePlateValid()" [style.opacity]="!isLicensePlateValid() ? '0.5' : '1'" [style.cursor]="!isLicensePlateValid() ? 'not-allowed' : 'pointer'">
+      <button class="btn btn-primary" (click)="confirmBooking()" [disabled]="!isDateRangeValid() || !isLicensePlateValid()" [style.opacity]="!isDateRangeValid() || !isLicensePlateValid() ? '0.5' : '1'" [style.cursor]="!isDateRangeValid() || !isLicensePlateValid() ? 'not-allowed' : 'pointer'">
         {{ 'PARKING.AUX.EIGHTH' | translate }}
       </button>
     </div>

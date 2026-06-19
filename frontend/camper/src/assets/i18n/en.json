@@ -214,6 +214,7 @@
       "NO_RESULTS": "Parking not found or not available for these dates.",
       "LOADING": "Error loading parking details.",
       "BOOKING": "There was an error when making the reservation.",
+      "INVALID_DATES": "The exit date must be at least one day after the entry date.",
       "SAME_PLATE": "There is already a booking for this license plate on the selected dates. Use another plate or change the dates."
     },
     "PLATE_WARNING": "This spot already has a booking on those dates. You can continue if the vehicle license plate is different.",

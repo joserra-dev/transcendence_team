@@ -5,7 +5,7 @@ from sqlalchemy import text
 
 from database import db
 
-status_bp = Blueprint('status_bp', __name__)
+status_bp = Blueprint('status_bp', __name__, url_prefix='/api')
 
 
 @status_bp.route('/status', methods=['GET'])
