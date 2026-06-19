@@ -92,10 +92,7 @@ export class BookingDetail implements OnInit {
 
   viewLicensePlate() {
     if (!this.booking) return;
-    this.isLoading = true;
-    this.licensePlate = this.booking.licensePlate
-    this.showlPlateModal = true
-    this.isLoading = false;
+    this.showlPlateModal = true;
   }
 
   rateBooking() {

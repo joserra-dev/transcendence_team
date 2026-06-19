@@ -15,6 +15,10 @@
     {{ errorMessage | translate }}
   </div>
 
+  <div *ngIf="currentUser?.avatar" class="profile-avatar-preview">
+    <img [src]="currentUser?.avatar || ''" alt="Avatar de usuario" />
+  </div>
+
   <form [formGroup]="profileForm" *ngIf="!isLoading || currentUser" (ngSubmit)="saveChanges()" class="form-standard">
     <h3 class="section-title">{{ 'PROFILE.PERSONAL_DATA' | translate }}</h3>
 
@@ -49,6 +53,11 @@
         {{ 'PROFILE.FIELDS.EMAIL' | translate }} <span class="label-tag">{{ 'PROFILE.NOT_EDITABLE' | translate }}</span>
       </label>
       <input id="email" type="email" formControlName="emailPersona" readonly>
+    </div>
+
+    <div class="mb-3 form-group-standard">
+      <label for="avatar" class="form-label-custom">Avatar URL</label>
+      <input id="avatar" type="url" formControlName="avatarPersona" placeholder="https://example.com/avatar.jpg">
     </div>
 
     <div class="row g-4 mb-3 form-2-group">

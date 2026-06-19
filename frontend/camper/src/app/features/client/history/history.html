@@ -128,6 +128,11 @@
           {{ (booking.totalPrice > 0 ? booking.totalPrice : booking.price) | currency:'EUR' }}
         </p>
 
+        <p *ngIf="booking.licensePlate">
+          <strong>{{ 'HISTORY.LICENSE_PLATE' | translate }}:</strong>
+          {{ booking.licensePlate }}
+        </p>
+
         <p *ngIf="booking.range">
           <strong>{{ 'HISTORY.RATING' | translate }}:</strong>
           {{ booking.range }}/10

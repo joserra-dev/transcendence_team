@@ -12,6 +12,9 @@ from routes.parking_routes import parking_bp
 from routes.space_routes import space_bp
 from routes.booking_routes import booking_bp
 from routes.access_routes import access_bp
+from routes.admin_routes import admin_bp
+from routes.public_api_routes import public_api_bp
+from routes.status_routes import status_bp
 
 
 app = Flask(__name__)
@@ -68,10 +71,12 @@ swagger = Swagger(app,  template=swagger_template)
 app.register_blueprint(company_bp)
 app.register_blueprint(users_bp)
 app.register_blueprint(parking_bp)
-
 app.register_blueprint(space_bp)
 app.register_blueprint(booking_bp)
 app.register_blueprint(access_bp)
+app.register_blueprint(admin_bp)
+app.register_blueprint(public_api_bp)
+app.register_blueprint(status_bp)
 
 # 4. INICIALIZADOR DE BASE DE DATOS
 with app.app_context():

@@ -26,6 +26,7 @@ def _user_to_frontend_dict(user):
     iban = ""
     metodo_pago = "iban"
     tarjeta = ""
+    avatar = ""
     
     if profile:
         nombre = profile.name or ""
@@ -35,6 +36,7 @@ def _user_to_frontend_dict(user):
         iban = profile.iban or ""
         metodo_pago = profile.metodo_pago or "iban"
         tarjeta = profile.tarjeta or ""
+        avatar = profile.avatar or ""
         is_admin = profile.role.value in ['admin', 'super_admin']
         company = profile.company
         if company:
@@ -49,6 +51,7 @@ def _user_to_frontend_dict(user):
         "ibanPersona": iban,
         "metodoPago": metodo_pago,
         "tarjeta": tarjeta,
+        "avatar": avatar,
         "emailPersona": user.email,
         "empresaNombre": company_name,
         "admin": is_admin
@@ -262,6 +265,7 @@ def update_profile():
         profile.metodo_pago = data.get("metodoPago", profile.metodo_pago or "iban")
         profile.iban = data.get("ibanPersona", profile.iban)
         profile.tarjeta = data.get("tarjeta", profile.tarjeta)
+        profile.avatar = data.get("avatarPersona", profile.avatar)
         profile.dni = data.get("dniPersona", profile.dni)
         
         fec_nac_str = data.get("fecNacimientoPersona")

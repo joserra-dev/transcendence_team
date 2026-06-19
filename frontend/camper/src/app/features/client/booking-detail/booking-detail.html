@@ -45,6 +45,9 @@
         <h3>{{ 'HISTORY_DETAIL.GENERAL' | translate }}</h3>
         <p><strong>{{ 'HISTORY_DETAIL.REFERENCE' | translate }}:</strong> #{{ booking.id }}</p>
         <p><strong>{{ 'HISTORY_DETAIL.SPOT' | translate }}:</strong> {{ booking.spaceName }}</p>
+        <p *ngIf="booking.licensePlate">
+          <strong>{{ 'HISTORY_DETAIL.LICENSE_PLATE' | translate }}:</strong> {{ booking.licensePlate }}
+        </p>
       </section>
 
       <section>
@@ -91,8 +94,8 @@
 
     <div class="qr-body">
       
-      <p *ngIf="licensePlate">{{ booking.licensePlate }}</p>
-      <p *ngIf="!licensePlate">{{ 'HISTORY_DETAIL.LOADING_PLATE' | translate }}</p>
+      <p *ngIf="booking?.licensePlate">{{ booking.licensePlate }}</p>
+      <p *ngIf="!booking?.licensePlate">{{ 'HISTORY_DETAIL.LOADING_PLATE' | translate }}</p>
     </div>
   </div>
 </div>

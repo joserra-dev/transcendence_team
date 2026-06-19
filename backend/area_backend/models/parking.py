@@ -66,7 +66,8 @@ class Parking(db.Model):
                         overlap = Booking.query.filter(
                             Booking.id_space == space.id,
                             Booking.start_date <= fh,
-                            Booking.end >= fd
+                            Booking.end_date >= fd,
+                            Booking.status == '1'
                         ).first()
                         if overlap:
                             space_data["status"] = "1"

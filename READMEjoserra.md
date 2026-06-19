@@ -187,3 +187,73 @@ Frontend (parking-detail.ts): He modificado cómo se maneja el error al confirma
 
 ### 7. guardamos sesion en localsession en vez de localstorage
 
+
+### 8. 26/06/19 revision contra subject
+He revisado el subject y aplicado mejoras críticas para cumplir mejor con transcendence_en.subject.pdf.
+
+Cambios principales:
+
+README.md reescrito en inglés con las secciones exigidas: equipo, gestión, stack, schema, features, módulos, contribuciones, IA y legal.
+Añadidas páginas legales accesibles:
+/legal/privacy
+/legal/terms
+Footer actualizado con enlaces a privacidad y términos.
+Añadido .env.example.
+.env eliminado del índice de Git para evitar subir secretos.
+Añadidos endpoints admin que faltaban:
+GET/POST/PUT /api/admin/parking
+GET/PUT/DELETE /api/admin/parking/:id/space/:id
+GET /api/admin/parking/space/:id
+Añadida API pública con API key y rate limit:
+GET/POST/GET /api/public/parkings...
+PUT /api/public/spaces/:id/status
+DELETE /api/public/spaces/:id
+Añadido health check:
+GET /api/status
+Corregido solapamiento de reservas para detectar intervalos parciales.
+Añadido email de confirmación de reserva.
+Perfil de usuario ampliado con avatar URL.
+Corregidos tests existentes.
+Docker backend corregido para lanzar Flask correctamente.
+Validaciones:
+
+git diff --check: correcto.
+
+compileall backend: correcto.
+Angular build: correcto.
+Angular tests: compilan, pero no se ejecutan porque falta ChromeHeadless en el entorno.
+
+Pendiente crítico:
+
+Despliegue real debe hacerse con HTTPS válido. Local puede seguir en HTTP, pero para evaluación conviene desplegar detrás de dominio HTTPS o configurar Caddy/Nginx con certificados.
+
+otros cambios:
+
+Backend POST /api/booking ahora permite reservas en fechas coincidentes si la matrícula es diferente.
+Bloquea duplicados solo cuando la misma matrícula ya tiene una reserva activa en esas fechas.
+Frontend permite seleccionar plazas marcadas como ocupadas.
+El modal muestra aviso: puedes continuar si la matrícula es diferente.
+Añadidos mensajes i18n en ES/EN/EU.
+Validado:
+
+compileall backend: correcto.
+
+Angular build: correcto.
+git diff --check: correcto.
+
+Añadida la matrícula visible en reservas.
+
+Cambios:
+
+Backend devuelve licensePlate en detalle de reserva y en historial.
+Historial muestra la matrícula en cada tarjeta.
+Detalle de reserva muestra la matrícula en información general.
+Modal “Ver matrícula” usa directamente la matrícula ya cargada.
+Traducciones añadidas en ES/EN/EU.
+Validado:
+
+Backend compile: correcto.
+
+Angular build: correcto.
+git diff --check: correcto.
+

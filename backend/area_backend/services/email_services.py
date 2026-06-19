@@ -71,6 +71,28 @@ class EmailService:
         return cls.base_mail(destinatario, asunto, html_content, plain_txt)
     
     @classmethod
+    def booking(cls, destinatario: str, user_name: str, booking_code: str, service_detail: str, booking_date: str, total_paid: str, management_url: str):
+        asunto = "HEMEN-GO - Reserva confirmada"
+        html_content = render_template(
+            'email/booking.html',
+            nombre=user_name,
+            codigo_reserva=booking_code,
+            detalle_servicio=service_detail,
+            fecha_reserva=booking_date,
+            total_pagado=total_paid,
+            enlace_gestion=management_url
+        )
+        plain_txt = (
+            f"Hola {user_name},\n\n"
+            f"Tu reserva #{booking_code} ha sido confirmada.\n"
+            f"Servicio: {service_detail}\n"
+            f"Fechas: {booking_date}\n"
+            f"Total: {total_paid}\n\n"
+            f"Puedes gestionarla en: {management_url}"
+        )
+        return cls.base_mail(destinatario, asunto, html_content, plain_txt)
+
+    @classmethod
     def forgot(cls, destinatario: str, user_name: str, recovery_url: str):
         asunto = "HEMEN-GO - Recuperar acceso a tu cuenta"
         html_content = render_template(

@@ -16,7 +16,7 @@ export const adminGuard: CanActivateFn = (_route, _state) => {
 
   // Si está logueado pero no es admin → redirige al home
   if (authService.isLoggedIn()) {
-    return router.createUrlTree(['/public']);
+    return router.createUrlTree(['/']);
   }
 
   // Si no tiene sesión → redirige al login
