@@ -88,15 +88,11 @@
 <div *ngIf="showlPlateModal" class="qr-modal" (click)="closePlateModal()">
   <div class="qr-box" (click)="$event.stopPropagation()">
     <div class="qr-header">
-      <h2>{{ 'HISTORY_DETAIL.PLATE_TITLE' | translate }}</h2>
+      <h2>{{ booking.licensePlate }}</h2>
       <button (click)="closePlateModal()"></button>
     </div>
 
-    <div class="qr-body">
-      
-      <p *ngIf="booking?.licensePlate">{{ booking.licensePlate }}</p>
-      <p *ngIf="!booking?.licensePlate">{{ 'HISTORY_DETAIL.LOADING_PLATE' | translate }}</p>
-    </div>
+   
   </div>
 </div>
 
