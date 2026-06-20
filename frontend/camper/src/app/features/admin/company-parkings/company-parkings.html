@@ -1,31 +1,33 @@
-<main class="admin-dashboard">
-  <header class="dashboard-hero">
+<main class="company-parkings">
+  <header class="page-header">
     <div>
-      <p class="eyebrow">{{ 'ADMIN_DASHBOARD.ADMIN_TITLE' | translate }}</p>
-      <h1>{{ 'ADMIN_DASHBOARD.WELCOME' | translate:{ name: userName } }}</h1>
-      <p class="subtitle">{{ 'ADMIN_DASHBOARD.ADMIN_DESC' | translate }}</p>
+      <a routerLink="/admin/companies" class="back-link">← {{ 'ADMIN_COMPANIES.BACK' | translate }}</a>
+      <h1>{{ company?.name || ('ADMIN_COMPANIES.PARKINGS_TITLE' | translate) }}</h1>
+      <p class="subtitle" *ngIf="company?.adminName || company?.adminEmail">
+        {{ 'ADMIN_COMPANIES.ADMIN_LABEL' | translate }}:
+        {{ company?.adminName || company?.adminEmail }}
+      </p>
     </div>
-    <button class="btn btn-secondary" type="button" (click)="logout()">
-      {{ 'HEADER.LOGOUT' | translate }}
-    </button>
+    <div class="header-actions">
+      <a class="btn btn-secondary" [routerLink]="['/admin/companies', companyId, 'edit']">
+        {{ 'ADMIN_COMPANIES.EDIT' | translate }}
+      </a>
+      <a
+        class="btn btn-primary"
+        [routerLink]="['/admin/parking/new']"
+        [queryParams]="{ companyId: companyId }">
+        + {{ 'ADMIN_PARKINGS.ADD' | translate }}
+      </a>
+    </div>
   </header>
 
-  <header class="dashboard-header">
-    <h2>{{ 'ADMIN_PARKINGS.TITLE' | translate }}</h2>
-    <a routerLink="/admin/parking/new" class="btn btn-primary">
-      + {{ 'ADMIN_PARKINGS.ADD' | translate }}
-    </a>
-  </header>
-
-  <div *ngIf="isLoading" class="loading-msg">
-    {{ 'ADMIN_PARKINGS.LOADING' | translate }}
-  </div>
+  <div *ngIf="isLoading" class="loading-msg">{{ 'ADMIN_PARKINGS.LOADING' | translate }}</div>
 
   <p *ngIf="!isLoading && parkings.length === 0" class="empty-msg">
-    {{ 'ADMIN_PARKINGS.EMPTY' | translate }}
+    {{ 'ADMIN_COMPANIES.NO_PARKINGS' | translate }}
   </p>
 
-  <section class="parking-list">
+  <section class="parking-list" *ngIf="!isLoading && parkings.length > 0">
     <article *ngFor="let parking of parkings" class="parking-card">
       <div class="card-header">
         <h3>{{ parking.name }}</h3>
@@ -55,7 +57,7 @@
       </div>
 
       <div class="card-actions">
-        <a class="btn btn-secondary" [routerLink]="['/admin/parking', parking.id]">
+        <a class="btn btn-secondary" [routerLink]="['/admin/parking', parking.id]" [queryParams]="{ companyId: companyId }">
           {{ 'ADMIN_PARKINGS.MANAGE' | translate }}
         </a>
       </div>

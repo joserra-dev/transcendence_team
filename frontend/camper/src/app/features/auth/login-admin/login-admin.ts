@@ -60,7 +60,12 @@ export class LoginAdmin {
       ).subscribe({
       next: (response) => {
         console.log('Login Admin exitoso:', response);
-        this.router.navigateByUrl(this.returnUrl);
+        const user = this.authService.getUser();
+        if (user?.role === 'super_admin') {
+          this.router.navigateByUrl('/admin/companies');
+        } else {
+          this.router.navigateByUrl(this.returnUrl);
+        }
       },
       error: (err) => {
         console.error('Error en login Admin:', err);

@@ -14,10 +14,9 @@ export class Admin {
 
   private apiUrl = `${window.env.URL_BACK}/api/admin`;
 
-  getParkings(): Observable<Parking[]> {
-    return this.http.get<Parking[]>(
-      `${this.apiUrl}/parking`
-    );
+  getParkings(companyId?: number): Observable<Parking[]> {
+    const params = companyId != null ? { companyId: String(companyId) } : undefined;
+    return this.http.get<Parking[]>(`${this.apiUrl}/parking`, { params });
   }
 
   getParkingById(id: number): Observable<Parking> {
@@ -70,6 +69,46 @@ export class Admin {
 
   getCompanies(): Observable<Company[]> {
     return this.http.get<Company[]>(`${this.apiUrl}/companies`);
+  }
+
+  createCompany(data: {
+    name: string;
+    cif?: string;
+    adminEmail: string;
+    adminPassword: string;
+    adminNombre: string;
+    adminApellidos?: string;
+    adminDni?: string;
+  }): Observable<Company> {
+    return this.http.post<Company>(`${this.apiUrl}/companies`, data);
+  }
+
+  getCompany(id: number): Observable<Company> {
+    return this.http.get<Company>(`${this.apiUrl}/companies/${id}`);
+  }
+
+  updateCompany(id: number, data: { name: string; cif?: string }): Observable<Company> {
+    return this.http.put<Company>(`${this.apiUrl}/companies/${id}`, data);
+  }
+
+  deleteCompany(id: number): Observable<{ mensaje: string }> {
+    return this.http.delete<{ mensaje: string }>(`${this.apiUrl}/companies/${id}`);
+  }
+
+  getCompanyUsers(companyId: number): Observable<AdminUser[]> {
+    return this.http.get<AdminUser[]>(`${this.apiUrl}/companies/${companyId}/users`);
+  }
+
+  updateUser(userId: number, data: {
+    email?: string;
+    password?: string;
+    nombre?: string;
+    apellidos?: string;
+    dni?: string;
+    role?: string;
+    companyId?: number | null;
+  }): Observable<AdminUser> {
+    return this.http.put<AdminUser>(`${this.apiUrl}/users/${userId}`, data);
   }
 
   createUser(data: {

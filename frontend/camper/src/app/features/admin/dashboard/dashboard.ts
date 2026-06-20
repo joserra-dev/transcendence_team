@@ -19,12 +19,10 @@ export class Dashboard implements OnInit {
   parkings: Parking[] = [];
   isLoading = true;
   userName = '';
-  isSuperAdmin = false;
 
   ngOnInit() {
     const user = this.authService.getUser();
     this.userName = user?.nombrePersona || user?.emailPersona || '';
-    this.isSuperAdmin = this.authService.isSuperAdmin();
     this.loadParkings();
   }
 

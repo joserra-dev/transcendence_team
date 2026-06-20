@@ -30,4 +30,10 @@ export interface Company {
   id: number;
   name: string;
   cif?: string;
+  parkingCount?: number;
+  adminUserId?: number | null;
+  adminEmail?: string | null;
+  adminName?: string | null;
+  adminApellidos?: string | null;
+  adminDni?: string | null;
 }

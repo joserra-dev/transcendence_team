@@ -1,0 +1,135 @@
+<main class="company-detail">
+  <header class="page-header">
+    <div>
+      <a routerLink="/admin/companies" class="back-link">← {{ 'ADMIN_COMPANIES.BACK' | translate }}</a>
+      <h1>{{ company?.name || ('ADMIN_COMPANIES.EDIT_TITLE' | translate) }}</h1>
+    </div>
+    <a class="btn btn-primary" [routerLink]="['/admin/companies', companyId, 'parkings']">
+      {{ 'ADMIN_COMPANIES.VIEW_PARKINGS_BTN' | translate }}
+    </a>
+  </header>
+
+  <div class="alert success" *ngIf="successMessage">{{ successMessage | translate }}</div>
+  <div class="alert error" *ngIf="errorMessage">{{ errorMessage | translate }}</div>
+
+  <div *ngIf="isLoading" class="loading-msg">{{ 'ADMIN_COMPANIES.LOADING' | translate }}</div>
+
+  <ng-container *ngIf="!isLoading && company">
+    <section class="panel">
+      <h2>{{ 'ADMIN_COMPANIES.COMPANY_SECTION' | translate }}</h2>
+      <form [formGroup]="companyForm" (ngSubmit)="saveCompany()" class="form-grid">
+        <label>
+          {{ 'ADMIN_COMPANIES.NAME' | translate }} *
+          <input type="text" formControlName="name" />
+        </label>
+        <label>
+          {{ 'ADMIN_COMPANIES.CIF' | translate }}
+          <input type="text" formControlName="cif" />
+        </label>
+        <div class="form-actions">
+          <button class="btn btn-primary" type="submit">
+            {{ 'ADMIN_COMPANIES.SAVE_COMPANY' | translate }}
+          </button>
+        </div>
+      </form>
+    </section>
+
+    <section class="panel" *ngIf="company.adminUserId">
+      <h2>{{ 'ADMIN_COMPANIES.ADMIN_SECTION' | translate }}</h2>
+      <form [formGroup]="adminForm" (ngSubmit)="saveAdmin()" class="form-grid">
+        <label>
+          {{ 'ADMIN_COMPANIES.ADMIN_EMAIL' | translate }} *
+          <input type="email" formControlName="email" />
+        </label>
+        <label>
+          {{ 'ADMIN_COMPANIES.ADMIN_PASSWORD' | translate }}
+          <input type="password" formControlName="password" [placeholder]="'ADMIN_COMPANIES.PASSWORD_OPTIONAL' | translate" />
+        </label>
+        <label>
+          {{ 'ADMIN_COMPANIES.ADMIN_NAME' | translate }} *
+          <input type="text" formControlName="nombre" />
+        </label>
+        <label>
+          {{ 'ADMIN_COMPANIES.ADMIN_LASTNAME' | translate }}
+          <input type="text" formControlName="apellidos" />
+        </label>
+        <label>
+          {{ 'ADMIN_COMPANIES.ADMIN_DNI' | translate }}
+          <input type="text" formControlName="dni" />
+        </label>
+        <div class="form-actions">
+          <button class="btn btn-primary" type="submit">
+            {{ 'ADMIN_COMPANIES.SAVE_ADMIN' | translate }}
+          </button>
+        </div>
+      </form>
+    </section>
+
+    <section class="panel">
+      <h2>{{ 'ADMIN_COMPANIES.USERS_SECTION' | translate }}</h2>
+      <p class="subtitle">{{ 'ADMIN_COMPANIES.USERS_DESC' | translate }}</p>
+
+      <p *ngIf="users.length === 0" class="empty-msg">{{ 'ADMIN_COMPANIES.NO_USERS' | translate }}</p>
+
+      <div class="users-list" *ngIf="users.length > 0">
+        <article *ngFor="let user of users" class="user-card">
+          <div *ngIf="editingUserId !== user.id">
+            <h3>{{ user.nombre }} {{ user.apellidos }}</h3>
+            <p class="meta">{{ user.email }}</p>
+            <p class="meta">
+              <span class="badge">{{ roleLabel(user.role) | translate }}</span>
+              <span *ngIf="user.dni"> · DNI: {{ user.dni }}</span>
+            </p>
+            <button
+              *ngIf="user.role !== 'super_admin'"
+              class="btn btn-secondary"
+              type="button"
+              (click)="startEditUser(user)">
+              {{ 'ADMIN_COMPANIES.EDIT_USER' | translate }}
+            </button>
+          </div>
+
+          <form
+            *ngIf="editingUserId === user.id"
+            [formGroup]="userForm"
+            (ngSubmit)="saveUser()"
+            class="form-grid edit-user-form">
+            <label>
+              {{ 'ADMIN_USERS.EMAIL' | translate }}
+              <input type="email" formControlName="email" />
+            </label>
+            <label>
+              {{ 'ADMIN_USERS.PASSWORD' | translate }}
+              <input type="password" formControlName="password" [placeholder]="'ADMIN_COMPANIES.PASSWORD_OPTIONAL' | translate" />
+            </label>
+            <label>
+              {{ 'ADMIN_USERS.NAME' | translate }}
+              <input type="text" formControlName="nombre" />
+            </label>
+            <label>
+              {{ 'ADMIN_USERS.LASTNAME' | translate }}
+              <input type="text" formControlName="apellidos" />
+            </label>
+            <label>
+              {{ 'ADMIN_USERS.DNI' | translate }}
+              <input type="text" formControlName="dni" />
+            </label>
+            <label>
+              {{ 'ADMIN_USERS.ROLE' | translate }}
+              <select formControlName="role">
+                <option value="user">{{ 'ADMIN_USERS.ROLE_USER' | translate }}</option>
+                <option value="admin">{{ 'ADMIN_USERS.ROLE_ADMIN' | translate }}</option>
+              </select>
+            </label>
+            <div class="form-actions">
+              <button class="btn btn-primary" type="submit">{{ 'ADMIN_COMPANIES.SAVE_USER' | translate }}</button>
+              <button class="btn btn-secondary" type="button" (click)="cancelEditUser()">
+                {{ 'ADMIN_COMPANIES.CANCEL' | translate }}
+              </button>
+            </div>
+          </form>
+        </article>
+      </div>
+    </section>
+  </ng-container>
+</main>

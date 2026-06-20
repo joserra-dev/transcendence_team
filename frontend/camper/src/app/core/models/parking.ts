@@ -11,6 +11,7 @@ export interface Space {
 
 export interface Parking {
   id: number;
+  id_company?: number;
   name: string;
 
   web?: string;           

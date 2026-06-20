@@ -25,7 +25,10 @@
     "DASHBOARD": "Panel de administración",
     "NEW_PARKING": "Nuevo parking",
     "MANAGE_PARKING": "Gestionar parking",
-    "MANAGE_USERS": "Gestionar usuarios"
+    "MANAGE_USERS": "Gestionar usuarios",
+    "MANAGE_COMPANIES": "Gestionar empresas",
+    "COMPANY_PARKINGS": "Parkings de empresa",
+    "EDIT_COMPANY": "Editar empresa"
   },
 
   "FOOTER": {
@@ -309,7 +312,10 @@
     "ROLE_USER": "Usuario",
     "GRANT_ADMIN": "Dar permisos de admin",
     "REVOKE_ADMIN": "Quitar permisos de admin",
+    "EDIT": "Editar perfil",
+    "PROMOTE_DESC": "Selecciona la empresa a la que asignar permisos de administrador.",
     "SUCCESS_CREATE": "Usuario creado correctamente.",
+    "SUCCESS_UPDATE": "Usuario actualizado correctamente.",
     "SUCCESS_PROMOTE": "Permisos de admin concedidos.",
     "SUCCESS_REVOKE": "Permisos de admin revocados.",
     "ERRORS": {
@@ -317,6 +323,60 @@
       "CREATE": "Error al crear el usuario.",
       "UPDATE": "Error al actualizar permisos.",
       "NO_COMPANY": "No hay empresas disponibles para asignar al admin."
+    }
+  },
+
+  "ADMIN_COMPANIES": {
+    "TITLE": "Panel de superadministrador",
+    "SUBTITLE": "Gestiona las empresas registradas y sus anuncios de parkings.",
+    "LIST_TITLE": "Empresas registradas",
+    "ADD": "Agregar empresa",
+    "CANCEL": "Cancelar",
+    "CREATE_TITLE": "Nueva empresa",
+    "COMPANY_SECTION": "Datos de la empresa",
+    "ADMIN_SECTION": "Datos del administrador",
+    "NAME": "Nombre de la empresa",
+    "CIF": "CIF",
+    "ADMIN_EMAIL": "Email del admin",
+    "ADMIN_PASSWORD": "Contraseña del admin",
+    "ADMIN_NAME": "Nombre",
+    "ADMIN_LASTNAME": "Apellidos",
+    "ADMIN_DNI": "DNI",
+    "ADMIN_LABEL": "Administrador",
+    "SAVE": "Crear empresa y admin",
+    "LOADING": "Cargando empresas...",
+    "EMPTY": "No hay empresas registradas todavía.",
+    "PARKINGS": "parkings",
+    "PARKINGS_TITLE": "Parkings de la empresa",
+    "NO_PARKINGS": "Esta empresa no tiene parkings publicados.",
+    "BACK": "Volver a empresas",
+    "VIEW_PARKINGS": "Ver parkings de {{name}}",
+    "VIEW_PARKINGS_BTN": "Ver parkings",
+    "EDIT": "Editar",
+    "DELETE": "Eliminar",
+    "MANAGE_USERS": "Administrar usuarios",
+    "CONFIRM_DELETE": "¿Eliminar la empresa \"{{name}}\"? Se borrarán también sus parkings.",
+    "EDIT_TITLE": "Editar empresa",
+    "SAVE_COMPANY": "Guardar empresa",
+    "SAVE_ADMIN": "Guardar administrador",
+    "SAVE_USER": "Guardar usuario",
+    "PASSWORD_OPTIONAL": "Dejar vacío para no cambiar",
+    "USERS_SECTION": "Usuarios de la empresa",
+    "USERS_DESC": "Perfiles vinculados a esta empresa.",
+    "NO_USERS": "No hay usuarios vinculados a esta empresa.",
+    "EDIT_USER": "Editar perfil",
+    "SUCCESS_CREATE": "Empresa y administrador creados correctamente.",
+    "SUCCESS_UPDATE": "Empresa actualizada correctamente.",
+    "SUCCESS_ADMIN_UPDATE": "Administrador actualizado correctamente.",
+    "SUCCESS_USER_UPDATE": "Usuario actualizado correctamente.",
+    "SUCCESS_DELETE": "Empresa eliminada correctamente.",
+    "ERRORS": {
+      "LOAD": "No se pudieron cargar las empresas.",
+      "CREATE": "Error al crear la empresa.",
+      "UPDATE": "Error al actualizar la empresa.",
+      "ADMIN_UPDATE": "Error al actualizar el administrador.",
+      "USER_UPDATE": "Error al actualizar el usuario.",
+      "DELETE": "Error al eliminar la empresa."
     }
   },
 

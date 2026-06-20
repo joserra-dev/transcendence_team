@@ -25,7 +25,10 @@
     "DASHBOARD": "Administrazio panela",
     "NEW_PARKING": "Aparkaleku berria",
     "MANAGE_PARKING": "Aparkalekua kudeatu",
-    "MANAGE_USERS": "Erabiltzaileak kudeatu"
+    "MANAGE_USERS": "Erabiltzaileak kudeatu",
+    "MANAGE_COMPANIES": "Enpresak kudeatu",
+    "COMPANY_PARKINGS": "Enpresaren aparkalekuak",
+    "EDIT_COMPANY": "Enpresa editatu"
   },
 
   "FOOTER": {
@@ -309,7 +312,10 @@
     "ROLE_USER": "Erabiltzailea",
     "GRANT_ADMIN": "Eman admin baimenak",
     "REVOKE_ADMIN": "Kendu admin baimenak",
+    "EDIT": "Profila editatu",
+    "PROMOTE_DESC": "Hautatu administratzaile baimenak emateko enpresa.",
     "SUCCESS_CREATE": "Erabiltzailea ongi sortu da.",
+    "SUCCESS_UPDATE": "Erabiltzailea ongi eguneratu da.",
     "SUCCESS_PROMOTE": "Admin baimenak ongi eman dira.",
     "SUCCESS_REVOKE": "Admin baimenak ongi kendu dira.",
     "ERRORS": {
@@ -317,6 +323,60 @@
       "CREATE": "Errorea erabiltzailea sortzean.",
       "UPDATE": "Errorea baimenak eguneratzean.",
       "NO_COMPANY": "Ez dago enpresarik adminari esleitzeko."
+    }
+  },
+
+  "ADMIN_COMPANIES": {
+    "TITLE": "Superadministratzaile panela",
+    "SUBTITLE": "Kudeatu erregistratutako enpresak eta haien aparkaleku iragarkiak.",
+    "LIST_TITLE": "Erregistratutako enpresak",
+    "ADD": "Enpresa gehitu",
+    "CANCEL": "Utzi",
+    "CREATE_TITLE": "Enpresa berria",
+    "COMPANY_SECTION": "Enpresaren datuak",
+    "ADMIN_SECTION": "Administratzailearen datuak",
+    "NAME": "Enpresaren izena",
+    "CIF": "IFK",
+    "ADMIN_EMAIL": "Adminaren posta",
+    "ADMIN_PASSWORD": "Adminaren pasahitza",
+    "ADMIN_NAME": "Izena",
+    "ADMIN_LASTNAME": "Abizenak",
+    "ADMIN_DNI": "NAN",
+    "ADMIN_LABEL": "Administratzailea",
+    "SAVE": "Enpresa eta admin sortu",
+    "LOADING": "Enpresak kargatzen...",
+    "EMPTY": "Oraindik ez dago enpresarik erregistratuta.",
+    "PARKINGS": "aparkaleku",
+    "PARKINGS_TITLE": "Enpresaren aparkalekuak",
+    "NO_PARKINGS": "Enpresa honek ez du aparkalekurik argitaratuta.",
+    "BACK": "Enpresetara itzuli",
+    "VIEW_PARKINGS": "{{name}} enpresaren aparkalekuak ikusi",
+    "VIEW_PARKINGS_BTN": "Aparkalekuak ikusi",
+    "EDIT": "Editatu",
+    "DELETE": "Ezabatu",
+    "MANAGE_USERS": "Erabiltzaileak kudeatu",
+    "CONFIRM_DELETE": "\"{{name}}\" enpresa ezabatu? Bere aparkalekuak ere kenduko dira.",
+    "EDIT_TITLE": "Enpresa editatu",
+    "SAVE_COMPANY": "Enpresa gorde",
+    "SAVE_ADMIN": "Administratzailea gorde",
+    "SAVE_USER": "Erabiltzailea gorde",
+    "PASSWORD_OPTIONAL": "Hutsik utzi aldatu gabe mantentzeko",
+    "USERS_SECTION": "Enpresako erabiltzaileak",
+    "USERS_DESC": "Enpresa honi lotutako profilak.",
+    "NO_USERS": "Ez dago erabiltzailerik enpresa honi lotuta.",
+    "EDIT_USER": "Profila editatu",
+    "SUCCESS_CREATE": "Enpresa eta administratzailea ongi sortu dira.",
+    "SUCCESS_UPDATE": "Enpresa ongi eguneratu da.",
+    "SUCCESS_ADMIN_UPDATE": "Administratzailea ongi eguneratu da.",
+    "SUCCESS_USER_UPDATE": "Erabiltzailea ongi eguneratu da.",
+    "SUCCESS_DELETE": "Enpresa ongi ezabatu da.",
+    "ERRORS": {
+      "LOAD": "Ezin izan dira enpresak kargatu.",
+      "CREATE": "Errorea enpresa sortzean.",
+      "UPDATE": "Errorea enpresa eguneratzean.",
+      "ADMIN_UPDATE": "Errorea administratzailea eguneratzean.",
+      "USER_UPDATE": "Errorea erabiltzailea eguneratzean.",
+      "DELETE": "Errorea enpresa ezabatzean."
     }
   },
 

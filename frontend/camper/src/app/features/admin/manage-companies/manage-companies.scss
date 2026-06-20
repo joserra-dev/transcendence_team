@@ -1,0 +1,233 @@
+@use "../../../../styles/abstracts/variables" as *;
+
+.admin-companies {
+  max-width: 1100px;
+  margin: 0 auto;
+  padding: 2rem 1rem;
+}
+
+.dashboard-hero {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 1rem;
+  margin-bottom: 1.5rem;
+  padding: 1.5rem;
+  background: linear-gradient(135deg, rgba($color-primary, 0.12), rgba($color-primary, 0.03));
+  border-radius: $radius-md;
+
+  h1 {
+    margin: 0.25rem 0;
+  }
+}
+
+.eyebrow {
+  margin: 0;
+  font-size: 0.85rem;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  color: $color-primary;
+  font-weight: 600;
+}
+
+.subtitle {
+  margin: 0.5rem 0 0;
+  color: $color-grey-soft;
+}
+
+.page-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 1rem;
+  margin-bottom: 1.5rem;
+
+  h2 {
+    margin: 0;
+  }
+}
+
+.page-header-actions {
+  display: flex;
+  gap: 0.75rem;
+  flex-wrap: wrap;
+}
+
+.alert {
+  padding: 0.75rem 1rem;
+  border-radius: $radius-sm;
+  margin-bottom: 1rem;
+
+  &.success {
+    background: rgba($color-primary, 0.1);
+    color: $color-primary;
+  }
+
+  &.error {
+    background: rgba(#c0392b, 0.1);
+    color: #c0392b;
+  }
+}
+
+.create-form {
+  background: $color-white;
+  border: 1px solid $color-border;
+  border-radius: $radius-md;
+  padding: 1.25rem;
+  margin-bottom: 1.5rem;
+
+  h3 {
+    margin: 0 0 1rem;
+  }
+}
+
+.form-section {
+  border: none;
+  margin: 0 0 1.25rem;
+  padding: 0;
+
+  legend {
+    font-weight: 600;
+    margin-bottom: 0.75rem;
+    color: $color-primary;
+  }
+}
+
+.form-grid {
+  display: grid;
+  gap: 1rem;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+
+  label {
+    display: flex;
+    flex-direction: column;
+    gap: 0.35rem;
+    font-size: 0.9rem;
+  }
+
+  input {
+    padding: 0.5rem 0.65rem;
+    border: 1px solid $color-border;
+    border-radius: $radius-sm;
+  }
+}
+
+.loading-msg,
+.empty-msg {
+  text-align: center;
+  color: $color-grey-soft;
+}
+
+.company-list {
+  display: grid;
+  gap: 1rem;
+}
+
+.company-card {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 1rem;
+  background: $color-white;
+  border: 1px solid $color-border;
+  border-radius: $radius-md;
+  padding: 1.25rem;
+  box-shadow: $shadow-soft;
+  cursor: pointer;
+  transition: transform 0.15s ease, box-shadow 0.15s ease;
+
+  &:hover,
+  &:focus-visible {
+    transform: translateY(-2px);
+    box-shadow: $shadow-strong;
+    outline: 2px solid rgba($color-primary, 0.3);
+    outline-offset: 2px;
+  }
+
+  h3 {
+    margin: 0 0 0.35rem;
+  }
+}
+
+.meta {
+  margin: 0.15rem 0;
+  color: $color-grey-soft;
+  font-size: 0.9rem;
+}
+
+.card-side {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  flex-shrink: 0;
+}
+
+.badge {
+  background: rgba($color-primary, 0.12);
+  color: $color-primary;
+  padding: 0.25rem 0.65rem;
+  border-radius: $radius-sm;
+  font-size: 0.85rem;
+  white-space: nowrap;
+}
+
+.arrow {
+  color: $color-primary;
+  font-size: 1.25rem;
+}
+
+.btn-panel-dark {
+  white-space: nowrap;
+  background-color: #474747;
+  color: $color-white;
+  border: none;
+  padding: $space-xs $space-lg;
+  font-weight: $font-weight-semibold;
+  border-radius: $radius-sm;
+  box-shadow: $shadow-strong;
+  transition: all 0.2s ease;
+  cursor: pointer;
+  text-decoration: none;
+  display: inline-block;
+  text-align: center;
+
+  &:hover {
+    background-color: darken(#474747, 8%);
+    color: $color-white;
+  }
+}
+
+.btn-panel-danger {
+  white-space: nowrap;
+  background-color: $color-error;
+  color: $color-white;
+  border: none;
+  padding: $space-xs $space-lg;
+  font-weight: $font-weight-semibold;
+  border-radius: $radius-sm;
+  box-shadow: $shadow-strong;
+  transition: all 0.2s ease;
+  cursor: pointer;
+
+  &:hover {
+    background-color: darken($color-error, 8%);
+  }
+}
+
+@media (max-width: $bp-sm) {
+  .dashboard-hero,
+  .page-header,
+  .company-card {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .page-header-actions {
+    width: 100%;
+    flex-direction: column;
+  }
+
+  .card-side {
+    justify-content: space-between;
+  }
+}

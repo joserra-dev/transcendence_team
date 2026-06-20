@@ -82,10 +82,50 @@ def _can_manage_parking(profile: Profiles, parking: Parking) -> bool:
     return profile.role == UserRole.ADMIN and profile.company_id == parking.id_company
 
 
+def _user_to_admin_dict(user: Users) -> dict:
+    profile = user.profile
+    return {
+        "id": user.id,
+        "email": user.email,
+        "isVerified": user.is_verified,
+        "nombre": profile.name if profile else "",
+        "apellidos": profile.last_name if profile else "",
+        "dni": profile.dni if profile else "",
+        "role": profile.role.value if profile else "user",
+        "companyId": profile.company_id if profile else None,
+        "companyName": profile.company.name if profile and profile.company else None,
+    }
+
+
+def _company_to_admin_dict(company: Company) -> dict:
+    data = company.to_dict()
+    data["parkingCount"] = len(company.parkings)
+    admin_profile = Profiles.query.filter_by(
+        company_id=company.id, role=UserRole.ADMIN
+    ).first()
+    if admin_profile and admin_profile.user:
+        data["adminUserId"] = admin_profile.user.id
+        data["adminEmail"] = admin_profile.user.email
+        data["adminName"] = admin_profile.name
+        data["adminApellidos"] = admin_profile.last_name
+        data["adminDni"] = admin_profile.dni
+    else:
+        data["adminUserId"] = None
+        data["adminEmail"] = None
+        data["adminName"] = None
+        data["adminApellidos"] = None
+        data["adminDni"] = None
+    return data
+
+
 @admin_bp.route('/parking', methods=['GET'])
 @require_admin
 def list_parkings(_user, profile):
-    parkings = _parking_query_for_profile(profile).all()
+    query = _parking_query_for_profile(profile)
+    company_id = request.args.get('companyId', type=int)
+    if company_id and profile.role == UserRole.SUPER_ADMIN:
+        query = query.filter(Parking.id_company == company_id)
+    parkings = query.all()
     return jsonify([_parking_to_admin_dict(p) for p in parkings]), 200
 
 
@@ -202,28 +242,128 @@ def update_spot(_user, profile, parking_id, spot_id):
 @require_super_admin
 def list_companies(_user, _profile):
     companies = Company.query.all()
-    return jsonify([c.to_dict() for c in companies]), 200
+    return jsonify([_company_to_admin_dict(c) for c in companies]), 200
+
+
+@admin_bp.route('/companies', methods=['POST'])
+@require_super_admin
+def create_company(_user, _profile):
+    data = request.get_json() or {}
+    name = data.get("name")
+    cif = data.get("cif")
+    email = data.get("adminEmail")
+    password = data.get("adminPassword")
+    nombre = data.get("adminNombre", "")
+    apellidos = data.get("adminApellidos", "")
+    dni = data.get("adminDni", "")
+
+    if not name:
+        return jsonify({"error": "El nombre de la empresa es obligatorio"}), 400
+    if not email or not password:
+        return jsonify(
+            {"error": "Email y contraseña del administrador son obligatorios"}
+        ), 400
+    if Users.query.filter_by(email=email).first():
+        return jsonify({"error": "El email ya está registrado"}), 409
+
+    company = Company(name=name, cif=cif or None)
+    db.session.add(company)
+    db.session.flush()
+
+    user = Users(
+        email=email,
+        pass_user=generate_password_hash(password),
+        is_verified=True,
+    )
+    db.session.add(user)
+    db.session.flush()
+
+    admin_profile = Profiles(
+        user_id=user.id,
+        name=nombre or "Admin",
+        last_name=apellidos or "",
+        dni=dni or "",
+        birth_day=date(1990, 1, 1),
+        role=UserRole.ADMIN,
+        company_id=company.id,
+    )
+    db.session.add(admin_profile)
+    db.session.commit()
+
+    return jsonify(_company_to_admin_dict(company)), 201
+
+
+@admin_bp.route('/companies/<int:company_id>', methods=['GET'])
+@require_super_admin
+def get_company(_user, _profile, company_id):
+    company = Company.query.get(company_id)
+    if not company:
+        return jsonify({"error": "Empresa no encontrada"}), 404
+    return jsonify(_company_to_admin_dict(company)), 200
+
+
+@admin_bp.route('/companies/<int:company_id>', methods=['PUT'])
+@require_super_admin
+def update_company(_user, _profile, company_id):
+    company = Company.query.get(company_id)
+    if not company:
+        return jsonify({"error": "Empresa no encontrada"}), 404
+
+    data = request.get_json() or {}
+    name = data.get("name")
+    if not name:
+        return jsonify({"error": "El nombre de la empresa es obligatorio"}), 400
+
+    company.name = name
+    if "cif" in data:
+        company.cif = data["cif"] or None
+
+    db.session.commit()
+    return jsonify(_company_to_admin_dict(company)), 200
+
+
+@admin_bp.route('/companies/<int:company_id>', methods=['DELETE'])
+@require_super_admin
+def delete_company(_user, _profile, company_id):
+    company = Company.query.get(company_id)
+    if not company:
+        return jsonify({"error": "Empresa no encontrada"}), 404
+
+    for parking in list(company.parkings):
+        for space in list(parking.spaces):
+            db.session.delete(space)
+        db.session.delete(parking)
+
+    for profile in Profiles.query.filter_by(company_id=company_id).all():
+        profile.company_id = None
+        if profile.role == UserRole.ADMIN:
+            profile.role = UserRole.USER
+
+    db.session.delete(company)
+    db.session.commit()
+    return jsonify({"mensaje": "Empresa eliminada correctamente"}), 200
+
+
+@admin_bp.route('/companies/<int:company_id>/users', methods=['GET'])
+@require_super_admin
+def list_company_users(_user, _profile, company_id):
+    company = Company.query.get(company_id)
+    if not company:
+        return jsonify({"error": "Empresa no encontrada"}), 404
+
+    profiles = Profiles.query.filter_by(company_id=company_id).all()
+    result = []
+    for profile in profiles:
+        if profile.user:
+            result.append(_user_to_admin_dict(profile.user))
+    return jsonify(result), 200
 
 
 @admin_bp.route('/users', methods=['GET'])
 @require_super_admin
 def list_users(_user, _profile):
     users = Users.query.all()
-    result = []
-    for user in users:
-        profile = user.profile
-        result.append({
-            "id": user.id,
-            "email": user.email,
-            "isVerified": user.is_verified,
-            "nombre": profile.name if profile else "",
-            "apellidos": profile.last_name if profile else "",
-            "dni": profile.dni if profile else "",
-            "role": profile.role.value if profile else "user",
-            "companyId": profile.company_id if profile else None,
-            "companyName": profile.company.name if profile and profile.company else None,
-        })
-    return jsonify(result), 200
+    return jsonify([_user_to_admin_dict(user) for user in users]), 200
 
 
 @admin_bp.route('/users', methods=['POST'])
@@ -274,6 +414,50 @@ def create_user(_user, _profile):
     db.session.commit()
 
     return jsonify({"mensaje": "Usuario creado correctamente", "id": user.id}), 201
+
+
+@admin_bp.route('/users/<int:user_id>', methods=['PUT'])
+@require_super_admin
+def update_user(_user, _profile, user_id):
+    data = request.get_json() or {}
+    user = Users.query.get(user_id)
+    if not user or not user.profile:
+        return jsonify({"error": "Usuario no encontrado"}), 404
+    if user.profile.role == UserRole.SUPER_ADMIN:
+        return jsonify({"error": "No se puede modificar un superadministrador"}), 403
+
+    new_email = data.get("email")
+    if new_email and new_email != user.email:
+        if Users.query.filter_by(email=new_email).first():
+            return jsonify({"error": "El email ya está registrado"}), 409
+        user.email = new_email
+
+    password = data.get("password")
+    if password:
+        user.pass_user = generate_password_hash(password)
+
+    profile = user.profile
+    if "nombre" in data:
+        profile.name = data["nombre"]
+    if "apellidos" in data:
+        profile.last_name = data["apellidos"]
+    if "dni" in data:
+        profile.dni = data["dni"]
+
+    role_name = data.get("role")
+    if role_name:
+        if role_name not in ("user", "admin"):
+            return jsonify({"error": "Rol no válido. Usa user o admin"}), 400
+        profile.role = UserRole.ADMIN if role_name == "admin" else UserRole.USER
+
+    if "companyId" in data:
+        company_id = data.get("companyId")
+        if profile.role == UserRole.ADMIN and not company_id:
+            return jsonify({"error": "Los admins deben pertenecer a una empresa"}), 400
+        profile.company_id = company_id
+
+    db.session.commit()
+    return jsonify(_user_to_admin_dict(user)), 200
 
 
 @admin_bp.route('/users/<int:user_id>/role', methods=['PUT'])

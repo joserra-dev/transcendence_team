@@ -1,6 +1,6 @@
 import { Component, OnInit, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
+import { FormBuilder, FormGroup, ReactiveFormsModule, Validators, FormsModule } from '@angular/forms';
 import { RouterLink } from '@angular/router';
 import { TranslateModule } from '@ngx-translate/core';
 import { Admin } from '../../../core/services/admin';
@@ -8,7 +8,7 @@ import { AdminUser, Company } from '../../../core/models/user';
 
 @Component({
   selector: 'app-manage-users',
-  imports: [CommonModule, ReactiveFormsModule, RouterLink, TranslateModule],
+  imports: [CommonModule, ReactiveFormsModule, FormsModule, RouterLink, TranslateModule],
   templateUrl: './manage-users.html',
   styleUrl: './manage-users.scss',
 })
@@ -20,6 +20,9 @@ export class ManageUsers implements OnInit {
   companies: Company[] = [];
   isLoading = true;
   showForm = false;
+  editingUserId: number | null = null;
+  promotingUserId: number | null = null;
+  promoteCompanyId: number | null = null;
   successMessage = '';
   errorMessage = '';
 
@@ -33,10 +36,25 @@ export class ManageUsers implements OnInit {
     companyId: [null],
   });
 
+  editForm: FormGroup = this.fb.group({
+    email: ['', [Validators.required, Validators.email]],
+    password: [''],
+    nombre: ['', Validators.required],
+    apellidos: [''],
+    dni: [''],
+    role: ['user', Validators.required],
+    companyId: [null],
+  });
+
   ngOnInit() {
     this.loadData();
-    this.userForm.get('role')?.valueChanges.subscribe((role) => {
-      const companyControl = this.userForm.get('companyId');
+    this.setupRoleValidators(this.userForm);
+    this.setupRoleValidators(this.editForm);
+  }
+
+  private setupRoleValidators(form: FormGroup) {
+    form.get('role')?.valueChanges.subscribe((role) => {
+      const companyControl = form.get('companyId');
       if (role === 'admin') {
         companyControl?.setValidators([Validators.required]);
       } else {
@@ -69,6 +87,7 @@ export class ManageUsers implements OnInit {
     this.showForm = !this.showForm;
     this.errorMessage = '';
     this.successMessage = '';
+    this.cancelEditUser();
     if (!this.showForm) {
       this.userForm.reset({ role: 'user' });
     }
@@ -93,16 +112,72 @@ export class ManageUsers implements OnInit {
     });
   }
 
-  promoteToAdmin(user: AdminUser) {
-    const companyId = this.companies[0]?.id;
-    if (!companyId) {
+  startEditUser(user: AdminUser) {
+    this.editingUserId = user.id;
+    this.promotingUserId = null;
+    this.editForm.patchValue({
+      email: user.email,
+      password: '',
+      nombre: user.nombre,
+      apellidos: user.apellidos,
+      dni: user.dni,
+      role: user.role,
+      companyId: user.companyId,
+    });
+  }
+
+  cancelEditUser() {
+    this.editingUserId = null;
+    this.editForm.reset({ role: 'user' });
+  }
+
+  saveUser() {
+    if (!this.editingUserId || this.editForm.invalid) {
+      this.editForm.markAllAsTouched();
+      return;
+    }
+
+    const data = { ...this.editForm.value };
+    if (!data.password) {
+      delete data.password;
+    }
+
+    this.adminService.updateUser(this.editingUserId, data).subscribe({
+      next: () => {
+        this.successMessage = 'ADMIN_USERS.SUCCESS_UPDATE';
+        this.cancelEditUser();
+        this.loadData();
+      },
+      error: (err) => {
+        this.errorMessage = err.error?.error || 'ADMIN_USERS.ERRORS.UPDATE';
+      },
+    });
+  }
+
+  startPromote(user: AdminUser) {
+    this.promotingUserId = user.id;
+    this.promoteCompanyId = user.companyId ?? this.companies[0]?.id ?? null;
+    this.cancelEditUser();
+  }
+
+  cancelPromote() {
+    this.promotingUserId = null;
+    this.promoteCompanyId = null;
+  }
+
+  confirmPromote() {
+    if (!this.promotingUserId || !this.promoteCompanyId) {
       this.errorMessage = 'ADMIN_USERS.ERRORS.NO_COMPANY';
       return;
     }
 
-    this.adminService.updateUserRole(user.id, { role: 'admin', companyId }).subscribe({
+    this.adminService.updateUserRole(this.promotingUserId, {
+      role: 'admin',
+      companyId: this.promoteCompanyId,
+    }).subscribe({
       next: () => {
         this.successMessage = 'ADMIN_USERS.SUCCESS_PROMOTE';
+        this.cancelPromote();
         this.loadData();
       },
       error: (err) => {

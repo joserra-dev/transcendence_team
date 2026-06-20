@@ -4,7 +4,7 @@
       {{ isEditMode ? ('MANAGE_PARKING.EDIT' | translate) : ('MANAGE_PARKING.NEW' | translate) }}
     </h1>
 
-    <a routerLink="/admin/dashboard" class="btn btn-secondary mt-2 mt-md-0">
+    <a [routerLink]="backLink" class="btn btn-secondary mt-2 mt-md-0">
       ← {{ 'MANAGE_PARKING.BACK' | translate }}
     </a>
   </header>

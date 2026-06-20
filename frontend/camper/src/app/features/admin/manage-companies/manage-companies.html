@@ -1,0 +1,121 @@
+<main class="admin-companies">
+  <header class="dashboard-hero">
+    <div>
+      <p class="eyebrow">{{ 'ADMIN_COMPANIES.TITLE' | translate }}</p>
+      <h1>{{ 'ADMIN_DASHBOARD.WELCOME' | translate:{ name: userName } }}</h1>
+      <p class="subtitle">{{ 'ADMIN_COMPANIES.SUBTITLE' | translate }}</p>
+    </div>
+    <button class="btn btn-panel-dark" type="button" (click)="logout()">
+      {{ 'HEADER.LOGOUT' | translate }}
+    </button>
+  </header>
+
+  <div class="alert success" *ngIf="successMessage">{{ successMessage | translate }}</div>
+  <div class="alert error" *ngIf="errorMessage">{{ errorMessage | translate }}</div>
+
+  <header class="page-header">
+    <h2>{{ 'ADMIN_COMPANIES.LIST_TITLE' | translate }}</h2>
+    <div class="page-header-actions">
+      <a routerLink="/admin/users" class="btn btn-panel-dark">
+        {{ 'ADMIN_COMPANIES.MANAGE_USERS' | translate }}
+      </a>
+      <button class="btn btn-panel-dark" type="button" (click)="toggleForm()">
+        {{ showForm ? ('ADMIN_COMPANIES.CANCEL' | translate) : ('ADMIN_COMPANIES.ADD' | translate) }}
+      </button>
+    </div>
+  </header>
+
+  <section class="create-form" *ngIf="showForm">
+    <h3>{{ 'ADMIN_COMPANIES.CREATE_TITLE' | translate }}</h3>
+    <form [formGroup]="companyForm" (ngSubmit)="createCompany()">
+      <fieldset class="form-section">
+        <legend>{{ 'ADMIN_COMPANIES.COMPANY_SECTION' | translate }}</legend>
+        <div class="form-grid">
+          <label>
+            {{ 'ADMIN_COMPANIES.NAME' | translate }} *
+            <input type="text" formControlName="name" />
+          </label>
+          <label>
+            {{ 'ADMIN_COMPANIES.CIF' | translate }}
+            <input type="text" formControlName="cif" />
+          </label>
+        </div>
+      </fieldset>
+
+      <fieldset class="form-section">
+        <legend>{{ 'ADMIN_COMPANIES.ADMIN_SECTION' | translate }}</legend>
+        <div class="form-grid">
+          <label>
+            {{ 'ADMIN_COMPANIES.ADMIN_EMAIL' | translate }} *
+            <input type="email" formControlName="adminEmail" />
+          </label>
+          <label>
+            {{ 'ADMIN_COMPANIES.ADMIN_PASSWORD' | translate }} *
+            <input type="password" formControlName="adminPassword" />
+          </label>
+          <label>
+            {{ 'ADMIN_COMPANIES.ADMIN_NAME' | translate }} *
+            <input type="text" formControlName="adminNombre" />
+          </label>
+          <label>
+            {{ 'ADMIN_COMPANIES.ADMIN_LASTNAME' | translate }}
+            <input type="text" formControlName="adminApellidos" />
+          </label>
+          <label>
+            {{ 'ADMIN_COMPANIES.ADMIN_DNI' | translate }}
+            <input type="text" formControlName="adminDni" />
+          </label>
+        </div>
+      </fieldset>
+
+      <button class="btn btn-primary" type="submit">
+        {{ 'ADMIN_COMPANIES.SAVE' | translate }}
+      </button>
+    </form>
+  </section>
+
+  <div *ngIf="isLoading" class="loading-msg">{{ 'ADMIN_COMPANIES.LOADING' | translate }}</div>
+
+  <p *ngIf="!isLoading && companies.length === 0" class="empty-msg">
+    {{ 'ADMIN_COMPANIES.EMPTY' | translate }}
+  </p>
+
+  <section class="company-list" *ngIf="!isLoading && companies.length > 0">
+    <article
+      *ngFor="let company of companies"
+      class="company-card"
+      (click)="openCompanyParkings(company)"
+      (keydown.enter)="openCompanyParkings(company)"
+      tabindex="0"
+      role="button"
+      [attr.aria-label]="'ADMIN_COMPANIES.VIEW_PARKINGS' | translate:{ name: company.name }">
+      <div class="card-main">
+        <h3>{{ company.name }}</h3>
+        <p *ngIf="company.cif" class="meta">{{ 'ADMIN_COMPANIES.CIF' | translate }}: {{ company.cif }}</p>
+        <p *ngIf="company.adminName || company.adminEmail" class="meta">
+          {{ 'ADMIN_COMPANIES.ADMIN_LABEL' | translate }}:
+          {{ adminDisplayName(company) || company.adminEmail }}
+        </p>
+      </div>
+      <div class="card-side">
+        <button
+          class="btn btn-panel-dark"
+          type="button"
+          (click)="editCompany($event, company)">
+          {{ 'ADMIN_COMPANIES.EDIT' | translate }}
+        </button>
+        <button
+          class="btn btn-panel-danger"
+          type="button"
+          (click)="deleteCompany($event, company)">
+          {{ 'ADMIN_COMPANIES.DELETE' | translate }}
+        </button>
+        <span class="badge">
+          {{ company.parkingCount || 0 }}
+          {{ 'ADMIN_COMPANIES.PARKINGS' | translate }}
+        </span>
+        <span class="arrow">→</span>
+      </div>
+    </article>
+  </section>
+</main>

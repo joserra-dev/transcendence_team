@@ -25,7 +25,10 @@
     "DASHBOARD": "Admin dashboard",
     "NEW_PARKING": "New parking",
     "MANAGE_PARKING": "Manage parking",
-    "MANAGE_USERS": "Manage users"
+    "MANAGE_USERS": "Manage users",
+    "MANAGE_COMPANIES": "Manage companies",
+    "COMPANY_PARKINGS": "Company parkings",
+    "EDIT_COMPANY": "Edit company"
   },
 
   "FOOTER": {
@@ -310,7 +313,10 @@
     "ROLE_USER": "User",
     "GRANT_ADMIN": "Grant admin permissions",
     "REVOKE_ADMIN": "Revoke admin permissions",
+    "EDIT": "Edit profile",
+    "PROMOTE_DESC": "Select the company to assign administrator permissions.",
     "SUCCESS_CREATE": "User created successfully.",
+    "SUCCESS_UPDATE": "User updated successfully.",
     "SUCCESS_PROMOTE": "Admin permissions granted.",
     "SUCCESS_REVOKE": "Admin permissions revoked.",
     "ERRORS": {
@@ -318,6 +324,60 @@
       "CREATE": "Error creating user.",
       "UPDATE": "Error updating permissions.",
       "NO_COMPANY": "No companies available to assign to admin."
+    }
+  },
+
+  "ADMIN_COMPANIES": {
+    "TITLE": "Superadmin panel",
+    "SUBTITLE": "Manage registered companies and their parking listings.",
+    "LIST_TITLE": "Registered companies",
+    "ADD": "Add company",
+    "CANCEL": "Cancel",
+    "CREATE_TITLE": "New company",
+    "COMPANY_SECTION": "Company details",
+    "ADMIN_SECTION": "Administrator details",
+    "NAME": "Company name",
+    "CIF": "Tax ID",
+    "ADMIN_EMAIL": "Admin email",
+    "ADMIN_PASSWORD": "Admin password",
+    "ADMIN_NAME": "First name",
+    "ADMIN_LASTNAME": "Last name",
+    "ADMIN_DNI": "ID number",
+    "ADMIN_LABEL": "Administrator",
+    "SAVE": "Create company and admin",
+    "LOADING": "Loading companies...",
+    "EMPTY": "No companies registered yet.",
+    "PARKINGS": "parkings",
+    "PARKINGS_TITLE": "Company parkings",
+    "NO_PARKINGS": "This company has no published parkings.",
+    "BACK": "Back to companies",
+    "VIEW_PARKINGS": "View parkings for {{name}}",
+    "VIEW_PARKINGS_BTN": "View parkings",
+    "EDIT": "Edit",
+    "DELETE": "Delete",
+    "MANAGE_USERS": "Manage users",
+    "CONFIRM_DELETE": "Delete company \"{{name}}\"? Its parkings will also be removed.",
+    "EDIT_TITLE": "Edit company",
+    "SAVE_COMPANY": "Save company",
+    "SAVE_ADMIN": "Save administrator",
+    "SAVE_USER": "Save user",
+    "PASSWORD_OPTIONAL": "Leave blank to keep current",
+    "USERS_SECTION": "Company users",
+    "USERS_DESC": "Profiles linked to this company.",
+    "NO_USERS": "No users linked to this company.",
+    "EDIT_USER": "Edit profile",
+    "SUCCESS_CREATE": "Company and administrator created successfully.",
+    "SUCCESS_UPDATE": "Company updated successfully.",
+    "SUCCESS_ADMIN_UPDATE": "Administrator updated successfully.",
+    "SUCCESS_USER_UPDATE": "User updated successfully.",
+    "SUCCESS_DELETE": "Company deleted successfully.",
+    "ERRORS": {
+      "LOAD": "Could not load companies.",
+      "CREATE": "Error creating company.",
+      "UPDATE": "Error updating company.",
+      "ADMIN_UPDATE": "Error updating administrator.",
+      "USER_UPDATE": "Error updating user.",
+      "DELETE": "Error deleting company."
     }
   },
 
