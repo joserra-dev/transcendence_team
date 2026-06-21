@@ -103,4 +103,15 @@ export class History implements OnInit {
     const input = event.target as HTMLInputElement;
     input.showPicker?.();
   }
+
+  onEntryDateChange() {
+    const fechaDesde = this.filterForm.get('fechaDesde')?.value;
+    if (fechaDesde) {
+      const nextDay = new Date(fechaDesde);
+      nextDay.setDate(nextDay.getDate() + 1);
+      this.filterForm.patchValue({
+        fechaHasta: nextDay.toISOString().split('T')[0]
+      });
+    }
+  }
 }

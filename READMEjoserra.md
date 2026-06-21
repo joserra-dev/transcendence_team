@@ -233,7 +233,9 @@ Backend POST /api/booking ahora permite reservas en fechas coincidentes si la ma
 Bloquea duplicados solo cuando la misma matrícula ya tiene una reserva activa en esas fechas.
 Frontend permite seleccionar plazas marcadas como ocupadas.
 El modal muestra aviso: puedes continuar si la matrícula es diferente.
+
 Añadidos mensajes i18n en ES/EN/EU.
+
 Validado:
 
 compileall backend: correcto.
@@ -256,4 +258,8 @@ Backend compile: correcto.
 
 Angular build: correcto.
 git diff --check: correcto.
+
+### 26/06/19 revision de ultimas modificaciones
+- las traducciones no son limpias
+- las fechas de las reservas no me modifica automaticamente al dia siguiente o dejarmelo vacio
 

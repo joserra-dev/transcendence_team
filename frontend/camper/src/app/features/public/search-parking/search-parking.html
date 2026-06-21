@@ -37,7 +37,7 @@
       <!-- FECHA ENTRADA -->
       <div class="search-field date">
         <i class="fa-regular fa-calendar"></i>
-        <input type="date" formControlName="fechaDesde" (click)="openDatePicker($event)">
+        <input type="date" formControlName="fechaDesde" (click)="openDatePicker($event)" (change)="onEntryDateChange()">
       </div>
 
       <div class="divider"></div>
