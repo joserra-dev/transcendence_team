@@ -7,7 +7,7 @@
         {{ parking.municipality || parking.localidad }}
         
         <button *ngIf="parking.latitude && parking.longitude" class="btn btn-sm btn-outline-primary ms-3" (click)="openMapModal()">
-          <i class="fa-solid fa-map-location-dot me-1"></i> Ver en Google Maps
+          Ver en Google Maps
         </button>
       </p>
     </div>
@@ -107,9 +107,9 @@
 
       <div class="contact">
         <h3 class="section-title">{{ 'PARKING.CONTACT' | translate }}</h3>
-        <p><i class="fa-solid fa-globe"></i><a [href]="parking.web" target="_blank"> {{ parking.web }}</a></p>
-        <p><i class="fa-solid fa-phone"></i> {{ parking.telephone }}</p>
-        <p><i class="fa-regular fa-envelope"></i> {{ parking.email }}</p>
+        <p *ngIf="parking.web"><i class="fa-solid fa-globe"></i><a [href]="parking.web" target="_blank"> {{ parking.web }}</a></p>
+        <p *ngIf="parking.telephone"><i class="fa-solid fa-phone"></i> {{ parking.telephone }}</p>
+        <p *ngIf="parking.email"><i class="fa-regular fa-envelope"></i> {{ parking.email }}</p>
       </div>
 
       <div class="booking-summary" *ngIf="selectedSpot">

@@ -2,7 +2,7 @@ import { Injectable, inject } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
-
+import { environment } from '../../../environments/environment';
 import { Parking, SearchFilters } from '../models/parking';
 
 @Injectable({
@@ -11,7 +11,7 @@ import { Parking, SearchFilters } from '../models/parking';
 export class ParkingService {
   private http = inject(HttpClient);
 
-  private apiUrl = `${window.env.URL_BACK}`;
+  private apiUrl = environment.urlBack;
 
   searchParkings(filters: SearchFilters): Observable<any[]> {
     let params: any = {};
