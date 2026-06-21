@@ -11,14 +11,19 @@ company_bp = Blueprint('company_bp', __name__)
 @company_bp.route('/api/company', methods=['GET'])
 def get_companyes():
     """
-    Obtiene la lista de usuarios o un usuario específico por ID.
+    Obtiene la lista de compañias o una compañía específica por ID.
     ---
     parameters:
+      - name: lang
+        in: query
+        type: string
+        required: false
+        description: Idioma de la respuesta (ej. es, en, eu).
       - name: id
         in: query
         type: integer
         required: false
-        description: ID del usuario opcional.
+        description: ID de la compañía opcional.
     responses:
       200:
         description: Éxito.

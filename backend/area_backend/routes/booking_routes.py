@@ -2,6 +2,7 @@
 from flask import Blueprint, jsonify, request
 # pyrefly: ignore [missing-import]
 from flask_jwt_extended import jwt_required, get_jwt_identity
+from flask_babel import gettext as _ 
 from datetime import datetime
 import os
 
@@ -62,10 +63,10 @@ def get_booking():
     if booking_id:
         booking = Booking.query.get(booking_id)
         if not booking:
-            return jsonify({"error": "Reserva no encontrada"}), 404
+            return jsonify({"error": _("Reserva no encontrada")}), 404
             
         if str(booking.id_user) != str(user_id):
-            return jsonify({"error": "No tienes permiso para ver esta reserva"}), 403
+            return jsonify({"error": _("No tienes permiso para ver esta reserva")}), 403
             
         return jsonify(_get_booking_details(booking)), 200
 
@@ -81,7 +82,7 @@ def get_reserva_by_id(id):
         return jsonify({"error": "Reserva no encontrada"}), 404
         
     if str(booking.id_user) != str(user_id):
-        return jsonify({"error": "No tienes permiso para ver esta reserva"}), 403
+        return jsonify({"error": _("No tienes permiso para ver esta reserva")}), 403
         
     return jsonify(_get_booking_details(booking)), 200
 
@@ -157,19 +158,19 @@ def create_booking():
     licensePlate = clean_license_plate(data.get("licensePlate"))
     
     if not id_space or not start_date or not end_date:
-        return "Faltan campos obligatorios", 400
+        return _("Faltan campos obligatorios"), 400
 
     if not licensePlate:
-        return "La matrícula del vehículo es obligatoria", 400
+        return _("La matrícula del vehículo es obligatoria"), 400
         
     try:
         startDate = datetime.strptime(start_date, "%Y-%m-%d").date()
         endDate = datetime.strptime(end_date, "%Y-%m-%d").date()
     except ValueError:
-        return "Formato de fecha inválido", 400
+        return _("Formato de fecha inválido"), 400
 
     if endDate <= startDate:
-        return jsonify({"error": "La fecha de salida debe ser al menos un día después de la fecha de entrada."}), 400
+        return jsonify({"error": _("La fecha de salida debe ser al menos un día después de la fecha de entrada.")}), 400
         
     # Validar solapamiento de plaza
     # Permitimos reservas coincidentes en la misma plaza si la matrícula es diferente.
@@ -182,7 +183,7 @@ def create_booking():
     ).first()
     
     if same_vehicle_overlap:
-        return jsonify({"error": "Ya existe una reserva para esta matrícula en las fechas seleccionadas. Usa otra matrícula o cambia las fechas."}), 400
+        return jsonify({"error": _("Ya existe una reserva para esta matrícula en las fechas seleccionadas. Usa otra matrícula o cambia las fechas.")}), 400
         
     try:
         from models.space import Space
@@ -233,69 +234,69 @@ def create_booking():
 def cancel_booking():
     data = request.get_json()
     if not data:
-        return jsonify({"error": "Petición inválida"}), 400
+        return jsonify({"error": _("Petición inválida")}), 400
         
     id_reserva = data.get("idReserva")
     if not id_reserva:
-        return jsonify({"error": "Falta idReserva"}), 400
+        return jsonify({"error": _("Falta idReserva")}), 400
         
     booking = Booking.query.get(id_reserva)
     if not booking:
-        return jsonify({"error": "Reserva no encontrada"}), 404
+        return jsonify({"error": _("Reserva no encontrada")}), 404
         
     user_id = get_jwt_identity()
     if str(booking.id_user) != str(user_id):
-        return jsonify({"error": "No tienes permiso para cancelar esta reserva"}), 403
+        return jsonify({"error": _("No tienes permiso para cancelar esta reserva")}), 403
         
     booking.status = "0" # 0 = Cancelada
     db.session.commit()
     
-    return jsonify({"message": "Reserva cancelada correctamente"}), 200
+    return jsonify({"message": _("Reserva cancelada correctamente")}), 200
 
 @booking_bp.route('/api/booking/rate', methods=['PUT'])
 @jwt_required()
 def rate_booking():
     data = request.get_json()
     if not data:
-        return jsonify({"error": "Petición inválida"}), 400
+        return jsonify({"error": _("Petición inválida")}), 400
         
     id_reserva = data.get("idReserva")
     puntuacion = data.get("puntuacion")
     
     if not id_reserva or puntuacion is None:
-        return jsonify({"error": "Faltan campos obligatorios"}), 400
+        return jsonify({"error": _("Faltan campos obligatorios")}), 400
         
     booking = Booking.query.get(id_reserva)
     if not booking:
-        return jsonify({"error": "Reserva no encontrada"}), 404
+        return jsonify({"error": _("Reserva no encontrada")}), 404
         
     user_id = get_jwt_identity()
     if str(booking.id_user) != str(user_id):
-        return jsonify({"error": "No tienes permiso para puntuar esta reserva"}), 403
+        return jsonify({"error": _("No tienes permiso para puntuar esta reserva")}), 403
         
     booking.puntuacion_reserva = puntuacion
     db.session.commit()
     
-    return jsonify({"message": "Puntuación guardada correctamente"}), 200
+    return jsonify({"message": _("Puntuación guardada correctamente")}), 200
 
 @booking_bp.route('/api/booking/qr', methods=['POST'])
 @jwt_required()
 def get_qr_code():
     data = request.get_json()
     if not data:
-        return jsonify({"error": "Petición inválida"}), 400
+        return jsonify({"error": _("Petición inválida")}), 400
         
     id_reserva = data.get("idReserva")
     if not id_reserva:
-        return jsonify({"error": "Falta idReserva"}), 400
+        return jsonify({"error": _("Falta idReserva")}), 400
         
     booking = Booking.query.get(id_reserva)
     if not booking:
-        return jsonify({"error": "Reserva no encontrada"}), 404
+        return jsonify({"error": _("Reserva no encontrada")}), 404
         
     user_id = get_jwt_identity()
     if str(booking.id_user) != str(user_id):
-        return jsonify({"error": "No tienes permiso para ver el QR de esta reserva"}), 403
+        return jsonify({"error": _("No tienes permiso para ver el QR de esta reserva")}), 403
         
     # Generar un código QR en base64 estático pero válido
     # Este es una imagen PNG de un código QR simple
