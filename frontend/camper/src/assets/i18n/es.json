@@ -355,6 +355,20 @@
     "EDIT": "Editar",
     "DELETE": "Eliminar",
     "MANAGE_USERS": "Administrar usuarios",
+    "MANAGE_ADS": "Gestionar anuncios",
+    "ADS_PANEL_TITLE": "Gestionar anuncios",
+    "ADS_PANEL_DESC": "Selecciona una empresa para ver y gestionar sus anuncios de parkings.",
+    "SELECT_COMPANY": "Selecciona empresa",
+    "SELECT_COMPANY_PLACEHOLDER": "Elige una empresa...",
+    "ADS_LOADING": "Cargando anuncios...",
+    "ADS_EMPTY": "Esta empresa no tiene anuncios publicados.",
+    "ADS_FOR_COMPANY": "Anuncios de {{name}}",
+    "ADS_PAGINATION_LABEL": "Paginación de anuncios",
+    "PAGE_INFO": "Mostrando {{from}}–{{to}} de {{total}}",
+    "PAGE": "Página {{current}} de {{total}}",
+    "PREV_PAGE": "Anterior",
+    "NEXT_PAGE": "Siguiente",
+    "PAGINATION_LABEL": "Paginación de empresas",
     "CONFIRM_DELETE": "¿Eliminar la empresa \"{{name}}\"? Se borrarán también sus parkings.",
     "EDIT_TITLE": "Editar empresa",
     "SAVE_COMPANY": "Guardar empresa",
@@ -376,7 +390,8 @@
       "UPDATE": "Error al actualizar la empresa.",
       "ADMIN_UPDATE": "Error al actualizar el administrador.",
       "USER_UPDATE": "Error al actualizar el usuario.",
-      "DELETE": "Error al eliminar la empresa."
+      "DELETE": "Error al eliminar la empresa.",
+      "LOAD_ADS": "No se pudieron cargar los anuncios."
     }
   },
 

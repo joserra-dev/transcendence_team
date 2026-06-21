@@ -355,6 +355,20 @@
     "EDIT": "Editatu",
     "DELETE": "Ezabatu",
     "MANAGE_USERS": "Erabiltzaileak kudeatu",
+    "MANAGE_ADS": "Iragarkiak kudeatu",
+    "ADS_PANEL_TITLE": "Iragarkiak kudeatu",
+    "ADS_PANEL_DESC": "Hautatu enpresa bat bere aparkaleku iragarkiak ikusi eta kudeatzeko.",
+    "SELECT_COMPANY": "Hautatu enpresa",
+    "SELECT_COMPANY_PLACEHOLDER": "Aukeratu enpresa bat...",
+    "ADS_LOADING": "Iragarkiak kargatzen...",
+    "ADS_EMPTY": "Enpresa honek ez du iragarkirik argitaratuta.",
+    "ADS_FOR_COMPANY": "{{name}} enpresaren iragarkiak",
+    "ADS_PAGINATION_LABEL": "Iragarkien orrialdekatzea",
+    "PAGE_INFO": "{{total}}tik {{from}}–{{to}} erakusten",
+    "PAGE": "{{total}}tik {{current}}. orria",
+    "PREV_PAGE": "Aurrekoa",
+    "NEXT_PAGE": "Hurrengoa",
+    "PAGINATION_LABEL": "Enpresen orrialdekatzea",
     "CONFIRM_DELETE": "\"{{name}}\" enpresa ezabatu? Bere aparkalekuak ere kenduko dira.",
     "EDIT_TITLE": "Enpresa editatu",
     "SAVE_COMPANY": "Enpresa gorde",
@@ -376,7 +390,8 @@
       "UPDATE": "Errorea enpresa eguneratzean.",
       "ADMIN_UPDATE": "Errorea administratzailea eguneratzean.",
       "USER_UPDATE": "Errorea erabiltzailea eguneratzean.",
-      "DELETE": "Errorea enpresa ezabatzean."
+      "DELETE": "Errorea enpresa ezabatzean.",
+      "LOAD_ADS": "Ezin izan dira iragarkiak kargatu."
     }
   },
 

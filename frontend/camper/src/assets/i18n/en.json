@@ -356,6 +356,20 @@
     "EDIT": "Edit",
     "DELETE": "Delete",
     "MANAGE_USERS": "Manage users",
+    "MANAGE_ADS": "Manage listings",
+    "ADS_PANEL_TITLE": "Manage listings",
+    "ADS_PANEL_DESC": "Select a company to view and manage its parking listings.",
+    "SELECT_COMPANY": "Select company",
+    "SELECT_COMPANY_PLACEHOLDER": "Choose a company...",
+    "ADS_LOADING": "Loading listings...",
+    "ADS_EMPTY": "This company has no published listings.",
+    "ADS_FOR_COMPANY": "Listings for {{name}}",
+    "ADS_PAGINATION_LABEL": "Listings pagination",
+    "PAGE_INFO": "Showing {{from}}–{{to}} of {{total}}",
+    "PAGE": "Page {{current}} of {{total}}",
+    "PREV_PAGE": "Previous",
+    "NEXT_PAGE": "Next",
+    "PAGINATION_LABEL": "Companies pagination",
     "CONFIRM_DELETE": "Delete company \"{{name}}\"? Its parkings will also be removed.",
     "EDIT_TITLE": "Edit company",
     "SAVE_COMPANY": "Save company",
@@ -377,7 +391,8 @@
       "UPDATE": "Error updating company.",
       "ADMIN_UPDATE": "Error updating administrator.",
       "USER_UPDATE": "Error updating user.",
-      "DELETE": "Error deleting company."
+      "DELETE": "Error deleting company.",
+      "LOAD_ADS": "Could not load listings."
     }
   },
 

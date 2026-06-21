@@ -1,10 +1,11 @@
-import { Component, OnInit, inject } from '@angular/core';
+import { Component, ElementRef, OnInit, ViewChild, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { Router, RouterLink } from '@angular/router';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { Admin } from '../../../core/services/admin';
 import { Auth } from '../../../core/services/auth';
+import { Parking } from '../../../core/models/parking';
 import { Company } from '../../../core/models/user';
 
 @Component({
@@ -14,15 +15,27 @@ import { Company } from '../../../core/models/user';
   styleUrl: './manage-companies.scss',
 })
 export class ManageCompanies implements OnInit {
+  @ViewChild('companyListScroll') companyListScroll?: ElementRef<HTMLElement>;
+  @ViewChild('adsListScroll') adsListScroll?: ElementRef<HTMLElement>;
+
   private fb = inject(FormBuilder);
   private adminService = inject(Admin);
   private authService = inject(Auth);
   private router = inject(Router);
   private translate = inject(TranslateService);
 
+  readonly pageSize = 8;
+  readonly adsPageSize = 8;
+  currentPage = 1;
+  adsCurrentPage = 1;
   companies: Company[] = [];
+  adsParkings: Parking[] = [];
+  selectedCompanyId: number | null = null;
   isLoading = true;
+  adsLoading = false;
   showForm = false;
+  showAdsPanel = false;
+  adsErrorMessage = '';
   successMessage = '';
   errorMessage = '';
   userName = '';
@@ -43,11 +56,56 @@ export class ManageCompanies implements OnInit {
     this.loadCompanies();
   }
 
+  get totalPages(): number {
+    return Math.max(1, Math.ceil(this.companies.length / this.pageSize));
+  }
+
+  get paginatedCompanies(): Company[] {
+    const start = (this.currentPage - 1) * this.pageSize;
+    return this.companies.slice(start, start + this.pageSize);
+  }
+
+  get pageRangeStart(): number {
+    if (this.companies.length === 0) {
+      return 0;
+    }
+    return (this.currentPage - 1) * this.pageSize + 1;
+  }
+
+  get pageRangeEnd(): number {
+    return Math.min(this.currentPage * this.pageSize, this.companies.length);
+  }
+
+  get adsTotalPages(): number {
+    return Math.max(1, Math.ceil(this.adsParkings.length / this.adsPageSize));
+  }
+
+  get paginatedAds(): Parking[] {
+    const start = (this.adsCurrentPage - 1) * this.adsPageSize;
+    return this.adsParkings.slice(start, start + this.adsPageSize);
+  }
+
+  get adsPageRangeStart(): number {
+    if (this.adsParkings.length === 0) {
+      return 0;
+    }
+    return (this.adsCurrentPage - 1) * this.adsPageSize + 1;
+  }
+
+  get adsPageRangeEnd(): number {
+    return Math.min(this.adsCurrentPage * this.adsPageSize, this.adsParkings.length);
+  }
+
+  get selectedCompanyName(): string {
+    return this.companies.find((c) => c.id === this.selectedCompanyId)?.name || '';
+  }
+
   loadCompanies() {
     this.isLoading = true;
     this.adminService.getCompanies().subscribe({
       next: (companies) => {
         this.companies = companies;
+        this.clampCurrentPage();
         this.isLoading = false;
       },
       error: () => {
@@ -61,9 +119,80 @@ export class ManageCompanies implements OnInit {
     this.showForm = !this.showForm;
     this.errorMessage = '';
     this.successMessage = '';
+    if (this.showForm) {
+      this.showAdsPanel = false;
+    }
     if (!this.showForm) {
       this.companyForm.reset();
     }
+  }
+
+  toggleAdsPanel() {
+    this.showAdsPanel = !this.showAdsPanel;
+    this.errorMessage = '';
+    this.successMessage = '';
+    if (this.showAdsPanel) {
+      this.showForm = false;
+      this.resetAdsState();
+    }
+  }
+
+  onAdsCompanyChange(rawValue: string) {
+    const companyId = rawValue ? Number(rawValue) : null;
+    this.selectedCompanyId = companyId;
+    this.adsCurrentPage = 1;
+    this.adsErrorMessage = '';
+
+    if (!companyId) {
+      this.adsParkings = [];
+      return;
+    }
+
+    this.loadCompanyAds(companyId);
+  }
+
+  loadCompanyAds(companyId: number) {
+    this.adsLoading = true;
+    this.adsErrorMessage = '';
+
+    this.adminService.getParkings(companyId).subscribe({
+      next: (parkings) => {
+        this.adsParkings = parkings;
+        this.clampAdsCurrentPage();
+        this.adsLoading = false;
+      },
+      error: () => {
+        this.adsErrorMessage = 'ADMIN_COMPANIES.ERRORS.LOAD_ADS';
+        this.adsParkings = [];
+        this.adsLoading = false;
+      },
+    });
+  }
+
+  openManageParking(parking: Parking) {
+    if (!this.selectedCompanyId) {
+      return;
+    }
+
+    this.router.navigate(['/admin/parking', parking.id], {
+      queryParams: { companyId: this.selectedCompanyId },
+    });
+  }
+
+  goToAdsPage(page: number) {
+    if (page < 1 || page > this.adsTotalPages || page === this.adsCurrentPage) {
+      return;
+    }
+    this.adsCurrentPage = page;
+    this.adsListScroll?.nativeElement.scrollTo({ top: 0, behavior: 'smooth' });
+  }
+
+  prevAdsPage() {
+    this.goToAdsPage(this.adsCurrentPage - 1);
+  }
+
+  nextAdsPage() {
+    this.goToAdsPage(this.adsCurrentPage + 1);
   }
 
   createCompany() {
@@ -114,6 +243,46 @@ export class ManageCompanies implements OnInit {
 
   adminDisplayName(company: Company): string {
     return [company.adminName, company.adminApellidos].filter(Boolean).join(' ').trim();
+  }
+
+  goToPage(page: number) {
+    if (page < 1 || page > this.totalPages || page === this.currentPage) {
+      return;
+    }
+    this.currentPage = page;
+    this.scrollListToTop();
+  }
+
+  prevPage() {
+    this.goToPage(this.currentPage - 1);
+  }
+
+  nextPage() {
+    this.goToPage(this.currentPage + 1);
+  }
+
+  private clampCurrentPage() {
+    if (this.currentPage > this.totalPages) {
+      this.currentPage = this.totalPages;
+    }
+  }
+
+  private clampAdsCurrentPage() {
+    if (this.adsCurrentPage > this.adsTotalPages) {
+      this.adsCurrentPage = this.adsTotalPages;
+    }
+  }
+
+  private resetAdsState() {
+    this.selectedCompanyId = null;
+    this.adsParkings = [];
+    this.adsCurrentPage = 1;
+    this.adsLoading = false;
+    this.adsErrorMessage = '';
+  }
+
+  private scrollListToTop() {
+    this.companyListScroll?.nativeElement.scrollTo({ top: 0, behavior: 'smooth' });
   }
 
   logout() {
