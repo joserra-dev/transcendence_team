@@ -122,7 +122,7 @@ export class ParkingDetail implements OnInit, OnDestroy {
 
     const diffTime = end.getTime() - start.getTime();
     const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
-    return (diffDays + 1) * this.selectedSpot.price;
+    return diffDays * this.selectedSpot.price;
   }
 
   isDateRangeValid(): boolean {

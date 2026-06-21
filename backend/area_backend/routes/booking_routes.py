@@ -22,9 +22,9 @@ def clean_license_plate(license_plate):
 
 
 def _get_booking_details(booking):
-    days = 1
+    days = 0
     if booking.start_date and booking.end_date:
-        days = (booking.end_date - booking.start_date).days + 1
+        days = max((booking.end_date - booking.start_date).days, 0)
     
     space = booking.space
     parking_name = ""
@@ -114,9 +114,9 @@ def get_history():
                 parking_id = parking.id
         
         # 2. Cálculo de días usando los nuevos campos en inglés de Booking (start_date y end_date)
-        days = 1
+        days = 0
         if b.start_date and b.end_date:
-            days = (b.end_date - b.start_date).days + 1
+            days = max((b.end_date - b.start_date).days, 0)
         total_price = days * price
         
         # 3. Mapeo del diccionario. Mantenemos las claves antiguas que Angular espera,
@@ -189,7 +189,7 @@ def create_booking():
         space = Space.query.get(id_space)
         total_price = 0.0
         if space:
-            days = max((endDate - startDate).days + 1, 0)
+            days = max((endDate - startDate).days, 0)
             total_price = days * float(space.price or 0)
     except Exception:
         total_price = 0.0
