@@ -10,3 +10,4 @@ pytest
 pytest-mock
 opencv-python-headless
 easyocr
+Flask-Babel==4.0.0

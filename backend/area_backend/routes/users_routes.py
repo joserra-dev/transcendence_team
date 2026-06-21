@@ -3,16 +3,26 @@ import os
 from flask import Blueprint, jsonify, request, current_app, redirect
 from sqlalchemy import func
 from werkzeug.security import generate_password_hash, check_password_hash 
-from flask_jwt_extended import create_access_token, decode_token,jwt_required, get_jwt_identity
+from flask_jwt_extended import create_access_token, decode_token, jwt_required, get_jwt_identity
 from flask_mailman import EmailMessage
 
 from services.email_services import EmailService
 from utils.password_validator import PasswordValidator
 
+# Importamos 'refresh' para actualizar el idioma en caliente dentro de la petición
+from flask_babel import gettext as _, refresh
+
 import secrets
 
 from database import db
 from models.users import Users, Profiles
+
+# Creamos el Blueprint
+users_bp = Blueprint('users_bp', __name__, url_prefix='/api/users')
+
+# ==============================================================================
+# FUNCIONES AUXILIARES
+# ==============================================================================
 
 def _user_to_frontend_dict(user):
     profile = user.profile
@@ -57,9 +67,6 @@ def _user_to_frontend_dict(user):
         "admin": is_admin
     }
 
-# Creamos el Blueprint
-users_bp = Blueprint('users_bp', __name__, url_prefix='/api/users')
-
 
 def _build_frontend_url(path: str) -> str:
     frontend_url = current_app.config.get('FRONTEND_URL', 'http://localhost:8001').rstrip('/')
@@ -87,6 +94,11 @@ def _clear_reset_token(usuario: Users) -> None:
     usuario.reset_password_expires = None
     usuario.password_reset_verified = False
 
+
+# ==============================================================================
+# RUTAS DEL ENTORNO DE USUARIOS
+# ==============================================================================
+
 @users_bp.route('', methods=['GET'])
 def obtener_usuarios():
     """
@@ -100,6 +112,11 @@ def obtener_usuarios():
         type: integer
         required: false
         description: ID del usuario opcional.
+      - name: lang
+        in: query
+        type: string
+        required: false
+        description: Idioma de la respuesta (ej. es, en, eu).
     responses:
       200:
         description: Éxito.
@@ -110,7 +127,7 @@ def obtener_usuarios():
         usuario = Users.query.get(user_id)
         if usuario:
             return jsonify(usuario.to_dict()), 200
-        return jsonify({"error": "Usuario no encontrado"}), 404
+        return jsonify({"error": _("Usuario no encontrado")}), 404
 
     all_users = Users.query.all()
     return jsonify([u.to_dict() for u in all_users]), 200
@@ -124,6 +141,11 @@ def registrar_usuario():
     tags:
       - Usuarios y Perfiles
     parameters:
+      - name: lang
+        in: query
+        type: string
+        required: false
+        description: Idioma para los mensajes de error/éxito (ej. es, en, eu).
       - name: body
         in: body
         required: true
@@ -153,49 +175,46 @@ def registrar_usuario():
 
     email = datos.get('email')
     password = datos.get('password')
-    confirmPassword = datos.get('confirmPassword') # <-- Recorremos el segundo password
+    confirmPassword = datos.get('confirmPassword')
 
-    # 1. Validar que vengan absolutamente todos los campos requeridos
-    if  not email or not password or not confirmPassword:
-        return jsonify({"error": "Todos los campos son obligatorios (email, password, confirmPassword)"}), 400
+    if not email or not password or not confirmPassword:
+        return jsonify({"error": _("Todos los campos son obligatorios (email, password, confirmPassword)")}), 400
 
-    # 2. VALIDACIÓN CLAVE: ¿Son iguales las dos contraseñas?
     if password != confirmPassword:
-        return jsonify({"error": "Las contraseñas introducidas no coinciden"}), 400
+        return jsonify({"error": _("Las contraseñas introducidas no coinciden")}), 400
 
     is_valid, mensagge = PasswordValidator.validar(password, email)
     if not is_valid:
         return jsonify({"error": mensagge}), 400
       
-    # 3. Verificar si el email ya existe en PostgreSQL
     usuario_existente = Users.query.filter_by(email=email).first()
     if usuario_existente:
-        return jsonify({"error": "Este email ya está registrado"}), 400
+        return jsonify({"error": _("Este email ya está registrado")}), 400
 
-    # 4. Si todo está correcto, encriptamos y guardamos
     password_encriptada = generate_password_hash(password)
-    verification_token=secrets.token_urlsafe(32)
+    verification_token = secrets.token_urlsafe(32)
     nuevo_usuario = Users(
-        email = email,
-        pass_user = password_encriptada,
-        is_verified = False,
-        verification_token = verification_token
+        email=email,
+        pass_user=password_encriptada,
+        is_verified=False,
+        verification_token=verification_token
     )
     try:
         db.session.add(nuevo_usuario)
     except Exception as e:
         db.session.rollback()
-        return jsonify({"error": "Error al registrar el usuario"}), 500
+        return jsonify({"error": _("Error al registrar el usuario")}), 500
     try:
-        EmailService.welcome(email,verification_token)
+        EmailService.welcome(email, verification_token)
         db.session.commit()
         return jsonify({
-            "mensaje": "Usuario registrado con éxito",
+            "mensaje": _("Usuario registrado con éxito"),
             "usuario": nuevo_usuario.to_dict()
         }), 201
     except Exception as e:
         db.session.rollback()
-        return jsonify({"error": "Error al enviar el mail de bienvenida"}), 500
+        return jsonify({"error": _("Error al enviar el mail de bienvenida")}), 500
+
 
 @users_bp.route('/verify', methods=['GET'])
 def verificar_cuenta():
@@ -219,23 +238,20 @@ def verificar_cuenta():
 
 
 @users_bp.route('/me', methods=['GET'])
-@jwt_required() # <--- Esto protege el endpoint, requiere token válido
+@jwt_required()
 def get_current_user():
     try:
-        # 1. Obtenemos el ID del usuario desde el token JWT
         current_user_id = get_jwt_identity()
-        
-        # 2. Buscamos al usuario en la base de datos
         user = Users.query.get(current_user_id)
         
         if not user:
-            return jsonify({"error": "Usuario no encontrado"}), 404
+            return jsonify({"error": _("Usuario no encontrado")}), 404
             
-        # 3. Devolvemos los datos necesarios para el perfil
         return jsonify(_user_to_frontend_dict(user)), 200
 
     except Exception as e:
-        return jsonify({"error": "Error al obtener los datos del usuario", "details": str(e)}), 500
+        return jsonify({"error": _("Error al obtener los datos del usuario"), "details": str(e)}), 500
+
 
 @users_bp.route('/update', methods=['PUT'])
 @jwt_required()
@@ -244,11 +260,11 @@ def update_profile():
         current_user_id = get_jwt_identity()
         user = Users.query.get(current_user_id)
         if not user:
-            return "Usuario no encontrado", 404
+            return _("Usuario no encontrado"), 404
             
         data = request.get_json()
         if not data:
-            return "Petición inválida", 400
+            return _("Petición inválida"), 400
             
         profile = user.profile
         if not profile:
@@ -278,13 +294,13 @@ def update_profile():
                 
         new_password = data.get("passPersona")
         if new_password and new_password.strip() != "":
-          is_valid, mensagge = PasswordValidator.validar(new_password)
-          if not is_valid:
-            return jsonify({"error": mensagge}), 400
-          user.pass_user = generate_password_hash(new_password)
+            is_valid, mensagge = PasswordValidator.validar(new_password)
+            if not is_valid:
+                return jsonify({"error": mensagge}), 400
+            user.pass_user = generate_password_hash(new_password)
             
         db.session.commit()
-        return "Perfil actualizado correctamente", 200
+        return _("Perfil actualizado correctamente"), 200
         
     except Exception as e:
         db.session.rollback()
@@ -294,11 +310,16 @@ def update_profile():
 @users_bp.route('/login', methods=['POST'])
 def autenticar_usuario():
     """
-    Registra un nuevo usuario en el sistema verificando la contraseña.
+    Autentica un usuario en el sistema comprobando correo y contraseña.
     ---
     tags:
       - Autenticación
     parameters:
+      - name: lang
+        in: query
+        type: string
+        required: false
+        description: Idioma para los mensajes de error/éxito (ej. es, en, eu).
       - name: body
         in: body
         required: true
@@ -318,52 +339,47 @@ def autenticar_usuario():
       200:
         description: Autentificación exitosa.
       400:
-        description: Autentificación fallida.
+        description: Datos incompletos.
+      401:
+        description: Credenciales incorrectas.
+      403:
+        description: Cuenta no verificada o rol no autorizado.
     """
-    datos = request.get_json()
+    datos = request.get_json() or {}
 
     email = datos.get('email')
     password = datos.get('password')
    
-    # 1. Validar que vengan absolutamente todos los campos requeridos
-    if  not email or not password : 
-      return jsonify({"error": "Todos los campos son obligatorios (email, password )"}), 400
+    if not email or not password: 
+        return jsonify({"error": _("Todos los campos son obligatorios (email, password)")}), 400
     
-    # 2. VALIDACIÓN CLAVE: ¿Son iguales las dos contraseñas?
-    #if password != confirm_password:
-    #    return jsonify({"error": "Las contraseñas introducidas no coinciden"}), 400
-
-    # 3. Verificar si el email ya existe en PostgreSQL
     usuario_existente = Users.query.filter_by(email=email).first()
 
-    if not usuario_existente or usuario_existente.is_verified == False:
-        return jsonify({"error": "Usuario no existe "}), 401
+    # Corregido: Si no existe o las credenciales no cuadran, 401.
+    if not usuario_existente:
+        return jsonify({"error": _("Credenciales incorrectas")}), 401
     
     coincide = check_password_hash(usuario_existente.pass_user, password)
     if not coincide:
-        return jsonify({"error": "Credenciales incorrectas"}), 401
+        return jsonify({"error": _("Credenciales incorrectas")}), 401
 
-    # 3.1 Impedir que admins entren por el login de cliente
+    # Corregido: El chequeo de verificación va DESPUÉS de comprobar que los datos son reales.
+    if not usuario_existente.is_verified:
+        return jsonify({"error": _("Debes verificar tu correo electrónico antes de iniciar sesión")}), 403
+
     perfil = usuario_existente.profile
     if perfil and perfil.role.value in ['admin', 'super_admin']:
-        return jsonify({"error": "Debes iniciar sesión desde el acceso de administrador"}), 403
-
-    if not usuario_existente.is_verified:
-        return jsonify({"error": "Debes verificar tu correo electrónico antes de iniciar sesión"}), 403
+        return jsonify({"error": _("Debes iniciar sesión desde el acceso de administrador")}), 403
    
-    # Modifica la línea 162 para pasarle el ID como string:
     token_acceso = create_access_token(identity=str(usuario_existente.id))
 
-    try:
-        return jsonify({
-        "mensaje": "¡Login exitoso!",
+    return jsonify({
+        "mensaje": _("¡Login exitoso!"),
         "token": token_acceso,
         "user": _user_to_frontend_dict(usuario_existente)
-        }), 200
-    except Exception as e:
-        db.session.rollback()
-        return jsonify({"error": "Error interno al guardar en la base de datos"}), 500
-      
+    }), 200
+
+
 @users_bp.route('/admin-login', methods=['POST'])
 def autenticar_admin():
     datos = request.get_json() or {}
@@ -371,58 +387,63 @@ def autenticar_admin():
     password = datos.get('password')
 
     if not email or not password:
-        return jsonify({"error": "Todos los campos son obligatorios (email, password)"}), 400
+        return jsonify({"error": _("Todos los campos son obligatorios (email, password)")}), 400
 
     usuario = Users.query.filter_by(email=email).first()
     if not usuario:
-        return jsonify({"error": "Credenciales incorrectas"}), 401
+        return jsonify({"error": _("Credenciales incorrectas")}), 401
 
     if not check_password_hash(usuario.pass_user, password):
-        return jsonify({"error": "Credenciales incorrectas"}), 401
+        return jsonify({"error": _("Credenciales incorrectas")}), 401
 
     if not usuario.is_verified:
-        return jsonify({"error": "Debes verificar tu correo electrónico antes de iniciar sesión"}), 403
+        return jsonify({"error": _("Debes verificar tu correo electrónico antes de iniciar sesión")}), 403
 
     profile = usuario.profile
     if not profile or profile.role.value not in ['admin', 'super_admin']:
-        return jsonify({"error": "No tienes permisos de administrador"}), 403
+        return jsonify({"error": _("No tienes permisos de administrador")}), 403
 
     token_acceso = create_access_token(identity=str(usuario.id))
     return jsonify({
-        "mensaje": "¡Login exitoso!",
+        "mensaje": _("¡Login exitoso!"),
         "token": token_acceso,
         "user": _user_to_frontend_dict(usuario)
     }), 200
 
 
 @users_bp.route('/perfil', methods=['GET'])
-@jwt_required() # <--- Este decorador obliga a que la petición lleve un token válido
+@jwt_required()
 def obtener_perfil():
-      """
+    """
     Obtiene el perfil del usuario autenticado.
     ---
     tags:
       - Usuarios y Perfiles
-      
+    parameters:
+      - name: lang
+        in: query
+        type: string
+        required: false
+        description: Idioma de la respuesta (ej. es, en, eu).
     security:
-      - BearerAuth: []  # <--- ESTO ACTIVA EL CANDADO EN ESTA RUTA
+      - BearerAuth: []
     responses:
       200:
         description: Datos del usuario obtenidos correctamente.
       401:
         description: Token faltante, inválido o expirado.
     """
-      usuario_id = get_jwt_identity()
-      usuario = Users.query.get(usuario_id)
+    usuario_id = get_jwt_identity()
+    usuario = Users.query.get(usuario_id)
       
-      if not usuario:
-          return jsonify({"error": "Usuario no encontrado"}), 404
+    if not usuario:
+        return jsonify({"error": _("Usuario no encontrado")}), 404
           
-      return jsonify({
-          "usuario": _user_to_frontend_dict(usuario)
-      }), 200
+    return jsonify({
+        "usuario": _user_to_frontend_dict(usuario)
+    }), 200
 
-      
+
 @users_bp.route('/forgot-password', methods=['POST'])
 def solicitar_recuperacion():
     """
@@ -431,6 +452,11 @@ def solicitar_recuperacion():
     tags:
       - Autenticación y Usuarios
     parameters:
+      - name: lang
+        in: query
+        type: string
+        required: false
+        description: Idioma de la respuesta (ej. es, en, eu).
       - in: body
         name: body
         required: true
@@ -462,7 +488,7 @@ def solicitar_recuperacion():
     email = data.get('email')
 
     if not email:
-        return jsonify({"error": "El campo email es obligatorio"}), 400
+        return jsonify({"error": _("El campo email es obligatorio")}), 400
 
     normalized_email = email.strip().lower()
     usuario = Users.query.filter(func.lower(Users.email) == normalized_email).first()
@@ -477,7 +503,7 @@ def solicitar_recuperacion():
         except Exception as e:
             db.session.rollback()
             current_app.logger.error(f"Error guardando token de recuperación: {e}")
-            return jsonify({"error": "Error interno al procesar la solicitud"}), 500
+            return jsonify({"error": _("Error interno al procesar la solicitud")}), 500
 
         url_recuperacion = _build_backend_url(f"api/users/reset-password/verify?token={reset_token}")
 
@@ -490,9 +516,9 @@ def solicitar_recuperacion():
             current_app.logger.info(f"Correo de recuperación enviado a {usuario.email}")
         except Exception as e:
             current_app.logger.error(f"Error enviando correo de recuperación: {e}")
-            return jsonify({"error": "Error interno al procesar la solicitud", "details": str(e)}), 500
+            return jsonify({"error": _("Error interno al procesar la solicitud"), "details": str(e)}), 500
 
-    return jsonify({"message": "Si el correo existe, se enviarán las instrucciones."}), 200
+    return jsonify({"message": _("Si el correo existe, se enviarán las instrucciones.")}), 200
 
 
 @users_bp.route('/reset-password/verify', methods=['GET'])
@@ -527,36 +553,55 @@ def restablecer_password():
     confirm_password = data.get('confirmPassword')
 
     if not token or not new_password or not confirm_password:
-        return jsonify({"error": "token, password y confirmPassword son obligatorios"}), 400
+        return jsonify({"error": _("token, password y confirmPassword son obligatorios")}), 400
 
     if new_password != confirm_password:
-        return jsonify({"error": "Las contraseñas introducidas no coinciden"}), 400
+        return jsonify({"error": _("Las contraseñas introducidas no coinciden")}), 400
 
     usuario = _find_user_by_reset_token(token)
     if not usuario or not usuario.password_reset_verified:
-        return jsonify({"error": "El enlace de recuperación no es válido o ha caducado"}), 400
+        return jsonify({"error": _("El enlace de recuperación no es válido o ha caducado")}), 400
 
     usuario.pass_user = generate_password_hash(new_password)
     _clear_reset_token(usuario)
 
     try:
         db.session.commit()
-        return jsonify({"message": "Contraseña actualizada correctamente"}), 200
+        return jsonify({"message": _("Contraseña actualizada correctamente")}), 200
     except Exception as e:
-        return jsonify({"error": "Error interno al procesar la solicitud", "details": str(e)}), 500
+        return jsonify({"error": _("Error interno al procesar la solicitud"), "details": str(e)}), 500
       
-@users_bp.route('/verify', methods=['GET'])
+
+@users_bp.route('/verify-account', methods=['GET'])
 def verify_account():
     """
     Endpoint para verificar la cuenta de usuario mediante el token enviado por correo.
-    Se accede mediante un GET (ej: /api/users/verify?token=XYZ...)
+    ---
+    tags:
+      - Autenticación y Usuarios
+    parameters:
+      - name: token
+        in: query
+        type: string
+        required: true
+        description: Token único de verificación enviado al correo.
+      - name: lang
+        in: query
+        type: string
+        required: false
+        description: Idioma de la respuesta (ej. es, en, eu).
+    responses:
+      200:
+        description: Cuenta verificada correctamente.
+      400:
+        description: Token inválido o ausente.
     """
     token = request.args.get('token')
     
     if not token:
         return jsonify({
             "status": "error",
-            "message": "Falta el token de verificación."
+            "message": _("Falta el token de verificación.")
         }), 400
 
     user = Users.query.filter_by(verification_token=token).first()
@@ -564,7 +609,7 @@ def verify_account():
     if not user:
         return jsonify({
             "status": "error",
-            "message": "El token no es válido o ya ha sido utilizado."
+            "message": _("El token no es válido o ya ha sido utilizado.")
         }), 400
 
     try:
@@ -574,7 +619,7 @@ def verify_account():
 
         return jsonify({
             "status": "success",
-            "message": "¡Cuenta verificada con éxito! Ya puedes iniciar sesión."
+            "message": _("¡Cuenta verificada con éxito! Ya puedes iniciar sesión.")
         }), 200
 
     except Exception as e:

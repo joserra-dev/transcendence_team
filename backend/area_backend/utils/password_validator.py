@@ -1,7 +1,7 @@
 # utils/validators.py
 import re
+from flask_babel import gettext as _, refresh
 
-import re
 
 class PasswordValidator:
     # Expresión regular estándar (mín. 8 caracteres, 1 mayúscula, 1 minúscula, 1 número, 1 carácter especial)
@@ -15,14 +15,14 @@ class PasswordValidator:
         Retorna un tuple: (is_valid, "mensaje de error o éxito")
         """
         if not password:
-            return False, "La contraseña no puede estar vacía."
+            return False, _("La contraseña no puede estar vacía.")
         
         # Pasamos a minúsculas para comparaciones insensibles a mayúsculas/minúsculas
         password_lower = password.lower()
 
         # 1. Validación: No contener la palabra 'password'
         if "password" in password_lower:
-            return False, "La contraseña no puede contener la palabra 'password'."
+            return False, _("La contraseña no puede contener la palabra 'password'.")
 
         # 2. Validación: No contener el nombre de usuario del email
         if email and "@" in email:
@@ -31,26 +31,26 @@ class PasswordValidator:
             
             # Validamos si el username está dentro de la contraseña
             if email_username and email_username in password_lower:
-                return False, "La contraseña no puede contener partes de tu correo electrónico."
+                return False, _("La contraseña no puede contener partes de tu correo electrónico.")
 
         # 3. Validaciones de estructura clásica
         if len(password) < 8:
-            return False, "La contraseña debe tener al menos 8 caracteres."
+            return False, _("La contraseña debe tener al menos 8 caracteres.")
             
         if not re.search(r"[A-Z]", password):
-            return False, "La contraseña debe contener al menos una letra mayúscula."
+            return False, _("La contraseña debe contener al menos una letra mayúscula.")
             
         if not re.search(r"[a-z]", password):
-            return False, "La contraseña debe contener al menos una letra minúscula."
+            return False, _("La contraseña debe contener al menos una letra minúscula.")
             
         if not re.search(r"\d", password):
-            return False, "La contraseña debe contener al menos un número."
+            return False, _("La contraseña debe contener al menos un número.")
             
         if not re.search(r"[@$!%*?&]", password):
-            return False, "La contraseña debe contener al menos un carácter especial (@$!%*?&)."
+            return False, _("La contraseña debe contener al menos un carácter especial (@$!%*?&).")
 
         # Verificación del regex completo por seguridad final
         if not re.match(cls.PASSWORD_REGEX, password):
-            return False, "La contraseña no cumple con el formato de seguridad requerido."
+            return False, _("La contraseña no cumple con el formato de seguridad requerido.")
 
-        return True, "Contraseña válida."
+        return True, _("Contraseña válida.")

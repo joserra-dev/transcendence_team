@@ -2,13 +2,13 @@
 
   <h2 class="page-title">{{ 'REGISTER.TITLE' | translate }}</h2>
 
-  <div class="error-backend mb-3" *ngIf="apiErrors.length > 0">
+  <div class="error-general" *ngIf="apiErrors.length > 0">
     <ul>
       <li *ngFor="let err of apiErrors">{{ err | translate }}</li>
     </ul>
   </div>
 
-  <div class="success-msg mb-3" *ngIf="successMessage">
+  <div class="success-general" *ngIf="successMessage">
     {{ successMessage | translate }}
     <br>
     <a routerLink="/auth/login-client">{{ 'LOGIN.BUTTON' | translate }}</a>

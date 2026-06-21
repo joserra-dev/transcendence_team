@@ -97,7 +97,7 @@ def search_parkings():
 @parking_bp.route('/api/parking', methods=['GET'])
 def get_pakings():
     """
-    Obtiene la lista de usuarios o un usuario específico por ID.
+    Obtiene la lista de parkings o un parking específico por ID.
     ---
     parameters:
       - name: id
@@ -115,7 +115,7 @@ def get_pakings():
         parking = Parking.query.get(id)
         if parking:
             return jsonify(parking.to_dict()), 200
-        return jsonify({"error": "Usuario no encontrado"}), 404
+        return jsonify({"error": _("Parking no encontrado")}), 404
 
     all = Parking.query.all()
     return jsonify([u.to_dict() for u in all]), 200

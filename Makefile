@@ -17,7 +17,7 @@ else
     HOST := $(if $(DETECTED_HOST),$(DETECTED_HOST),localhost)
 endif
 
-.PHONY: all dev prod up up-prod clean rclean env
+.PHONY: all dev prod up up-prod clean fclean env help
 
 .DEFAULT_GOAL := help
 
@@ -59,14 +59,25 @@ clean: ## Detiene contenedores sin perder datos ni imágenes
 	docker-compose down
 	@echo -e "$(COLOR_GREEN)✓ Contenedores limpios.$(COLOR_RESET)"
 
-rclean: ## Limpieza profunda total: Elimina contenedores, volúmenes, imágenes y .env
-	@echo -e "$(COLOR_RED)🚨 LIMPIEZA PROFUNDA: Eliminando contenedores, volúmenes e imágenes...$(COLOR_RESET)"
-	docker-compose -f docker-compose.yml -f docker-compose.prod.yml down --rmi all --volumes --remove-orphans
+fclean: ## Limpieza profunda total: Elimina contenedores, volúmenes, imágenes <none> y .env
+	@echo -e "$(COLOR_RED)🧹 Ejecutando fclean (Limpieza forzada)...$(COLOR_RESET)"
+	# 1. Detiene y elimina contenedores y volúmenes del compose
+	docker-compose -f docker-compose.yml -f docker-compose.prod.yml down --volumes --remove-orphans
+	# 2. Elimina todas las imágenes huérfanas (<none>:<none>) del sistema
+	@if [ $$(docker images -f "dangling=true" -q | wc -l) -gt 0 ]; then \
+		echo "Eliminando imágenes huérfanas..."; \
+		docker rmi $$(docker images -f "dangling=true" -q); \
+	else \
+		echo "No se encontraron imágenes <none> para limpiar."; \
+	fi
+	# 3. Eliminar el archivo .env si existe
 	@if [ -f .env ]; then \
 		rm .env; \
-		echo "$(COLOR_RED)🗑️ Archivo .env eliminado.$(COLOR_RESET)"; \
+		echo -e "$(COLOR_RED)🗑️ Archivo .env eliminado.$(COLOR_RESET)"; \
 	fi
-	@echo -e "$(COLOR_GREEN)💥 Todo el entorno ha sido reseteado desde cero.$(COLOR_RESET)"
+	# 4. Limpieza extra de caché de construcción que pueda haber quedado
+	docker builder prune -f
+	@echo -e "$(COLOR_GREEN)✨ Sistema Docker limpio de residuos y contenedores. Entorno reseteado.$(COLOR_RESET)"
 
 # ==============================================================================
 # AUTOMATIC ENVIRONMENT GENERATION (.env)
@@ -114,3 +125,4 @@ env:
 	else \
 		echo -e "$(COLOR_GREEN)✔ El archivo .env ya existe. Saltando configuración interactiva.$(COLOR_RESET)"; \
 	fi
+	
