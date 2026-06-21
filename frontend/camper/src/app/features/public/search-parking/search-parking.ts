@@ -38,7 +38,7 @@ export class SearchParking implements OnInit {
 
     this.searchForm.patchValue({
       fechaDesde: today,
-      fechaHasta: today
+      fechaHasta: tomorrow
     });
 
     this.onSearch();
@@ -122,6 +122,17 @@ export class SearchParking implements OnInit {
   openDatePicker(event: Event) {
     const input = event.target as HTMLInputElement;
     input.showPicker?.();
+  }
+
+  onEntryDateChange() {
+    const fechaDesde = this.searchForm.get('fechaDesde')?.value;
+    if (fechaDesde) {
+      const nextDay = new Date(fechaDesde);
+      nextDay.setDate(nextDay.getDate() + 1);
+      this.searchForm.patchValue({
+        fechaHasta: nextDay.toISOString().split('T')[0]
+      });
+    }
   }
 
   // Para los servicios en las tarjetas de los parking
