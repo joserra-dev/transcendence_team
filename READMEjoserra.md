@@ -263,3 +263,17 @@ git diff --check: correcto.
 - las traducciones no son limpias
 - las fechas de las reservas no me modifica automaticamente al dia siguiente o dejarmelo vacio
 
+### 26/06/22 revision facturacion y legal / terms
+El fallo venía de que LegalPage reutilizaba el mismo componente y solo leía el parámetro con snapshot; al cambiar entre /legal/privacy y /legal/terms no volvía a ejecutarse ngOnInit.
+
+Cambios:
+
+frontend/camper/src/app/features/legal/legal-page.ts:18 ahora escucha route.paramMap para actualizar pageType al cambiar de página.
+frontend/camper/src/app/features/legal/legal-page.ts:22 también devuelve el scroll arriba al cambiar.
+frontend/camper/src/app/features/legal/legal-page.ts:26 libera la suscripción al destruir el componente.
+
+
+También corregí el cálculo que cobraba un día de más:
+
+Backend: backend/area_backend/routes/booking_routes.py:27, :119, :192
+Frontend: frontend/camper/src/app/features/public/parking-detail/parking-detail.ts:125
