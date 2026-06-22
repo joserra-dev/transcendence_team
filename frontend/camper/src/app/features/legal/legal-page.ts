@@ -1,6 +1,7 @@
-import { Component, inject, OnInit } from '@angular/core';
+import { Component, inject, OnDestroy, OnInit } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { TranslateModule } from '@ngx-translate/core';
+import { Subscription } from 'rxjs';
 
 @Component({
   selector: 'app-legal-page',
@@ -9,13 +10,21 @@ import { TranslateModule } from '@ngx-translate/core';
   templateUrl: './legal-page.html',
   styleUrl: './legal-page.scss',
 })
-export class LegalPage implements OnInit {
+export class LegalPage implements OnInit, OnDestroy {
   private route = inject(ActivatedRoute);
+  private paramsSubscription!: Subscription;
   pageType: 'privacy' | 'terms' = 'privacy';
 
   ngOnInit() {
-    const type = this.route.snapshot.paramMap.get('type');
-    this.pageType = type === 'terms' ? 'terms' : 'privacy';
+    this.paramsSubscription = this.route.paramMap.subscribe(params => {
+      const type = params.get('type');
+      this.pageType = type === 'terms' ? 'terms' : 'privacy';
+      window.scrollTo({ top: 0, behavior: 'auto' });
+    });
+  }
+
+  ngOnDestroy() {
+    this.paramsSubscription?.unsubscribe();
   }
 
   get titleKey(): string {
