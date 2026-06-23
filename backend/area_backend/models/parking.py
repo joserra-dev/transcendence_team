@@ -65,8 +65,8 @@ class Parking(db.Model):
                         from models.booking import Booking
                         overlap = Booking.query.filter(
                             Booking.id_space == space.id,
-                            Booking.start_date <= fh,
-                            Booking.end_date >= fd,
+                            Booking.start_date < fh,
+                            Booking.end_date > fd,
                             Booking.status == '1'
                         ).first()
                         if overlap:

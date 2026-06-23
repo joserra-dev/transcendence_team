@@ -176,8 +176,8 @@ def create_booking():
     # Solo bloqueamos duplicados de la misma matrícula en fechas solapadas.
     same_vehicle_overlap = Booking.query.filter(
         Booking.license_plate == licensePlate,
-        Booking.start_date <= endDate,
-        Booking.end_date >= startDate,
+        Booking.start_date < endDate,
+        Booking.end_date > startDate,
         Booking.status == "1"
     ).first()
     

@@ -277,3 +277,16 @@ También corregí el cálculo que cobraba un día de más:
 
 Backend: backend/area_backend/routes/booking_routes.py:27, :119, :192
 Frontend: frontend/camper/src/app/features/public/parking-detail/parking-detail.ts:125
+
+### 26/06/23 correccion solapamiento reservas
+
+backend/area_backend/models/parking.py:66-71 la comprobación de disponibilidad de plazas usa < y > en lugar de <= y >=.
+
+Esto significa que:
+
+Si tienes una reserva que termina el día X, puedes reservar la misma plaza para el día X (u otro período posterior).
+Si tienes una reserva que empieza el día X, puedes reservar la misma plaza para el día X (u otro período anterior).
+Los solapamientos reales siguen bloqueados.
+Consistente con la lógica de la matrícula (salida 12:00, entrada 15:00).
+
+
