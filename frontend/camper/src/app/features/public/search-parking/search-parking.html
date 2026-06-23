@@ -12,8 +12,9 @@
 
       <!-- DESTINO -->
       <div class="search-field">
+         <label for="search-destination" class="visually-hidden">{{ 'SEARCH.DESTINATION' | translate }}</label>
         <i class="fa-solid fa-location-dot"></i>
-        <input
+        <input id="search-destination"
           type="text"
           formControlName="localidad"
           placeholder="{{ 'SEARCH.DESTINATION' | translate }}"
@@ -24,8 +25,9 @@
 
       <!-- PROVINCIA -->
       <div class="search-field">
+        <label for="search-province" class="visually-hidden">{{ 'SEARCH.PROVINCE' | translate }}</label>
         <i class="fa-solid fa-map"></i>
-        <input
+        <input id="search-province"
           type="text"
           formControlName="provincia"
           placeholder="{{ 'SEARCH.PROVINCE' | translate }}"
@@ -36,16 +38,18 @@
 
       <!-- FECHA ENTRADA -->
       <div class="search-field date">
+         <label for="search-fechadesde" class="visually-hidden">fechaDesde</label>
         <i class="fa-regular fa-calendar"></i>
-        <input type="date" formControlName="fechaDesde" (click)="openDatePicker($event)" (change)="onEntryDateChange()">
+        <input id="search-fechadesde" type="date" formControlName="fechaDesde" (click)="openDatePicker($event)" (change)="onEntryDateChange()">
       </div>
 
       <div class="divider"></div>
 
       <!-- FECHA SALIDA -->
       <div class="search-field date">
+        <label for="search-fechahasta" class="visually-hidden">fechahasta</label>
         <i class="fa-regular fa-calendar"></i>
-        <input type="date" formControlName="fechaHasta" (click)="openDatePicker($event)">
+        <input id="search-fechahasta" type="date" formControlName="fechaHasta" (click)="openDatePicker($event)">
       </div>
 
       <!-- BOTÓN -->
