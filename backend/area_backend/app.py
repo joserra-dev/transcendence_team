@@ -1,10 +1,10 @@
 import os
-from flask import Flask, request  # <-- Importamos 'request' para detectar el idioma
+from flask import Flask, request
 from flask_mailman import Mail
 from database import db, jwt
 from flasgger import Swagger
 from flask_cors import CORS
-from flask_babel import Babel  # <-- Importamos Flask-Babel
+from flask_babel import Babel
 
 from routes.company_routes import company_bp
 from routes.users_routes import users_bp

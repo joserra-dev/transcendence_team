@@ -7,45 +7,85 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PROJECT VERSION\n"
 "Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
-"POT-Creation-Date: 2026-06-21 14:58+0000\n"
+"POT-Creation-Date: 2026-06-23 18:44+0200\n"
 "PO-Revision-Date: 2026-06-21 17:15+0000\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language: en\n"
 "Language-Team: en <LL@li.org>\n"
-"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+"Plural-Forms: nplurals=2; plural=(n != 1)\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Generated-By: Babel 2.18.0\n"
+"Generated-By: Babel 2.8.0\n"
 
-#: routes/booking_routes.py:66 routes/booking_routes.py:245
-#: routes/booking_routes.py:271 routes/booking_routes.py:295
+#: routes/admin_routes.py:30 routes/users_routes.py:404
+msgid "No tienes permisos de administrador"
+msgstr "You do not have administrator permissions"
+
+#: routes/admin_routes.py:154 routes/admin_routes.py:349
+#: routes/admin_routes.py:440 routes/admin_routes.py:585
+#: routes/parking_routes.py:152
+msgid "Parking no encontrado"
+msgstr "Parking not found"
+
+#: routes/admin_routes.py:157 routes/admin_routes.py:352
+#: routes/admin_routes.py:443 routes/admin_routes.py:528
+#: routes/admin_routes.py:642
+msgid "No tienes permiso para gestionar este parking"
+msgstr "You do not have permission to manage this parking"
+
+#: routes/admin_routes.py:447
+msgid "El nombre de la plaza es obligatorio"
+msgstr "The name of the parking space is required"
+
+#: routes/admin_routes.py:522 routes/admin_routes.py:636
+msgid "Parking o plaza no encontrada"
+msgstr "Parking or parking space not found"
+
+#: routes/admin_routes.py:525 routes/admin_routes.py:639
+msgid "La plaza no pertenece a este parking"
+msgstr "The parking space does not belong to this parking"
+
+#: routes/admin_routes.py:581
+msgid "Plaza no encontrada"
+msgstr "Parking space not found"
+
+#: routes/admin_routes.py:588
+msgid "No tienes permiso para gestionar esta plaza"
+msgstr "You do not have permission to manage this parking space"
+
+#: routes/admin_routes.py:646
+msgid "Plaza eliminada correctamente"
+msgstr "Parking space successfully deleted"
+
+#: routes/booking_routes.py:92 routes/booking_routes.py:384
+#: routes/booking_routes.py:450 routes/booking_routes.py:508
 msgid "Reserva no encontrada"
 msgstr "Booking not found"
 
-#: routes/booking_routes.py:69 routes/booking_routes.py:85
+#: routes/booking_routes.py:95 routes/booking_routes.py:137
 msgid "No tienes permiso para ver esta reserva"
 msgstr "You do not have permission to view this booking"
 
-#: routes/booking_routes.py:161 routes/booking_routes.py:267
+#: routes/booking_routes.py:269 routes/booking_routes.py:446
 msgid "Faltan campos obligatorios"
 msgstr "Required fields are missing"
 
-#: routes/booking_routes.py:164
+#: routes/booking_routes.py:272
 msgid "La matrícula del vehículo es obligatoria"
 msgstr "Vehicle license plate is required"
 
-#: routes/booking_routes.py:170
+#: routes/booking_routes.py:278
 msgid "Formato de fecha inválido"
 msgstr "Invalid date format"
 
-#: routes/booking_routes.py:173
+#: routes/booking_routes.py:281
 msgid ""
 "La fecha de salida debe ser al menos un día después de la fecha de "
 "entrada."
 msgstr "The departure date must be at least one day after the arrival date."
 
-#: routes/booking_routes.py:186
+#: routes/booking_routes.py:291
 msgid ""
 "Ya existe una reserva para esta matrícula en las fechas seleccionadas. "
 "Usa otra matrícula o cambia las fechas."
@@ -53,47 +93,44 @@ msgstr ""
 "A booking already exists for this license plate on the selected dates. "
 "Please use another license plate or change the dates."
 
-#: routes/booking_routes.py:237 routes/booking_routes.py:261
-#: routes/booking_routes.py:287 routes/users_routes.py:267
+#: routes/booking_routes.py:376 routes/booking_routes.py:440
+#: routes/booking_routes.py:500 routes/users_routes.py:267
 msgid "Petición inválida"
 msgstr "Invalid request"
 
-#: routes/booking_routes.py:241 routes/booking_routes.py:291
+#: routes/booking_routes.py:380 routes/booking_routes.py:504
 msgid "Falta idReserva"
 msgstr "Missing booking ID"
 
-#: routes/booking_routes.py:249
+#: routes/booking_routes.py:388
 msgid "No tienes permiso para cancelar esta reserva"
 msgstr "You do not have permission to cancel this booking"
 
-#: routes/booking_routes.py:254
+#: routes/booking_routes.py:393
 msgid "Reserva cancelada correctamente"
 msgstr "Booking successfully canceled"
 
-#: routes/booking_routes.py:275
+#: routes/booking_routes.py:454
 msgid "No tienes permiso para puntuar esta reserva"
 msgstr "You do not have permission to rate this booking"
 
-#: routes/booking_routes.py:280
+#: routes/booking_routes.py:459
 msgid "Puntuación guardada correctamente"
 msgstr "Rating successfully saved"
 
-#: routes/booking_routes.py:299
+#: routes/booking_routes.py:512
 msgid "No tienes permiso para ver el QR de esta reserva"
 msgstr "You do not have permission to view the QR code for this booking"
 
-#: routes/parking_routes.py:118
-msgid "Parking no encontrado"
-msgstr "Parking not found"
-
-#: routes/space_routes.py:33
-msgid "Plaza no existe"
-msgstr "Parking space does not exist"
-
-#: routes/users_routes.py:130 routes/users_routes.py:248
-#: routes/users_routes.py:263 routes/users_routes.py:440
+#: company_routes.py:65 routes/users_routes.py:130
+#: routes/users_routes.py:248 routes/users_routes.py:263
+#: routes/users_routes.py:440
 msgid "Usuario no encontrado"
 msgstr "User not found"
+
+#: routes/space_routes.py:65
+msgid "Plaza no existe"
+msgstr "Parking space does not exist"
 
 #: routes/users_routes.py:181
 msgid "Todos los campos son obligatorios (email, password, confirmPassword)"
@@ -147,10 +184,6 @@ msgstr "You must log in through administrator access"
 #: routes/users_routes.py:377 routes/users_routes.py:408
 msgid "¡Login exitoso!"
 msgstr "Login successful!"
-
-#: routes/users_routes.py:404
-msgid "No tienes permisos de administrador"
-msgstr "You do not have administrator permissions"
 
 #: routes/users_routes.py:491
 msgid "El campo email es obligatorio"

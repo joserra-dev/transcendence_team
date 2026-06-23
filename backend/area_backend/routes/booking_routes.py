@@ -57,6 +57,32 @@ def _get_booking_details(booking):
 @booking_bp.route('/api/booking', methods=['GET'])
 @jwt_required() 
 def get_booking():
+    """
+    Obtener reservas del usuario autenticado
+    ---
+    tags:
+      - Booking
+    security:
+      - Bearer: []
+    parameters:
+      - name: id
+        in: query
+        type: integer
+        required: false
+        description: ID de una reserva específica para filtrar
+      - name: lang
+        in: query
+        type: string
+        required: false
+        description: Idioma para la internacionalización de las respuestas (ej. es, en, eu)
+    responses:
+      200:
+        description: Lista de reservas o detalle de una reserva específica
+      403:
+        description: No tienes permiso para ver esta reserva
+      404:
+        description: Reserva no encontrada
+    """
     user_id = get_jwt_identity()
     booking_id = request.args.get('id')
 
@@ -76,6 +102,32 @@ def get_booking():
 @booking_bp.route('/api/booking/<int:id>', methods=['GET'])
 @jwt_required()
 def get_reserva_by_id(id):
+    """
+    Obtener una reserva por su ID de ruta
+    ---
+    tags:
+      - Booking
+    security:
+      - Bearer: []
+    parameters:
+      - name: id
+        in: path
+        type: integer
+        required: true
+        description: ID único de la reserva
+      - name: lang
+        in: query
+        type: string
+        required: false
+        description: Idioma para la internacionalización de las respuestas (ej. es, en, eu)
+    responses:
+      200:
+        description: Detalle estructural de la reserva consultada
+      403:
+        description: No tienes permiso para ver esta reserva
+      404:
+        description: Reserva no encontrada
+    """
     user_id = get_jwt_identity()
     booking = Booking.query.get(id)
     if not booking:
@@ -89,17 +141,32 @@ def get_reserva_by_id(id):
 @booking_bp.route('/api/historic/list', methods=['GET'])
 @jwt_required()
 def get_history():
+    """
+    Obtener el historial extendido de reservas del usuario
+    ---
+    tags:
+      - Booking
+    security:
+      - Bearer: []
+    parameters:
+      - name: lang
+        in: query
+        type: string
+        required: false
+        description: Idioma para la internacionalización de las respuestas (ej. es, en, eu)
+    responses:
+      200:
+        description: Listado histórico con mapeo compatible para el frontend
+    """
     user_id = get_jwt_identity()
     from models.users import Users
     
-    # 1. Traemos las reservas del usuario usando el campo correcto en inglés (id_user)
     bookings = Booking.query.filter_by(id_user=user_id).all()
     user = Users.query.get(user_id)
     user_email = user.email if user else ""
     
     history = []
     for b in bookings:
-        # CORRECCIÓN CLAVE: Accedemos directamente a la relación 'space' del modelo Booking
         plaza = b.space 
         
         parking_name = ""
@@ -108,20 +175,16 @@ def get_history():
         
         if plaza:
             price = plaza.price or 0
-            # Accedemos a la relación 'parking' desde el modelo Space
             parking = plaza.parking 
             if parking:
-                parking_name = parking.name or parking.name or ""
+                parking_name = parking.name or ""
                 parking_id = parking.id
         
-        # 2. Cálculo de días usando los nuevos campos en inglés de Booking (start_date y end_date)
         days = 1
         if b.start_date and b.end_date:
             days = (b.end_date - b.start_date).days + 1
         total_price = days * price
         
-        # 3. Mapeo del diccionario. Mantenemos las claves antiguas que Angular espera,
-        # pero leyendo las propiedades nuevas de los modelos.
         history.append({
             "id": b.id,
             "userId": int(user_id),
@@ -131,13 +194,11 @@ def get_history():
             "parkingName": parking_name,
             "price": float(price),
             "totalPrice": float(total_price),
-            # Propiedades de fecha y estado cambiadas a inglés:
             "startDate": b.start_date.isoformat() if b.start_date else None,
             "endDate": b.end_date.isoformat() if b.end_date else None,
             "createDate": b.created_at.strftime('%Y-%m-%d %H:%M:%S') if b.created_at else None,
             "status": b.status,
             "range": float(b.rating) if b.rating is not None else None,
-            # NUEVO: Enviamos la matrícula al Frontend para el historial
             "licensePlate": b.license_plate
         })
         
@@ -146,6 +207,53 @@ def get_history():
 @booking_bp.route('/api/booking', methods=['POST'])
 @jwt_required()
 def create_booking():
+    """
+    Crear una nueva reserva de plaza de parking
+    ---
+    tags:
+      - Booking
+    security:
+      - Bearer: []
+    parameters:
+      - name: lang
+        in: query
+        type: string
+        required: false
+        description: Idioma para la internacionalización de las respuestas (ej. es, en, eu)
+      - name: body
+        in: body
+        required: true
+        schema:
+          type: object
+          required:
+            - idSpace
+            - startDate
+            - endDate
+            - licensePlate
+          properties:
+            idSpace:
+              type: integer
+              example: 42
+            idParking:
+              type: integer
+              example: 1
+            startDate:
+              type: string
+              format: date
+              example: "2026-07-01"
+            endDate:
+              type: string
+              format: date
+              example: "2026-07-05"
+            licensePlate:
+              type: string
+              example: "1234ABC"
+    responses:
+      200:
+        description: Reserva creada con éxito. Devuelve el ID asignado.
+      400:
+        description: Faltan campos, formato inválido o solapamiento detectado.
+    """
     user_id = get_jwt_identity()
     data = request.get_json()
     if not data:
@@ -172,9 +280,6 @@ def create_booking():
     if endDate <= startDate:
         return jsonify({"error": _("La fecha de salida debe ser al menos un día después de la fecha de entrada.")}), 400
         
-    # Validar solapamiento de plaza
-    # Permitimos reservas coincidentes en la misma plaza si la matrícula es diferente.
-    # Solo bloqueamos duplicados de la misma matrícula en fechas solapadas.
     same_vehicle_overlap = Booking.query.filter(
         Booking.license_plate == licensePlate,
         Booking.start_date <= endDate,
@@ -200,7 +305,7 @@ def create_booking():
         id_space=id_space,
         start_date=startDate,
         end_date=endDate,
-        status="1", # 1 = Confirmada
+        status="1", 
         license_plate=licensePlate.upper() if licensePlate else "",
         total_price=total_price
     )
@@ -232,6 +337,40 @@ def create_booking():
 @booking_bp.route('/api/booking/cancel', methods=['PUT'])
 @jwt_required()
 def cancel_booking():
+    """
+    Cancelar una reserva existente
+    ---
+    tags:
+      - Booking
+    security:
+      - Bearer: []
+    parameters:
+      - name: lang
+        in: query
+        type: string
+        required: false
+        description: Idioma para la internacionalización de las respuestas (ej. es, en, eu)
+      - name: body
+        in: body
+        required: true
+        schema:
+          type: object
+          required:
+            - idReserva
+          properties:
+            idReserva:
+              type: integer
+              example: 105
+    responses:
+      200:
+        description: Reserva cancelada correctamente
+      400:
+        description: Petición inválida o falta idReserva
+      403:
+        description: No tienes permiso para cancelar esta reserva
+      404:
+        description: Reserva no encontrada
+    """
     data = request.get_json()
     if not data:
         return jsonify({"error": _("Petición inválida")}), 400
@@ -248,7 +387,7 @@ def cancel_booking():
     if str(booking.id_user) != str(user_id):
         return jsonify({"error": _("No tienes permiso para cancelar esta reserva")}), 403
         
-    booking.status = "0" # 0 = Cancelada
+    booking.status = "0" 
     db.session.commit()
     
     return jsonify({"message": _("Reserva cancelada correctamente")}), 200
@@ -256,6 +395,46 @@ def cancel_booking():
 @booking_bp.route('/api/booking/rate', methods=['PUT'])
 @jwt_required()
 def rate_booking():
+    """
+    Puntuar una reserva finalizada
+    ---
+    tags:
+      - Booking
+    security:
+      - Bearer: []
+    parameters:
+      - name: lang
+        in: query
+        type: string
+        required: false
+        description: Idioma para la internacionalización de las respuestas (ej. es, en, eu)
+      - name: body
+        in: body
+        required: true
+        schema:
+          type: object
+          required:
+            - idReserva
+            - puntuacion
+          properties:
+            idReserva:
+              type: integer
+              example: 105
+            puntuacion:
+              type: number
+              minimum: 1
+              maximum: 5
+              example: 4.5
+    responses:
+      200:
+        description: Puntuación guardada correctamente
+      400:
+        description: Faltan campos obligatorios
+      403:
+        description: No tienes permiso para puntuar esta reserva
+      404:
+        description: Reserva no encontrada
+    """
     data = request.get_json()
     if not data:
         return jsonify({"error": _("Petición inválida")}), 400
@@ -282,6 +461,40 @@ def rate_booking():
 @booking_bp.route('/api/booking/qr', methods=['POST'])
 @jwt_required()
 def get_qr_code():
+    """
+    Obtener el código QR de acceso de una reserva
+    ---
+    tags:
+      - Booking
+    security:
+      - Bearer: []
+    parameters:
+      - name: lang
+        in: query
+        type: string
+        required: false
+        description: Idioma para la internacionalización de las respuestas (ej. es, en, eu)
+      - name: body
+        in: body
+        required: true
+        schema:
+          type: object
+          required:
+            - idReserva
+          properties:
+            idReserva:
+              type: integer
+              example: 105
+    responses:
+      200:
+        description: Devuelve la imagen del código QR codificada en Base64
+      400:
+        description: Petición inválida o falta idReserva
+      403:
+        description: No tienes permiso para ver el QR de esta reserva
+      404:
+        description: Reserva no encontrada
+    """
     data = request.get_json()
     if not data:
         return jsonify({"error": _("Petición inválida")}), 400
@@ -298,7 +511,5 @@ def get_qr_code():
     if str(booking.id_user) != str(user_id):
         return jsonify({"error": _("No tienes permiso para ver el QR de esta reserva")}), 403
         
-    # Generar un código QR en base64 estático pero válido
-    # Este es una imagen PNG de un código QR simple
     qr_base64 = "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAGQAAABkAQMAAABKLMIoAAAABlBMVEUAAAD///+l2Z/dAAAAMklEQVQ4y2P4DwUMg6EGBgYGBkYoGBkYGIEBCgYGBkYoGBmYoGBgYICCYWRgYGBkYGCEBwC04AIPfFk1/QAAAABJRU5ErkJggg=="
     return jsonify({"qrBase64": qr_base64}), 200
