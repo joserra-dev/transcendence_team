@@ -50,7 +50,13 @@
 .page-header-actions {
   display: flex;
   gap: 0.75rem;
-  flex-wrap: wrap;
+  flex-wrap: nowrap;
+  flex-shrink: 0;
+  align-items: center;
+
+  .btn {
+    white-space: nowrap;
+  }
 }
 
 .alert {
@@ -217,7 +223,21 @@
     padding: 0.5rem 0.65rem;
     border: 1px solid $color-border;
     border-radius: $radius-sm;
+
+    &.field-error {
+      border-color: $color-error;
+    }
   }
+}
+
+.field-error-msg {
+  color: $color-error;
+  font-size: 0.8rem;
+  margin-top: 0.15rem;
+}
+
+.form-alert {
+  margin-bottom: 1rem;
 }
 
 .loading-msg,
@@ -339,27 +359,6 @@
   font-size: 1.25rem;
 }
 
-.btn-panel-dark {
-  white-space: nowrap;
-  background-color: #474747;
-  color: $color-white;
-  border: none;
-  padding: $space-xs $space-lg;
-  font-weight: $font-weight-semibold;
-  border-radius: $radius-sm;
-  box-shadow: $shadow-strong;
-  transition: all 0.2s ease;
-  cursor: pointer;
-  text-decoration: none;
-  display: inline-block;
-  text-align: center;
-
-  &:hover {
-    background-color: darken(#474747, 8%);
-    color: $color-white;
-  }
-}
-
 .btn-panel-danger {
   white-space: nowrap;
   background-color: $color-error;
@@ -387,7 +386,8 @@
 
   .page-header-actions {
     width: 100%;
-    flex-direction: column;
+    justify-content: flex-start;
+    overflow-x: auto;
   }
 
   .card-side {

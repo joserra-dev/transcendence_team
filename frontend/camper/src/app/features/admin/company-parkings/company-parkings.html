@@ -9,7 +9,7 @@
       </p>
     </div>
     <div class="header-actions">
-      <a class="btn btn-secondary" [routerLink]="['/admin/companies', companyId, 'edit']">
+      <a class="btn btn-primary" [routerLink]="['/admin/companies', companyId, 'edit']">
         {{ 'ADMIN_COMPANIES.EDIT' | translate }}
       </a>
       <a
@@ -57,7 +57,7 @@
       </div>
 
       <div class="card-actions">
-        <a class="btn btn-secondary" [routerLink]="['/admin/parking', parking.id]" [queryParams]="{ companyId: companyId }">
+        <a class="btn btn-primary" [routerLink]="['/admin/parking', parking.id]" [queryParams]="{ companyId: companyId }">
           {{ 'ADMIN_PARKINGS.MANAGE' | translate }}
         </a>
       </div>

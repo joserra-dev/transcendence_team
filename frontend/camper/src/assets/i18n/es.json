@@ -314,6 +314,17 @@
     "REVOKE_ADMIN": "Quitar permisos de admin",
     "EDIT": "Editar perfil",
     "PROMOTE_DESC": "Selecciona la empresa a la que asignar permisos de administrador.",
+    "FILTER_ROLE": "Filtrar por permisos",
+    "FILTER_ROLE_ALL": "Todos los permisos",
+    "FILTER_COMPANY": "Filtrar por empresa",
+    "FILTER_COMPANY_ALL": "Todas las empresas",
+    "SORT": "Orden alfabético",
+    "SORT_ASC": "A → Z",
+    "SORT_DESC": "Z → A",
+    "TABLE_NAME": "Nombre y apellidos",
+    "ACTIONS": "Acciones",
+    "NO_COMPANY": "—",
+    "EMPTY_FILTERED": "No hay usuarios que coincidan con los filtros seleccionados.",
     "SUCCESS_CREATE": "Usuario creado correctamente.",
     "SUCCESS_UPDATE": "Usuario actualizado correctamente.",
     "SUCCESS_PROMOTE": "Permisos de admin concedidos.",
@@ -391,7 +402,16 @@
       "ADMIN_UPDATE": "Error al actualizar el administrador.",
       "USER_UPDATE": "Error al actualizar el usuario.",
       "DELETE": "Error al eliminar la empresa.",
-      "LOAD_ADS": "No se pudieron cargar los anuncios."
+      "LOAD_ADS": "No se pudieron cargar los anuncios.",
+      "VALIDATION": "Revisa el formulario: faltan campos obligatorios o hay datos incorrectos."
+    },
+    "VALIDATION": {
+      "REQUIRED_NAME": "El nombre de la empresa es obligatorio.",
+      "REQUIRED_EMAIL": "El email del administrador es obligatorio.",
+      "INVALID_EMAIL": "Introduce un email válido.",
+      "REQUIRED_PASSWORD": "La contraseña del administrador es obligatoria.",
+      "MIN_PASSWORD": "La contraseña debe tener al menos 6 caracteres.",
+      "REQUIRED_ADMIN_NAME": "El nombre del administrador es obligatorio."
     }
   },
 

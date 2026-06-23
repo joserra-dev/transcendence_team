@@ -315,6 +315,17 @@
     "REVOKE_ADMIN": "Revoke admin permissions",
     "EDIT": "Edit profile",
     "PROMOTE_DESC": "Select the company to assign administrator permissions.",
+    "FILTER_ROLE": "Filter by permissions",
+    "FILTER_ROLE_ALL": "All permissions",
+    "FILTER_COMPANY": "Filter by company",
+    "FILTER_COMPANY_ALL": "All companies",
+    "SORT": "Alphabetical order",
+    "SORT_ASC": "A → Z",
+    "SORT_DESC": "Z → A",
+    "TABLE_NAME": "Full name",
+    "ACTIONS": "Actions",
+    "NO_COMPANY": "—",
+    "EMPTY_FILTERED": "No users match the selected filters.",
     "SUCCESS_CREATE": "User created successfully.",
     "SUCCESS_UPDATE": "User updated successfully.",
     "SUCCESS_PROMOTE": "Admin permissions granted.",
@@ -392,7 +403,16 @@
       "ADMIN_UPDATE": "Error updating administrator.",
       "USER_UPDATE": "Error updating user.",
       "DELETE": "Error deleting company.",
-      "LOAD_ADS": "Could not load listings."
+      "LOAD_ADS": "Could not load listings.",
+      "VALIDATION": "Please review the form: required fields are missing or some data is invalid."
+    },
+    "VALIDATION": {
+      "REQUIRED_NAME": "Company name is required.",
+      "REQUIRED_EMAIL": "Administrator email is required.",
+      "INVALID_EMAIL": "Please enter a valid email address.",
+      "REQUIRED_PASSWORD": "Administrator password is required.",
+      "MIN_PASSWORD": "Password must be at least 6 characters.",
+      "REQUIRED_ADMIN_NAME": "Administrator first name is required."
     }
   },
 

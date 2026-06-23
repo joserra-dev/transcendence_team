@@ -26,6 +26,10 @@ export class ManageUsers implements OnInit {
   successMessage = '';
   errorMessage = '';
 
+  filterRole = 'all';
+  filterCompanyId: number | 'all' = 'all';
+  sortOrder: 'asc' | 'desc' = 'asc';
+
   userForm: FormGroup = this.fb.group({
     email: ['', [Validators.required, Validators.email]],
     password: ['', [Validators.required, Validators.minLength(6)]],
@@ -202,5 +206,32 @@ export class ManageUsers implements OnInit {
     if (role === 'super_admin') return 'ADMIN_USERS.ROLE_SUPER';
     if (role === 'admin') return 'ADMIN_USERS.ROLE_ADMIN';
     return 'ADMIN_USERS.ROLE_USER';
+  }
+
+  fullName(user: AdminUser): string {
+    return `${user.nombre || ''} ${user.apellidos || ''}`.trim();
+  }
+
+  get filteredUsers(): AdminUser[] {
+    let result = [...this.users];
+
+    if (this.filterRole !== 'all') {
+      result = result.filter((user) => user.role === this.filterRole);
+    }
+
+    if (this.filterCompanyId !== 'all') {
+      result = result.filter((user) => user.companyId === this.filterCompanyId);
+    }
+
+    result.sort((a, b) => {
+      const cmp = this.fullName(a).localeCompare(this.fullName(b), 'es', { sensitivity: 'base' });
+      return this.sortOrder === 'asc' ? cmp : -cmp;
+    });
+
+    return result;
+  }
+
+  toggleSortOrder(): void {
+    this.sortOrder = this.sortOrder === 'asc' ? 'desc' : 'asc';
   }
 }

@@ -5,7 +5,7 @@
       <h1>{{ 'ADMIN_DASHBOARD.WELCOME' | translate:{ name: userName } }}</h1>
       <p class="subtitle">{{ 'ADMIN_COMPANIES.SUBTITLE' | translate }}</p>
     </div>
-    <button class="btn btn-panel-dark" type="button" (click)="logout()">
+    <button class="btn btn-primary" type="button" (click)="logout()">
       {{ 'HEADER.LOGOUT' | translate }}
     </button>
   </header>
@@ -16,13 +16,13 @@
   <header class="page-header">
     <h2>{{ 'ADMIN_COMPANIES.LIST_TITLE' | translate }}</h2>
     <div class="page-header-actions">
-      <a routerLink="/admin/users" class="btn btn-panel-dark">
+      <a routerLink="/admin/users" class="btn btn-primary">
         {{ 'ADMIN_COMPANIES.MANAGE_USERS' | translate }}
       </a>
-      <button class="btn btn-panel-dark" type="button" (click)="toggleAdsPanel()">
+      <button class="btn btn-primary" type="button" (click)="toggleAdsPanel()">
         {{ showAdsPanel ? ('ADMIN_COMPANIES.CANCEL' | translate) : ('ADMIN_COMPANIES.MANAGE_ADS' | translate) }}
       </button>
-      <button class="btn btn-panel-dark" type="button" (click)="toggleForm()">
+      <button class="btn btn-primary" type="button" (click)="toggleForm()">
         {{ showForm ? ('ADMIN_COMPANIES.CANCEL' | translate) : ('ADMIN_COMPANIES.ADD' | translate) }}
       </button>
     </div>
@@ -30,13 +30,17 @@
 
   <section class="create-form" *ngIf="showForm">
     <h3>{{ 'ADMIN_COMPANIES.CREATE_TITLE' | translate }}</h3>
+    <div class="alert error form-alert" *ngIf="formErrorMessage">{{ formErrorMessage | translate }}</div>
     <form [formGroup]="companyForm" (ngSubmit)="createCompany()">
       <fieldset class="form-section">
         <legend>{{ 'ADMIN_COMPANIES.COMPANY_SECTION' | translate }}</legend>
         <div class="form-grid">
           <label>
             {{ 'ADMIN_COMPANIES.NAME' | translate }} *
-            <input type="text" formControlName="name" />
+            <input type="text" formControlName="name" [class.field-error]="isFieldInvalid('name')" />
+            <small class="field-error-msg" *ngIf="isFieldInvalid('name')">
+              {{ 'ADMIN_COMPANIES.VALIDATION.REQUIRED_NAME' | translate }}
+            </small>
           </label>
           <label>
             {{ 'ADMIN_COMPANIES.CIF' | translate }}
@@ -50,15 +54,30 @@
         <div class="form-grid">
           <label>
             {{ 'ADMIN_COMPANIES.ADMIN_EMAIL' | translate }} *
-            <input type="email" formControlName="adminEmail" />
+            <input type="email" formControlName="adminEmail" [class.field-error]="isFieldInvalid('adminEmail')" />
+            <small class="field-error-msg" *ngIf="isFieldInvalid('adminEmail') && companyForm.get('adminEmail')?.hasError('required')">
+              {{ 'ADMIN_COMPANIES.VALIDATION.REQUIRED_EMAIL' | translate }}
+            </small>
+            <small class="field-error-msg" *ngIf="isFieldInvalid('adminEmail') && companyForm.get('adminEmail')?.hasError('email')">
+              {{ 'ADMIN_COMPANIES.VALIDATION.INVALID_EMAIL' | translate }}
+            </small>
           </label>
           <label>
             {{ 'ADMIN_COMPANIES.ADMIN_PASSWORD' | translate }} *
-            <input type="password" formControlName="adminPassword" />
+            <input type="password" formControlName="adminPassword" [class.field-error]="isFieldInvalid('adminPassword')" />
+            <small class="field-error-msg" *ngIf="isFieldInvalid('adminPassword') && companyForm.get('adminPassword')?.hasError('required')">
+              {{ 'ADMIN_COMPANIES.VALIDATION.REQUIRED_PASSWORD' | translate }}
+            </small>
+            <small class="field-error-msg" *ngIf="isFieldInvalid('adminPassword') && companyForm.get('adminPassword')?.hasError('minlength')">
+              {{ 'ADMIN_COMPANIES.VALIDATION.MIN_PASSWORD' | translate }}
+            </small>
           </label>
           <label>
             {{ 'ADMIN_COMPANIES.ADMIN_NAME' | translate }} *
-            <input type="text" formControlName="adminNombre" />
+            <input type="text" formControlName="adminNombre" [class.field-error]="isFieldInvalid('adminNombre')" />
+            <small class="field-error-msg" *ngIf="isFieldInvalid('adminNombre')">
+              {{ 'ADMIN_COMPANIES.VALIDATION.REQUIRED_ADMIN_NAME' | translate }}
+            </small>
           </label>
           <label>
             {{ 'ADMIN_COMPANIES.ADMIN_LASTNAME' | translate }}
@@ -143,7 +162,7 @@
         </p>
         <div class="pagination-controls" *ngIf="adsTotalPages > 1">
           <button
-            class="btn btn-panel-dark"
+            class="btn btn-primary"
             type="button"
             (click)="prevAdsPage()"
             [disabled]="adsCurrentPage === 1">
@@ -153,7 +172,7 @@
             {{ 'ADMIN_COMPANIES.PAGE' | translate:{ current: adsCurrentPage, total: adsTotalPages } }}
           </span>
           <button
-            class="btn btn-panel-dark"
+            class="btn btn-primary"
             type="button"
             (click)="nextAdsPage()"
             [disabled]="adsCurrentPage === adsTotalPages">
@@ -190,7 +209,7 @@
         </div>
         <div class="card-side">
           <button
-            class="btn btn-panel-dark"
+            class="btn btn-primary"
             type="button"
             (click)="editCompany($event, company)">
             {{ 'ADMIN_COMPANIES.EDIT' | translate }}
@@ -219,7 +238,7 @@
       </p>
       <div class="pagination-controls" *ngIf="totalPages > 1">
         <button
-          class="btn btn-panel-dark"
+          class="btn btn-primary"
           type="button"
           (click)="prevPage()"
           [disabled]="currentPage === 1">
@@ -229,7 +248,7 @@
           {{ 'ADMIN_COMPANIES.PAGE' | translate:{ current: currentPage, total: totalPages } }}
         </span>
         <button
-          class="btn btn-panel-dark"
+          class="btn btn-primary"
           type="button"
           (click)="nextPage()"
           [disabled]="currentPage === totalPages">

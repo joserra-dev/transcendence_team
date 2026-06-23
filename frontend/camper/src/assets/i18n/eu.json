@@ -314,6 +314,17 @@
     "REVOKE_ADMIN": "Kendu admin baimenak",
     "EDIT": "Profila editatu",
     "PROMOTE_DESC": "Hautatu administratzaile baimenak emateko enpresa.",
+    "FILTER_ROLE": "Iragazi baimenen arabera",
+    "FILTER_ROLE_ALL": "Baimen guztiak",
+    "FILTER_COMPANY": "Iragazi enpresaren arabera",
+    "FILTER_COMPANY_ALL": "Enpresa guztiak",
+    "SORT": "Orden alfabetikoa",
+    "SORT_ASC": "A → Z",
+    "SORT_DESC": "Z → A",
+    "TABLE_NAME": "Izena eta abizenak",
+    "ACTIONS": "Ekintzak",
+    "NO_COMPANY": "—",
+    "EMPTY_FILTERED": "Ez dago hautatutako iragazkiekin bat datorren erabiltzailerik.",
     "SUCCESS_CREATE": "Erabiltzailea ongi sortu da.",
     "SUCCESS_UPDATE": "Erabiltzailea ongi eguneratu da.",
     "SUCCESS_PROMOTE": "Admin baimenak ongi eman dira.",
@@ -391,7 +402,16 @@
       "ADMIN_UPDATE": "Errorea administratzailea eguneratzean.",
       "USER_UPDATE": "Errorea erabiltzailea eguneratzean.",
       "DELETE": "Errorea enpresa ezabatzean.",
-      "LOAD_ADS": "Ezin izan dira iragarkiak kargatu."
+      "LOAD_ADS": "Ezin izan dira iragarkiak kargatu.",
+      "VALIDATION": "Berrikusi formularioa: derrigorrezko eremuak falta dira edo datu okerrak daude."
+    },
+    "VALIDATION": {
+      "REQUIRED_NAME": "Enpresaren izena derrigorrezkoa da.",
+      "REQUIRED_EMAIL": "Administratzailearen emaila derrigorrezkoa da.",
+      "INVALID_EMAIL": "Sartu baliozko email bat.",
+      "REQUIRED_PASSWORD": "Administratzailearen pasahitza derrigorrezkoa da.",
+      "MIN_PASSWORD": "Pasahitzak gutxienez 6 karaktere izan behar ditu.",
+      "REQUIRED_ADMIN_NAME": "Administratzailearen izena derrigorrezkoa da."
     }
   },
 

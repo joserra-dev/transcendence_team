@@ -38,6 +38,7 @@ export class ManageCompanies implements OnInit {
   adsErrorMessage = '';
   successMessage = '';
   errorMessage = '';
+  formErrorMessage = '';
   userName = '';
 
   companyForm: FormGroup = this.fb.group({
@@ -118,6 +119,7 @@ export class ManageCompanies implements OnInit {
   toggleForm() {
     this.showForm = !this.showForm;
     this.errorMessage = '';
+    this.formErrorMessage = '';
     this.successMessage = '';
     if (this.showForm) {
       this.showAdsPanel = false;
@@ -198,9 +200,11 @@ export class ManageCompanies implements OnInit {
   createCompany() {
     if (this.companyForm.invalid) {
       this.companyForm.markAllAsTouched();
+      this.formErrorMessage = 'ADMIN_COMPANIES.ERRORS.VALIDATION';
       return;
     }
 
+    this.formErrorMessage = '';
     this.adminService.createCompany(this.companyForm.value).subscribe({
       next: () => {
         this.successMessage = 'ADMIN_COMPANIES.SUCCESS_CREATE';
@@ -287,5 +291,10 @@ export class ManageCompanies implements OnInit {
 
   logout() {
     this.authService.logoutAdmin();
+  }
+
+  isFieldInvalid(field: string): boolean {
+    const control = this.companyForm.get(field);
+    return !!(control && control.invalid && control.touched);
   }
 }

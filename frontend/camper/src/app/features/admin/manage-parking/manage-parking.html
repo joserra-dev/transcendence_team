@@ -4,7 +4,7 @@
       {{ isEditMode ? ('MANAGE_PARKING.EDIT' | translate) : ('MANAGE_PARKING.NEW' | translate) }}
     </h1>
 
-    <a [routerLink]="backLink" class="btn btn-secondary mt-2 mt-md-0">
+    <a [routerLink]="backLink" class="btn btn-primary mt-2 mt-md-0">
       ← {{ 'MANAGE_PARKING.BACK' | translate }}
     </a>
   </header>
@@ -90,7 +90,7 @@
           {{ 'MANAGE_PARKING.SPOTS' | translate }} ({{ plazas.length }})
         </h2>
 
-        <button type="button" class="btn btn-secondary" (click)="openSpotModal()">
+        <button type="button" class="btn btn-primary" (click)="openSpotModal()">
           + {{ 'MANAGE_PARKING.ADD_SPOT' | translate }}
         </button>
       </div>
@@ -121,7 +121,7 @@
                 </span>
               </td>
               <td>
-                <button class="btn btn-secondary btn-sm" type="button" (click)="openSpotModal(plaza)">
+                <button class="btn btn-primary btn-sm" type="button" (click)="openSpotModal(plaza)">
                   {{ 'MANAGE_PARKING.EDIT_SPOT' | translate }}
                 </button>
               </td>
@@ -182,7 +182,7 @@
             </div>
 
             <div class="d-flex flex-column justify-content-end gap-3">
-              <button type="button" class="btn btn-secondary" (click)="closeSpotModal()">
+              <button type="button" class="btn btn-primary" (click)="closeSpotModal()">
                 {{ 'MANAGE_PARKING.CANCEL' | translate }}
               </button>
 
