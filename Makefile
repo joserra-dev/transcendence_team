@@ -17,7 +17,7 @@ else
     HOST := $(if $(DETECTED_HOST),$(DETECTED_HOST),localhost)
 endif
 
-.PHONY: all dev prod up up-prod clean fclean env help
+.PHONY: all dev prod up up-prod clean fclean env
 
 .DEFAULT_GOAL := help
 
@@ -59,25 +59,27 @@ clean: ## Detiene contenedores sin perder datos ni imágenes
 	docker-compose down
 	@echo -e "$(COLOR_GREEN)✓ Contenedores limpios.$(COLOR_RESET)"
 
-fclean: ## Limpieza profunda total: Elimina contenedores, volúmenes, imágenes <none> y .env
-	@echo -e "$(COLOR_RED)🧹 Ejecutando fclean (Limpieza forzada)...$(COLOR_RESET)"
-	# 1. Detiene y elimina contenedores y volúmenes del compose
-	docker-compose -f docker-compose.yml -f docker-compose.prod.yml down --volumes --remove-orphans
-	# 2. Elimina todas las imágenes huérfanas (<none>:<none>) del sistema
-	@if [ $$(docker images -f "dangling=true" -q | wc -l) -gt 0 ]; then \
-		echo "Eliminando imágenes huérfanas..."; \
-		docker rmi $$(docker images -f "dangling=true" -q); \
-	else \
-		echo "No se encontraron imágenes <none> para limpiar."; \
-	fi
-	# 3. Eliminar el archivo .env si existe
+fclean: ## Limpieza profunda total: Elimina contenedores, volúmenes, imágenes, huérfanos y .env
+	@echo -e "$(COLOR_RED)🚨 LIMPIEZA PROFUNDA: Eliminando contenedores, volúmenes, huérfanos e imágenes...$(COLOR_RESET)"
+	
+	@# 1. Apagar contenedores, borrar volúmenes e imágenes creadas por el compose, incluyendo huérfanos del proyecto
+	docker compose -f docker-compose.yml -f docker-compose.prod.yml down --rmi all --volumes --remove-orphans || true
+	
+	@# 2. EL TRUCO FINAL PARA HUÉRFANOS: Borra cualquier contenedor, red o volumen colgado/huérfano en todo el sistema Docker
+	docker system prune -a --volumes -f || true
+	
+	@# 3. Limpieza de la caché interna de construcción de BuildKit
+	docker builder prune -a -f || true
+	
+	@# 4. Forzar borrado manual por si quedaba algún residuo con estos nombres exactos
+	docker rmi -f transcendence_team-backend transcendence_team-db transcendence_team-frontend || true
+	
+	@# 5. Eliminar el archivo de variables de entorno si existe
 	@if [ -f .env ]; then \
 		rm .env; \
 		echo -e "$(COLOR_RED)🗑️ Archivo .env eliminado.$(COLOR_RESET)"; \
 	fi
-	# 4. Limpieza extra de caché de construcción que pueda haber quedado
-	docker builder prune -f
-	@echo -e "$(COLOR_GREEN)✨ Sistema Docker limpio de residuos y contenedores. Entorno reseteado.$(COLOR_RESET)"
+	@echo -e "$(COLOR_GREEN)💥 Todo el entorno (incluyendo huérfanos y cachés) ha sido reseteado desde cero.$(COLOR_RESET)"
 
 # ==============================================================================
 # AUTOMATIC ENVIRONMENT GENERATION (.env)
@@ -114,7 +116,7 @@ env:
 		echo "MAIL_PORT=587" >> .env; \
 		echo "MAIL_USE_TLS=True" >> .env; \
 		read -p "Tu correo de Gmail (MAIL_USERNAME): " mail_user; \
-		read -p "Tu contraseña de aplicación de Gmail (MAIL_PASSWORD): " mail_pass; echo ""; \
+		read -p "Tu contraseña de aplicaci710c77922dd5ón de Gmail (MAIL_PASSWORD): " mail_pass; echo ""; \
 		read -p "Correo remitente por defecto (MAIL_DEFAULT_SENDER): " mail_sender; \
 		echo "MAIL_USERNAME=$$mail_user" >> .env; \
 		echo "MAIL_PASSWORD=$$mail_pass" >> .env; \
@@ -125,4 +127,3 @@ env:
 	else \
 		echo -e "$(COLOR_GREEN)✔ El archivo .env ya existe. Saltando configuración interactiva.$(COLOR_RESET)"; \
 	fi
-	
