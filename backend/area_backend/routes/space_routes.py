@@ -14,15 +14,47 @@ def get_space():
     """
     Obtiene la lista de plazas o una plaza específica por ID.
     ---
+    tags:
+      - Space
     parameters:
       - name: id
         in: query
         type: integer
         required: false
-        description: ID de la plaza opcional.
+        description: ID de la plaza opcional para filtrar un registro específico.
+      - name: lang
+        in: query
+        type: string
+        required: false
+        description: Idioma para la internacionalización de las respuestas (ej. es, en, eu).
     responses:
       200:
-        description: Éxito.
+        description: Éxito. Devuelve el objeto estructurado de la plaza o el listado completo.
+        schema:
+          type: array
+          items:
+            type: object
+            properties:
+              id:
+                type: integer
+                example: 42
+              name:
+                type: string
+                example: "Plaza A-12"
+              price:
+                type: number
+                example: 15.50
+              id_parking:
+                type: integer
+                example: 1
+      404:
+        description: La plaza especificada no existe.
+        schema:
+          type: object
+          properties:
+            error:
+              type: string
+              example: "Plaza no existe"
     """
     id = request.args.get('id')
 
