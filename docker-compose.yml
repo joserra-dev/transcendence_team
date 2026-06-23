@@ -1,6 +1,8 @@
 services:
   db:
-    image: postgres:15-alpine
+    build:
+      context: ./ddbb
+      dockerfile: Dockerfile
     volumes:
       - postgres_data:/var/lib/postgresql/data
     environment:
@@ -18,14 +20,14 @@ services:
   backend:
     build: 
       context: ./backend/area_backend
-    # 1. Ejecutamos la instalación de pip y luego arrancamos FLASK con autoreload (--debug)
-    command: sh -c "pip install -r requirements.txt && python -m flask run --host=0.0.0.0 --port=8000 --debug"
+    # ── CORRECCIÓN: Eliminamos el pip install. Solo ejecutamos Flask directamente ──
+    command: python -m flask run --host=0.0.0.0 --port=8000 --debug
     volumes:
       - ./backend/area_backend:/app
     ports:
       - "${BACK_PORT}:8000"
     environment:
-      - FLASK_APP=app.py        # 2. Asegúrate de que tu archivo principal de Flask se llama app.py
+      - FLASK_APP=app.py
       - FLASK_DEBUG=1
       - PYTHONPATH=.
       - JWT_SECRET_KEY=${JWT_SECRET_KEY:-local_dev_secret_change_me}
@@ -36,6 +38,12 @@ services:
     depends_on:
       db:
         condition: service_healthy
+    healthcheck:
+      test: ["CMD", "python", "-c", "import socket; s = socket.socket(); s.connect(('127.0.0.1', 8000))"]
+      interval: 5s
+      timeout: 5s
+      retries: 5        # Ya podemos bajar los reintentos
+      start_period: 5s  # Flask arrancará en un par de segundos ahora
 
   frontend:
     build:
@@ -57,6 +65,10 @@ services:
       - .env
     stdin_open: true 
     tty: true
+
+    depends_on:
+      backend:
+        condition: service_healthy
     
 volumes:
   postgres_data:

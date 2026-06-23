@@ -1,7 +1,7 @@
-FROM postgres:18
+FROM postgres:15-alpine
 
 # Copiamos los scripts de inicialización
-COPY init /docker-entrypoint-initdb.d/
+COPY ./init/ /docker-entrypoint-initdb.d/
 
 # Render y Postgres usan variables de entorno estándar:
 # POSTGRES_DB

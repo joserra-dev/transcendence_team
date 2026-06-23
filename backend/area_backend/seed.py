@@ -227,15 +227,14 @@ def _ensure_seed_users_verified() -> None:
 
 
 def seed_database() -> None:
-    """Inserta datos de desarrollo si las tablas están vacías."""
+    """Inserta datos de desarrollo si las tablas están vacías (SOLO USUARIOS Y PERFILES)."""
+    # 1. Cargamos únicamente los usuarios y sus perfiles
     users_created = _seed_users()
-    parkings_created = _seed_parkings()
+    
+    # 2. Nos aseguramos de que queden verificados
     _ensure_seed_users_verified()
 
-    if users_created or parkings_created:
-        db.session.commit()
-
+    # 3. Guardamos los cambios en la base de datos si se creó algún usuario
     if users_created:
+        db.session.commit()
         print(f" * {users_created} usuarios creados (contraseña: {DEFAULT_PASSWORD!r})")
-    if parkings_created:
-        print(f" * {parkings_created} parkings creados con sus plazas")
