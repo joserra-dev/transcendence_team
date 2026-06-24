@@ -9,6 +9,7 @@
   >
     <div class="search-bar">
 
+      <!-- Destino -->
       <div class="search-field">
         <label for="search-destination" class="visually-hidden">{{ 'SEARCH.DESTINATION' | translate }}</label>
         <i class="fa-solid fa-location-dot"></i>
@@ -21,6 +22,7 @@
 
       <div class="divider"></div>
 
+      <!-- Provincia -->
       <div class="search-field">
         <label for="search-province" class="visually-hidden">{{ 'SEARCH.PROVINCE' | translate }}</label>
         <i class="fa-solid fa-map"></i>
@@ -33,7 +35,8 @@
 
       <div class="divider"></div>
 
-      <div class="search-field date" (click)="openDatePicker(fechaDesdeInput)">
+      <!-- FECHA ENTRADA (Corregido y único) -->
+      <div class="search-field date">
         <label for="fake-fechadesde" class="visually-hidden">{{ 'BOOKING.ENTRY_DATE' | translate }}</label>
         <i class="fa-regular fa-calendar"></i>
         
@@ -50,14 +53,15 @@
           id="search-fechadesde"
           type="date" 
           formControlName="fechaDesde" 
-          style="display: none;" 
+          class="native-hidden-date"
           (change)="onEntryDateChange()"
         >
       </div>
 
       <div class="divider"></div>
 
-      <div class="search-field date" (click)="openDatePicker(fechaHastaInput)">
+      <!-- FECHA SALIDA -->
+      <div class="search-field date">
         <label for="fake-fechahasta" class="visually-hidden">{{ 'BOOKING.EXIT_DATE' | translate }}</label>
         <i class="fa-regular fa-calendar"></i>
         
@@ -74,10 +78,11 @@
           id="search-fechahasta"
           type="date" 
           formControlName="fechaHasta" 
-          style="display: none;"
+          class="native-hidden-date"
         >
       </div>
 
+      <!-- Botón Buscar -->
       <button
         type="submit"
         class="btn btn-primary search-button"
@@ -88,6 +93,7 @@
 
     </div>
 
+    <!-- Filtros Checkbox -->
     <div class="form-check form-switch filters-row">
       <label class="form-check-label">
         <input type="checkbox" formControlName="tomaElectricidad" class="form-check-input">
