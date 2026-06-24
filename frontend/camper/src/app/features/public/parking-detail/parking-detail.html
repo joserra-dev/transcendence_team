@@ -3,11 +3,9 @@
     <div>
       <h1 class="page-title">{{ parking.name }}</h1>
       <p class="location">
-        <i class="fa-solid fa-location-dot"></i>
-        {{ parking.municipality || parking.localidad }}
-        
-        <button *ngIf="parking.latitude && parking.longitude" class="btn btn-sm btn-outline-primary ms-3" (click)="openMapModal()">
-          Ver en Google Maps
+        <button   class="btn btn-primary"  [disabled]="!parking.latitude || !parking.longitude" (click)="openMapModal()">
+            <i class="fa-solid fa-location-dot"></i>
+            {{ parking.municipality || parking.localidad }}
         </button>
       </p>
     </div>
