@@ -73,6 +73,7 @@ fclean: ## Limpieza profunda total: Elimina contenedores, volúmenes, imágenes,
 	
 	@# 4. Forzar borrado manual por si quedaba algún residuo con estos nombres exactos
 	docker rmi -f transcendence_team-backend transcendence_team-db transcendence_team-frontend || true
+	#docker ps -q | xargs -r docker stop
 	
 	@# 5. Eliminar el archivo de variables de entorno si existe
 	@if [ -f .env ]; then \
