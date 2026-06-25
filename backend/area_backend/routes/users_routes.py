@@ -8,6 +8,7 @@ from flask_mailman import EmailMessage
 
 from services.email_services import EmailService
 from utils.password_validator import PasswordValidator
+from utils.identity_validator import IdentityValidator
 
 # Importamos 'refresh' para actualizar el idioma en caliente dentro de la petición
 from flask_babel import gettext as _, refresh
@@ -293,7 +294,8 @@ def update_profile():
                 profile.birth_day = datetime.strptime(fec_nac_str, "%Y-%m-%d").date()
             except ValueError:
                 pass
-                
+        if not IdentityValidator.validate_document(profile.dni):
+             return jsonify({"error": _("El documento de identidad no valido")}), 400        
         new_password = data.get("passPersona")
         if new_password and new_password.strip() != "":
             is_valid, mensagge = PasswordValidator.validar(new_password)
