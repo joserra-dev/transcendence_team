@@ -103,7 +103,6 @@ app.register_blueprint(space_bp)
 app.register_blueprint(booking_bp)
 app.register_blueprint(admin_bp)
 app.register_blueprint(access_bp)
-app.register_blueprint(admin_bp)
 app.register_blueprint(public_api_bp)
 app.register_blueprint(status_bp)
 
