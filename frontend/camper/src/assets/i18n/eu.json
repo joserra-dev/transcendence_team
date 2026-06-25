@@ -218,6 +218,7 @@
     "SUCCESS": "Erreserba arrakastaz egin da!",
     "LOCATIONOF":"Kokapena",
     "DESCRIPTION":"Deskribapena",
+    "NO_SERVICES":"Ez du zerbitzurik",
     "ERRORS": {
       "NOT_FOUND": "Ez da bilatutako aparkalekua aurkitu.",
       "NO_RESULTS": "Ez da aparkalekurik aurkitu edo ez dago erabilgarri data hauetarako.",

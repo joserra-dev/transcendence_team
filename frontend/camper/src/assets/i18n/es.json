@@ -218,6 +218,7 @@
     "SUCCESS": "¡Reserva realizada con éxito!",
     "LOCATIONOF":"Ubicación de",
     "DESCRIPTION":"Descripción",
+    "NO_SERVICES":"No dispone de servicios",
     "ERRORS": {
       "NOT_FOUND": "No se encontró el parking solicitado.",
       "NO_RESULTS": "Parking no encontrado o no disponible para estas fechas.",

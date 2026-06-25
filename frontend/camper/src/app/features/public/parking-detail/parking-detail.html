@@ -70,7 +70,13 @@
 
         <div class="services">
           <h2 class="section-title">{{ 'PARKING.SERVICES' | translate }}</h2>
-          <ul>
+          
+          <ul *ngIf="
+            parking.tomaElectricidad || parking.has_electricity || 
+            parking.limpiezaAguasResiduales || parking.has_waste_disposal || 
+            parking.plazasVip || parking.has_vip_spots; 
+            else noServices
+          ">
             <li *ngIf="parking.tomaElectricidad || parking.has_electricity">
               <i class="fa-solid fa-check"></i> {{ 'SEARCH.ELECTRICITY' | translate }}
             </li>
@@ -81,6 +87,12 @@
               <i class="fa-solid fa-check"></i> {{ 'SEARCH.VIP' | translate }}
             </li>
           </ul>
+
+          <ng-template #noServices>
+            <p class="no-services-msg">
+              {{ 'PARKING.NO_SERVICES' | translate }}
+            </p>
+          </ng-template>
         </div>
 
         <div class="slots">
