@@ -41,3 +41,28 @@ export interface BookingHistoryResponse {
   range: number | null;
   licensePlate?: string;
 }
+
+export interface AdminBooking {
+  id: number;
+  userId: number;
+  userEmail: string;
+  userName: string;
+  spaceId: number;
+  spaceName: string;
+  parkingId: number;
+  parkingName: string;
+  price: number;
+  totalPrice: number;
+  startDate: string | null;
+  endDate: string | null;
+  createDate: string;
+  status: string;
+  rating: number | null;
+  licensePlate: string;
+}
+
+export interface AdminBookingFilters {
+  parkingId?: number;
+  status?: string;
+  companyId?: number;
+}

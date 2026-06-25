@@ -1,0 +1,226 @@
+<main class="admin-users">
+  <header class="page-header">
+    <div>
+      <a routerLink="/admin/companies" class="back-link">← {{ 'ADMIN_USERS.BACK' | translate }}</a>
+      <h1>{{ 'ADMIN_USERS.TITLE' | translate }}</h1>
+      <p class="subtitle">{{ 'ADMIN_USERS.SUBTITLE' | translate }}</p>
+    </div>
+    <button class="btn btn-primary" type="button" (click)="toggleForm()">
+      {{ showForm ? ('ADMIN_USERS.CANCEL' | translate) : ('ADMIN_USERS.ADD' | translate) }}
+    </button>
+  </header>
+
+  <div class="alert success" *ngIf="successMessage">{{ successMessage | translate }}</div>
+  <div class="alert error" *ngIf="errorMessage">{{ errorMessage | translate }}</div>
+
+  <section class="create-form" *ngIf="showForm">
+    <h2>{{ 'ADMIN_USERS.CREATE_TITLE' | translate }}</h2>
+    <form [formGroup]="userForm" (ngSubmit)="createUser()" class="form-grid">
+      <label>
+        {{ 'ADMIN_USERS.EMAIL' | translate }}
+        <input type="email" formControlName="email" />
+      </label>
+      <label>
+        {{ 'ADMIN_USERS.PASSWORD' | translate }}
+        <input type="password" formControlName="password" />
+      </label>
+      <label>
+        {{ 'ADMIN_USERS.NAME' | translate }}
+        <input type="text" formControlName="nombre" />
+      </label>
+      <label>
+        {{ 'ADMIN_USERS.LASTNAME' | translate }}
+        <input type="text" formControlName="apellidos" />
+      </label>
+      <label>
+        {{ 'ADMIN_USERS.DNI' | translate }}
+        <input type="text" formControlName="dni" />
+      </label>
+      <label>
+        {{ 'ADMIN_USERS.ROLE' | translate }}
+        <select formControlName="role">
+          <option value="user">{{ 'ADMIN_USERS.ROLE_USER' | translate }}</option>
+          <option value="admin">{{ 'ADMIN_USERS.ROLE_ADMIN' | translate }}</option>
+        </select>
+      </label>
+      <label *ngIf="userForm.get('role')?.value === 'admin'">
+        {{ 'ADMIN_USERS.COMPANY' | translate }}
+        <select formControlName="companyId">
+          <option [ngValue]="null">{{ 'ADMIN_USERS.SELECT_COMPANY' | translate }}</option>
+          <option *ngFor="let company of companies" [ngValue]="company.id">{{ company.name }}</option>
+        </select>
+      </label>
+      <label class="submit-field">
+        <span class="submit-field__label" aria-hidden="true">{{ 'ADMIN_USERS.ROLE' | translate }}</span>
+        <button class="btn btn-primary submit-field__btn" type="submit">{{ 'ADMIN_USERS.SAVE' | translate }}</button>
+      </label>
+    </form>
+  </section>
+
+  <div *ngIf="isLoading" class="loading-msg">{{ 'ADMIN_USERS.LOADING' | translate }}</div>
+
+  <section class="users-section" *ngIf="!isLoading">
+    <div class="table-filters">
+      <label>
+        {{ 'ADMIN_USERS.FILTER_ROLE' | translate }}
+        <select [(ngModel)]="filterRole" [ngModelOptions]="{standalone: true}">
+          <option [ngValue]="'all'">{{ 'ADMIN_USERS.FILTER_ROLE_ALL' | translate }}</option>
+          <option [ngValue]="'super_admin'">{{ 'ADMIN_USERS.ROLE_SUPER' | translate }}</option>
+          <option [ngValue]="'admin'">{{ 'ADMIN_USERS.ROLE_ADMIN' | translate }}</option>
+          <option [ngValue]="'user'">{{ 'ADMIN_USERS.ROLE_USER' | translate }}</option>
+        </select>
+      </label>
+
+      <label>
+        {{ 'ADMIN_USERS.FILTER_COMPANY' | translate }}
+        <select [(ngModel)]="filterCompanyId" [ngModelOptions]="{standalone: true}">
+          <option [ngValue]="'all'">{{ 'ADMIN_USERS.FILTER_COMPANY_ALL' | translate }}</option>
+          <option *ngFor="let company of companies" [ngValue]="company.id">{{ company.name }}</option>
+        </select>
+      </label>
+
+      <label>
+        {{ 'ADMIN_USERS.SORT' | translate }}
+        <select [(ngModel)]="sortOrder" [ngModelOptions]="{standalone: true}">
+          <option [ngValue]="'asc'">{{ 'ADMIN_USERS.SORT_ASC' | translate }}</option>
+          <option [ngValue]="'desc'">{{ 'ADMIN_USERS.SORT_DESC' | translate }}</option>
+        </select>
+      </label>
+    </div>
+
+    <p *ngIf="filteredUsers.length === 0" class="empty-msg">{{ 'ADMIN_USERS.EMPTY_FILTERED' | translate }}</p>
+
+    <div class="table-wrapper" *ngIf="filteredUsers.length > 0">
+      <table class="users-data-table">
+        <thead>
+          <tr>
+            <th>
+              <button type="button" class="sort-header" (click)="toggleSortOrder()">
+                {{ 'ADMIN_USERS.TABLE_NAME' | translate }}
+                <span class="sort-icon">{{ sortOrder === 'asc' ? '↑' : '↓' }}</span>
+              </button>
+            </th>
+            <th>{{ 'ADMIN_USERS.COMPANY' | translate }}</th>
+            <th>{{ 'ADMIN_USERS.EMAIL' | translate }}</th>
+            <th>{{ 'ADMIN_USERS.ROLE' | translate }}</th>
+            <th>{{ 'ADMIN_USERS.DNI' | translate }}</th>
+            <th>{{ 'ADMIN_USERS.ACTIONS' | translate }}</th>
+          </tr>
+        </thead>
+        <tbody>
+          <ng-container *ngFor="let user of filteredUsers">
+            <tr *ngIf="editingUserId !== user.id && promotingUserId !== user.id">
+              <td class="name-cell">{{ fullName(user) }}</td>
+              <td>{{ user.companyName || ('ADMIN_USERS.NO_COMPANY' | translate) }}</td>
+              <td>{{ user.email }}</td>
+              <td>
+                <span class="badge">{{ roleLabel(user.role) | translate }}</span>
+              </td>
+              <td>{{ user.dni || '—' }}</td>
+              <td>
+                <div class="actions" *ngIf="user.role !== 'super_admin'">
+                  <button
+                    class="btn-icon btn-icon--primary"
+                    type="button"
+                    (click)="startEditUser(user)"
+                    [attr.aria-label]="'ADMIN_USERS.EDIT' | translate"
+                    [attr.title]="'ADMIN_USERS.EDIT' | translate">
+                    <i class="fa-regular fa-pen-to-square" aria-hidden="true"></i>
+                  </button>
+                  <button
+                    *ngIf="user.role === 'user'"
+                    class="btn-icon btn-icon--primary"
+                    type="button"
+                    (click)="startPromote(user)"
+                    [attr.aria-label]="'ADMIN_USERS.GRANT_ADMIN' | translate"
+                    [attr.title]="'ADMIN_USERS.GRANT_ADMIN' | translate">
+                    <i class="fa-solid fa-person-military-to-person" aria-hidden="true"></i>
+                  </button>
+                  <button
+                    *ngIf="user.role === 'admin'"
+                    class="btn-icon btn-icon--danger"
+                    type="button"
+                    (click)="revokeAdmin(user)"
+                    [attr.aria-label]="'ADMIN_USERS.REVOKE_ADMIN' | translate"
+                    [attr.title]="'ADMIN_USERS.REVOKE_ADMIN' | translate">
+                    <i class="fa-solid fa-person-military-to-person" aria-hidden="true"></i>
+                  </button>
+                </div>
+              </td>
+            </tr>
+
+            <tr *ngIf="editingUserId === user.id" class="expanded-row">
+              <td colspan="6">
+                <form [formGroup]="editForm" (ngSubmit)="saveUser()" class="form-grid edit-form">
+                  <label>
+                    {{ 'ADMIN_USERS.EMAIL' | translate }}
+                    <input type="email" formControlName="email" />
+                  </label>
+                  <label>
+                    {{ 'ADMIN_USERS.PASSWORD' | translate }}
+                    <input type="password" formControlName="password" [placeholder]="'ADMIN_COMPANIES.PASSWORD_OPTIONAL' | translate" />
+                  </label>
+                  <label>
+                    {{ 'ADMIN_USERS.NAME' | translate }}
+                    <input type="text" formControlName="nombre" />
+                  </label>
+                  <label>
+                    {{ 'ADMIN_USERS.LASTNAME' | translate }}
+                    <input type="text" formControlName="apellidos" />
+                  </label>
+                  <label>
+                    {{ 'ADMIN_USERS.DNI' | translate }}
+                    <input type="text" formControlName="dni" />
+                  </label>
+                  <label>
+                    {{ 'ADMIN_USERS.ROLE' | translate }}
+                    <select formControlName="role">
+                      <option value="user">{{ 'ADMIN_USERS.ROLE_USER' | translate }}</option>
+                      <option value="admin">{{ 'ADMIN_USERS.ROLE_ADMIN' | translate }}</option>
+                    </select>
+                  </label>
+                  <label *ngIf="editForm.get('role')?.value === 'admin'">
+                    {{ 'ADMIN_USERS.COMPANY' | translate }}
+                    <select formControlName="companyId">
+                      <option [ngValue]="null">{{ 'ADMIN_USERS.SELECT_COMPANY' | translate }}</option>
+                      <option *ngFor="let company of companies" [ngValue]="company.id">{{ company.name }}</option>
+                    </select>
+                  </label>
+                  <div class="form-actions">
+                    <button class="btn btn-primary" type="submit">{{ 'ADMIN_USERS.SAVE' | translate }}</button>
+                    <button class="btn btn-primary" type="button" (click)="cancelEditUser()">
+                      {{ 'ADMIN_USERS.CANCEL' | translate }}
+                    </button>
+                  </div>
+                </form>
+              </td>
+            </tr>
+
+            <tr *ngIf="promotingUserId === user.id" class="expanded-row">
+              <td colspan="6">
+                <div class="promote-form">
+                  <p>{{ 'ADMIN_USERS.PROMOTE_DESC' | translate }}</p>
+                  <label>
+                    {{ 'ADMIN_USERS.COMPANY' | translate }}
+                    <select [(ngModel)]="promoteCompanyId" [ngModelOptions]="{standalone: true}">
+                      <option [ngValue]="null">{{ 'ADMIN_USERS.SELECT_COMPANY' | translate }}</option>
+                      <option *ngFor="let company of companies" [ngValue]="company.id">{{ company.name }}</option>
+                    </select>
+                  </label>
+                  <div class="form-actions">
+                    <button class="btn btn-primary" type="button" (click)="confirmPromote()">
+                      {{ 'ADMIN_USERS.GRANT_ADMIN' | translate }}
+                    </button>
+                    <button class="btn btn-primary" type="button" (click)="cancelPromote()">
+                      {{ 'ADMIN_USERS.CANCEL' | translate }}
+                    </button>
+                  </div>
+                </div>
+              </td>
+            </tr>
+          </ng-container>
+        </tbody>
+      </table>
+    </div>
+  </section>
+</main>

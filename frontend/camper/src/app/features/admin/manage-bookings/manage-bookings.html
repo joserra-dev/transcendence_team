@@ -1,0 +1,156 @@
+<main class="admin-bookings">
+  <header class="page-hero">
+    <div>
+      <p class="eyebrow">{{ 'ADMIN_BOOKINGS.TITLE' | translate }}</p>
+      <h1>{{ 'ADMIN_BOOKINGS.SUBTITLE' | translate }}</h1>
+    </div>
+    <a routerLink="/admin/dashboard" class="btn btn-primary">
+      {{ 'ADMIN_BOOKINGS.BACK' | translate }}
+    </a>
+  </header>
+
+  <div class="alert success" *ngIf="successMessage">{{ successMessage | translate }}</div>
+  <div class="alert error" *ngIf="errorMessage">{{ errorMessage | translate }}</div>
+
+  <section class="filters-panel">
+    <form [formGroup]="filterForm" (ngSubmit)="applyFilters()" class="filters-form">
+      <label>
+        {{ 'ADMIN_BOOKINGS.FILTER_FROM' | translate }}
+        <input type="date" formControlName="fechaDesde" (click)="openDatePicker($event)" />
+      </label>
+
+      <label>
+        {{ 'ADMIN_BOOKINGS.FILTER_TO' | translate }}
+        <input type="date" formControlName="fechaHasta" (click)="openDatePicker($event)" />
+      </label>
+
+      <label>
+        {{ 'ADMIN_BOOKINGS.FILTER_PARKING' | translate }}
+        <select formControlName="parkingId">
+          <option value="">{{ 'HISTORY.ALL' | translate }}</option>
+          <option *ngFor="let parking of parkings" [value]="parking.id">{{ parking.name }}</option>
+        </select>
+      </label>
+
+      <label>
+        {{ 'ADMIN_BOOKINGS.FILTER_STATUS' | translate }}
+        <select formControlName="status">
+          <option value="">{{ 'HISTORY.ALL' | translate }}</option>
+          <option value="1">{{ 'HISTORY.CONFIRMED' | translate }}</option>
+          <option value="0">{{ 'HISTORY.CANCELLED' | translate }}</option>
+        </select>
+      </label>
+
+      <label>
+        {{ 'ADMIN_BOOKINGS.FILTER_PLATE' | translate }}
+        <input type="text" formControlName="licensePlate" [placeholder]="'ADMIN_BOOKINGS.PLATE_PLACEHOLDER' | translate" />
+      </label>
+
+      <div class="filter-actions">
+        <button class="btn btn-primary" type="submit" [disabled]="isLoading">
+          {{ 'HISTORY.FILTER' | translate }}
+        </button>
+        <button class="btn btn-primary" type="button" (click)="clearFilters()">
+          {{ 'HISTORY.CLEAR' | translate }}
+        </button>
+      </div>
+    </form>
+  </section>
+
+  <section class="bookings-panel">
+    <div *ngIf="isLoading" class="loading-msg">
+      {{ 'ADMIN_BOOKINGS.LOADING' | translate }}
+    </div>
+
+    <p *ngIf="!isLoading && filteredBookings.length === 0" class="empty-msg">
+      {{ 'ADMIN_BOOKINGS.EMPTY' | translate }}
+    </p>
+
+    <div class="bookings-results" *ngIf="!isLoading && filteredBookings.length > 0">
+      <div #bookingsListScroll class="bookings-list-scroll">
+        <article
+          *ngFor="let booking of paginatedBookings"
+          class="booking-card"
+          [class.cancelled]="booking.status === '0'">
+          <div class="booking-card-main">
+            <div class="card-top">
+              <h3>{{ booking.parkingName || ('HISTORY.PARKING_GENERIC' | translate) }}</h3>
+              <span
+                class="status"
+                [class.confirmed]="booking.status === '1'"
+                [class.cancelled]="booking.status === '0'">
+                {{ getStatusLabel(booking.status) | translate }}
+              </span>
+            </div>
+
+            <p class="meta">
+              <strong>{{ 'HISTORY.REFERENCE' | translate }}:</strong> #{{ booking.id }}
+            </p>
+            <p class="meta" *ngIf="booking.startDate && booking.endDate">
+              <strong>{{ 'HISTORY.DATES' | translate }}:</strong>
+              {{ booking.startDate | date:'dd/MM/yyyy' }} – {{ booking.endDate | date:'dd/MM/yyyy' }}
+            </p>
+            <p class="meta">
+              <strong>{{ 'ADMIN_BOOKINGS.CUSTOMER' | translate }}:</strong>
+              {{ booking.userName || booking.userEmail }}
+            </p>
+            <p class="meta" *ngIf="booking.userName && booking.userEmail">
+              {{ booking.userEmail }}
+            </p>
+            <p class="meta">
+              <strong>{{ 'ADMIN_BOOKINGS.PLATE' | translate }}:</strong> {{ booking.licensePlate }}
+            </p>
+            <p class="meta">
+              <strong>{{ 'HISTORY_DETAIL.SPOT' | translate }}:</strong> {{ booking.spaceName }}
+            </p>
+            <p class="meta">
+              <strong>{{ 'HISTORY.TOTAL' | translate }}:</strong>
+              {{ booking.totalPrice | currency:'EUR' }}
+            </p>
+            <p class="meta" *ngIf="booking.rating != null">
+              <strong>{{ 'HISTORY.RATING' | translate }}:</strong> {{ booking.rating }}/10
+            </p>
+          </div>
+
+          <div class="booking-card-actions" *ngIf="booking.status === '1'">
+            <button
+              class="btn btn-panel-danger"
+              type="button"
+              [disabled]="cancellingId === booking.id"
+              (click)="cancelBooking($event, booking)">
+              {{ 'ADMIN_BOOKINGS.CANCEL' | translate }}
+            </button>
+          </div>
+        </article>
+      </div>
+
+      <nav class="pagination" [attr.aria-label]="'ADMIN_BOOKINGS.PAGINATION_LABEL' | translate">
+        <p class="pagination-info">
+          {{
+            'ADMIN_COMPANIES.PAGE_INFO'
+              | translate:{ from: pageRangeStart, to: pageRangeEnd, total: filteredBookings.length }
+          }}
+        </p>
+        <div class="pagination-controls" *ngIf="totalPages > 1">
+          <button
+            class="btn btn-primary"
+            type="button"
+            (click)="prevPage()"
+            [disabled]="currentPage === 1">
+            {{ 'ADMIN_COMPANIES.PREV_PAGE' | translate }}
+          </button>
+          <span class="pagination-current">
+            {{ 'ADMIN_COMPANIES.PAGE' | translate:{ current: currentPage, total: totalPages } }}
+          </span>
+          <button
+            class="btn btn-primary"
+            type="button"
+            (click)="nextPage()"
+            [disabled]="currentPage === totalPages">
+            {{ 'ADMIN_COMPANIES.NEXT_PAGE' | translate }}
+          </button>
+        </div>
+      </nav>
+    </div>
+  </section>
+</main>

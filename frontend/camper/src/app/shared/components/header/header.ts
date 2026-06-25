@@ -59,6 +59,10 @@ export class Header {
     return this.authService.isAdmin();
   }
 
+  get adminPanelLink(): string {
+    return this.authService.isSuperAdmin() ? '/admin/companies' : '/admin/dashboard';
+  }
+
   toggleMenu(event: Event) {
     event.stopPropagation();
     this.menuOpen = !this.menuOpen;

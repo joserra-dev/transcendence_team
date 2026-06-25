@@ -1,0 +1,260 @@
+<main class="admin-companies">
+  <header class="dashboard-hero">
+    <div>
+      <p class="eyebrow">{{ 'ADMIN_COMPANIES.TITLE' | translate }}</p>
+      <h1>{{ 'ADMIN_DASHBOARD.WELCOME' | translate:{ name: userName } }}</h1>
+      <p class="subtitle">{{ 'ADMIN_COMPANIES.SUBTITLE' | translate }}</p>
+    </div>
+    <button class="btn btn-primary" type="button" (click)="logout()">
+      {{ 'HEADER.LOGOUT' | translate }}
+    </button>
+  </header>
+
+  <div class="alert success" *ngIf="successMessage">{{ successMessage | translate }}</div>
+  <div class="alert error" *ngIf="errorMessage">{{ errorMessage | translate }}</div>
+
+  <header class="page-header">
+    <h2>{{ 'ADMIN_COMPANIES.LIST_TITLE' | translate }}</h2>
+    <div class="page-header-actions">
+      <a routerLink="/admin/users" class="btn btn-primary">
+        {{ 'ADMIN_COMPANIES.MANAGE_USERS' | translate }}
+      </a>
+      <button class="btn btn-primary" type="button" (click)="toggleAdsPanel()">
+        {{ showAdsPanel ? ('ADMIN_COMPANIES.CANCEL' | translate) : ('ADMIN_COMPANIES.MANAGE_ADS' | translate) }}
+      </button>
+      <button class="btn btn-primary" type="button" (click)="toggleForm()">
+        {{ showForm ? ('ADMIN_COMPANIES.CANCEL' | translate) : ('ADMIN_COMPANIES.ADD' | translate) }}
+      </button>
+    </div>
+  </header>
+
+  <section class="create-form" *ngIf="showForm">
+    <h3>{{ 'ADMIN_COMPANIES.CREATE_TITLE' | translate }}</h3>
+    <div class="alert error form-alert" *ngIf="formErrorMessage">{{ formErrorMessage | translate }}</div>
+    <form [formGroup]="companyForm" (ngSubmit)="createCompany()">
+      <fieldset class="form-section">
+        <legend>{{ 'ADMIN_COMPANIES.COMPANY_SECTION' | translate }}</legend>
+        <div class="form-grid">
+          <label>
+            {{ 'ADMIN_COMPANIES.NAME' | translate }} *
+            <input type="text" formControlName="name" [class.field-error]="isFieldInvalid('name')" />
+            <small class="field-error-msg" *ngIf="isFieldInvalid('name')">
+              {{ 'ADMIN_COMPANIES.VALIDATION.REQUIRED_NAME' | translate }}
+            </small>
+          </label>
+          <label>
+            {{ 'ADMIN_COMPANIES.CIF' | translate }}
+            <input type="text" formControlName="cif" />
+          </label>
+        </div>
+      </fieldset>
+
+      <fieldset class="form-section">
+        <legend>{{ 'ADMIN_COMPANIES.ADMIN_SECTION' | translate }}</legend>
+        <div class="form-grid">
+          <label>
+            {{ 'ADMIN_COMPANIES.ADMIN_EMAIL' | translate }} *
+            <input type="email" formControlName="adminEmail" [class.field-error]="isFieldInvalid('adminEmail')" />
+            <small class="field-error-msg" *ngIf="isFieldInvalid('adminEmail') && companyForm.get('adminEmail')?.hasError('required')">
+              {{ 'ADMIN_COMPANIES.VALIDATION.REQUIRED_EMAIL' | translate }}
+            </small>
+            <small class="field-error-msg" *ngIf="isFieldInvalid('adminEmail') && companyForm.get('adminEmail')?.hasError('email')">
+              {{ 'ADMIN_COMPANIES.VALIDATION.INVALID_EMAIL' | translate }}
+            </small>
+          </label>
+          <label>
+            {{ 'ADMIN_COMPANIES.ADMIN_PASSWORD' | translate }} *
+            <input type="password" formControlName="adminPassword" [class.field-error]="isFieldInvalid('adminPassword')" />
+            <small class="field-error-msg" *ngIf="isFieldInvalid('adminPassword') && companyForm.get('adminPassword')?.hasError('required')">
+              {{ 'ADMIN_COMPANIES.VALIDATION.REQUIRED_PASSWORD' | translate }}
+            </small>
+            <small class="field-error-msg" *ngIf="isFieldInvalid('adminPassword') && companyForm.get('adminPassword')?.hasError('minlength')">
+              {{ 'ADMIN_COMPANIES.VALIDATION.MIN_PASSWORD' | translate }}
+            </small>
+          </label>
+          <label>
+            {{ 'ADMIN_COMPANIES.ADMIN_NAME' | translate }} *
+            <input type="text" formControlName="adminNombre" [class.field-error]="isFieldInvalid('adminNombre')" />
+            <small class="field-error-msg" *ngIf="isFieldInvalid('adminNombre')">
+              {{ 'ADMIN_COMPANIES.VALIDATION.REQUIRED_ADMIN_NAME' | translate }}
+            </small>
+          </label>
+          <label>
+            {{ 'ADMIN_COMPANIES.ADMIN_LASTNAME' | translate }}
+            <input type="text" formControlName="adminApellidos" />
+          </label>
+          <label>
+            {{ 'ADMIN_COMPANIES.ADMIN_DNI' | translate }}
+            <input type="text" formControlName="adminDni" />
+          </label>
+        </div>
+      </fieldset>
+
+      <button class="btn btn-primary" type="submit">
+        {{ 'ADMIN_COMPANIES.SAVE' | translate }}
+      </button>
+    </form>
+  </section>
+
+  <section class="ads-panel" *ngIf="showAdsPanel">
+    <h3>{{ 'ADMIN_COMPANIES.ADS_PANEL_TITLE' | translate }}</h3>
+    <p class="ads-panel-desc">{{ 'ADMIN_COMPANIES.ADS_PANEL_DESC' | translate }}</p>
+
+    <label class="ads-company-select">
+      {{ 'ADMIN_COMPANIES.SELECT_COMPANY' | translate }}
+      <select (change)="onAdsCompanyChange($any($event.target).value)">
+        <option value="">{{ 'ADMIN_COMPANIES.SELECT_COMPANY_PLACEHOLDER' | translate }}</option>
+        <option *ngFor="let company of companies" [value]="company.id">{{ company.name }}</option>
+      </select>
+    </label>
+
+    <div class="alert error" *ngIf="adsErrorMessage">{{ adsErrorMessage | translate }}</div>
+
+    <div *ngIf="selectedCompanyId && adsLoading" class="loading-msg">
+      {{ 'ADMIN_COMPANIES.ADS_LOADING' | translate }}
+    </div>
+
+    <p *ngIf="selectedCompanyId && !adsLoading && adsParkings.length === 0" class="empty-msg">
+      {{ 'ADMIN_COMPANIES.ADS_EMPTY' | translate }}
+    </p>
+
+    <div class="ads-results" *ngIf="selectedCompanyId && !adsLoading && adsParkings.length > 0">
+      <p class="ads-results-title">
+        {{ 'ADMIN_COMPANIES.ADS_FOR_COMPANY' | translate:{ name: selectedCompanyName } }}
+      </p>
+
+      <div #adsListScroll class="ads-list-scroll">
+        <article
+          *ngFor="let parking of paginatedAds"
+          class="ads-card"
+          (click)="openManageParking(parking)"
+          (keydown.enter)="openManageParking(parking)"
+          tabindex="0"
+          role="button"
+          [attr.aria-label]="'ADMIN_PARKINGS.MANAGE' | translate">
+          <div class="ads-card-main">
+            <h4>{{ parking.name }}</h4>
+            <p class="meta">{{ parking.localidad || parking.municipality }}</p>
+            <p class="meta">
+              {{ 'ADMIN_PARKINGS.SPOTS' | translate }}:
+              {{ parking.numeroPlazas || parking.spaces?.length || 0 }}
+            </p>
+          </div>
+          <div class="ads-card-side">
+            <span class="status" [class.inactive]="parking.isActive === false">
+              {{
+                parking.isActive === false
+                  ? ('ADMIN_DASHBOARD.INACTIVE' | translate)
+                  : ('ADMIN_DASHBOARD.ACTIVE' | translate)
+              }}
+            </span>
+            <span class="arrow">→</span>
+          </div>
+        </article>
+      </div>
+
+      <nav class="pagination" [attr.aria-label]="'ADMIN_COMPANIES.ADS_PAGINATION_LABEL' | translate">
+        <p class="pagination-info">
+          {{
+            'ADMIN_COMPANIES.PAGE_INFO'
+              | translate:{ from: adsPageRangeStart, to: adsPageRangeEnd, total: adsParkings.length }
+          }}
+        </p>
+        <div class="pagination-controls" *ngIf="adsTotalPages > 1">
+          <button
+            class="btn btn-primary"
+            type="button"
+            (click)="prevAdsPage()"
+            [disabled]="adsCurrentPage === 1">
+            {{ 'ADMIN_COMPANIES.PREV_PAGE' | translate }}
+          </button>
+          <span class="pagination-current">
+            {{ 'ADMIN_COMPANIES.PAGE' | translate:{ current: adsCurrentPage, total: adsTotalPages } }}
+          </span>
+          <button
+            class="btn btn-primary"
+            type="button"
+            (click)="nextAdsPage()"
+            [disabled]="adsCurrentPage === adsTotalPages">
+            {{ 'ADMIN_COMPANIES.NEXT_PAGE' | translate }}
+          </button>
+        </div>
+      </nav>
+    </div>
+  </section>
+
+  <div *ngIf="isLoading" class="loading-msg">{{ 'ADMIN_COMPANIES.LOADING' | translate }}</div>
+
+  <p *ngIf="!isLoading && companies.length === 0" class="empty-msg">
+    {{ 'ADMIN_COMPANIES.EMPTY' | translate }}
+  </p>
+
+  <section class="companies-panel" *ngIf="!isLoading && companies.length > 0">
+    <div #companyListScroll class="company-list-scroll">
+      <article
+        *ngFor="let company of paginatedCompanies"
+        class="company-card"
+        (click)="openCompanyParkings(company)"
+        (keydown.enter)="openCompanyParkings(company)"
+        tabindex="0"
+        role="button"
+        [attr.aria-label]="'ADMIN_COMPANIES.VIEW_PARKINGS' | translate:{ name: company.name }">
+        <div class="card-main">
+          <h3>{{ company.name }}</h3>
+          <p *ngIf="company.cif" class="meta">{{ 'ADMIN_COMPANIES.CIF' | translate }}: {{ company.cif }}</p>
+          <p *ngIf="company.adminName || company.adminEmail" class="meta">
+            {{ 'ADMIN_COMPANIES.ADMIN_LABEL' | translate }}:
+            {{ adminDisplayName(company) || company.adminEmail }}
+          </p>
+        </div>
+        <div class="card-side">
+          <button
+            class="btn btn-primary"
+            type="button"
+            (click)="editCompany($event, company)">
+            {{ 'ADMIN_COMPANIES.EDIT' | translate }}
+          </button>
+          <button
+            class="btn btn-panel-danger"
+            type="button"
+            (click)="deleteCompany($event, company)">
+            {{ 'ADMIN_COMPANIES.DELETE' | translate }}
+          </button>
+          <span class="badge">
+            {{ company.parkingCount || 0 }}
+            {{ 'ADMIN_COMPANIES.PARKINGS' | translate }}
+          </span>
+          <span class="arrow">→</span>
+        </div>
+      </article>
+    </div>
+
+    <nav class="pagination" [attr.aria-label]="'ADMIN_COMPANIES.PAGINATION_LABEL' | translate">
+      <p class="pagination-info">
+        {{
+          'ADMIN_COMPANIES.PAGE_INFO'
+            | translate:{ from: pageRangeStart, to: pageRangeEnd, total: companies.length }
+        }}
+      </p>
+      <div class="pagination-controls" *ngIf="totalPages > 1">
+        <button
+          class="btn btn-primary"
+          type="button"
+          (click)="prevPage()"
+          [disabled]="currentPage === 1">
+          {{ 'ADMIN_COMPANIES.PREV_PAGE' | translate }}
+        </button>
+        <span class="pagination-current">
+          {{ 'ADMIN_COMPANIES.PAGE' | translate:{ current: currentPage, total: totalPages } }}
+        </span>
+        <button
+          class="btn btn-primary"
+          type="button"
+          (click)="nextPage()"
+          [disabled]="currentPage === totalPages">
+          {{ 'ADMIN_COMPANIES.NEXT_PAGE' | translate }}
+        </button>
+      </div>
+    </nav>
+  </section>
+</main>

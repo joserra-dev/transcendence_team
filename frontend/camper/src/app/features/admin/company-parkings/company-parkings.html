@@ -1,0 +1,66 @@
+<main class="company-parkings">
+  <header class="page-header">
+    <div>
+      <a routerLink="/admin/companies" class="back-link">← {{ 'ADMIN_COMPANIES.BACK' | translate }}</a>
+      <h1>{{ company?.name || ('ADMIN_COMPANIES.PARKINGS_TITLE' | translate) }}</h1>
+      <p class="subtitle" *ngIf="company?.adminName || company?.adminEmail">
+        {{ 'ADMIN_COMPANIES.ADMIN_LABEL' | translate }}:
+        {{ company?.adminName || company?.adminEmail }}
+      </p>
+    </div>
+    <div class="header-actions">
+      <a class="btn btn-primary" [routerLink]="['/admin/companies', companyId, 'edit']">
+        {{ 'ADMIN_COMPANIES.EDIT' | translate }}
+      </a>
+      <a
+        class="btn btn-primary"
+        [routerLink]="['/admin/parking/new']"
+        [queryParams]="{ companyId: companyId }">
+        + {{ 'ADMIN_PARKINGS.ADD' | translate }}
+      </a>
+    </div>
+  </header>
+
+  <div *ngIf="isLoading" class="loading-msg">{{ 'ADMIN_PARKINGS.LOADING' | translate }}</div>
+
+  <p *ngIf="!isLoading && parkings.length === 0" class="empty-msg">
+    {{ 'ADMIN_COMPANIES.NO_PARKINGS' | translate }}
+  </p>
+
+  <section class="parking-list" *ngIf="!isLoading && parkings.length > 0">
+    <article *ngFor="let parking of parkings" class="parking-card">
+      <div class="card-header">
+        <h3>{{ parking.name }}</h3>
+        <span class="status" [class.inactive]="parking.isActive === false">
+          {{ parking.isActive === false ? ('ADMIN_DASHBOARD.INACTIVE' | translate) : ('ADMIN_DASHBOARD.ACTIVE' | translate) }}
+        </span>
+      </div>
+
+      <div class="card-info">
+        <p class="location">{{ parking.localidad || parking.municipality }}</p>
+        <p>
+          <strong>{{ 'ADMIN_PARKINGS.SPOTS' | translate }}:</strong>
+          {{ parking.numeroPlazas || parking.spaces?.length || 0 }}
+        </p>
+      </div>
+
+      <div class="services">
+        <span *ngIf="parking.tomaElectricidad || parking.has_electricity">
+          {{ 'SEARCH.ELECTRICITY' | translate }}
+        </span>
+        <span *ngIf="parking.limpiezaAguasResiduales || parking.has_waste_disposal">
+          {{ 'SEARCH.RESIDUALS' | translate }}
+        </span>
+        <span *ngIf="parking.plazasVip || parking.has_vip_spots">
+          {{ 'SEARCH.VIP' | translate }}
+        </span>
+      </div>
+
+      <div class="card-actions">
+        <a class="btn btn-primary" [routerLink]="['/admin/parking', parking.id]" [queryParams]="{ companyId: companyId }">
+          {{ 'ADMIN_PARKINGS.MANAGE' | translate }}
+        </a>
+      </div>
+    </article>
+  </section>
+</main>
