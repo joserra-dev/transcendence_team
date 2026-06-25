@@ -1,16 +1,17 @@
-# app.py
 import os
-from flask import Flask
+from flask import Flask, request
 from flask_mailman import Mail
 from database import db, jwt
 from flasgger import Swagger
 from flask_cors import CORS
+from flask_babel import Babel
 
 from routes.company_routes import company_bp
 from routes.users_routes import users_bp
 from routes.parking_routes import parking_bp
 from routes.space_routes import space_bp
 from routes.booking_routes import booking_bp
+from routes.admin_routes import admin_bp
 from routes.access_routes import access_bp
 from routes.admin_routes import admin_bp
 from routes.public_api_routes import public_api_bp
@@ -38,15 +39,42 @@ app.config['MAIL_DEFAULT_SENDER'] = os.environ.get(
 )
 app.config['FRONTEND_URL'] = os.environ.get('URL_FRONT', 'http://localhost:8001')
 
+# Configuración de Flask-Babel
+app.config['BABEL_DEFAULT_LOCALE'] = 'es'
+app.config['BABEL_SUPPORTED_LOCALES'] = ['es', 'eu', 'en']
+
 # Inicializamos Mail
 mail = Mail(app)
+
 # ==========================================
 # 2. INICIALIZACIÓN DE EXTENSIONES DESPUÉS
 # ==========================================
-# Al llamar a .init_app(app) AQUÍ, db y jwt leerán perfectamente
-# las configuraciones que acabamos de setear arriba.
 db.init_app(app)
 jwt.init_app(app) 
+
+# Función que Babel ejecutará en cada petición para elegir el idioma
+def get_locale():
+    idiomas_soportados = app.config.get('BABEL_SUPPORTED_LOCALES', ['es', 'eu', 'en'])
+    
+    # Priority 1: Buscar si el parámetro explícito viene en la URL (?lang=es)
+    lang_url = request.args.get('lang')
+    if lang_url and lang_url.lower() in idiomas_soportados:
+        return lang_url
+
+    # Priority 2: Ver si algún Blueprint interceptó y guardó ya un idioma válido
+    if hasattr(request, 'babel_locale') and request.babel_locale in idiomas_soportados:
+        return request.babel_locale
+        
+    # Priority 3: Analizar la cabecera 'Accept-Language' del navegador/cliente
+    match_cabecera = request.accept_languages.best_match(idiomas_soportados)
+    if match_cabecera:
+        return match_cabecera
+        
+    # Priority 4: Idioma base del sistema por defecto
+    return app.config.get('BABEL_DEFAULT_LOCALE', 'es')
+
+# Inicialización de Flask-Babel pasándole la función selectora corregida
+babel = Babel(app, locale_selector=get_locale)
 
 
 swagger_template = {
@@ -73,8 +101,8 @@ app.register_blueprint(users_bp)
 app.register_blueprint(parking_bp)
 app.register_blueprint(space_bp)
 app.register_blueprint(booking_bp)
-app.register_blueprint(access_bp)
 app.register_blueprint(admin_bp)
+app.register_blueprint(access_bp)
 app.register_blueprint(public_api_bp)
 app.register_blueprint(status_bp)
 
@@ -97,13 +125,9 @@ with app.app_context():
     seed_database()
 
 if __name__ == '__main__':
-    # Leemos la variable 'FLASK_DEBUG'. Si no existe, por defecto será 'False'
-    # .strip().lower() asegura que no afecten los espacios ni las mayúsculas
     debug_env = os.getenv('FLASK_DEBUG', 'False').strip().lower()
-    
-    # Evaluamos si el string es 'true' o '1' para asignarle el Booleano True
     modo_debug = debug_env in ['true', '1']
 
     print(f" * Arrancando el servidor con debug={modo_debug}")
-    
     app.run(host='0.0.0.0', port=5000, debug=modo_debug)
+    

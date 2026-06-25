@@ -2,7 +2,6 @@
 
   <h1 class="page-title">{{ 'SEARCH.TITLE' | translate }}</h1>
 
-  <!-- BARRA DE BÚSQUEDA -->
   <form
     class="search-bar-wrapper"
     [formGroup]="searchForm"
@@ -10,10 +9,11 @@
   >
     <div class="search-bar">
 
-      <!-- DESTINO -->
+      <!-- Destino -->
       <div class="search-field">
+        <label for="search-destination" class="visually-hidden">{{ 'SEARCH.DESTINATION' | translate }}</label>
         <i class="fa-solid fa-location-dot"></i>
-        <input
+        <input id="search-destination"
           type="text"
           formControlName="localidad"
           placeholder="{{ 'SEARCH.DESTINATION' | translate }}"
@@ -22,10 +22,11 @@
 
       <div class="divider"></div>
 
-      <!-- PROVINCIA -->
+      <!-- Provincia -->
       <div class="search-field">
+        <label for="search-province" class="visually-hidden">{{ 'SEARCH.PROVINCE' | translate }}</label>
         <i class="fa-solid fa-map"></i>
-        <input
+        <input id="search-province"
           type="text"
           formControlName="provincia"
           placeholder="{{ 'SEARCH.PROVINCE' | translate }}"
@@ -34,21 +35,54 @@
 
       <div class="divider"></div>
 
-      <!-- FECHA ENTRADA -->
+      <!-- FECHA ENTRADA (Corregido y único) -->
       <div class="search-field date">
+        <label for="fake-fechadesde" class="visually-hidden">{{ 'BOOKING.ENTRY_DATE' | translate }}</label>
         <i class="fa-regular fa-calendar"></i>
-        <input type="date" formControlName="fechaDesde" (click)="openDatePicker($event)" (change)="onEntryDateChange()">
+        
+        <input 
+          id="fake-fechadesde"
+          type="text" 
+          [value]="rawEntryDate | date: dateFormat" 
+          readonly
+          placeholder="{{ 'BOOKING.ENTRY_DATE' | translate }}"
+        >
+        
+        <input 
+          #fechaDesdeInput
+          id="search-fechadesde"
+          type="date" 
+          formControlName="fechaDesde" 
+          class="native-hidden-date"
+          (change)="onEntryDateChange()"
+        >
       </div>
 
       <div class="divider"></div>
 
       <!-- FECHA SALIDA -->
       <div class="search-field date">
+        <label for="fake-fechahasta" class="visually-hidden">{{ 'BOOKING.EXIT_DATE' | translate }}</label>
         <i class="fa-regular fa-calendar"></i>
-        <input type="date" formControlName="fechaHasta" (click)="openDatePicker($event)">
+        
+        <input 
+          id="fake-fechahasta"
+          type="text" 
+          [value]="rawExitDate | date: dateFormat" 
+          readonly
+          placeholder="{{ 'BOOKING.EXIT_DATE' | translate }}"
+        >
+        
+        <input 
+          #fechaHastaInput
+          id="search-fechahasta"
+          type="date" 
+          formControlName="fechaHasta" 
+          class="native-hidden-date"
+        >
       </div>
 
-      <!-- BOTÓN -->
+      <!-- Botón Buscar -->
       <button
         type="submit"
         class="btn btn-primary search-button"
@@ -59,7 +93,7 @@
 
     </div>
 
-    <!-- FILTROS -->
+    <!-- Filtros Checkbox -->
     <div class="form-check form-switch filters-row">
       <label class="form-check-label">
         <input type="checkbox" formControlName="tomaElectricidad" class="form-check-input">
@@ -78,18 +112,15 @@
     </div>
   </form>
 
-  <!-- MENSAJE ERROR -->
   <p class="error-msg-standard" *ngIf="errorMessage">
     {{ errorMessage | translate }}
   </p>
 
-  <!-- TÍTULO RESULTADOS -->
   <h2 class="results-title" *ngIf="parkings.length > 0">
     {{ searchForm.value.localidad || ('SEARCH.ALL' | translate) }}:
     <span>{{ parkings.length }} {{ 'SEARCH.RESULTS' | translate }}</span>
   </h2>
 
-  <!-- RESULTADOS -->
   <div *ngIf="isLoading" class="loading-msg">
     <i class="fa-solid fa-spinner loading-icon"></i>
     {{ 'SEARCH.LOADING' | translate }}
@@ -150,4 +181,3 @@
     </article>
   </section>
 </div>
-

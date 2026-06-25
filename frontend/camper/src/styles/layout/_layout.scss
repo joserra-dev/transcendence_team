@@ -75,3 +75,32 @@ app-header {
 app-footer {
   flex-shrink: 0;
 }
+
+.error-general {
+  background-color: rgba($color-error, 0.08);
+  border-left: 4px solid $color-error;
+  padding: $space-sm $space-md;
+  border-radius: $radius-sm;
+  margin-bottom: $space-lg;
+  color: $color-error;
+  
+  ul {
+    list-style: none;
+    margin: 0;
+    padding-left: 1rem;
+  }
+}
+
+.success-general {
+  background-color: rgba($color-success, 0.12);
+  border-left: 4px solid $color-success;
+  padding: $space-sm $space-md;
+  border-radius: $radius-sm;
+  margin-bottom: $space-lg;
+  color: darken($color-success, 20%);
+
+  ul {
+    margin: 0;
+    padding-left: 1rem;
+  }
+}

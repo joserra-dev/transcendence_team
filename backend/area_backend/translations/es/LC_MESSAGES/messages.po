@@ -1,0 +1,262 @@
+# Spanish translations for PROJECT.
+# Copyright (C) 2026 ORGANIZATION
+# This file is distributed under the same license as the PROJECT project.
+# FIRST AUTHOR <EMAIL@ADDRESS>, 2026.
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: PROJECT VERSION\n"
+"Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
+"POT-Creation-Date: 2026-06-23 18:44+0200\n"
+"PO-Revision-Date: 2026-06-21 14:59+0000\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language: es\n"
+"Language-Team: es <LL@li.org>\n"
+"Plural-Forms: nplurals=2; plural=(n != 1)\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Generated-By: Babel 2.8.0\n"
+
+#: routes/admin_routes.py:30 routes/users_routes.py:404
+msgid "No tienes permisos de administrador"
+msgstr ""
+
+#: routes/admin_routes.py:154 routes/admin_routes.py:349
+#: routes/admin_routes.py:440 routes/admin_routes.py:585
+#: routes/parking_routes.py:152
+msgid "Parking no encontrado"
+msgstr ""
+
+#: routes/admin_routes.py:157 routes/admin_routes.py:352
+#: routes/admin_routes.py:443 routes/admin_routes.py:528
+#: routes/admin_routes.py:642
+msgid "No tienes permiso para gestionar este parking"
+msgstr ""
+
+#: routes/admin_routes.py:447
+msgid "El nombre de la plaza es obligatorio"
+msgstr ""
+
+#: routes/admin_routes.py:522 routes/admin_routes.py:636
+msgid "Parking o plaza no encontrada"
+msgstr ""
+
+#: routes/admin_routes.py:525 routes/admin_routes.py:639
+msgid "La plaza no pertenece a este parking"
+msgstr ""
+
+#: routes/admin_routes.py:581
+msgid "Plaza no encontrada"
+msgstr ""
+
+#: routes/admin_routes.py:588
+msgid "No tienes permiso para gestionar esta plaza"
+msgstr ""
+
+#: routes/admin_routes.py:646
+msgid "Plaza eliminada correctamente"
+msgstr ""
+
+#: routes/booking_routes.py:92 routes/booking_routes.py:384
+#: routes/booking_routes.py:450 routes/booking_routes.py:508
+msgid "Reserva no encontrada"
+msgstr ""
+
+#: routes/booking_routes.py:95 routes/booking_routes.py:137
+msgid "No tienes permiso para ver esta reserva"
+msgstr ""
+
+#: routes/booking_routes.py:269 routes/booking_routes.py:446
+msgid "Faltan campos obligatorios"
+msgstr ""
+
+#: routes/booking_routes.py:272
+msgid "La matrícula del vehículo es obligatoria"
+msgstr ""
+
+#: routes/booking_routes.py:278
+msgid "Formato de fecha inválido"
+msgstr ""
+
+#: routes/booking_routes.py:281
+msgid ""
+"La fecha de salida debe ser al menos un día después de la fecha de "
+"entrada."
+msgstr ""
+
+#: routes/booking_routes.py:291
+msgid ""
+"Ya existe una reserva para esta matrícula en las fechas seleccionadas. "
+"Usa otra matrícula o cambia las fechas."
+msgstr ""
+
+#: routes/booking_routes.py:376 routes/booking_routes.py:440
+#: routes/booking_routes.py:500 routes/users_routes.py:267
+msgid "Petición inválida"
+msgstr ""
+
+#: routes/booking_routes.py:380 routes/booking_routes.py:504
+msgid "Falta idReserva"
+msgstr ""
+
+#: routes/booking_routes.py:388
+msgid "No tienes permiso para cancelar esta reserva"
+msgstr ""
+
+#: routes/booking_routes.py:393
+msgid "Reserva cancelada correctamente"
+msgstr ""
+
+#: routes/booking_routes.py:454
+msgid "No tienes permiso para puntuar esta reserva"
+msgstr ""
+
+#: routes/booking_routes.py:459
+msgid "Puntuación guardada correctamente"
+msgstr ""
+
+#: routes/booking_routes.py:512
+msgid "No tienes permiso para ver el QR de esta reserva"
+msgstr ""
+
+#: routes/company_routes.py:65 routes/users_routes.py:130
+#: routes/users_routes.py:248 routes/users_routes.py:263
+#: routes/users_routes.py:440
+msgid "Usuario no encontrado"
+msgstr ""
+
+#: routes/space_routes.py:65
+msgid "Plaza no existe"
+msgstr ""
+
+#: routes/users_routes.py:181
+msgid "Todos los campos son obligatorios (email, password, confirmPassword)"
+msgstr ""
+
+#: routes/users_routes.py:184 routes/users_routes.py:559
+msgid "Las contraseñas introducidas no coinciden"
+msgstr ""
+
+#: routes/users_routes.py:192
+msgid "Este email ya está registrado"
+msgstr ""
+
+#: routes/users_routes.py:206
+msgid "Error al registrar el usuario"
+msgstr ""
+
+#: routes/users_routes.py:211
+msgid "Usuario registrado con éxito"
+msgstr ""
+
+#: routes/users_routes.py:216
+msgid "Error al enviar el mail de bienvenida"
+msgstr ""
+
+#: routes/users_routes.py:253
+msgid "Error al obtener los datos del usuario"
+msgstr ""
+
+#: routes/users_routes.py:303
+msgid "Perfil actualizado correctamente"
+msgstr ""
+
+#: routes/users_routes.py:354 routes/users_routes.py:390
+msgid "Todos los campos son obligatorios (email, password)"
+msgstr ""
+
+#: routes/users_routes.py:360 routes/users_routes.py:364
+#: routes/users_routes.py:394 routes/users_routes.py:397
+msgid "Credenciales incorrectas"
+msgstr ""
+
+#: routes/users_routes.py:368 routes/users_routes.py:400
+msgid "Debes verificar tu correo electrónico antes de iniciar sesión"
+msgstr ""
+
+#: routes/users_routes.py:372
+msgid "Debes iniciar sesión desde el acceso de administrador"
+msgstr ""
+
+#: routes/users_routes.py:377 routes/users_routes.py:408
+msgid "¡Login exitoso!"
+msgstr ""
+
+#: routes/users_routes.py:491
+msgid "El campo email es obligatorio"
+msgstr ""
+
+#: routes/users_routes.py:506 routes/users_routes.py:519
+#: routes/users_routes.py:572
+msgid "Error interno al procesar la solicitud"
+msgstr ""
+
+#: routes/users_routes.py:521
+msgid "Si el correo existe, se enviarán las instrucciones."
+msgstr ""
+
+#: routes/users_routes.py:556
+msgid "token, password y confirmPassword son obligatorios"
+msgstr ""
+
+#: routes/users_routes.py:563
+msgid "El enlace de recuperación no es válido o ha caducado"
+msgstr ""
+
+#: routes/users_routes.py:570
+msgid "Contraseña actualizada correctamente"
+msgstr ""
+
+#: routes/users_routes.py:604
+msgid "Falta el token de verificación."
+msgstr ""
+
+#: routes/users_routes.py:612
+msgid "El token no es válido o ya ha sido utilizado."
+msgstr ""
+
+#: routes/users_routes.py:622
+msgid "¡Cuenta verificada con éxito! Ya puedes iniciar sesión."
+msgstr ""
+
+#: utils/password_validator.py:18
+msgid "La contraseña no puede estar vacía."
+msgstr ""
+
+#: utils/password_validator.py:25
+msgid "La contraseña no puede contener la palabra 'password'."
+msgstr ""
+
+#: utils/password_validator.py:34
+msgid "La contraseña no puede contener partes de tu correo electrónico."
+msgstr ""
+
+#: utils/password_validator.py:38
+msgid "La contraseña debe tener al menos 8 caracteres."
+msgstr ""
+
+#: utils/password_validator.py:41
+msgid "La contraseña debe contener al menos una letra mayúscula."
+msgstr ""
+
+#: utils/password_validator.py:44
+msgid "La contraseña debe contener al menos una letra minúscula."
+msgstr ""
+
+#: utils/password_validator.py:47
+msgid "La contraseña debe contener al menos un número."
+msgstr ""
+
+#: utils/password_validator.py:50
+msgid "La contraseña debe contener al menos un carácter especial (@$!%*?&)."
+msgstr ""
+
+#: utils/password_validator.py:54
+msgid "La contraseña no cumple con el formato de seguridad requerido."
+msgstr ""
+
+#: utils/password_validator.py:56
+msgid "Contraseña válida."
+msgstr ""
+

@@ -153,13 +153,11 @@ def _get_or_create_company(name: str, cif: str | None = None, tbai_enabled: bool
 
 
 def _seed_users() -> int:
-    if Users.query.first():
-        return 0
-
     password_hash = generate_password_hash(DEFAULT_PASSWORD)
     created = 0
 
     for user_data in SEED_USERS:
+        existing = Users.query.filter_by(email=user_data["email"]).first()
         profile_data = user_data["profile"].copy()
         company_name = profile_data.pop("company_name", None)
         company_cif = profile_data.pop("company_cif", None)
@@ -169,6 +167,16 @@ def _seed_users() -> int:
         if company_name:
             company = _get_or_create_company(company_name, company_cif, tbai_enabled, tbai_license)
             profile_data["company_id"] = company.id
+
+        if existing:
+            existing.pass_user = password_hash
+            existing.is_verified = True
+            if existing.profile:
+                for key, value in profile_data.items():
+                    setattr(existing.profile, key, value)
+            else:
+                db.session.add(Profiles(user_id=existing.id, **profile_data))
+            continue
 
         user = Users(
             email=user_data["email"],
@@ -227,15 +235,18 @@ def _ensure_seed_users_verified() -> None:
 
 
 def seed_database() -> None:
-    """Inserta datos de desarrollo si las tablas están vacías."""
+    """Inserta datos de desarrollo si las tablas están vacías (SOLO USUARIOS Y PERFILES)."""
+    # 1. Cargamos únicamente los usuarios y sus perfiles
     users_created = _seed_users()
-    parkings_created = _seed_parkings()
+    
+    # 2. Nos aseguramos de que queden verificados
     _ensure_seed_users_verified()
 
-    if users_created or parkings_created:
+    # 3. Guardamos los cambios en la base de datos si se creó algún usuario
+    if users_created:
+        db.session.commit()
+    elif Users.query.filter(Users.email.in_([u["email"] for u in SEED_USERS])).count():
         db.session.commit()
 
     if users_created:
         print(f" * {users_created} usuarios creados (contraseña: {DEFAULT_PASSWORD!r})")
-    if parkings_created:
-        print(f" * {parkings_created} parkings creados con sus plazas")

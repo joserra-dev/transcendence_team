@@ -1,11 +1,12 @@
-import { Component, OnInit, inject } from '@angular/core';
+import { Component, OnInit, OnDestroy, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormBuilder, FormGroup, ReactiveFormsModule } from '@angular/forms';
 import { RouterLink } from '@angular/router';
 import { ParkingService } from '../../../core/services/parking';
 import { Parking, SearchFilters } from '../../../core/models/parking';
-import { TranslateModule } from '@ngx-translate/core';
+import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { finalize } from 'rxjs/operators';
+import { Subscription } from 'rxjs';
 
 @Component({
   selector: 'app-search-parking',
@@ -14,13 +15,18 @@ import { finalize } from 'rxjs/operators';
   templateUrl: './search-parking.html',
   styleUrls: ['./search-parking.scss']
 })
-export class SearchParking implements OnInit {
+export class SearchParking implements OnInit, OnDestroy {
   private parkingService = inject(ParkingService);
   private fb = inject(FormBuilder);
+  private translate = inject(TranslateService); // Inyectamos el servicio de traducción
 
   parkings: Parking[] = [];
   isLoading = false;
   errorMessage = '';
+  
+  // Variables para controlar el formato regional
+  dateFormat: string = 'dd/MM/yyyy';
+  private langFormatSub!: Subscription;
 
   searchForm: FormGroup = this.fb.group({
     fechaDesde: [''],
@@ -33,6 +39,14 @@ export class SearchParking implements OnInit {
   });
 
   ngOnInit() {
+    // 1. Suscripción al cambio de idioma
+    this.langFormatSub = this.translate.onLangChange.subscribe((event) => {
+      this.dateformatdefine(event.lang);
+    });
+
+    // 2. Establecer formato inicial
+    this.dateformatdefine(this.translate.currentLang || this.translate.defaultLang || 'es');
+
     const today = new Date().toISOString().split('T')[0];
     const tomorrow = new Date(new Date().setDate(new Date().getDate() + 1)).toISOString().split('T')[0];
 
@@ -42,6 +56,24 @@ export class SearchParking implements OnInit {
     });
 
     this.onSearch();
+  }
+
+  private dateformatdefine(lang: string) {
+    const idioma = lang.toLowerCase();
+    if (idioma === 'eu' || idioma === 'en') {
+      this.dateFormat = 'yyyy/MM/dd';
+    } else {
+      this.dateFormat = 'dd/MM/yyyy';
+    }
+  }
+
+  // Getters auxiliares para leer cómodamente el valor ISO crudo desde el HTML
+  get rawEntryDate(): string {
+    return this.searchForm.get('fechaDesde')?.value || '';
+  }
+
+  get rawExitDate(): string {
+    return this.searchForm.get('fechaHasta')?.value || '';
   }
 
   onSearch() {
@@ -118,10 +150,9 @@ export class SearchParking implements OnInit {
     this.onSearch();
   }
 
-  // Para las fechas del buscador
-  openDatePicker(event: Event) {
-    const input = event.target as HTMLInputElement;
-    input.showPicker?.();
+  // Abre el selector nativo del input oculto subyacente o un datepicker personalizado
+  openDatePicker(hiddenInput: HTMLInputElement) {
+    hiddenInput.showPicker?.();
   }
 
   onEntryDateChange() {
@@ -135,7 +166,6 @@ export class SearchParking implements OnInit {
     }
   }
 
-  // Para los servicios en las tarjetas de los parking
   getServices(parking: Parking): string[] {
     const services: string[] = [];
 
@@ -152,5 +182,11 @@ export class SearchParking implements OnInit {
     }
 
     return services;
+  }
+
+  ngOnDestroy() {
+    if (this.langFormatSub) {
+      this.langFormatSub.unsubscribe();
+    }
   }
 }

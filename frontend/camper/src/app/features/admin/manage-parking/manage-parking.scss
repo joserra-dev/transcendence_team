@@ -27,6 +27,33 @@
   font-weight: $font-weight-semibold;
 }
 
+.form-actions {
+  display: flex;
+  gap: 0.75rem;
+  flex-wrap: wrap;
+}
+
+.btn-danger {
+  background-color: $color-error;
+  color: $color-white;
+  border: none;
+  padding: $space-xs $space-lg;
+  font-weight: $font-weight-semibold;
+  border-radius: $radius-sm;
+  box-shadow: $shadow-strong;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+
+  &:hover:not(:disabled) {
+    background-color: darken($color-error, 8%);
+  }
+
+  &:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+  }
+}
+
 .spot-modal-backdrop {
   position: fixed;
   inset: 0;
@@ -117,6 +144,14 @@
   .btn {
     width: 100%;
     margin-top: 0;
+  }
+
+  .form-actions {
+    flex-direction: column;
+  }
+
+  .form-actions .btn {
+    width: 100%;
   }
 
   .plazas-div {

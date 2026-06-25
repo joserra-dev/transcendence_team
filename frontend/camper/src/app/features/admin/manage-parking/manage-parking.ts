@@ -3,8 +3,9 @@ import { CommonModule } from '@angular/common';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { Admin } from '../../../core/services/admin';
+import { Auth } from '../../../core/services/auth';
 import { Parking, Space } from '../../../core/models/parking';
-import { TranslateModule } from '@ngx-translate/core';
+import { TranslateModule, TranslateService } from '@ngx-translate/core';
 
 @Component({
   selector: 'app-manage-parking',
@@ -15,12 +16,16 @@ import { TranslateModule } from '@ngx-translate/core';
 export class ManageParking implements OnInit {
   private fb = inject(FormBuilder);
   private adminService = inject(Admin);
+  private authService = inject(Auth);
   private route = inject(ActivatedRoute);
   private router = inject(Router);
+  private translate = inject(TranslateService);
 
   parkingId: number | null = null;
+  companyId: number | null = null;
   isEditMode = false;
   isLoading = false;
+  isDeleting = false;
 
   successMessage = '';
   errorMessage = '';
@@ -53,12 +58,22 @@ export class ManageParking implements OnInit {
   });
 
   ngOnInit() {
+    const companyIdParam = this.route.snapshot.queryParamMap.get('companyId');
+    this.companyId = companyIdParam ? Number(companyIdParam) : null;
+
     const id = this.route.snapshot.paramMap.get('id');
     if (id) {
       this.parkingId = Number(id);
       this.isEditMode = true;
       this.loadParking(this.parkingId);
     }
+  }
+
+  get backLink(): string[] {
+    if (this.authService.isSuperAdmin() && this.companyId) {
+      return ['/admin/companies', String(this.companyId), 'parkings'];
+    }
+    return ['/admin/dashboard'];
   }
 
   // --- GESTIÓN DE INFORMACIÓN GENERAL DEL PARKING ---
@@ -87,6 +102,9 @@ export class ManageParking implements OnInit {
         });
 
         this.plazas = data.plazasResponse || data.spaces || [];
+        if (!this.companyId && data.id_company) {
+          this.companyId = data.id_company;
+        }
         this.isLoading = false;
       },
       error: (err) => {
@@ -126,19 +144,46 @@ export class ManageParking implements OnInit {
         }
       });
     } else {
-      this.adminService.createParking(formData).subscribe({
+      const createData = this.companyId
+        ? { ...formData, companyId: this.companyId }
+        : formData;
+      this.adminService.createParking(createData).subscribe({
         next: () => {
           this.showSuccess('Parking creado correctamente');
-          this.router.navigate(['/admin/dashboard']);
+          this.router.navigate(this.backLink);
         },
         error: (err) => {
           console.error(err);
           this.errorMessage ='Error al crear el parking';
           this.isLoading = false;
-          this.router.navigate(['/admin/dashboard']);
         }
       });
     }
+  }
+
+  deleteParking() {
+    if (!this.parkingId || this.isDeleting) {
+      return;
+    }
+
+    const parkingName = this.parkingForm.get('nombreParking')?.value || '';
+    const msg = this.translate.instant('MANAGE_PARKING.CONFIRM_DELETE', { name: parkingName });
+    if (!confirm(msg)) {
+      return;
+    }
+
+    this.isDeleting = true;
+    this.clearMessages();
+
+    this.adminService.deleteParking(this.parkingId).subscribe({
+      next: () => {
+        this.router.navigate(this.backLink);
+      },
+      error: (err) => {
+        this.errorMessage = err.error?.error || 'MANAGE_PARKING.ERRORS.DELETE';
+        this.isDeleting = false;
+      },
+    });
   }
 
   // --- GESTIÓN DE PLAZAS ---

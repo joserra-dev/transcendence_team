@@ -59,12 +59,20 @@ export class LoginAdmin {
         })
       ).subscribe({
       next: (response) => {
-        this.router.navigateByUrl(this.returnUrl);
+        console.log('Login Admin exitoso:', response);
+        const user = this.authService.getUser();
+        if (user?.role === 'super_admin') {
+          this.router.navigateByUrl('/admin/companies');
+        } else {
+          this.router.navigateByUrl(this.returnUrl);
+        }
       },
       error: (err) => {
         console.error('Error en login Admin:', err);
         if (err instanceof TimeoutError) {
              this.errorMessage = 'LOGIN.ERROR.TIMEOUT';
+        } else if (err.status === 403) {
+          this.errorMessage = err.error?.error || 'LOGIN.ERROR.NO_ADMIN';
         } else if (err.status === 401 || err.status === 404) {
           this.errorMessage = 'LOGIN.ERROR.INVALID_CREDENTIALS';
         } else {

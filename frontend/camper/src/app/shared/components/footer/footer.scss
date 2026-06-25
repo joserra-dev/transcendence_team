@@ -29,6 +29,31 @@
     }
   }
 
+  // ── MODIFICADO: Ahora está fuera de footer-left para centrarse de forma global ──
+  .footer-legal-links {
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    align-items: center;
+    gap: 2rem;                 // Espaciado generoso entre ambos links
+    margin-top: $space-sm;
+    margin-bottom: $space-md;  // Espacio con el separador inferior si lo hubiera
+    width: 100%;
+
+    a {
+      color: $color-white !important;
+      text-decoration: none;
+      font-size: 0.85rem;
+      transition: opacity 0.2s ease;
+      white-space: nowrap;
+
+      &:hover {
+        text-decoration: underline;
+        opacity: 0.8;
+      }
+    }
+  }
+
   .footer-logo {
     max-width: 140px;
     width: 50%;
@@ -51,8 +76,8 @@
   }
 }
 
+/* ── MEDIA QUERIES (MÓVIL) ── */
 @media (max-width: $bp-sm) {
-
   .footer {
     padding-left: 1rem !important;
     padding-right: 1rem !important;
@@ -76,6 +101,12 @@
     .footer-item {
       justify-content: center !important;
     }
+  }
+
+  // Ajuste sutil de margen para móvil
+  .footer-legal-links {
+    margin-top: $space-md;
+    margin-bottom: $space-sm;
   }
 
   .footer-logo {

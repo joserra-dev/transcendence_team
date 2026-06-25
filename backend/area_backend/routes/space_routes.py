@@ -1,6 +1,7 @@
 from flask import Blueprint, jsonify, request
 from werkzeug.security import generate_password_hash, check_password_hash 
 from flask_jwt_extended import create_access_token, jwt_required, get_jwt_identity
+from flask_babel import gettext as _, refresh
 
 from database import db
 from models.space import Space
@@ -11,17 +12,49 @@ space_bp = Blueprint('space_bp', __name__)
 @space_bp.route('/api/space', methods=['GET'])
 def get_space():
     """
-    Obtiene la lista de usuarios o un usuario específico por ID.
+    Obtiene la lista de plazas o una plaza específica por ID.
     ---
+    tags:
+      - Space
     parameters:
       - name: id
         in: query
         type: integer
         required: false
-        description: ID del usuario opcional.
+        description: ID de la plaza opcional para filtrar un registro específico.
+      - name: lang
+        in: query
+        type: string
+        required: false
+        description: Idioma para la internacionalización de las respuestas (ej. es, en, eu).
     responses:
       200:
-        description: Éxito.
+        description: Éxito. Devuelve el objeto estructurado de la plaza o el listado completo.
+        schema:
+          type: array
+          items:
+            type: object
+            properties:
+              id:
+                type: integer
+                example: 42
+              name:
+                type: string
+                example: "Plaza A-12"
+              price:
+                type: number
+                example: 15.50
+              id_parking:
+                type: integer
+                example: 1
+      404:
+        description: La plaza especificada no existe.
+        schema:
+          type: object
+          properties:
+            error:
+              type: string
+              example: "Plaza no existe"
     """
     id = request.args.get('id')
 
@@ -29,7 +62,7 @@ def get_space():
         parking = Space.query.get(id)
         if parking:
             return jsonify(parking.to_dict()), 200
-        return jsonify({"error": "Usuario no encontrado"}), 404
+        return jsonify({"error": _("Plaza no existe")}), 404
 
     all = Space.query.all()
     return jsonify([u.to_dict() for u in all]), 200

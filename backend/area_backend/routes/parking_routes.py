@@ -2,6 +2,7 @@ from flask import Blueprint, jsonify, request
 from werkzeug.security import generate_password_hash, check_password_hash 
 from flask_jwt_extended import create_access_token, jwt_required, get_jwt_identity
 from sqlalchemy import func
+from flask_babel import gettext as _, refresh
 
 from database import db
 from models.parking import Parking
@@ -14,7 +15,14 @@ def search_parkings():
     """
     Busca y filtra parkings por ubicación y servicios disponibles.
     ---
+    tags:
+      - Parking
     parameters:
+      - name: id
+        in: query
+        type: integer
+        required: false
+        description: ID único de un parking para una búsqueda directa.
       - name: provincia
         in: query
         type: string
@@ -25,6 +33,18 @@ def search_parkings():
         type: string
         required: false
         description: Filtrar por municipio.
+      - name: fechaDesde
+        in: query
+        type: string
+        format: date
+        required: false
+        description: Fecha de inicio para comprobar disponibilidad (YYYY-MM-DD).
+      - name: fechaHasta
+        in: query
+        type: string
+        format: date
+        required: false
+        description: Fecha de fin para comprobar disponibilidad (YYYY-MM-DD).
       - name: isactive
         in: query
         type: boolean
@@ -45,6 +65,11 @@ def search_parkings():
         type: boolean
         required: false
         description: Filtrar si tiene plazas VIP (true/false).
+      - name: lang
+        in: query
+        type: string
+        required: false
+        description: Idioma para la internacionalización de las respuestas (ej. es, en, eu).
     responses:
       200:
         description: Lista de parkings filtrados correctamente.
@@ -101,17 +126,26 @@ def search_parkings():
 @parking_bp.route('/api/parking', methods=['GET'])
 def get_pakings():
     """
-    Obtiene la lista de usuarios o un usuario específico por ID.
+    Obtiene la lista de parkings o un parking específico por ID.
     ---
+    tags:
+      - Parking
     parameters:
       - name: id
         in: query
         type: integer
         required: false
-        description: ID del usuario opcional.
+        description: ID del parking opcional.
+      - name: lang
+        in: query
+        type: string
+        required: false
+        description: Idioma para la internacionalización de las respuestas (ej. es, en, eu).
     responses:
       200:
-        description: Éxito.
+        description: Éxito. Devuelve el objeto o listado de parkings.
+      404:
+        description: Parking no encontrado.
     """
     id = request.args.get('id')
 
@@ -119,7 +153,7 @@ def get_pakings():
         parking = Parking.query.get(id)
         if parking:
             return jsonify(parking.to_dict()), 200
-        return jsonify({"error": "Usuario no encontrado"}), 404
+        return jsonify({"error": _("Parking no encontrado")}), 404
 
     all = Parking.query.all()
     return jsonify([u.to_dict() for u in all]), 200

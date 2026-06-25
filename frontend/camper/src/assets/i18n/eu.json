@@ -24,7 +24,12 @@
     "BOOKING_DETAIL": "Erreserbaren xehetasunak",
     "DASHBOARD": "Administrazio panela",
     "NEW_PARKING": "Aparkaleku berria",
-    "MANAGE_PARKING": "Aparkalekua kudeatu"
+    "MANAGE_PARKING": "Aparkalekua kudeatu",
+    "MANAGE_USERS": "Erabiltzaileak kudeatu",
+    "MANAGE_COMPANIES": "Enpresak kudeatu",
+    "COMPANY_PARKINGS": "Enpresaren aparkalekuak",
+    "EDIT_COMPANY": "Enpresa editatu",
+    "MANAGE_BOOKINGS": "Erreserbak kudeatu"
   },
 
   "FOOTER": {
@@ -68,6 +73,7 @@
       "REQUIRED_PASSWORD": "Pasahitza derrigorrezkoa da.",
       "INVALID_CREDENTIALS": "Kredentzial baliogabeak. Egiaztatu posta eta pasahitza.",
       "NOT_VERIFIED": "Saioa hasi baino lehen zure posta egiaztatu behar duzu.",
+      "NO_ADMIN": "Ez duzu administratzaile baimenik.",
       "TIMEOUT": "Zerbitzariak denbora gehiegi behar du erantzuteko. Saiatu geroago.",
       "UNKNOWN": "Ustekabeko errorea gertatu da. Saiatu geroago."
     },
@@ -287,6 +293,148 @@
     }
   },
 
+  "ADMIN_DASHBOARD": {
+    "SUPER_TITLE": "Superadministrazio panela",
+    "ADMIN_TITLE": "Administratzaile panela",
+    "WELCOME": "Kaixo, {{name}}",
+    "SUPER_DESC": "Iragarkiak, erabiltzaileak, admin baimenak eta bezeroak kudeatu.",
+    "ADMIN_DESC": "Zure enpresaren aparkaleku iragarkiak eta bezeroen erreserbak kudeatu.",
+    "ADS_SECTION_TITLE": "Nire iragarkiak",
+    "ADS_SECTION_DESC": "Kontsultatu, editatu eta argitaratu zure enpresaren aparkalekuak.",
+    "ADS_PAGINATION_LABEL": "Iragarkien orrialdekatzea",
+    "MANAGE_BOOKINGS": "Erreserbak kudeatu",
+    "ACTIVE": "Aktibo",
+    "INACTIVE": "Inaktibo",
+    "ERRORS": {
+      "LOAD_ADS": "Ezin izan dira zure iragarkiak kargatu."
+    }
+  },
+
+  "ADMIN_USERS": {
+    "TITLE": "Erabiltzaileak eta baimenak",
+    "SUBTITLE": "Sortu erabiltzaileak eta eman admin baimenak.",
+    "BACK": "Panelera itzuli",
+    "ADD": "Erabiltzailea sortu",
+    "CANCEL": "Utzi",
+    "CREATE_TITLE": "Erabiltzaile berria",
+    "EMAIL": "Emaila",
+    "PASSWORD": "Pasahitza",
+    "NAME": "Izena",
+    "LASTNAME": "Abizenak",
+    "DNI": "NAN",
+    "ROLE": "Rola",
+    "COMPANY": "Enpresa",
+    "SELECT_COMPANY": "Hautatu enpresa",
+    "SAVE": "Gorde erabiltzailea",
+    "LOADING": "Erabiltzaileak kargatzen...",
+    "ROLE_SUPER": "Superadmin",
+    "ROLE_ADMIN": "Admin",
+    "ROLE_USER": "Erabiltzailea",
+    "GRANT_ADMIN": "Eman admin baimenak",
+    "REVOKE_ADMIN": "Kendu admin baimenak",
+    "EDIT": "Profila editatu",
+    "PROMOTE_DESC": "Hautatu administratzaile baimenak emateko enpresa.",
+    "FILTER_ROLE": "Iragazi baimenen arabera",
+    "FILTER_ROLE_ALL": "Baimen guztiak",
+    "FILTER_COMPANY": "Iragazi enpresaren arabera",
+    "FILTER_COMPANY_ALL": "Enpresa guztiak",
+    "SORT": "Orden alfabetikoa",
+    "SORT_ASC": "A → Z",
+    "SORT_DESC": "Z → A",
+    "TABLE_NAME": "Izena eta abizenak",
+    "ACTIONS": "Ekintzak",
+    "NO_COMPANY": "—",
+    "EMPTY_FILTERED": "Ez dago hautatutako iragazkiekin bat datorren erabiltzailerik.",
+    "SUCCESS_CREATE": "Erabiltzailea sortu da. Egiaztapen mezu bat bidali da.",
+    "SUCCESS_UPDATE": "Erabiltzailea ongi eguneratu da.",
+    "SUCCESS_PROMOTE": "Admin baimenak ongi eman dira.",
+    "SUCCESS_REVOKE": "Admin baimenak ongi kendu dira.",
+    "ERRORS": {
+      "LOAD": "Ezin izan dira erabiltzaileak kargatu.",
+      "CREATE": "Errorea erabiltzailea sortzean.",
+      "UPDATE": "Errorea baimenak eguneratzean.",
+      "NO_COMPANY": "Ez dago enpresarik adminari esleitzeko."
+    }
+  },
+
+  "ADMIN_COMPANIES": {
+    "TITLE": "Superadministratzaile panela",
+    "SUBTITLE": "Kudeatu erregistratutako enpresak eta haien aparkaleku iragarkiak.",
+    "LIST_TITLE": "Erregistratutako enpresak",
+    "ADD": "Enpresa gehitu",
+    "CANCEL": "Utzi",
+    "CREATE_TITLE": "Enpresa berria",
+    "COMPANY_SECTION": "Enpresaren datuak",
+    "ADMIN_SECTION": "Administratzailearen datuak",
+    "NAME": "Enpresaren izena",
+    "CIF": "IFK",
+    "ADMIN_EMAIL": "Adminaren posta",
+    "ADMIN_PASSWORD": "Adminaren pasahitza",
+    "ADMIN_NAME": "Izena",
+    "ADMIN_LASTNAME": "Abizenak",
+    "ADMIN_DNI": "NAN",
+    "ADMIN_LABEL": "Administratzailea",
+    "SAVE": "Enpresa eta admin sortu",
+    "LOADING": "Enpresak kargatzen...",
+    "EMPTY": "Oraindik ez dago enpresarik erregistratuta.",
+    "PARKINGS": "aparkaleku",
+    "PARKINGS_TITLE": "Enpresaren aparkalekuak",
+    "NO_PARKINGS": "Enpresa honek ez du aparkalekurik argitaratuta.",
+    "BACK": "Enpresetara itzuli",
+    "VIEW_PARKINGS": "{{name}} enpresaren aparkalekuak ikusi",
+    "VIEW_PARKINGS_BTN": "Aparkalekuak ikusi",
+    "EDIT": "Editatu",
+    "DELETE": "Ezabatu",
+    "MANAGE_USERS": "Erabiltzaileak kudeatu",
+    "MANAGE_ADS": "Iragarkiak kudeatu",
+    "ADS_PANEL_TITLE": "Iragarkiak kudeatu",
+    "ADS_PANEL_DESC": "Hautatu enpresa bat bere aparkaleku iragarkiak ikusi eta kudeatzeko.",
+    "SELECT_COMPANY": "Hautatu enpresa",
+    "SELECT_COMPANY_PLACEHOLDER": "Aukeratu enpresa bat...",
+    "ADS_LOADING": "Iragarkiak kargatzen...",
+    "ADS_EMPTY": "Enpresa honek ez du iragarkirik argitaratuta.",
+    "ADS_FOR_COMPANY": "{{name}} enpresaren iragarkiak",
+    "ADS_PAGINATION_LABEL": "Iragarkien orrialdekatzea",
+    "PAGE_INFO": "{{total}}tik {{from}}–{{to}} erakusten",
+    "PAGE": "{{total}}tik {{current}}. orria",
+    "PREV_PAGE": "Aurrekoa",
+    "NEXT_PAGE": "Hurrengoa",
+    "PAGINATION_LABEL": "Enpresen orrialdekatzea",
+    "CONFIRM_DELETE": "\"{{name}}\" enpresa ezabatu? Bere aparkalekuak ere kenduko dira.",
+    "EDIT_TITLE": "Enpresa editatu",
+    "SAVE_COMPANY": "Enpresa gorde",
+    "SAVE_ADMIN": "Administratzailea gorde",
+    "SAVE_USER": "Erabiltzailea gorde",
+    "PASSWORD_OPTIONAL": "Hutsik utzi aldatu gabe mantentzeko",
+    "USERS_SECTION": "Enpresako erabiltzaileak",
+    "USERS_DESC": "Enpresa honi lotutako profilak.",
+    "NO_USERS": "Ez dago erabiltzailerik enpresa honi lotuta.",
+    "EDIT_USER": "Profila editatu",
+    "SUCCESS_CREATE": "Enpresa eta administratzailea sortu dira. Egiaztapen mezu bat bidali zaio adminari.",
+    "SUCCESS_UPDATE": "Enpresa ongi eguneratu da.",
+    "SUCCESS_ADMIN_UPDATE": "Administratzailea ongi eguneratu da.",
+    "SUCCESS_USER_UPDATE": "Erabiltzailea ongi eguneratu da.",
+    "SUCCESS_DELETE": "Enpresa ongi ezabatu da.",
+    "ERRORS": {
+      "LOAD": "Ezin izan dira enpresak kargatu.",
+      "CREATE": "Errorea enpresa sortzean.",
+      "UPDATE": "Errorea enpresa eguneratzean.",
+      "ADMIN_UPDATE": "Errorea administratzailea eguneratzean.",
+      "USER_UPDATE": "Errorea erabiltzailea eguneratzean.",
+      "DELETE": "Errorea enpresa ezabatzean.",
+      "LOAD_ADS": "Ezin izan dira iragarkiak kargatu.",
+      "VALIDATION": "Berrikusi formularioa: derrigorrezko eremuak falta dira edo datu okerrak daude."
+    },
+    "VALIDATION": {
+      "REQUIRED_NAME": "Enpresaren izena derrigorrezkoa da.",
+      "REQUIRED_EMAIL": "Administratzailearen emaila derrigorrezkoa da.",
+      "INVALID_EMAIL": "Sartu baliozko email bat.",
+      "REQUIRED_PASSWORD": "Administratzailearen pasahitza derrigorrezkoa da.",
+      "MIN_PASSWORD": "Pasahitzak gutxienez 6 karaktere izan behar ditu.",
+      "REQUIRED_ADMIN_NAME": "Administratzailearen izena derrigorrezkoa da."
+    }
+  },
+
   "ADMIN_PARKINGS": {
     "TITLE": "Nire aparkalekuak",
     "ADD": "Aparkalekua gehitu",
@@ -294,6 +442,30 @@
     "EMPTY": "Ez duzu aparkalekurik erregistratuta.",
     "SPOTS": "Plazak",
     "MANAGE": "Kudeatu"
+  },
+
+  "ADMIN_BOOKINGS": {
+    "TITLE": "Bezeroen erreserbak",
+    "SUBTITLE": "Kontsultatu eta kudeatu zure aparkalekuen erreserbak",
+    "BACK": "Panelera itzuli",
+    "LOADING": "Erreserbak kargatzen...",
+    "EMPTY": "Ez dago hautatutako iragazkiekin bat datorren erreserbarik.",
+    "CUSTOMER": "Bezeroa",
+    "PLATE": "Matrikula",
+    "CANCEL": "Erreserba utzi",
+    "FILTER_FROM": "Noiztik",
+    "FILTER_TO": "Noiz arte",
+    "FILTER_PARKING": "Aparkalekua",
+    "FILTER_STATUS": "Egoera",
+    "FILTER_PLATE": "Matrikula",
+    "PLATE_PLACEHOLDER": "Adib. 1234ABC",
+    "PAGINATION_LABEL": "Erreserben orrialdekatzea",
+    "CONFIRM_CANCEL": "Utzi #{{ref}} erreserba {{parking}} aparkalekuan?",
+    "SUCCESS_CANCEL": "Erreserba ongi utzi da.",
+    "ERRORS": {
+      "LOAD": "Ezin izan dira erreserbak kargatu.",
+      "CANCEL": "Errorea erreserba uztean."
+    }
   },
 
   "MANAGE_PARKING": {
@@ -325,6 +497,9 @@
     "NO_SPOTS": "Aparkaleku honek ez du plazarik sortuta.",
     "CANCEL": "Utzi",
     "SAVE_SPOT": "Gorde plaza",
+    "DELETE": "Iragarkia ezabatu",
+    "DELETING": "Ezabatzen...",
+    "CONFIRM_DELETE": "\"{{name}}\" iragarkia ezabatu? Bere plazak eta erlazionatutako erreserbak ere ezabatuko dira.",
     "SUCCESS_UPDATE": "Aparkalekua eguneratu da",
     "SUCCESS_CREATE": "Aparkalekua sortu da",
     "SUCCESS_CREATE_SPOT": "Plaza sortu da",
@@ -333,7 +508,8 @@
       "CREATE": "Errorea aparkalekua sortzean",
       "UPDATE": "Errorea aparkalekua eguneratzean. Saiatu berriro.",
       "CREATE_SPOT": "Errorea plaza sortzean.",
-      "UPDATE_SPOT": "Errorea plaza eguneratzean."
+      "UPDATE_SPOT": "Errorea plaza eguneratzean.",
+      "DELETE": "Errorea aparkalekua ezabatzean."
     }
   }
 }

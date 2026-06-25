@@ -1,29 +1,16 @@
-<ng-template #loadingTpl>
-  <div class="loading-wrapper">
-    <i class="fa-solid fa-spinner spinner"></i>
-    <p>{{ 'PARKING.LOADING' | translate }}</p>
-  </div>
-</ng-template>
-
-<div *ngIf="errorMessage; else parkingTpl" class="loading-wrapper">
-  <i class="fa-solid fa-exclamation-triangle" style="color: #dc3545; font-size: 2rem;"></i>
-  <p>{{ errorMessage | translate }}</p>
-</div>
-
-<ng-template #parkingTpl>
-  <div *ngIf="parking; else loadingTpl" class="parking-detail-page">
-    <header class="parking-header">
-      <div>
-        <h1 class="page-title">{{ parking.name }}</h1>
-        <p class="location">
-          <i class="fa-solid fa-location-dot"></i>
-          {{ parking.municipality || parking.localidad }}
-          
-          <button *ngIf="parking.latitude && parking.longitude" class="btn btn-sm btn-outline-primary ms-3" (click)="openMapModal()">
-            Ver en Google Maps
-          </button>
-        </p>
-      </div>
+<div *ngIf="parking; else loadingTpl" class="parking-detail-page">
+  <header class="parking-header">
+    <div>
+      <h1 class="page-title">{{ parking.name }}</h1>
+      <p class="location">
+        <i class="fa-solid fa-location-dot"></i>
+        {{ parking.municipality || parking.localidad }}
+        
+        <button *ngIf="parking.latitude && parking.longitude" class="btn btn-sm btn-outline-primary ms-3" (click)="openMapModal()">
+          Ver en Google Maps
+        </button>
+      </p>
+    </div>
 
       <div class="rating" *ngIf="parking.media">
         {{ parking.media | number:'1.1-1' }}
