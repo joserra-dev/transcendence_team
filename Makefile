@@ -101,14 +101,13 @@ env:
 		echo ""; \
 		echo -e "$(COLOR_BLUE)🐘 Configuración de conexión a PostgreSQL:$(COLOR_RESET)"; \
 		read -p "Puerto de Postgres (ej. 5432): " db_port; \
-		read -p "Usuario de Postgres (ej. defaultdb_user): " db_user; \
 		read -p "Contraseña de Postgres: " db_pass; echo ""; \
 		read -p "Nombre de la Base de Datos (ej. defaultdb): " db_name; \
 		echo "POSTGRES_DB=$$db_name" >> .env;\
 		echo "POSTGRES_USER=$$db_user" >> .env;\
 		echo "POSTGRES_PASSWORD=$$db_pass" >> .env;\
 		echo "POSTGRES_PORT=$$db_port" >> .env;\
-		echo "DATABASE_URL=postgresql://$$db_user:$$db_pass@db:$$db_port/$$db_name" >> .env; \
+		echo "DATABASE_URL=postgresql://defaultdb_user:$$db_pass@db:$$db_port/$$db_name" >> .env; \
 		\
 		echo ""; \
 		echo -e "$(COLOR_BLUE)📧 Configuración de Correo (Gmail SMTP):$(COLOR_RESET)"; \
