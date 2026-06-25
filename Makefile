@@ -104,7 +104,7 @@ env:
 		read -p "Contraseña de Postgres: " db_pass; echo ""; \
 		read -p "Nombre de la Base de Datos (ej. defaultdb): " db_name; \
 		echo "POSTGRES_DB=$$db_name" >> .env;\
-		echo "POSTGRES_USER=$$db_user" >> .env;\
+		echo "POSTGRES_USER=defaultdb_user" >> .env;\
 		echo "POSTGRES_PASSWORD=$$db_pass" >> .env;\
 		echo "POSTGRES_PORT=$$db_port" >> .env;\
 		echo "DATABASE_URL=postgresql://defaultdb_user:$$db_pass@db:$$db_port/$$db_name" >> .env; \
