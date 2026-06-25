@@ -104,7 +104,11 @@ export class ParkingDetail implements OnInit, OnDestroy {
       },
       error: (err) => {
         console.error(err);
-        this.errorMessage = 'PARKING.ERRORS.LOADING';
+        if (err.status === 404) {
+          this.errorMessage = 'PARKING.ERRORS.NOT_FOUND';
+        } else {
+          this.errorMessage = 'PARKING.ERRORS.LOADING';
+        }
         this.isLoading = false;
       }
     });

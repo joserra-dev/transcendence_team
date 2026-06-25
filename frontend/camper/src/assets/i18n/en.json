@@ -211,6 +211,7 @@
     "LOADING": "Loading parking information...",
     "SUCCESS": "Booking successful",
     "ERRORS": {
+      "NOT_FOUND": "The requested parking was not found.",
       "NO_RESULTS": "Parking not found or not available for these dates.",
       "LOADING": "Error loading parking details.",
       "BOOKING": "There was an error when making the reservation.",
