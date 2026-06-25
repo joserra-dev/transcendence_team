@@ -1,16 +1,29 @@
-<div *ngIf="parking; else loadingTpl" class="parking-detail-page">
-  <header class="parking-header">
-    <div>
-      <h1 class="page-title">{{ parking.name }}</h1>
-      <p class="location">
-        <i class="fa-solid fa-location-dot"></i>
-        {{ parking.municipality || parking.localidad }}
-        
-        <button *ngIf="parking.latitude && parking.longitude" class="btn btn-sm btn-outline-primary ms-3" (click)="openMapModal()">
-          Ver en Google Maps
-        </button>
-      </p>
-    </div>
+<ng-template #loadingTpl>
+  <div class="loading-wrapper">
+    <i class="fa-solid fa-spinner spinner"></i>
+    <p>{{ 'PARKING.LOADING' | translate }}</p>
+  </div>
+</ng-template>
+
+<div *ngIf="errorMessage; else parkingTpl" class="loading-wrapper">
+  <i class="fa-solid fa-exclamation-triangle" style="color: #dc3545; font-size: 2rem;"></i>
+  <p>{{ errorMessage | translate }}</p>
+</div>
+
+<ng-template #parkingTpl>
+  <div *ngIf="parking; else loadingTpl" class="parking-detail-page">
+    <header class="parking-header">
+      <div>
+        <h1 class="page-title">{{ parking.name }}</h1>
+        <p class="location">
+          <button [disabled]="!parking.latitude || !parking.longitude" 
+            class="btn btn-primary" 
+            (click)="openMapModal()">
+            <i class="fa-solid fa-location-dot"></i>
+            {{ parking.municipality || parking.localidad }}
+          </button>
+        </p>
+      </div>
 
       <div class="rating" *ngIf="parking.media">
         {{ parking.media | number:'1.1-1' }}
@@ -51,12 +64,12 @@
         </div>
 
         <div class="services" *ngIf="parking.description">
-          <h3 class="section-title">{{ 'PARKING.DESCRIPTION' | translate }}</h3>
+          <h2 class="section-title">{{ 'PARKING.DESCRIPTION' | translate }}</h2>
           <p style="white-space: pre-line; color: #555; line-height: 1.6;">{{ parking.description }}</p>
         </div>
 
         <div class="services">
-          <h3 class="section-title">{{ 'PARKING.SERVICES' | translate }}</h3>
+          <h2 class="section-title">{{ 'PARKING.SERVICES' | translate }}</h2>
           <ul>
             <li *ngIf="parking.tomaElectricidad || parking.has_electricity">
               <i class="fa-solid fa-check"></i> {{ 'SEARCH.ELECTRICITY' | translate }}
@@ -71,7 +84,7 @@
         </div>
 
         <div class="slots">
-          <h3 class="section-title">{{ 'PARKING.SELECT_SPOT' | translate }}</h3>
+          <h2 class="section-title">{{ 'PARKING.SELECT_SPOT' | translate }}</h2>
           <p>
             {{ 'PARKING.DATES' | translate }}:
             {{ entryDate | date: dateFormat }} – {{ exitDate | date: dateFormat }}
@@ -101,7 +114,7 @@
         </div>
 
         <div class="contact">
-          <h3 class="section-title">{{ 'PARKING.CONTACT' | translate }}</h3>
+          <h2 class="section-title">{{ 'PARKING.CONTACT' | translate }}</h2>
           <p *ngIf="parking.web"><i class="fa-solid fa-globe"></i><a [href]="parking.web" target="_blank"> {{ parking.web }}</a></p>
           <p *ngIf="parking.telephone"><i class="fa-solid fa-phone"></i> {{ parking.telephone }}</p>
           <p *ngIf="parking.email"><i class="fa-regular fa-envelope"></i> {{ parking.email }}</p>
@@ -154,7 +167,7 @@
         <label style="display: block; font-weight: bold; margin-bottom: 0.5rem; font-size: 0.95rem;">{{ 'PAPID.LICENCE' | translate }}</label>
         <input type="text" [(ngModel)]="licensePlate" placeholder="Ej: 1234BBB" style="width: 100%; padding: 0.6rem; border: 1px solid #ccc; border-radius: 4px; font-size: 1.1rem; text-transform: uppercase; box-sizing: border-box;" />
         <small *ngIf="licensePlate && !isLicensePlateValid()" style="color: #dc3545; display: block; margin-top: 0.25rem;">
-          Por favor, introduce una matrícula válida (4 números y 3 letras, sin espacios).
+          Por favor, introduce una matrícula.
         </small>
       </div>
     </div>
@@ -171,7 +184,7 @@
 <div class="lightbox" *ngIf="showMapModal" (click)="closeMapModal()">
   <div class="modal-content-wrapper" (click)="$event.stopPropagation()" style="background: white; padding: 1.5rem; border-radius: 8px; max-width: 700px; width: 95%; position: relative;">
     <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem;">
-      <h3 style="margin: 0; font-size: 1.3rem;"><i class="fa-solid fa-map"></i> Ubicación de {{ parking?.name }}</h3>
+      <h3 style="margin: 0; font-size: 1.3rem;"><i class="fa-solid fa-map"></i> {{ 'PARKING.LOCATIONOF' | translate }} {{ parking?.name }}</h3>
       <button (click)="closeMapModal()" style="background: none; border: none; font-size: 1.8rem; cursor: pointer; line-height: 1;">&times;</button>
     </div>
 
@@ -180,7 +193,7 @@
     </div>
 
     <div style="display: flex; justify-content: flex-end; margin-top: 1rem;">
-      <button class="btn btn-secondary" (click)="closeMapModal()">Cerrar</button>
+      <button class="btn btn-secondary" (click)="closeMapModal()"> {{ 'HEADER.CLOSE' | translate }}</button>
     </div>
   </div>
 </div>
