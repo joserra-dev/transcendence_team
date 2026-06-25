@@ -453,7 +453,7 @@ def rate_booking():
     if str(booking.id_user) != str(user_id):
         return jsonify({"error": _("No tienes permiso para puntuar esta reserva")}), 403
         
-    booking.puntuacion_reserva = puntuacion
+    booking.rating = puntuacion
     db.session.commit()
     
     return jsonify({"message": _("Puntuación guardada correctamente")}), 200
