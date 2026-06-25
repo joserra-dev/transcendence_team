@@ -289,4 +289,15 @@ Si tienes una reserva que empieza el día X, puedes reservar la misma plaza para
 Los solapamientos reales siguen bloqueados.
 Consistente con la lógica de la matrícula (salida 12:00, entrada 15:00).
 
+### 26/06/25 modificacion templates (control de errores)
+Los cambios son:
+
+Backend (backend/area_backend/routes/parking_routes.py):
+
+Agregué control de error 404 cuando se busca un parking por ID y no existe
+Frontend (frontend/camper/src/app/features/public/parking-detail/):
+
+parking-detail.ts: Agregué manejo de error 404 en la suscripción del servicio
+parking-detail.html: Reordené el template para mostrar error antes del loading
+i18n/es.json, i18n/en.json, i18n/eu.json: Agregué clave NOT_FOUND con los mensajes de error
 

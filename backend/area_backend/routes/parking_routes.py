@@ -91,7 +91,11 @@ def search_parkings():
 
     # 5. Ejecutamos la consulta y formateamos la respuesta
     filtered_parking = query.all()
-    print(filtered_parking)
+    
+    # Si se buscó por ID específico y no se encontró, devolver error 404
+    if id_parking and len(filtered_parking) == 0:
+        return jsonify({"error": "Parking no encontrado"}), 404
+    
     return jsonify([p.to_dict(from_date=from_date, to_date=to_date) for p in filtered_parking]), 200
 
 @parking_bp.route('/api/parking', methods=['GET'])
