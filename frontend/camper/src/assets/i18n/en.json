@@ -28,7 +28,8 @@
     "MANAGE_USERS": "Manage users",
     "MANAGE_COMPANIES": "Manage companies",
     "COMPANY_PARKINGS": "Company parkings",
-    "EDIT_COMPANY": "Edit company"
+    "EDIT_COMPANY": "Edit company",
+    "MANAGE_BOOKINGS": "Manage bookings"
   },
 
   "FOOTER": {
@@ -282,13 +283,20 @@
     "ADMIN_TITLE": "Admin panel",
     "WELCOME": "Hello, {{name}}",
     "SUPER_DESC": "Manage listings, users, admin permissions and end customers.",
-    "ADMIN_DESC": "Manage your company listings and customer bookings.",
+    "ADMIN_DESC": "Manage your company's parking listings and customer bookings.",
+    "ADS_SECTION_TITLE": "My listings",
+    "ADS_SECTION_DESC": "View, edit and publish your company's parking listings.",
+    "ADS_PAGINATION_LABEL": "Listings pagination",
+    "MANAGE_BOOKINGS": "Manage bookings",
     "MANAGE_ADS": "Parking listings",
     "MANAGE_ADS_DESC": "Create, edit and publish campervan listings.",
     "MANAGE_USERS": "Users and permissions",
     "MANAGE_USERS_DESC": "Create users, assign admins and manage access.",
     "ACTIVE": "Active",
-    "INACTIVE": "Inactive"
+    "INACTIVE": "Inactive",
+    "ERRORS": {
+      "LOAD_ADS": "Could not load your listings."
+    }
   },
 
   "ADMIN_USERS": {
@@ -326,7 +334,7 @@
     "ACTIONS": "Actions",
     "NO_COMPANY": "—",
     "EMPTY_FILTERED": "No users match the selected filters.",
-    "SUCCESS_CREATE": "User created successfully.",
+    "SUCCESS_CREATE": "User created. A verification email has been sent.",
     "SUCCESS_UPDATE": "User updated successfully.",
     "SUCCESS_PROMOTE": "Admin permissions granted.",
     "SUCCESS_REVOKE": "Admin permissions revoked.",
@@ -391,7 +399,7 @@
     "USERS_DESC": "Profiles linked to this company.",
     "NO_USERS": "No users linked to this company.",
     "EDIT_USER": "Edit profile",
-    "SUCCESS_CREATE": "Company and administrator created successfully.",
+    "SUCCESS_CREATE": "Company and administrator created. A verification email has been sent to the admin.",
     "SUCCESS_UPDATE": "Company updated successfully.",
     "SUCCESS_ADMIN_UPDATE": "Administrator updated successfully.",
     "SUCCESS_USER_UPDATE": "User updated successfully.",
@@ -425,6 +433,30 @@
     "MANAGE": "Manage"
   },
 
+  "ADMIN_BOOKINGS": {
+    "TITLE": "Customer bookings",
+    "SUBTITLE": "View and manage bookings for your parkings",
+    "BACK": "Back to dashboard",
+    "LOADING": "Loading bookings...",
+    "EMPTY": "No bookings match the selected filters.",
+    "CUSTOMER": "Customer",
+    "PLATE": "License plate",
+    "CANCEL": "Cancel booking",
+    "FILTER_FROM": "From",
+    "FILTER_TO": "To",
+    "FILTER_PARKING": "Parking",
+    "FILTER_STATUS": "Status",
+    "FILTER_PLATE": "License plate",
+    "PLATE_PLACEHOLDER": "E.g. 1234ABC",
+    "PAGINATION_LABEL": "Bookings pagination",
+    "CONFIRM_CANCEL": "Cancel booking #{{ref}} at {{parking}}?",
+    "SUCCESS_CANCEL": "Booking cancelled successfully.",
+    "ERRORS": {
+      "LOAD": "Could not load bookings.",
+      "CANCEL": "Error cancelling the booking."
+    }
+  },
+
   "MANAGE_PARKING": {
     "NEW": "New Parking",
     "EDIT": "Manage Parking",
@@ -454,6 +486,9 @@
     "NO_SPOTS": "This parking has no spots.",
     "CANCEL": "Delete",
     "SAVE_SPOT": "Save spot",
+    "DELETE": "Delete listing",
+    "DELETING": "Deleting...",
+    "CONFIRM_DELETE": "Delete listing \"{{name}}\"? Its spots and associated bookings will also be removed.",
     "SUCCESS_UPDATE": "Parking correctly updated",
     "SUCCESS_CREATE": "Parking correctly created",
     "SUCCESS_CREATE_SPOT": "Spot correctly created",
@@ -462,7 +497,8 @@
       "CREATE": "Error creating the parking",
       "UPDATE": "Error updating the parking. Try again.",
       "CREATE_SPOT": "Error creating the spot.",
-      "UPDATE_SPOT": "Error updating the spot."
+      "UPDATE_SPOT": "Error updating the spot.",
+      "DELETE": "Error deleting the parking."
     }
   }
 }

@@ -5,60 +5,106 @@
       <h1>{{ 'ADMIN_DASHBOARD.WELCOME' | translate:{ name: userName } }}</h1>
       <p class="subtitle">{{ 'ADMIN_DASHBOARD.ADMIN_DESC' | translate }}</p>
     </div>
-    <button class="btn btn-secondary" type="button" (click)="logout()">
-      {{ 'HEADER.LOGOUT' | translate }}
-    </button>
+    <div class="hero-actions">
+      <a routerLink="/admin/bookings" class="btn btn-primary">
+        {{ 'ADMIN_DASHBOARD.MANAGE_BOOKINGS' | translate }}
+      </a>
+      <button class="btn btn-primary" type="button" (click)="logout()">
+        {{ 'HEADER.LOGOUT' | translate }}
+      </button>
+    </div>
   </header>
 
-  <header class="dashboard-header">
-    <h2>{{ 'ADMIN_PARKINGS.TITLE' | translate }}</h2>
+  <div class="alert error" *ngIf="errorMessage">{{ errorMessage | translate }}</div>
+
+  <header class="page-header">
+    <div>
+      <h2>{{ 'ADMIN_DASHBOARD.ADS_SECTION_TITLE' | translate }}</h2>
+      <p class="section-desc">{{ 'ADMIN_DASHBOARD.ADS_SECTION_DESC' | translate }}</p>
+    </div>
     <a routerLink="/admin/parking/new" class="btn btn-primary">
       + {{ 'ADMIN_PARKINGS.ADD' | translate }}
     </a>
   </header>
 
-  <div *ngIf="isLoading" class="loading-msg">
-    {{ 'ADMIN_PARKINGS.LOADING' | translate }}
-  </div>
+  <section class="ads-panel">
+    <div *ngIf="isLoading" class="loading-msg">
+      {{ 'ADMIN_PARKINGS.LOADING' | translate }}
+    </div>
 
-  <p *ngIf="!isLoading && parkings.length === 0" class="empty-msg">
-    {{ 'ADMIN_PARKINGS.EMPTY' | translate }}
-  </p>
+    <p *ngIf="!isLoading && parkings.length === 0" class="empty-msg">
+      {{ 'ADMIN_PARKINGS.EMPTY' | translate }}
+    </p>
 
-  <section class="parking-list">
-    <article *ngFor="let parking of parkings" class="parking-card">
-      <div class="card-header">
-        <h3>{{ parking.name }}</h3>
-        <span class="status" [class.inactive]="parking.isActive === false">
-          {{ parking.isActive === false ? ('ADMIN_DASHBOARD.INACTIVE' | translate) : ('ADMIN_DASHBOARD.ACTIVE' | translate) }}
-        </span>
+    <div class="ads-results" *ngIf="!isLoading && parkings.length > 0">
+      <div #adsListScroll class="ads-list-scroll">
+        <article
+          *ngFor="let parking of paginatedAds"
+          class="ads-card"
+          (click)="openManageParking(parking)"
+          (keydown.enter)="openManageParking(parking)"
+          tabindex="0"
+          role="button"
+          [attr.aria-label]="'ADMIN_PARKINGS.MANAGE' | translate">
+          <div class="ads-card-main">
+            <h3>{{ parking.name }}</h3>
+            <p class="meta">{{ parking.localidad || parking.municipality }}</p>
+            <p class="meta">
+              {{ 'ADMIN_PARKINGS.SPOTS' | translate }}:
+              {{ parking.numeroPlazas || parking.spaces?.length || 0 }}
+            </p>
+            <div class="services">
+              <span *ngIf="parking.tomaElectricidad || parking.has_electricity">
+                {{ 'SEARCH.ELECTRICITY' | translate }}
+              </span>
+              <span *ngIf="parking.limpiezaAguasResiduales || parking.has_waste_disposal">
+                {{ 'SEARCH.RESIDUALS' | translate }}
+              </span>
+              <span *ngIf="parking.plazasVip || parking.has_vip_spots">
+                {{ 'SEARCH.VIP' | translate }}
+              </span>
+            </div>
+          </div>
+          <div class="ads-card-side">
+            <span class="status" [class.inactive]="parking.isActive === false">
+              {{
+                parking.isActive === false
+                  ? ('ADMIN_DASHBOARD.INACTIVE' | translate)
+                  : ('ADMIN_DASHBOARD.ACTIVE' | translate)
+              }}
+            </span>
+            <span class="arrow">→</span>
+          </div>
+        </article>
       </div>
 
-      <div class="card-info">
-        <p class="location">{{ parking.localidad || parking.municipality }}</p>
-        <p>
-          <strong>{{ 'ADMIN_PARKINGS.SPOTS' | translate }}:</strong>
-          {{ parking.numeroPlazas || parking.spaces?.length || 0 }}
+      <nav class="pagination" [attr.aria-label]="'ADMIN_DASHBOARD.ADS_PAGINATION_LABEL' | translate">
+        <p class="pagination-info">
+          {{
+            'ADMIN_COMPANIES.PAGE_INFO'
+              | translate:{ from: adsPageRangeStart, to: adsPageRangeEnd, total: parkings.length }
+          }}
         </p>
-      </div>
-
-      <div class="services">
-        <span *ngIf="parking.tomaElectricidad || parking.has_electricity">
-          {{ 'SEARCH.ELECTRICITY' | translate }}
-        </span>
-        <span *ngIf="parking.limpiezaAguasResiduales || parking.has_waste_disposal">
-          {{ 'SEARCH.RESIDUALS' | translate }}
-        </span>
-        <span *ngIf="parking.plazasVip || parking.has_vip_spots">
-          {{ 'SEARCH.VIP' | translate }}
-        </span>
-      </div>
-
-      <div class="card-actions">
-        <a class="btn btn-secondary" [routerLink]="['/admin/parking', parking.id]">
-          {{ 'ADMIN_PARKINGS.MANAGE' | translate }}
-        </a>
-      </div>
-    </article>
+        <div class="pagination-controls" *ngIf="adsTotalPages > 1">
+          <button
+            class="btn btn-primary"
+            type="button"
+            (click)="prevAdsPage()"
+            [disabled]="adsCurrentPage === 1">
+            {{ 'ADMIN_COMPANIES.PREV_PAGE' | translate }}
+          </button>
+          <span class="pagination-current">
+            {{ 'ADMIN_COMPANIES.PAGE' | translate:{ current: adsCurrentPage, total: adsTotalPages } }}
+          </span>
+          <button
+            class="btn btn-primary"
+            type="button"
+            (click)="nextAdsPage()"
+            [disabled]="adsCurrentPage === adsTotalPages">
+            {{ 'ADMIN_COMPANIES.NEXT_PAGE' | translate }}
+          </button>
+        </div>
+      </nav>
+    </div>
   </section>
 </main>

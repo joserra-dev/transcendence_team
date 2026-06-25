@@ -4,6 +4,7 @@ import { Observable } from 'rxjs';
 
 import { Parking, Space } from '../models/parking';
 import { AdminUser, Company } from '../models/user';
+import { AdminBooking, AdminBookingFilters } from '../models/booking';
 
 @Injectable({
   providedIn: 'root',
@@ -39,6 +40,10 @@ export class Admin {
     );
   }
 
+  deleteParking(id: number): Observable<{ mensaje: string }> {
+    return this.http.delete<{ mensaje: string }>(`${this.apiUrl}/parking/${id}`);
+  }
+
   createSpot(parkingId: number, spot: Partial<Space>): Observable<Space> {
     return this.http.post<Space>(
       `${this.apiUrl}/parking/${parkingId}/space`,
@@ -61,6 +66,28 @@ export class Admin {
     return this.http.get<Space>(
       `${this.apiUrl}/parking/space/${spotId}`
     );
+  }
+
+  getBookings(filters?: AdminBookingFilters): Observable<AdminBooking[]> {
+    const params: Record<string, string> = {};
+    if (filters?.parkingId != null) {
+      params['parkingId'] = String(filters.parkingId);
+    }
+    if (filters?.status) {
+      params['status'] = filters.status;
+    }
+    if (filters?.companyId != null) {
+      params['companyId'] = String(filters.companyId);
+    }
+    return this.http.get<AdminBooking[]>(`${this.apiUrl}/bookings`, { params });
+  }
+
+  getBookingById(id: number): Observable<AdminBooking> {
+    return this.http.get<AdminBooking>(`${this.apiUrl}/bookings/${id}`);
+  }
+
+  cancelBooking(id: number): Observable<{ mensaje: string }> {
+    return this.http.put<{ mensaje: string }>(`${this.apiUrl}/bookings/${id}/cancel`, {});
   }
 
   getUsers(): Observable<AdminUser[]> {

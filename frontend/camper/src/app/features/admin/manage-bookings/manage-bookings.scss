@@ -1,12 +1,12 @@
 @use "../../../../styles/abstracts/variables" as *;
 
-.admin-dashboard {
+.admin-bookings {
   max-width: 1100px;
   margin: 0 auto;
   padding: 2rem 1rem;
 }
 
-.dashboard-hero {
+.page-hero {
   display: flex;
   justify-content: space-between;
   align-items: flex-start;
@@ -17,16 +17,9 @@
   border-radius: $radius-md;
 
   h1 {
-    margin: 0.25rem 0;
+    margin: 0.25rem 0 0;
+    font-size: 1.35rem;
   }
-}
-
-.hero-actions {
-  display: flex;
-  gap: 0.75rem;
-  flex-wrap: wrap;
-  flex-shrink: 0;
-  align-items: center;
 }
 
 .eyebrow {
@@ -38,33 +31,15 @@
   font-weight: 600;
 }
 
-.subtitle {
-  margin: 0.5rem 0 0;
-  color: $color-grey-soft;
-}
-
-.page-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: flex-start;
-  gap: 1rem;
-  margin-bottom: 1.5rem;
-
-  h2 {
-    margin: 0 0 0.35rem;
-  }
-}
-
-.section-desc {
-  margin: 0;
-  color: $color-grey-soft;
-  font-size: 0.95rem;
-}
-
 .alert {
   padding: 0.75rem 1rem;
   border-radius: $radius-sm;
   margin-bottom: 1rem;
+
+  &.success {
+    background: rgba($color-primary, 0.1);
+    color: $color-primary;
+  }
 
   &.error {
     background: rgba(#c0392b, 0.1);
@@ -72,18 +47,54 @@
   }
 }
 
-.ads-panel {
+.filters-panel {
+  background: $color-white;
+  border: 1px solid $color-border;
+  border-radius: $radius-md;
+  padding: 1.25rem;
+  margin-bottom: 1.5rem;
+}
+
+.filters-form {
+  display: grid;
+  gap: 1rem;
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  align-items: end;
+
+  label {
+    display: flex;
+    flex-direction: column;
+    gap: 0.35rem;
+    font-size: 0.9rem;
+  }
+
+  input,
+  select {
+    padding: 0.5rem 0.65rem;
+    border: 1px solid $color-border;
+    border-radius: $radius-sm;
+    background: $color-white;
+  }
+}
+
+.filter-actions {
+  display: flex;
+  gap: 0.75rem;
+  flex-wrap: wrap;
+}
+
+.bookings-panel {
   background: $color-white;
   border: 1px solid $color-border;
   border-radius: $radius-md;
   padding: 1.25rem;
 }
 
-.ads-list-scroll {
+.bookings-list-scroll {
   display: flex;
   flex-direction: column;
   gap: 0.75rem;
-  max-height: min(55vh, calc(100dvh - 22rem));
+  max-height: min(55vh, calc(100dvh - 24rem));
   overflow-y: auto;
   padding-right: 0.35rem;
   margin-bottom: 0.75rem;
@@ -100,37 +111,32 @@
   }
 }
 
-.ads-card {
+.booking-card {
   display: flex;
   justify-content: space-between;
-  align-items: center;
+  align-items: flex-start;
   gap: 1rem;
   background: rgba($color-primary, 0.03);
   border: 1px solid $color-border;
   border-radius: $radius-sm;
   padding: 0.85rem 1rem;
-  cursor: pointer;
-  transition: transform 0.15s ease, box-shadow 0.15s ease;
 
-  &:hover,
-  &:focus-visible {
-    transform: translateY(-1px);
-    box-shadow: $shadow-soft;
-    outline: 2px solid rgba($color-primary, 0.25);
-    outline-offset: 2px;
-  }
-
-  h3 {
-    margin: 0 0 0.25rem;
-    font-size: 1rem;
+  &.cancelled {
+    opacity: 0.75;
   }
 }
 
-.ads-card-side {
+.card-top {
   display: flex;
-  align-items: center;
+  justify-content: space-between;
+  align-items: flex-start;
   gap: 0.75rem;
-  flex-shrink: 0;
+  margin-bottom: 0.5rem;
+
+  h3 {
+    margin: 0;
+    font-size: 1rem;
+  }
 }
 
 .meta {
@@ -139,38 +145,48 @@
   font-size: 0.9rem;
 }
 
-.services {
-  display: flex;
-  gap: 0.5rem;
-  flex-wrap: wrap;
-  margin-top: 0.5rem;
-
-  span {
-    background: rgba($color-primary, 0.1);
-    color: $color-primary;
-    font-size: 0.75rem;
-    padding: 0.15rem 0.45rem;
-    border-radius: $radius-sm;
-  }
-}
-
 .status {
   font-size: 0.75rem;
   padding: 0.2rem 0.5rem;
   border-radius: $radius-sm;
-  background: rgba(#27ae60, 0.12);
-  color: #1e8449;
   white-space: nowrap;
 
-  &.inactive {
+  &.confirmed {
+    background: rgba(#27ae60, 0.12);
+    color: #1e8449;
+  }
+
+  &.cancelled {
     background: rgba(#c0392b, 0.12);
     color: #c0392b;
   }
 }
 
-.arrow {
-  color: $color-primary;
-  font-size: 1.25rem;
+.booking-card-actions {
+  flex-shrink: 0;
+  align-self: center;
+}
+
+.btn-panel-danger {
+  white-space: nowrap;
+  background-color: $color-error;
+  color: $color-white;
+  border: none;
+  padding: $space-xs $space-lg;
+  font-weight: $font-weight-semibold;
+  border-radius: $radius-sm;
+  box-shadow: $shadow-strong;
+  transition: all 0.2s ease;
+  cursor: pointer;
+
+  &:hover:not(:disabled) {
+    background-color: darken($color-error, 8%);
+  }
+
+  &:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+  }
 }
 
 .loading-msg,
@@ -214,38 +230,34 @@
 }
 
 @media (max-width: $bp-sm) {
-  .dashboard-hero,
-  .page-header {
+  .page-hero {
     flex-direction: column;
     align-items: stretch;
   }
 
-  .hero-actions {
-    width: 100%;
+  .filter-actions {
     flex-direction: column;
   }
 
-  .hero-actions .btn {
+  .filter-actions .btn {
     width: 100%;
-    text-align: center;
   }
 
-  .page-header .btn {
-    width: 100%;
-    text-align: center;
-  }
-
-  .ads-list-scroll {
-    max-height: min(45vh, calc(100dvh - 26rem));
-  }
-
-  .ads-card {
+  .booking-card {
     flex-direction: column;
-    align-items: stretch;
   }
 
-  .ads-card-side {
-    justify-content: space-between;
+  .booking-card-actions {
+    width: 100%;
+    align-self: stretch;
+  }
+
+  .btn-panel-danger {
+    width: 100%;
+  }
+
+  .bookings-list-scroll {
+    max-height: min(45vh, calc(100dvh - 28rem));
   }
 
   .pagination {

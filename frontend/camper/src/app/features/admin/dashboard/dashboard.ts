@@ -1,10 +1,10 @@
-import { Component, inject, OnInit } from '@angular/core';
+import { Component, ElementRef, OnInit, ViewChild, inject } from '@angular/core';
+import { CommonModule } from '@angular/common';
+import { Router, RouterLink } from '@angular/router';
+import { TranslateModule } from '@ngx-translate/core';
 import { Admin } from '../../../core/services/admin';
 import { Auth } from '../../../core/services/auth';
-import { RouterLink } from '@angular/router';
 import { Parking } from '../../../core/models/parking';
-import { CommonModule } from '@angular/common';
-import { TranslateModule } from '@ngx-translate/core';
 
 @Component({
   selector: 'app-dashboard',
@@ -13,11 +13,18 @@ import { TranslateModule } from '@ngx-translate/core';
   styleUrl: './dashboard.scss',
 })
 export class Dashboard implements OnInit {
+  @ViewChild('adsListScroll') adsListScroll?: ElementRef<HTMLElement>;
+
   private adminService = inject(Admin);
   private authService = inject(Auth);
+  private router = inject(Router);
+
+  readonly adsPageSize = 8;
 
   parkings: Parking[] = [];
+  adsCurrentPage = 1;
   isLoading = true;
+  errorMessage = '';
   userName = '';
 
   ngOnInit() {
@@ -26,20 +33,70 @@ export class Dashboard implements OnInit {
     this.loadParkings();
   }
 
+  get adsTotalPages(): number {
+    return Math.max(1, Math.ceil(this.parkings.length / this.adsPageSize));
+  }
+
+  get paginatedAds(): Parking[] {
+    const start = (this.adsCurrentPage - 1) * this.adsPageSize;
+    return this.parkings.slice(start, start + this.adsPageSize);
+  }
+
+  get adsPageRangeStart(): number {
+    if (this.parkings.length === 0) {
+      return 0;
+    }
+    return (this.adsCurrentPage - 1) * this.adsPageSize + 1;
+  }
+
+  get adsPageRangeEnd(): number {
+    return Math.min(this.adsCurrentPage * this.adsPageSize, this.parkings.length);
+  }
+
   loadParkings() {
+    this.isLoading = true;
+    this.errorMessage = '';
+
     this.adminService.getParkings().subscribe({
       next: (data) => {
         this.parkings = data;
+        this.clampAdsCurrentPage();
         this.isLoading = false;
       },
-      error: (err) => {
-        console.error(err);
+      error: () => {
+        this.errorMessage = 'ADMIN_DASHBOARD.ERRORS.LOAD_ADS';
         this.isLoading = false;
-      }
+      },
     });
+  }
+
+  openManageParking(parking: Parking) {
+    this.router.navigate(['/admin/parking', parking.id]);
+  }
+
+  goToAdsPage(page: number) {
+    if (page < 1 || page > this.adsTotalPages || page === this.adsCurrentPage) {
+      return;
+    }
+    this.adsCurrentPage = page;
+    this.adsListScroll?.nativeElement.scrollTo({ top: 0, behavior: 'smooth' });
+  }
+
+  prevAdsPage() {
+    this.goToAdsPage(this.adsCurrentPage - 1);
+  }
+
+  nextAdsPage() {
+    this.goToAdsPage(this.adsCurrentPage + 1);
   }
 
   logout() {
     this.authService.logoutAdmin();
+  }
+
+  private clampAdsCurrentPage() {
+    if (this.adsCurrentPage > this.adsTotalPages) {
+      this.adsCurrentPage = this.adsTotalPages;
+    }
   }
 }

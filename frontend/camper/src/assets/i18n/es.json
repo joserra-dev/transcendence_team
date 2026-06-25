@@ -28,7 +28,8 @@
     "MANAGE_USERS": "Gestionar usuarios",
     "MANAGE_COMPANIES": "Gestionar empresas",
     "COMPANY_PARKINGS": "Parkings de empresa",
-    "EDIT_COMPANY": "Editar empresa"
+    "EDIT_COMPANY": "Editar empresa",
+    "MANAGE_BOOKINGS": "Gestionar reservas"
   },
 
   "FOOTER": {
@@ -281,13 +282,20 @@
     "ADMIN_TITLE": "Panel de administrador",
     "WELCOME": "Hola, {{name}}",
     "SUPER_DESC": "Gestiona anuncios, usuarios, permisos de admin y clientes finales.",
-    "ADMIN_DESC": "Gestiona los anuncios de tu empresa y las reservas de clientes.",
+    "ADMIN_DESC": "Gestiona los anuncios de parkings y las reservas de tu empresa.",
+    "ADS_SECTION_TITLE": "Mis anuncios",
+    "ADS_SECTION_DESC": "Consulta, edita y publica los parkings de tu empresa.",
+    "ADS_PAGINATION_LABEL": "Paginación de anuncios",
+    "MANAGE_BOOKINGS": "Gestionar reservas",
     "MANAGE_ADS": "Anuncios de parkings",
     "MANAGE_ADS_DESC": "Crear, editar y publicar anuncios de autocaravanas.",
     "MANAGE_USERS": "Usuarios y permisos",
     "MANAGE_USERS_DESC": "Crear usuarios, asignar admins y gestionar accesos.",
     "ACTIVE": "Activo",
-    "INACTIVE": "Inactivo"
+    "INACTIVE": "Inactivo",
+    "ERRORS": {
+      "LOAD_ADS": "No se pudieron cargar tus anuncios."
+    }
   },
 
   "ADMIN_USERS": {
@@ -325,7 +333,7 @@
     "ACTIONS": "Acciones",
     "NO_COMPANY": "—",
     "EMPTY_FILTERED": "No hay usuarios que coincidan con los filtros seleccionados.",
-    "SUCCESS_CREATE": "Usuario creado correctamente.",
+    "SUCCESS_CREATE": "Usuario creado. Se ha enviado un correo de verificación.",
     "SUCCESS_UPDATE": "Usuario actualizado correctamente.",
     "SUCCESS_PROMOTE": "Permisos de admin concedidos.",
     "SUCCESS_REVOKE": "Permisos de admin revocados.",
@@ -390,7 +398,7 @@
     "USERS_DESC": "Perfiles vinculados a esta empresa.",
     "NO_USERS": "No hay usuarios vinculados a esta empresa.",
     "EDIT_USER": "Editar perfil",
-    "SUCCESS_CREATE": "Empresa y administrador creados correctamente.",
+    "SUCCESS_CREATE": "Empresa y administrador creados. Se ha enviado un correo de verificación al admin.",
     "SUCCESS_UPDATE": "Empresa actualizada correctamente.",
     "SUCCESS_ADMIN_UPDATE": "Administrador actualizado correctamente.",
     "SUCCESS_USER_UPDATE": "Usuario actualizado correctamente.",
@@ -424,6 +432,30 @@
     "MANAGE": "Gestionar"
   },
 
+  "ADMIN_BOOKINGS": {
+    "TITLE": "Reservas de clientes",
+    "SUBTITLE": "Consulta y gestiona las reservas de tus parkings",
+    "BACK": "Volver al panel",
+    "LOADING": "Cargando reservas...",
+    "EMPTY": "No hay reservas con los filtros seleccionados.",
+    "CUSTOMER": "Cliente",
+    "PLATE": "Matrícula",
+    "CANCEL": "Cancelar reserva",
+    "FILTER_FROM": "Desde",
+    "FILTER_TO": "Hasta",
+    "FILTER_PARKING": "Parking",
+    "FILTER_STATUS": "Estado",
+    "FILTER_PLATE": "Matrícula",
+    "PLATE_PLACEHOLDER": "Ej. 1234ABC",
+    "PAGINATION_LABEL": "Paginación de reservas",
+    "CONFIRM_CANCEL": "¿Cancelar la reserva #{{ref}} en {{parking}}?",
+    "SUCCESS_CANCEL": "Reserva cancelada correctamente.",
+    "ERRORS": {
+      "LOAD": "No se pudieron cargar las reservas.",
+      "CANCEL": "Error al cancelar la reserva."
+    }
+  },
+
   "MANAGE_PARKING": {
     "NEW": "Nuevo Parking",
     "EDIT": "Gestionar Parking",
@@ -453,6 +485,9 @@
     "NO_SPOTS": "Este parking no tiene plazas creadas.",
     "CANCEL": "Cancelar",
     "SAVE_SPOT": "Guardar plaza",
+    "DELETE": "Eliminar anuncio",
+    "DELETING": "Eliminando...",
+    "CONFIRM_DELETE": "¿Eliminar el anuncio \"{{name}}\"? Se borrarán también sus plazas y reservas asociadas.",
     "SUCCESS_UPDATE": "Parking actualizado correctamente",
     "SUCCESS_CREATE": "Parking creado correctamente",
     "SUCCESS_CREATE_SPOT": "Plaza creada correctamente",
@@ -461,7 +496,8 @@
       "CREATE": "Error al crear el parking",
       "UPDATE": "Error al actualizar el parking. Inténtalo de nuevo.",
       "CREATE_SPOT": "Error al crear la plaza en el servidor.",
-      "UPDATE_SPOT": "Error al actualizar la plaza en el servidor."
+      "UPDATE_SPOT": "Error al actualizar la plaza en el servidor.",
+      "DELETE": "Error al eliminar el parking."
     }
   }
 }

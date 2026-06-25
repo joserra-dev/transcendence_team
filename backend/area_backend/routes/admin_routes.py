@@ -1,13 +1,16 @@
 from datetime import date
+import secrets
 
 from flask import Blueprint, jsonify, request
 from werkzeug.security import generate_password_hash
 
 from database import db
+from models.booking import Booking
 from models.company import Company
 from models.parking import Parking
 from models.space import Space
 from models.users import Profiles, UserRole, Users
+from services.email_services import EmailService
 from utils.admin_auth import require_admin, require_super_admin
 
 admin_bp = Blueprint('admin_bp', __name__, url_prefix='/api/admin')
@@ -82,6 +85,67 @@ def _can_manage_parking(profile: Profiles, parking: Parking) -> bool:
     return profile.role == UserRole.ADMIN and profile.company_id == parking.id_company
 
 
+def _booking_query_for_profile(profile: Profiles):
+    query = Booking.query.join(Space).join(Parking)
+    if profile.role == UserRole.ADMIN:
+        if not profile.company_id:
+            return query.filter(False)
+        query = query.filter(Parking.id_company == profile.company_id)
+    return query
+
+
+def _can_manage_booking(profile: Profiles, booking: Booking) -> bool:
+    space = booking.space
+    if not space or not space.parking:
+        return False
+    return _can_manage_parking(profile, space.parking)
+
+
+def _booking_to_admin_dict(booking: Booking) -> dict:
+    days = 1
+    if booking.start_date and booking.end_date:
+        days = (booking.end_date - booking.start_date).days + 1
+
+    space = booking.space
+    parking_name = ""
+    parking_id = 0
+    space_name = ""
+    price = 0.0
+    if space:
+        space_name = space.name or ""
+        price = float(space.price or 0)
+        parking = space.parking
+        if parking:
+            parking_name = parking.name or ""
+            parking_id = parking.id
+
+    total_price = float(booking.total_price) if booking.total_price else days * price
+    user = booking.user
+    user_email = user.email if user else ""
+    user_name = ""
+    if user and user.profile:
+        user_name = f"{user.profile.name or ''} {user.profile.last_name or ''}".strip()
+
+    return {
+        "id": booking.id,
+        "userId": booking.id_user,
+        "userEmail": user_email,
+        "userName": user_name,
+        "spaceId": booking.id_space,
+        "spaceName": space_name,
+        "parkingId": parking_id,
+        "parkingName": parking_name,
+        "price": price,
+        "totalPrice": total_price,
+        "startDate": booking.start_date.isoformat() if booking.start_date else None,
+        "endDate": booking.end_date.isoformat() if booking.end_date else None,
+        "createDate": booking.created_at.strftime('%Y-%m-%d %H:%M:%S') if booking.created_at else None,
+        "status": booking.status,
+        "rating": float(booking.rating) if booking.rating is not None else None,
+        "licensePlate": booking.license_plate,
+    }
+
+
 def _user_to_admin_dict(user: Users) -> dict:
     profile = user.profile
     return {
@@ -95,6 +159,17 @@ def _user_to_admin_dict(user: Users) -> dict:
         "companyId": profile.company_id if profile else None,
         "companyName": profile.company.name if profile and profile.company else None,
     }
+
+
+def _create_pending_user(email: str, password: str) -> tuple[Users, str]:
+    verification_token = secrets.token_urlsafe(32)
+    user = Users(
+        email=email,
+        pass_user=generate_password_hash(password),
+        is_verified=False,
+        verification_token=verification_token,
+    )
+    return user, verification_token
 
 
 def _company_to_admin_dict(company: Company) -> dict:
@@ -198,6 +273,22 @@ def update_parking(_user, profile):
     return jsonify(_parking_to_admin_dict(parking)), 200
 
 
+@admin_bp.route('/parking/<int:parking_id>', methods=['DELETE'])
+@require_admin
+def delete_parking(_user, profile, parking_id):
+    parking = Parking.query.get(parking_id)
+    if not parking:
+        return jsonify({"error": "Parking no encontrado"}), 404
+    if not _can_manage_parking(profile, parking):
+        return jsonify({"error": "No autorizado"}), 403
+
+    for space in list(parking.spaces):
+        db.session.delete(space)
+    db.session.delete(parking)
+    db.session.commit()
+    return jsonify({"mensaje": "Parking eliminado correctamente"}), 200
+
+
 @admin_bp.route('/parking/<int:parking_id>/space', methods=['POST'])
 @require_admin
 def create_spot(_user, profile, parking_id):
@@ -238,6 +329,54 @@ def update_spot(_user, profile, parking_id, spot_id):
     return jsonify(_space_to_admin_dict(space)), 200
 
 
+@admin_bp.route('/bookings', methods=['GET'])
+@require_admin
+def list_bookings(_user, profile):
+    query = _booking_query_for_profile(profile)
+
+    parking_id = request.args.get('parkingId', type=int)
+    if parking_id:
+        query = query.filter(Parking.id == parking_id)
+
+    company_id = request.args.get('companyId', type=int)
+    if company_id and profile.role == UserRole.SUPER_ADMIN:
+        query = query.filter(Parking.id_company == company_id)
+
+    status = request.args.get('status')
+    if status:
+        query = query.filter(Booking.status == status)
+
+    bookings = query.order_by(Booking.created_at.desc()).all()
+    return jsonify([_booking_to_admin_dict(b) for b in bookings]), 200
+
+
+@admin_bp.route('/bookings/<int:booking_id>', methods=['GET'])
+@require_admin
+def get_booking(_user, profile, booking_id):
+    booking = Booking.query.get(booking_id)
+    if not booking:
+        return jsonify({"error": "Reserva no encontrada"}), 404
+    if not _can_manage_booking(profile, booking):
+        return jsonify({"error": "No autorizado"}), 403
+    return jsonify(_booking_to_admin_dict(booking)), 200
+
+
+@admin_bp.route('/bookings/<int:booking_id>/cancel', methods=['PUT'])
+@require_admin
+def cancel_booking_admin(_user, profile, booking_id):
+    booking = Booking.query.get(booking_id)
+    if not booking:
+        return jsonify({"error": "Reserva no encontrada"}), 404
+    if not _can_manage_booking(profile, booking):
+        return jsonify({"error": "No autorizado"}), 403
+    if booking.status == '0':
+        return jsonify({"error": "La reserva ya está cancelada"}), 400
+
+    booking.status = '0'
+    db.session.commit()
+    return jsonify({"mensaje": "Reserva cancelada correctamente"}), 200
+
+
 @admin_bp.route('/companies', methods=['GET'])
 @require_super_admin
 def list_companies(_user, _profile):
@@ -270,11 +409,7 @@ def create_company(_user, _profile):
     db.session.add(company)
     db.session.flush()
 
-    user = Users(
-        email=email,
-        pass_user=generate_password_hash(password),
-        is_verified=True,
-    )
+    user, verification_token = _create_pending_user(email, password)
     db.session.add(user)
     db.session.flush()
 
@@ -288,7 +423,12 @@ def create_company(_user, _profile):
         company_id=company.id,
     )
     db.session.add(admin_profile)
-    db.session.commit()
+    try:
+        EmailService.welcome(email, verification_token)
+        db.session.commit()
+    except Exception:
+        db.session.rollback()
+        return jsonify({"error": "Error al enviar el correo de verificación"}), 500
 
     return jsonify(_company_to_admin_dict(company)), 201
 
@@ -393,11 +533,7 @@ def create_user(_user, _profile):
     if role == UserRole.SUPER_ADMIN:
         company_id = None
 
-    user = Users(
-        email=email,
-        pass_user=generate_password_hash(password),
-        is_verified=True,
-    )
+    user, verification_token = _create_pending_user(email, password)
     db.session.add(user)
     db.session.flush()
 
@@ -411,9 +547,17 @@ def create_user(_user, _profile):
         company_id=company_id,
     )
     db.session.add(profile)
-    db.session.commit()
+    try:
+        EmailService.welcome(email, verification_token)
+        db.session.commit()
+    except Exception:
+        db.session.rollback()
+        return jsonify({"error": "Error al enviar el correo de verificación"}), 500
 
-    return jsonify({"mensaje": "Usuario creado correctamente", "id": user.id}), 201
+    return jsonify({
+        "mensaje": "Usuario creado. Debe verificar su correo antes de iniciar sesión.",
+        "id": user.id,
+    }), 201
 
 
 @admin_bp.route('/users/<int:user_id>', methods=['PUT'])

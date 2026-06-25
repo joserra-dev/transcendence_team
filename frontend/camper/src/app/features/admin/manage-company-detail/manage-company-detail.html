@@ -82,7 +82,7 @@
             </p>
             <button
               *ngIf="user.role !== 'super_admin'"
-              class="btn btn-secondary"
+              class="btn btn-primary"
               type="button"
               (click)="startEditUser(user)">
               {{ 'ADMIN_COMPANIES.EDIT_USER' | translate }}
@@ -123,7 +123,7 @@
             </label>
             <div class="form-actions">
               <button class="btn btn-primary" type="submit">{{ 'ADMIN_COMPANIES.SAVE_USER' | translate }}</button>
-              <button class="btn btn-secondary" type="button" (click)="cancelEditUser()">
+              <button class="btn btn-primary" type="button" (click)="cancelEditUser()">
                 {{ 'ADMIN_COMPANIES.CANCEL' | translate }}
               </button>
             </div>

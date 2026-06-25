@@ -77,9 +77,17 @@
         </label>
       </div>
 
-      <div class="mt-4">
-        <button type="submit" class="btn btn-primary" [disabled]="isLoading">
+      <div class="mt-4 form-actions">
+        <button type="submit" class="btn btn-primary" [disabled]="isLoading || isDeleting">
           {{ isLoading ? ('MANAGE_PARKING.SAVING' | translate) : ('MANAGE_PARKING.SAVE' | translate) }}
+        </button>
+        <button
+          *ngIf="isEditMode"
+          type="button"
+          class="btn btn-danger"
+          [disabled]="isLoading || isDeleting"
+          (click)="deleteParking()">
+          {{ isDeleting ? ('MANAGE_PARKING.DELETING' | translate) : ('MANAGE_PARKING.DELETE' | translate) }}
         </button>
       </div>
     </section>

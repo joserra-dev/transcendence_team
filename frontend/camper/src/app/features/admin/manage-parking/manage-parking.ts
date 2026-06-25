@@ -5,7 +5,7 @@ import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { Admin } from '../../../core/services/admin';
 import { Auth } from '../../../core/services/auth';
 import { Parking, Space } from '../../../core/models/parking';
-import { TranslateModule } from '@ngx-translate/core';
+import { TranslateModule, TranslateService } from '@ngx-translate/core';
 
 @Component({
   selector: 'app-manage-parking',
@@ -19,11 +19,13 @@ export class ManageParking implements OnInit {
   private authService = inject(Auth);
   private route = inject(ActivatedRoute);
   private router = inject(Router);
+  private translate = inject(TranslateService);
 
   parkingId: number | null = null;
   companyId: number | null = null;
   isEditMode = false;
   isLoading = false;
+  isDeleting = false;
 
   successMessage = '';
   errorMessage = '';
@@ -157,6 +159,31 @@ export class ManageParking implements OnInit {
         }
       });
     }
+  }
+
+  deleteParking() {
+    if (!this.parkingId || this.isDeleting) {
+      return;
+    }
+
+    const parkingName = this.parkingForm.get('nombreParking')?.value || '';
+    const msg = this.translate.instant('MANAGE_PARKING.CONFIRM_DELETE', { name: parkingName });
+    if (!confirm(msg)) {
+      return;
+    }
+
+    this.isDeleting = true;
+    this.clearMessages();
+
+    this.adminService.deleteParking(this.parkingId).subscribe({
+      next: () => {
+        this.router.navigate(this.backLink);
+      },
+      error: (err) => {
+        this.errorMessage = err.error?.error || 'MANAGE_PARKING.ERRORS.DELETE';
+        this.isDeleting = false;
+      },
+    });
   }
 
   // --- GESTIÓN DE PLAZAS ---

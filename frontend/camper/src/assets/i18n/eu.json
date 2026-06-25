@@ -28,7 +28,8 @@
     "MANAGE_USERS": "Erabiltzaileak kudeatu",
     "MANAGE_COMPANIES": "Enpresak kudeatu",
     "COMPANY_PARKINGS": "Enpresaren aparkalekuak",
-    "EDIT_COMPANY": "Enpresa editatu"
+    "EDIT_COMPANY": "Enpresa editatu",
+    "MANAGE_BOOKINGS": "Erreserbak kudeatu"
   },
 
   "FOOTER": {
@@ -281,13 +282,16 @@
     "ADMIN_TITLE": "Administratzaile panela",
     "WELCOME": "Kaixo, {{name}}",
     "SUPER_DESC": "Iragarkiak, erabiltzaileak, admin baimenak eta bezeroak kudeatu.",
-    "ADMIN_DESC": "Zure enpresaren iragarkiak eta erreserbak kudeatu.",
-    "MANAGE_ADS": "Aparkaleku iragarkiak",
-    "MANAGE_ADS_DESC": "Sortu, editatu eta argitaratu iragarkiak.",
-    "MANAGE_USERS": "Erabiltzaileak eta baimenak",
-    "MANAGE_USERS_DESC": "Sortu erabiltzaileak eta esleitu admin baimenak.",
+    "ADMIN_DESC": "Zure enpresaren aparkaleku iragarkiak eta bezeroen erreserbak kudeatu.",
+    "ADS_SECTION_TITLE": "Nire iragarkiak",
+    "ADS_SECTION_DESC": "Kontsultatu, editatu eta argitaratu zure enpresaren aparkalekuak.",
+    "ADS_PAGINATION_LABEL": "Iragarkien orrialdekatzea",
+    "MANAGE_BOOKINGS": "Erreserbak kudeatu",
     "ACTIVE": "Aktibo",
-    "INACTIVE": "Inaktibo"
+    "INACTIVE": "Inaktibo",
+    "ERRORS": {
+      "LOAD_ADS": "Ezin izan dira zure iragarkiak kargatu."
+    }
   },
 
   "ADMIN_USERS": {
@@ -325,7 +329,7 @@
     "ACTIONS": "Ekintzak",
     "NO_COMPANY": "—",
     "EMPTY_FILTERED": "Ez dago hautatutako iragazkiekin bat datorren erabiltzailerik.",
-    "SUCCESS_CREATE": "Erabiltzailea ongi sortu da.",
+    "SUCCESS_CREATE": "Erabiltzailea sortu da. Egiaztapen mezu bat bidali da.",
     "SUCCESS_UPDATE": "Erabiltzailea ongi eguneratu da.",
     "SUCCESS_PROMOTE": "Admin baimenak ongi eman dira.",
     "SUCCESS_REVOKE": "Admin baimenak ongi kendu dira.",
@@ -390,7 +394,7 @@
     "USERS_DESC": "Enpresa honi lotutako profilak.",
     "NO_USERS": "Ez dago erabiltzailerik enpresa honi lotuta.",
     "EDIT_USER": "Profila editatu",
-    "SUCCESS_CREATE": "Enpresa eta administratzailea ongi sortu dira.",
+    "SUCCESS_CREATE": "Enpresa eta administratzailea sortu dira. Egiaztapen mezu bat bidali zaio adminari.",
     "SUCCESS_UPDATE": "Enpresa ongi eguneratu da.",
     "SUCCESS_ADMIN_UPDATE": "Administratzailea ongi eguneratu da.",
     "SUCCESS_USER_UPDATE": "Erabiltzailea ongi eguneratu da.",
@@ -424,6 +428,30 @@
     "MANAGE": "Kudeatu"
   },
 
+  "ADMIN_BOOKINGS": {
+    "TITLE": "Bezeroen erreserbak",
+    "SUBTITLE": "Kontsultatu eta kudeatu zure aparkalekuen erreserbak",
+    "BACK": "Panelera itzuli",
+    "LOADING": "Erreserbak kargatzen...",
+    "EMPTY": "Ez dago hautatutako iragazkiekin bat datorren erreserbarik.",
+    "CUSTOMER": "Bezeroa",
+    "PLATE": "Matrikula",
+    "CANCEL": "Erreserba utzi",
+    "FILTER_FROM": "Noiztik",
+    "FILTER_TO": "Noiz arte",
+    "FILTER_PARKING": "Aparkalekua",
+    "FILTER_STATUS": "Egoera",
+    "FILTER_PLATE": "Matrikula",
+    "PLATE_PLACEHOLDER": "Adib. 1234ABC",
+    "PAGINATION_LABEL": "Erreserben orrialdekatzea",
+    "CONFIRM_CANCEL": "Utzi #{{ref}} erreserba {{parking}} aparkalekuan?",
+    "SUCCESS_CANCEL": "Erreserba ongi utzi da.",
+    "ERRORS": {
+      "LOAD": "Ezin izan dira erreserbak kargatu.",
+      "CANCEL": "Errorea erreserba uztean."
+    }
+  },
+
   "MANAGE_PARKING": {
     "NEW": "Aparkaleku Berria",
     "EDIT": "Aparkalekua Kudeatu",
@@ -453,6 +481,9 @@
     "NO_SPOTS": "Aparkaleku honek ez du plazarik sortuta.",
     "CANCEL": "Utzi",
     "SAVE_SPOT": "Gorde plaza",
+    "DELETE": "Iragarkia ezabatu",
+    "DELETING": "Ezabatzen...",
+    "CONFIRM_DELETE": "\"{{name}}\" iragarkia ezabatu? Bere plazak eta erlazionatutako erreserbak ere ezabatuko dira.",
     "SUCCESS_UPDATE": "Aparkalekua eguneratu da",
     "SUCCESS_CREATE": "Aparkalekua sortu da",
     "SUCCESS_CREATE_SPOT": "Plaza sortu da",
@@ -461,7 +492,8 @@
       "CREATE": "Errorea aparkalekua sortzean",
       "UPDATE": "Errorea aparkalekua eguneratzean. Saiatu berriro.",
       "CREATE_SPOT": "Errorea plaza sortzean.",
-      "UPDATE_SPOT": "Errorea plaza eguneratzean."
+      "UPDATE_SPOT": "Errorea plaza eguneratzean.",
+      "DELETE": "Errorea aparkalekua ezabatzean."
     }
   }
 }

@@ -5,6 +5,7 @@ import { ManageUsers } from './manage-users/manage-users';
 import { ManageCompanies } from './manage-companies/manage-companies';
 import { ManageCompanyDetail } from './manage-company-detail/manage-company-detail';
 import { CompanyParkings } from './company-parkings/company-parkings';
+import { ManageBookings } from './manage-bookings/manage-bookings';
 import { adminGuard, adminOnlyGuard, superAdminGuard } from '../../core/guards/admin.guard';
 
 export const ADMIN_ROUTES: Routes = [
@@ -47,6 +48,13 @@ export const ADMIN_ROUTES: Routes = [
     title: 'Gestionar usuarios',
     canActivate: [superAdminGuard],
     data: { breadcrumb: 'BREADCRUMB.MANAGE_USERS' },
+  },
+  {
+    path: 'bookings',
+    component: ManageBookings,
+    title: 'Gestionar reservas',
+    canActivate: [adminOnlyGuard],
+    data: { breadcrumb: 'BREADCRUMB.MANAGE_BOOKINGS' },
   },
   {
     path: 'parking/new',
