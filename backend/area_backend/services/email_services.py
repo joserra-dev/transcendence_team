@@ -56,11 +56,13 @@ class EmailService:
         Método especializado (ejemplo) para correos de bienvenida.
         Mantiene limpia la lógica de tus vistas/rutas.
         """
+        actual_locale = get_locale()
+        idioma = actual_locale.language 
         
         base_url = os.getenv('URL_BACK')
         verification_url = f"{base_url}/api/users/verify?token={token}"
         html_content = render_template(
-            'email/bienvenida.html', 
+            f'email/{idioma}/bienvenida.html', 
             nombre=destinatario, 
             email=destinatario,
             verification_url=verification_url
@@ -74,9 +76,11 @@ class EmailService:
     
     @classmethod
     def booking(cls, destinatario: str, user_name: str, booking_code: str, service_detail: str, booking_date: str, total_paid: str, management_url: str):
-        asunto = "HEMEN-GO - Reserva confirmada"
+        actual_locale = get_locale()
+        idioma = actual_locale.language 
+        asunto = _("HEMEN-GO - Reserva confirmada")
         html_content = render_template(
-            'email/booking.html',
+            f'email/{idioma}/booking.html',
             nombre=user_name,
             codigo_reserva=booking_code,
             detalle_servicio=service_detail,
