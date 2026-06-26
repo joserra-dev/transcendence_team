@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PROJECT VERSION\n"
 "Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
-"POT-Creation-Date: 2026-06-23 18:44+0200\n"
+"POT-Creation-Date: 2026-06-26 17:52+0200\n"
 "PO-Revision-Date: 2026-06-21 17:18+0000\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language: eu\n"
@@ -18,50 +18,114 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Generated-By: Babel 2.8.0\n"
 
-#: routes/admin_routes.py:30 routes/users_routes.py:404
-msgid "No tienes permisos de administrador"
-msgstr "Ez duzu administratzaile baimenik"
-
-#: routes/admin_routes.py:154 routes/admin_routes.py:349
-#: routes/admin_routes.py:440 routes/admin_routes.py:585
-#: routes/parking_routes.py:152
-msgid "Parking no encontrado"
-msgstr "Aparkalekua ez da aurkitu"
-
-#: routes/admin_routes.py:157 routes/admin_routes.py:352
-#: routes/admin_routes.py:443 routes/admin_routes.py:528
-#: routes/admin_routes.py:642
-msgid "No tienes permiso para gestionar este parking"
-msgstr "Ez duzu aparkaleku hau kudeatzeko baimenik"
-
-#: routes/admin_routes.py:447
-msgid "El nombre de la plaza es obligatorio"
-msgstr "Plazaren izena nahitaezkoa da"
-
-#: routes/admin_routes.py:522 routes/admin_routes.py:636
-msgid "Parking o plaza no encontrada"
-msgstr "Aparkalekua edo plaza ez da aurkitu"
-
-#: routes/admin_routes.py:525 routes/admin_routes.py:639
-msgid "La plaza no pertenece a este parking"
-msgstr "Plaza ez dagokio aparkaleku honi"
-
-#: routes/admin_routes.py:581
+#: routes/admin_routes.py:261 routes/admin_routes.py:561
 msgid "Plaza no encontrada"
 msgstr "Plaza ez da aurkitu"
 
-#: routes/admin_routes.py:588
-msgid "No tienes permiso para gestionar esta plaza"
-msgstr "Ez duzu plaza hau kudeatzeko baimenik"
+#: routes/admin_routes.py:263 routes/admin_routes.py:299
+#: routes/admin_routes.py:420 routes/admin_routes.py:456
+#: routes/admin_routes.py:508 routes/admin_routes.py:557
+#: routes/admin_routes.py:642 routes/admin_routes.py:675
+msgid "No autorizado"
+msgstr ""
 
-#: routes/admin_routes.py:646
-msgid "Plaza eliminada correctamente"
-msgstr "Plaza modu egokian ezabatu da"
+#: routes/admin_routes.py:297 routes/admin_routes.py:418
+#: routes/admin_routes.py:454 routes/admin_routes.py:506
+#: routes/admin_routes.py:555 routes/parking_routes.py:156
+msgid "Parking no encontrado"
+msgstr "Aparkalekua ez da aurkitu"
 
+#: routes/admin_routes.py:353
+msgid "Nombre, municipio y email son obligatorios"
+msgstr ""
+
+#: routes/admin_routes.py:363
+msgid "No hay empresas registradas"
+msgstr ""
+
+#: routes/admin_routes.py:414
+msgid "idParking es obligatorio"
+msgstr ""
+
+#: routes/admin_routes.py:462
+msgid "Parking eliminado correctamente"
+msgstr ""
+
+#: routes/admin_routes.py:513
+msgid "El nombre de la plaza es obligatorio"
+msgstr "Plazaren izena nahitaezkoa da"
+
+#: routes/admin_routes.py:640 routes/admin_routes.py:673
 #: routes/booking_routes.py:92 routes/booking_routes.py:384
 #: routes/booking_routes.py:450 routes/booking_routes.py:508
 msgid "Reserva no encontrada"
 msgstr "Erreserba ez da aurkitu"
+
+#: routes/admin_routes.py:677
+msgid "La reserva ya está cancelada"
+msgstr ""
+
+#: routes/admin_routes.py:681 routes/booking_routes.py:393
+msgid "Reserva cancelada correctamente"
+msgstr "Erreserba modu egokian bertan behera utzi da"
+
+#: routes/admin_routes.py:755 routes/admin_routes.py:858
+msgid "El nombre de la empresa es obligatorio"
+msgstr ""
+
+#: routes/admin_routes.py:758
+msgid "Email y contraseña del administrador son obligatorios"
+msgstr ""
+
+#: routes/admin_routes.py:761 routes/admin_routes.py:1007
+#: routes/admin_routes.py:1087
+msgid "El email ya está registrado"
+msgstr ""
+
+#: routes/admin_routes.py:786 routes/admin_routes.py:1041
+msgid "Error al enviar el correo de verificación"
+msgstr ""
+
+#: routes/admin_routes.py:814 routes/admin_routes.py:853
+#: routes/admin_routes.py:891 routes/admin_routes.py:931
+msgid "Empresa no encontrada"
+msgstr ""
+
+#: routes/admin_routes.py:905
+msgid "Empresa eliminada correctamente"
+msgstr ""
+
+#: routes/admin_routes.py:1004
+msgid "Email y contraseña son obligatorios"
+msgstr ""
+
+#: routes/admin_routes.py:1018 routes/admin_routes.py:1111
+#: routes/admin_routes.py:1171
+msgid "Los admins deben pertenecer a una empresa"
+msgstr ""
+
+#: routes/admin_routes.py:1044
+msgid "Usuario creado. Debe verificar su correo antes de iniciar sesión."
+msgstr ""
+
+#: routes/admin_routes.py:1080 routes/admin_routes.py:1163
+#: routes/company_routes.py:65 routes/users_routes.py:134
+#: routes/users_routes.py:252 routes/users_routes.py:267
+#: routes/users_routes.py:445
+msgid "Usuario no encontrado"
+msgstr "Erabiltzailea ez da aurkitu"
+
+#: routes/admin_routes.py:1082 routes/admin_routes.py:1165
+msgid "No se puede modificar un superadministrador"
+msgstr ""
+
+#: routes/admin_routes.py:1105 routes/admin_routes.py:1159
+msgid "Rol no válido. Usa user o admin"
+msgstr ""
+
+#: routes/admin_routes.py:1177
+msgid "Permisos actualizados correctamente"
+msgstr ""
 
 #: routes/booking_routes.py:95 routes/booking_routes.py:137
 msgid "No tienes permiso para ver esta reserva"
@@ -96,7 +160,7 @@ msgstr ""
 "Mesedez, erabili beste matrikula bat edo aldatu datak."
 
 #: routes/booking_routes.py:376 routes/booking_routes.py:440
-#: routes/booking_routes.py:500 routes/users_routes.py:267
+#: routes/booking_routes.py:500 routes/users_routes.py:271
 msgid "Petición inválida"
 msgstr "Eskaera baliogabea"
 
@@ -107,10 +171,6 @@ msgstr "idReserva falta da"
 #: routes/booking_routes.py:388
 msgid "No tienes permiso para cancelar esta reserva"
 msgstr "Ez duzu baimenik erreserba hau bertan behera uzteko"
-
-#: routes/booking_routes.py:393
-msgid "Reserva cancelada correctamente"
-msgstr "Erreserba modu egokian bertan behera utzi da"
 
 #: routes/booking_routes.py:454
 msgid "No tienes permiso para puntuar esta reserva"
@@ -124,105 +184,129 @@ msgstr "Puntuazioa modu egokian gorde da"
 msgid "No tienes permiso para ver el QR de esta reserva"
 msgstr "Ez duzu baimenik erreserba honen QR kodea ikusteko"
 
-#: routes/company_routes.py:65 routes/users_routes.py:130
-#: routes/users_routes.py:248 routes/users_routes.py:263
-#: routes/users_routes.py:440
-msgid "Usuario no encontrado"
-msgstr "Erabiltzailea ez da aurkitu"
-
 #: routes/space_routes.py:65
 msgid "Plaza no existe"
 msgstr "Plaza ez da existitzen"
 
-#: routes/users_routes.py:181
+#: routes/users_routes.py:185
 msgid "Todos los campos son obligatorios (email, password, confirmPassword)"
 msgstr "Eremu guztiak nahitaezkoak dira (email, password, confirmPassword)"
 
-#: routes/users_routes.py:184 routes/users_routes.py:559
+#: routes/users_routes.py:188 routes/users_routes.py:564
 msgid "Las contraseñas introducidas no coinciden"
 msgstr "Sartutako pasahitzak ez datoz bat"
 
-#: routes/users_routes.py:192
+#: routes/users_routes.py:196
 msgid "Este email ya está registrado"
 msgstr "E-posta hau dagoeneko erregistratuta dago"
 
-#: routes/users_routes.py:206
+#: routes/users_routes.py:210
 msgid "Error al registrar el usuario"
 msgstr "Errorea erabiltzailea erregistratzean"
 
-#: routes/users_routes.py:211
+#: routes/users_routes.py:215
 msgid "Usuario registrado con éxito"
 msgstr "Erabiltzailea ongi erregistru da"
 
-#: routes/users_routes.py:216
+#: routes/users_routes.py:220
 msgid "Error al enviar el mail de bienvenida"
 msgstr "Errorea ongi etorri e-posta bidaltzean"
 
-#: routes/users_routes.py:253
+#: routes/users_routes.py:257
 msgid "Error al obtener los datos del usuario"
 msgstr "Errorea erabiltzailearen datuak lortzean"
 
-#: routes/users_routes.py:303
+#: routes/users_routes.py:299
+msgid "El documento de identidad no valido"
+msgstr ""
+
+#: routes/users_routes.py:308
 msgid "Perfil actualizado correctamente"
 msgstr "Profila modu egokian eguneratu da"
 
-#: routes/users_routes.py:354 routes/users_routes.py:390
+#: routes/users_routes.py:359 routes/users_routes.py:395
 msgid "Todos los campos son obligatorios (email, password)"
 msgstr "Eremu guztiak nahitaezkoak dira (email, password)"
 
-#: routes/users_routes.py:360 routes/users_routes.py:364
-#: routes/users_routes.py:394 routes/users_routes.py:397
+#: routes/users_routes.py:365 routes/users_routes.py:369
+#: routes/users_routes.py:399 routes/users_routes.py:402
 msgid "Credenciales incorrectas"
 msgstr "Kredentzial okerrak"
 
-#: routes/users_routes.py:368 routes/users_routes.py:400
+#: routes/users_routes.py:373 routes/users_routes.py:405
 msgid "Debes verificar tu correo electrónico antes de iniciar sesión"
 msgstr "Saioa hasi baino lehen zure e-posta egiaztatu behar duzu"
 
-#: routes/users_routes.py:372
+#: routes/users_routes.py:377
 msgid "Debes iniciar sesión desde el acceso de administrador"
 msgstr "Administratzailearen sarbidetik hasi behar duzu saioa"
 
-#: routes/users_routes.py:377 routes/users_routes.py:408
+#: routes/users_routes.py:382 routes/users_routes.py:413
 msgid "¡Login exitoso!"
 msgstr "Saio-hasiera arrakastatsua!"
 
-#: routes/users_routes.py:491
+#: routes/users_routes.py:409
+msgid "No tienes permisos de administrador"
+msgstr "Ez duzu administratzaile baimenik"
+
+#: routes/users_routes.py:496
 msgid "El campo email es obligatorio"
 msgstr "E-posta eremua nahitaezkoa da"
 
-#: routes/users_routes.py:506 routes/users_routes.py:519
-#: routes/users_routes.py:572
+#: routes/users_routes.py:511 routes/users_routes.py:524
+#: routes/users_routes.py:577
 msgid "Error interno al procesar la solicitud"
 msgstr "Barne errorea eskaera prozesatzean"
 
-#: routes/users_routes.py:521
+#: routes/users_routes.py:526
 msgid "Si el correo existe, se enviarán las instrucciones."
 msgstr "E-posta existitzen bada, argibideak bidaliko dira."
 
-#: routes/users_routes.py:556
+#: routes/users_routes.py:561
 msgid "token, password y confirmPassword son obligatorios"
 msgstr "token, password eta confirmPassword nahitaezkoak dira"
 
-#: routes/users_routes.py:563
+#: routes/users_routes.py:568
 msgid "El enlace de recuperación no es válido o ha caducado"
 msgstr "Berreskuratzeko esteka ez da baliozkoa edo iraungi egin da"
 
-#: routes/users_routes.py:570
+#: routes/users_routes.py:575
 msgid "Contraseña actualizada correctamente"
 msgstr "Pasahitza modu egokian eguneratu da"
 
-#: routes/users_routes.py:604
+#: routes/users_routes.py:609
 msgid "Falta el token de verificación."
 msgstr "Egiaztapen-tokena falta da."
 
-#: routes/users_routes.py:612
+#: routes/users_routes.py:617
 msgid "El token no es válido o ya ha sido utilizado."
 msgstr "Tokena ez da baliozkoa edo dagoeneko erabili da."
 
-#: routes/users_routes.py:622
+#: routes/users_routes.py:627
 msgid "¡Cuenta verificada con éxito! Ya puedes iniciar sesión."
 msgstr "Kontua ongi egiaztatu da! Saioa has dezakezu orain."
+
+#: services/email_services.py:103
+msgid "HEMEN-GO - Recuperar acceso a tu cuenta"
+msgstr "HEMEN-GO - Sarbidea berreskuratu"
+
+#: services/email_services.py:113
+#, python-format
+msgid ""
+"Hola %(user_name)s,\n"
+"\n"
+"Hemos recibido una solicitud para restablecer tu contraseña en HEMEN-GO.\n"
+"Abre este enlace para crear una nueva contraseña:\n"
+"%(recovery_url)s\n"
+"\n"
+"El enlace caduca en 1 hora.\n"
+"Si no solicitaste este cambio, ignora este correo."
+msgstr ""
+"Kaixo %(user_name)s,\n\n"
+"Zure HEMEN-GO kontuko pasahitza berrezartzeko eskaera jaso dugu.\n"
+"Ireki esteka hau pasahitz berri bat sortzeko:\n%(recovery_url)s\n\n"
+"Esteka hau ordu 1 barru iraungiko da.\n"
+"Aldaketa hau eskatu ez baduzu, mezu honi jaramonik ez egin."
 
 #: utils/password_validator.py:18
 msgid "La contraseña no puede estar vacía."
@@ -263,3 +347,19 @@ msgstr "Pasahitzak ez du eskatutako segurtasun-formatua betetzen."
 #: utils/password_validator.py:56
 msgid "Contraseña válida."
 msgstr "Pasahitz baliozkoa."
+
+#~ msgid "No tienes permiso para gestionar este parking"
+#~ msgstr "Ez duzu aparkaleku hau kudeatzeko baimenik"
+
+#~ msgid "Parking o plaza no encontrada"
+#~ msgstr "Aparkalekua edo plaza ez da aurkitu"
+
+#~ msgid "La plaza no pertenece a este parking"
+#~ msgstr "Plaza ez dagokio aparkaleku honi"
+
+#~ msgid "No tienes permiso para gestionar esta plaza"
+#~ msgstr "Ez duzu plaza hau kudeatzeko baimenik"
+
+#~ msgid "Plaza eliminada correctamente"
+#~ msgstr "Plaza modu egokian ezabatu da"
+

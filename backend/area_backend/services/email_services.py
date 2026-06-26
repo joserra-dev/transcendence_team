@@ -4,6 +4,7 @@ import smtplib
 
 from flask import current_app, render_template
 from flask_mailman import EmailMessage
+from flask_babel import _, get_locale   
 import os
 
 class EmailService:
@@ -55,6 +56,7 @@ class EmailService:
         Método especializado (ejemplo) para correos de bienvenida.
         Mantiene limpia la lógica de tus vistas/rutas.
         """
+        
         base_url = os.getenv('URL_BACK')
         verification_url = f"{base_url}/api/users/verify?token={token}"
         html_content = render_template(
@@ -94,17 +96,28 @@ class EmailService:
 
     @classmethod
     def forgot(cls, destinatario: str, user_name: str, recovery_url: str):
-        asunto = "HEMEN-GO - Recuperar acceso a tu cuenta"
+        actual_locale = get_locale()
+        idioma = actual_locale.language  # 'es', 'en', 'eu'
+
+        # 1. Asunto traducido automáticamente según el idioma actual
+        asunto = _("HEMEN-GO - Recuperar acceso a tu cuenta")
+
+        # 2. Renderizado de la plantilla HTML organizada por carpetas de idioma
         html_content = render_template(
-            'email/forgot.html',
+            f'email/{idioma}/forgot.html',
             user_name=user_name,
             recovery_url=recovery_url
         )
-        plain_txt = (
-            f"Hola {user_name},\n\n"
-            f"Hemos recibido una solicitud para restablecer tu contraseña en HEMEN-GO.\n"
-            f"Abre este enlace para crear una nueva contraseña:\n{recovery_url}\n\n"
-            f"El enlace caduca en 1 hora.\n"
-            f"Si no solicitaste este cambio, ignora este correo."
+
+        # 3. Texto plano utilizando la función de traducción con variables inyectadas
+        plain_txt = _(
+            "Hola %(user_name)s,\n\n"
+            "Hemos recibido una solicitud para restablecer tu contraseña en HEMEN-GO.\n"
+            "Abre este enlace para crear una nueva contraseña:\n%(recovery_url)s\n\n"
+            "El enlace caduca en 1 hora.\n"
+            "Si no solicitaste este cambio, ignora este correo.",
+            user_name=user_name,
+            recovery_url=recovery_url
         )
+
         return cls.base_mail(destinatario, asunto, html_content, plain_txt)
