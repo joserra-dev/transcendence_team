@@ -1,4 +1,4 @@
-<main class="page-wrapper manage-parking-page">
+<main class="manage-parking-page">
   <header class="d-flex justify-content-between align-items-start align-items-md-center mb-4 parking-header">
     <h1 class="page-title">
       {{ isEditMode ? ('MANAGE_PARKING.EDIT' | translate) : ('MANAGE_PARKING.NEW' | translate) }}
@@ -52,6 +52,29 @@
         <div class="col-12 col-md-6 form-group-standard">
           <label class="form-label-custom">{{ 'MANAGE_PARKING.PHONE' | translate }}</label>
           <input type="text" formControlName="telefonoParking">
+        </div>
+
+        <div class="col-12 col-md-6 form-group-standard">
+          <label class="form-label-custom">{{ 'MANAGE_PARKING.LATITUDE' | translate }}</label>
+          <input type="number" step="any" formControlName="latitudParking">
+        </div>
+
+        <div class="col-12 col-md-6 form-group-standard">
+          <label class="form-label-custom">{{ 'MANAGE_PARKING.LONGITUDE' | translate }}</label>
+          <input type="number" step="any" formControlName="longitudParking">
+        </div>
+
+        <div class="col-12 form-group-standard">
+          <label class="form-label-custom">{{ 'MANAGE_PARKING.DESCRIPTION' | translate }}</label>
+          <textarea
+            formControlName="descripcionParking"
+            maxlength="254"
+            rows="4"
+            [class.error-input]="parkingForm.get('descripcionParking')?.invalid && parkingForm.get('descripcionParking')?.touched">
+          </textarea>
+          <small class="char-counter">
+            {{ parkingForm.get('descripcionParking')?.value?.length || 0 }}/254
+          </small>
         </div>
       </div>
 

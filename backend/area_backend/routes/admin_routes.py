@@ -44,6 +44,24 @@ def _space_to_admin_dict(space: Space) -> dict:
     }
 
 
+def _optional_float(value):
+    if value is None or value == '':
+        return None
+    try:
+        return float(value)
+    except (TypeError, ValueError):
+        return None
+
+
+def _optional_description(value):
+    if value is None:
+        return None
+    text = str(value).strip()
+    if not text:
+        return None
+    return text[:254]
+
+
 def _map_parking_fields(data: dict) -> dict:
     return {
         "name": data.get("nombreParking"),
@@ -57,6 +75,9 @@ def _map_parking_fields(data: dict) -> dict:
         "has_electricity": data.get("tieneElectricidadParking", False),
         "has_waste_disposal": data.get("tieneResidualesParking", False),
         "has_vip_spots": data.get("tienePlazasVipParking", False),
+        "latitude": _optional_float(data.get("latitudParking")),
+        "longitude": _optional_float(data.get("longitudParking")),
+        "description": _optional_description(data.get("descripcionParking")),
     }
 
 

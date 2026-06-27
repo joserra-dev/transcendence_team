@@ -43,7 +43,10 @@ export class ManageParking implements OnInit {
     isActivoParking: [true],
     tieneElectricidadParking: [false],
     tieneResidualesParking: [false],
-    tienePlazasVipParking: [false]
+    tienePlazasVipParking: [false],
+    latitudParking: [''],
+    longitudParking: [''],
+    descripcionParking: ['', Validators.maxLength(254)]
   });
 
   plazas: Space[] = [];
@@ -105,7 +108,11 @@ export class ManageParking implements OnInit {
 
           tienePlazasVipParking: data.plazasVip || data.has_vip_spots,
 
-          isActivoParking: data.isActive !== undefined ? data.isActive : true
+          isActivoParking: data.isActive !== undefined ? data.isActive : true,
+
+          latitudParking: data.latitude ?? '',
+          longitudParking: data.longitude ?? '',
+          descripcionParking: data.description ?? ''
         });
 
         this.plazas = data.plazasResponse || data.spaces || [];
