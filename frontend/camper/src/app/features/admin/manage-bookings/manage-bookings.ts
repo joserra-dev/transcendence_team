@@ -2,15 +2,16 @@ import { Component, ElementRef, OnInit, ViewChild, inject } from '@angular/core'
 import { CommonModule } from '@angular/common';
 import { FormBuilder, FormGroup, ReactiveFormsModule } from '@angular/forms';
 import { RouterLink } from '@angular/router';
-import { TranslateModule, TranslateService } from '@ngx-translate/core';
+import { TranslateModule } from '@ngx-translate/core';
 import { Admin } from '../../../core/services/admin';
 import { Auth } from '../../../core/services/auth';
 import { AdminBooking } from '../../../core/models/booking';
 import { Parking } from '../../../core/models/parking';
+import { ConfirmDialog } from '../../../shared/components/confirm-dialog/confirm-dialog';
 
 @Component({
   selector: 'app-manage-bookings',
-  imports: [CommonModule, ReactiveFormsModule, RouterLink, TranslateModule],
+  imports: [CommonModule, ReactiveFormsModule, RouterLink, TranslateModule, ConfirmDialog],
   templateUrl: './manage-bookings.html',
   styleUrl: './manage-bookings.scss',
 })
@@ -20,7 +21,6 @@ export class ManageBookings implements OnInit {
   private adminService = inject(Admin);
   private authService = inject(Auth);
   private fb = inject(FormBuilder);
-  private translate = inject(TranslateService);
 
   readonly pageSize = 8;
 
@@ -32,6 +32,9 @@ export class ManageBookings implements OnInit {
   errorMessage = '';
   successMessage = '';
   cancellingId: number | null = null;
+  showCancelConfirm = false;
+  cancelConfirmParams: Record<string, string | number> = {};
+  private bookingPendingCancel: AdminBooking | null = null;
 
   filterForm: FormGroup = this.fb.group({
     fechaDesde: [''],
@@ -144,14 +147,27 @@ export class ManageBookings implements OnInit {
       return;
     }
 
-    const msg = this.translate.instant('ADMIN_BOOKINGS.CONFIRM_CANCEL', {
+    this.bookingPendingCancel = booking;
+    this.cancelConfirmParams = {
       ref: booking.id,
-      parking: booking.parkingName,
-    });
-    if (!confirm(msg)) {
+      parking: booking.parkingName || '',
+    };
+    this.showCancelConfirm = true;
+  }
+
+  dismissCancelBooking() {
+    this.showCancelConfirm = false;
+    this.bookingPendingCancel = null;
+  }
+
+  confirmCancelBooking() {
+    const booking = this.bookingPendingCancel;
+    if (!booking || booking.status === '0' || this.cancellingId != null) {
       return;
     }
 
+    this.showCancelConfirm = false;
+    this.bookingPendingCancel = null;
     this.cancellingId = booking.id;
     this.errorMessage = '';
     this.successMessage = '';

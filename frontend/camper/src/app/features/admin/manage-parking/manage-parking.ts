@@ -6,10 +6,11 @@ import { Admin } from '../../../core/services/admin';
 import { Auth } from '../../../core/services/auth';
 import { Parking, Space } from '../../../core/models/parking';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
+import { ConfirmDialog } from '../../../shared/components/confirm-dialog/confirm-dialog';
 
 @Component({
   selector: 'app-manage-parking',
-  imports: [CommonModule, ReactiveFormsModule, RouterLink, TranslateModule],
+  imports: [CommonModule, ReactiveFormsModule, RouterLink, TranslateModule, ConfirmDialog],
   templateUrl: './manage-parking.html',
   styleUrl: './manage-parking.scss',
 })
@@ -47,6 +48,12 @@ export class ManageParking implements OnInit {
 
   plazas: Space[] = [];
   showSpotModal = false;
+  showDeleteConfirm = false;
+  deleteConfirmParams: Record<string, string> = {};
+  showDeleteSpotConfirm = false;
+  deleteSpotConfirmParams: Record<string, string> = {};
+  private spotPendingDelete: Space | null = null;
+  isDeletingSpot = false;
   currentSpotId: number | null = null;
 
   spotForm: FormGroup = this.fb.group({
@@ -167,11 +174,20 @@ export class ManageParking implements OnInit {
     }
 
     const parkingName = this.parkingForm.get('nombreParking')?.value || '';
-    const msg = this.translate.instant('MANAGE_PARKING.CONFIRM_DELETE', { name: parkingName });
-    if (!confirm(msg)) {
+    this.deleteConfirmParams = { name: parkingName };
+    this.showDeleteConfirm = true;
+  }
+
+  cancelDeleteParking() {
+    this.showDeleteConfirm = false;
+  }
+
+  confirmDeleteParking() {
+    if (!this.parkingId || this.isDeleting) {
       return;
     }
 
+    this.showDeleteConfirm = false;
     this.isDeleting = true;
     this.clearMessages();
 
@@ -233,6 +249,45 @@ export class ManageParking implements OnInit {
         error: () => this.spotErrorMessage = 'MANAGE_PARKING.ERRORS.CREATE_SPOT'
       });
     }
+  }
+
+  deleteSpot(spot: Space) {
+    if (!this.parkingId || this.isDeletingSpot) {
+      return;
+    }
+
+    this.spotPendingDelete = spot;
+    this.deleteSpotConfirmParams = { name: spot.name };
+    this.showDeleteSpotConfirm = true;
+  }
+
+  cancelDeleteSpot() {
+    this.showDeleteSpotConfirm = false;
+    this.spotPendingDelete = null;
+  }
+
+  confirmDeleteSpot() {
+    const spot = this.spotPendingDelete;
+    if (!spot || !this.parkingId || this.isDeletingSpot) {
+      return;
+    }
+
+    this.showDeleteSpotConfirm = false;
+    this.spotPendingDelete = null;
+    this.isDeletingSpot = true;
+    this.spotErrorMessage = '';
+
+    this.adminService.deleteSpot(this.parkingId, spot.id).subscribe({
+      next: () => {
+        this.plazas = this.plazas.filter((plaza) => plaza.id !== spot.id);
+        this.isDeletingSpot = false;
+        this.showSuccess(this.translate.instant('MANAGE_PARKING.SUCCESS_DELETE_SPOT'));
+      },
+      error: (err) => {
+        this.errorMessage = err.error?.error || 'MANAGE_PARKING.ERRORS.DELETE_SPOT';
+        this.isDeletingSpot = false;
+      },
+    });
   }
 
   private clearMessages() {

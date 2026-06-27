@@ -145,6 +145,14 @@
                     [attr.title]="'ADMIN_USERS.REVOKE_ADMIN' | translate">
                     <i class="fa-solid fa-person-military-to-person" aria-hidden="true"></i>
                   </button>
+                  <button
+                    class="btn-icon btn-icon--danger"
+                    type="button"
+                    (click)="deleteUser(user)"
+                    [attr.aria-label]="'ADMIN_USERS.DELETE' | translate"
+                    [attr.title]="'ADMIN_USERS.DELETE' | translate">
+                    <i class="fa-solid fa-user-xmark" aria-hidden="true"></i>
+                  </button>
                 </div>
               </td>
             </tr>
@@ -223,4 +231,23 @@
       </table>
     </div>
   </section>
+
+  <app-confirm-dialog
+    [visible]="showRevokeConfirm"
+    titleKey="ADMIN_USERS.CONFIRM_REVOKE_TITLE"
+    messageKey="ADMIN_USERS.CONFIRM_REVOKE_TEXT"
+    [messageParams]="revokeConfirmParams"
+    confirmKey="COMMON.CONFIRM_YES_REVOKE"
+    (cancelled)="cancelRevokeAdmin()"
+    (confirmed)="confirmRevokeAdmin()">
+  </app-confirm-dialog>
+
+  <app-confirm-dialog
+    [visible]="showDeleteConfirm"
+    titleKey="ADMIN_USERS.CONFIRM_DELETE_TITLE"
+    messageKey="ADMIN_USERS.CONFIRM_DELETE_TEXT"
+    [messageParams]="deleteConfirmParams"
+    (cancelled)="cancelDeleteUser()"
+    (confirmed)="confirmDeleteUser()">
+  </app-confirm-dialog>
 </main>

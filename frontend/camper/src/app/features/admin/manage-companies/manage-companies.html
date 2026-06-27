@@ -257,4 +257,13 @@
       </div>
     </nav>
   </section>
+
+  <app-confirm-dialog
+    [visible]="showDeleteConfirm"
+    titleKey="ADMIN_COMPANIES.CONFIRM_DELETE_TITLE"
+    messageKey="ADMIN_COMPANIES.CONFIRM_DELETE_TEXT"
+    [messageParams]="deleteConfirmParams"
+    (cancelled)="cancelDeleteCompany()"
+    (confirmed)="confirmDeleteCompany()">
+  </app-confirm-dialog>
 </main>

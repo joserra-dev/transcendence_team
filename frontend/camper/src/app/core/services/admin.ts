@@ -62,6 +62,12 @@ export class Admin {
     );
   }
 
+  deleteSpot(parkingId: number, spotId: number): Observable<{ mensaje: string }> {
+    return this.http.delete<{ mensaje: string }>(
+      `${this.apiUrl}/parking/${parkingId}/space/${spotId}`
+    );
+  }
+
   getSpotById(spotId: number): Observable<Space> {
     return this.http.get<Space>(
       `${this.apiUrl}/parking/space/${spotId}`
@@ -152,5 +158,9 @@ export class Admin {
 
   updateUserRole(userId: number, data: { role: string; companyId?: number | null }): Observable<{ mensaje: string }> {
     return this.http.put<{ mensaje: string }>(`${this.apiUrl}/users/${userId}/role`, data);
+  }
+
+  deleteUser(userId: number): Observable<{ mensaje: string }> {
+    return this.http.delete<{ mensaje: string }>(`${this.apiUrl}/users/${userId}`);
   }
 }

@@ -5,10 +5,11 @@ import { RouterLink } from '@angular/router';
 import { TranslateModule } from '@ngx-translate/core';
 import { Admin } from '../../../core/services/admin';
 import { AdminUser, Company } from '../../../core/models/user';
+import { ConfirmDialog } from '../../../shared/components/confirm-dialog/confirm-dialog';
 
 @Component({
   selector: 'app-manage-users',
-  imports: [CommonModule, ReactiveFormsModule, FormsModule, RouterLink, TranslateModule],
+  imports: [CommonModule, ReactiveFormsModule, FormsModule, RouterLink, TranslateModule, ConfirmDialog],
   templateUrl: './manage-users.html',
   styleUrl: './manage-users.scss',
 })
@@ -25,6 +26,12 @@ export class ManageUsers implements OnInit {
   promoteCompanyId: number | null = null;
   successMessage = '';
   errorMessage = '';
+  showRevokeConfirm = false;
+  revokeConfirmParams: Record<string, string> = {};
+  private userPendingRevoke: AdminUser | null = null;
+  showDeleteConfirm = false;
+  deleteConfirmParams: Record<string, string> = {};
+  private userPendingDelete: AdminUser | null = null;
 
   filterRole = 'all';
   filterCompanyId: number | 'all' = 'all';
@@ -191,6 +198,25 @@ export class ManageUsers implements OnInit {
   }
 
   revokeAdmin(user: AdminUser) {
+    this.userPendingRevoke = user;
+    this.revokeConfirmParams = { name: this.fullName(user) || user.email };
+    this.showRevokeConfirm = true;
+  }
+
+  cancelRevokeAdmin() {
+    this.showRevokeConfirm = false;
+    this.userPendingRevoke = null;
+  }
+
+  confirmRevokeAdmin() {
+    const user = this.userPendingRevoke;
+    if (!user) {
+      return;
+    }
+
+    this.showRevokeConfirm = false;
+    this.userPendingRevoke = null;
+
     this.adminService.updateUserRole(user.id, { role: 'user' }).subscribe({
       next: () => {
         this.successMessage = 'ADMIN_USERS.SUCCESS_REVOKE';
@@ -198,6 +224,39 @@ export class ManageUsers implements OnInit {
       },
       error: (err) => {
         this.errorMessage = err.error?.error || 'ADMIN_USERS.ERRORS.UPDATE';
+      },
+    });
+  }
+
+  deleteUser(user: AdminUser) {
+    this.userPendingDelete = user;
+    this.deleteConfirmParams = { name: this.fullName(user) || user.email };
+    this.showDeleteConfirm = true;
+  }
+
+  cancelDeleteUser() {
+    this.showDeleteConfirm = false;
+    this.userPendingDelete = null;
+  }
+
+  confirmDeleteUser() {
+    const user = this.userPendingDelete;
+    if (!user) {
+      return;
+    }
+
+    this.showDeleteConfirm = false;
+    this.userPendingDelete = null;
+
+    this.adminService.deleteUser(user.id).subscribe({
+      next: () => {
+        this.successMessage = 'ADMIN_USERS.SUCCESS_DELETE';
+        this.cancelEditUser();
+        this.cancelPromote();
+        this.loadData();
+      },
+      error: (err) => {
+        this.errorMessage = err.error?.error || 'ADMIN_USERS.ERRORS.DELETE';
       },
     });
   }

@@ -329,6 +329,24 @@ def update_spot(_user, profile, parking_id, spot_id):
     return jsonify(_space_to_admin_dict(space)), 200
 
 
+@admin_bp.route('/parking/<int:parking_id>/space/<int:spot_id>', methods=['DELETE'])
+@require_admin
+def delete_spot(_user, profile, parking_id, spot_id):
+    parking = Parking.query.get(parking_id)
+    if not parking:
+        return jsonify({"error": "Parking no encontrado"}), 404
+    if not _can_manage_parking(profile, parking):
+        return jsonify({"error": "No autorizado"}), 403
+
+    space = Space.query.filter_by(id=spot_id, id_parking=parking_id).first()
+    if not space:
+        return jsonify({"error": "Plaza no encontrada"}), 404
+
+    db.session.delete(space)
+    db.session.commit()
+    return jsonify({"mensaje": "Plaza eliminada correctamente"}), 200
+
+
 @admin_bp.route('/bookings', methods=['GET'])
 @require_admin
 def list_bookings(_user, profile):
@@ -629,3 +647,20 @@ def update_user_role(_user, _profile, user_id):
     db.session.commit()
 
     return jsonify({"mensaje": "Permisos actualizados correctamente"}), 200
+
+
+@admin_bp.route('/users/<int:user_id>', methods=['DELETE'])
+@require_super_admin
+def delete_user(user, _profile, user_id):
+    if user.id == user_id:
+        return jsonify({"error": "No puedes eliminar tu propia cuenta"}), 403
+
+    target = Users.query.get(user_id)
+    if not target or not target.profile:
+        return jsonify({"error": "Usuario no encontrado"}), 404
+    if target.profile.role == UserRole.SUPER_ADMIN:
+        return jsonify({"error": "No se puede eliminar un superadministrador"}), 403
+
+    db.session.delete(target)
+    db.session.commit()
+    return jsonify({"mensaje": "Usuario eliminado correctamente"}), 200

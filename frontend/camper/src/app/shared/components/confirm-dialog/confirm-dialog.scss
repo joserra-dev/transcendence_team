@@ -1,0 +1,72 @@
+@use '../../../../styles/abstracts/variables' as *;
+
+.confirm-dialog-backdrop {
+  align-items: center;
+  background: rgba(15, 23, 42, 0.62);
+  display: flex;
+  inset: 0;
+  justify-content: center;
+  padding: $space-lg;
+  position: fixed;
+  z-index: 9999;
+}
+
+.confirm-dialog {
+  background: $color-white;
+  border-radius: $radius-lg;
+  box-shadow: 0 24px 80px rgba(15, 23, 42, 0.24);
+  max-width: 520px;
+  padding: $space-xl;
+  width: 100%;
+}
+
+.confirm-dialog__header {
+  align-items: center;
+  display: flex;
+  justify-content: space-between;
+  gap: $space-md;
+  margin-bottom: $space-md;
+
+  h2 {
+    color: $color-primary-dark;
+    font-size: 1.35rem;
+    margin: 0;
+  }
+}
+
+.confirm-dialog__close {
+  background: transparent;
+  border: 0;
+  color: $color-grey-soft;
+  cursor: pointer;
+  font-size: 2rem;
+  line-height: 1;
+  padding: 0;
+}
+
+.confirm-dialog__body {
+  p {
+    color: $color-grey-soft;
+    margin: 0 0 $space-lg;
+  }
+}
+
+.confirm-dialog__actions {
+  display: flex;
+  gap: $space-md;
+  justify-content: flex-end;
+
+  .btn {
+    min-width: 140px;
+  }
+}
+
+@media (max-width: $bp-sm) {
+  .confirm-dialog__actions {
+    flex-direction: column;
+
+    .btn {
+      width: 100%;
+    }
+  }
+}

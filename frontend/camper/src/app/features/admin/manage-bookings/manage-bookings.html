@@ -153,4 +153,14 @@
       </nav>
     </div>
   </section>
+
+  <app-confirm-dialog
+    [visible]="showCancelConfirm"
+    titleKey="ADMIN_BOOKINGS.CONFIRM_CANCEL_TITLE"
+    messageKey="ADMIN_BOOKINGS.CONFIRM_CANCEL_TEXT"
+    [messageParams]="cancelConfirmParams"
+    confirmKey="COMMON.CONFIRM_YES_CANCEL"
+    (cancelled)="dismissCancelBooking()"
+    (confirmed)="confirmCancelBooking()">
+  </app-confirm-dialog>
 </main>

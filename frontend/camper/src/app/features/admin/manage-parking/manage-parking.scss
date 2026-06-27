@@ -117,6 +117,12 @@
   border-radius: $radius-md;
 }
 
+.spot-actions {
+  display: flex;
+  gap: 0.5rem;
+  flex-wrap: nowrap;
+}
+
 .table-wrapper::-webkit-scrollbar {
   height: 6px;
 }

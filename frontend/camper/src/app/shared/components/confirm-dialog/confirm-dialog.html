@@ -1,0 +1,21 @@
+<div class="confirm-dialog-backdrop" *ngIf="visible" (click)="onBackdropClick()">
+  <div class="confirm-dialog" (click)="$event.stopPropagation()">
+    <div class="confirm-dialog__header">
+      <h2>{{ titleKey | translate }}</h2>
+      <button type="button" class="confirm-dialog__close" (click)="onCancel()" aria-label="Cerrar">×</button>
+    </div>
+
+    <div class="confirm-dialog__body">
+      <p>{{ messageKey | translate:messageParams }}</p>
+
+      <div class="confirm-dialog__actions">
+        <button type="button" class="btn btn-secondary" (click)="onCancel()">
+          {{ cancelKey | translate }}
+        </button>
+        <button type="button" class="btn btn-danger" (click)="onConfirm()">
+          {{ confirmKey | translate }}
+        </button>
+      </div>
+    </div>
+  </div>
+</div>

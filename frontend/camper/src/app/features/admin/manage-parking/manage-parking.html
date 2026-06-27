@@ -129,9 +129,18 @@
                 </span>
               </td>
               <td>
-                <button class="btn btn-primary btn-sm" type="button" (click)="openSpotModal(plaza)">
-                  {{ 'MANAGE_PARKING.EDIT_SPOT' | translate }}
-                </button>
+                <div class="spot-actions">
+                  <button class="btn btn-primary btn-sm" type="button" (click)="openSpotModal(plaza)">
+                    {{ 'MANAGE_PARKING.EDIT_SPOT' | translate }}
+                  </button>
+                  <button
+                    class="btn btn-danger btn-sm"
+                    type="button"
+                    [disabled]="isDeletingSpot"
+                    (click)="deleteSpot(plaza)">
+                    {{ 'MANAGE_PARKING.DELETE_SPOT' | translate }}
+                  </button>
+                </div>
               </td>
             </tr>
 
@@ -203,4 +212,22 @@
       </div>
     </section>
   </form>
+
+  <app-confirm-dialog
+    [visible]="showDeleteConfirm"
+    titleKey="MANAGE_PARKING.CONFIRM_DELETE_TITLE"
+    messageKey="MANAGE_PARKING.CONFIRM_DELETE_TEXT"
+    [messageParams]="deleteConfirmParams"
+    (cancelled)="cancelDeleteParking()"
+    (confirmed)="confirmDeleteParking()">
+  </app-confirm-dialog>
+
+  <app-confirm-dialog
+    [visible]="showDeleteSpotConfirm"
+    titleKey="MANAGE_PARKING.CONFIRM_DELETE_SPOT_TITLE"
+    messageKey="MANAGE_PARKING.CONFIRM_DELETE_SPOT_TEXT"
+    [messageParams]="deleteSpotConfirmParams"
+    (cancelled)="cancelDeleteSpot()"
+    (confirmed)="confirmDeleteSpot()">
+  </app-confirm-dialog>
 </main>
