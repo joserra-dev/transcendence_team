@@ -50,8 +50,8 @@ export interface Parking {
 export interface SearchFilters {
   id?: number;
 
-  fechaDesde?: string; 
-  fechaHasta?: string; 
+  startDate?: string; 
+  endDate?: string; 
   localidad?: string;
   provincia?: string;
   tomaElectricidad?: boolean;

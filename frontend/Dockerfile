@@ -26,13 +26,18 @@ RUN npx ng build --configuration=production
 FROM nginx:stable-alpine AS production
 RUN rm -rf /usr/share/nginx/html/*
 
-# Copiamos la app compilada a Nginx
 COPY --from=build-stage /app/dist/camper/browser /usr/share/nginx/html
 COPY nginx.conf /etc/nginx/conf.d/default.conf
 
-RUN apk add --no-cache gettext
+RUN apk add --no-cache openssl gettext && \
+    mkdir -p /etc/nginx/ssl && \
+    openssl req -x509 -nodes -days 365 -newkey rsa:2048 \
+      -keyout /etc/nginx/ssl/nginx-selfsigned.key \
+      -out /etc/nginx/ssl/nginx-selfsigned.crt \
+      -subj "/C=ES/ST=State/L=City/O=Organization/CN=localhost"
+
 COPY docker-entrypoint.sh /docker-entrypoint.sh
 RUN chmod +x /docker-entrypoint.sh
 
-EXPOSE 80
+EXPOSE 443
 ENTRYPOINT ["/docker-entrypoint.sh"]

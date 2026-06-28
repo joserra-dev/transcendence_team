@@ -16,12 +16,12 @@
     <form [formGroup]="filterForm" (ngSubmit)="applyFilters()" class="filters-form">
       <label>
         {{ 'ADMIN_BOOKINGS.FILTER_FROM' | translate }}
-        <input type="date" formControlName="fechaDesde" (click)="openDatePicker($event)" />
+        <input type="date" formControlName="startDate" (click)="openDatePicker($event)" />
       </label>
 
       <label>
         {{ 'ADMIN_BOOKINGS.FILTER_TO' | translate }}
-        <input type="date" formControlName="fechaHasta" (click)="openDatePicker($event)" />
+        <input type="date" formControlName="endDate" (click)="openDatePicker($event)" />
       </label>
 
       <label>

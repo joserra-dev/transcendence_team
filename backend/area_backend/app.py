@@ -37,7 +37,7 @@ app.config['MAIL_DEFAULT_SENDER'] = os.environ.get(
     'MAIL_DEFAULT_SENDER',
     os.environ.get('MAIL_USERNAME', 'noreply@local.test')
 )
-app.config['FRONTEND_URL'] = os.environ.get('URL_FRONT', 'http://localhost:8001')
+app.config['FRONTEND_URL'] = os.environ.get('URL_FRONT', 'https://localhost:8001')
 
 # Configuración de Flask-Babel
 app.config['BABEL_DEFAULT_LOCALE'] = 'es'

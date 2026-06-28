@@ -49,10 +49,10 @@
         >
         
         <input 
-          #fechaDesdeInput
-          id="search-fechadesde"
+          #startDateInput
+          id="search-startDate"
           type="date" 
-          formControlName="fechaDesde" 
+          formControlName="startDate" 
           class="native-hidden-date"
           (change)="onEntryDateChange()"
         >
@@ -74,10 +74,10 @@
         >
         
         <input 
-          #fechaHastaInput
-          id="search-fechahasta"
+          #endDateInput
+          id="search-endDate"
           type="date" 
-          formControlName="fechaHasta" 
+          formControlName="endDate" 
           class="native-hidden-date"
         >
       </div>
@@ -169,8 +169,8 @@
             class="btn btn-primary"
             [routerLink]="['/parking', parking.id]"
             [queryParams]="{
-              fechaDesde: searchForm.value.fechaDesde,
-              fechaHasta: searchForm.value.fechaHasta
+              startDate: searchForm.value.startDate,
+              endDate: searchForm.value.endDate
             }"
           >
             {{ 'SEARCH.DETAILS' | translate }}

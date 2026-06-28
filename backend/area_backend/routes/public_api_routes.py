@@ -102,18 +102,30 @@ def search_parkings():
     if data.get('vip_spots') is not None:
         query = query.filter(Parking.has_vip_spots.is_(bool(data['vip_spots'])))
 
-    from_date = data.get('fechaDesde') or data.get('start_date')
-    to_date = data.get('fechaHasta') or data.get('end_date')
+    from_date = data.get('startDate')
+    to_date = data.get('endDate')
+    from_date_obj = None
+    to_date_obj = None
+    if from_date:
+        try:
+            from_date_obj = datetime.strptime(from_date, '%Y-%m-%d').date()
+        except ValueError:
+            return jsonify({"error": "Formato de fecha inválido. Usa YYYY-MM-DD."}), 400
+    if to_date:
+        try:
+            to_date_obj = datetime.strptime(to_date, '%Y-%m-%d').date()
+        except ValueError:
+            return jsonify({"error": "Formato de fecha inválido. Usa YYYY-MM-DD."}), 400
     parkings = []
     for parking in query.order_by(Parking.name).all():
         parking_data = _parking_summary(parking)
-        if from_date and to_date:
+        if from_date_obj and to_date_obj:
             parking_data['available_spots'] = [
                 _space_payload(space) for space in parking.spaces or []
                 if not Booking.query.filter(
                     Booking.id_space == space.id,
-                    Booking.start_date <= datetime.strptime(to_date, '%Y-%m-%d').date(),
-                    Booking.end_date >= datetime.strptime(from_date, '%Y-%m-%d').date(),
+                    Booking.start_date < to_date_obj,
+                    Booking.end_date > from_date_obj,
                     Booking.status == '1'
                 ).first()
             ]

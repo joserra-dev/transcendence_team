@@ -34,8 +34,8 @@ export class ManageBookings implements OnInit {
   cancellingId: number | null = null;
 
   filterForm: FormGroup = this.fb.group({
-    fechaDesde: [''],
-    fechaHasta: [''],
+    startDate: [''],
+    endDate: [''],
     parkingId: [''],
     status: [''],
     licensePlate: [''],
@@ -108,11 +108,11 @@ export class ManageBookings implements OnInit {
       let matches = true;
 
       if (filters.fechaDesde && booking.startDate) {
-        matches = matches && new Date(booking.startDate) >= new Date(filters.fechaDesde);
+        matches = matches && this.extractDate(booking.startDate) >= this.extractDate(filters.fechaDesde);
       }
 
       if (filters.fechaHasta && booking.endDate) {
-        matches = matches && new Date(booking.endDate) <= new Date(filters.fechaHasta);
+        matches = matches && this.extractDate(booking.endDate) <= this.extractDate(filters.fechaHasta);
       }
 
       if (filters.licensePlate) {
@@ -128,8 +128,8 @@ export class ManageBookings implements OnInit {
 
   clearFilters() {
     this.filterForm.reset({
-      fechaDesde: '',
-      fechaHasta: '',
+      startDate: '',
+      endDate: '',
       parkingId: '',
       status: '',
       licensePlate: '',
@@ -192,6 +192,10 @@ export class ManageBookings implements OnInit {
   openDatePicker(event: Event) {
     const input = event.target as HTMLInputElement;
     input.showPicker?.();
+  }
+
+  private extractDate(value: string): string {
+    return value.split('T')[0].split(' ')[0];
   }
 
   private clampCurrentPage() {

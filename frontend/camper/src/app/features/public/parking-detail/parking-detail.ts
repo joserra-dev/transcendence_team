@@ -64,11 +64,13 @@ export class ParkingDetail implements OnInit, OnDestroy {
     const parkingId = this.route.snapshot.paramMap.get('id');
     this.route.queryParams.subscribe(params => {
       const today = new Date();
+      const todayStr = `${today.getFullYear()}-${String(today.getMonth() + 1).padStart(2, '0')}-${String(today.getDate()).padStart(2, '0')}`;
       const tomorrow = new Date(today);
       tomorrow.setDate(tomorrow.getDate() + 1);
+      const tomorrowStr = `${tomorrow.getFullYear()}-${String(tomorrow.getMonth() + 1).padStart(2, '0')}-${String(tomorrow.getDate()).padStart(2, '0')}`;
 
-      this.entryDate = params['fechaDesde'] || today.toISOString().split('T')[0];
-      this.exitDate = params['fechaHasta'] || tomorrow.toISOString().split('T')[0];
+      this.entryDate = params['startDate'] || todayStr;
+      this.exitDate = params['endDate'] || tomorrowStr;
     });
 
     if (parkingId) {
@@ -90,8 +92,8 @@ export class ParkingDetail implements OnInit, OnDestroy {
     this.errorMessage = '';
     const filters: SearchFilters = {
       id: Number(id),
-      fechaDesde: this.entryDate,
-      fechaHasta: this.exitDate
+      startDate: this.entryDate,
+      endDate: this.exitDate
     };
     this.parkingService.searchParkings(filters).subscribe({
       next: (data) => {
@@ -103,16 +105,12 @@ export class ParkingDetail implements OnInit, OnDestroy {
         this.isLoading = false;
       },
       error: (err) => {
-<<<<<<< HEAD
         console.error(err);
         if (err.status === 404) {
           this.errorMessage = 'PARKING.ERRORS.NOT_FOUND';
         } else {
           this.errorMessage = 'PARKING.ERRORS.LOADING';
         }
-=======
-        this.errorMessage = 'PARKING.ERRORS.LOADING';
->>>>>>> 9c4431e63499793dd2c1d7afb859ac4e07e9e9fb
         this.isLoading = false;
       }
     });
