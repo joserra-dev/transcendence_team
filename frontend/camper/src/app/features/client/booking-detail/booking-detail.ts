@@ -89,6 +89,10 @@ export class BookingDetail implements OnInit {
     this.loadBooking(this.booking.id);
   }
 
+  pdfGenerator()
+  {
+    console.log("Hola mundo");
+  }
 
   viewLicensePlate() {
     if (!this.booking) return;

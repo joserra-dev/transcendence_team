@@ -46,22 +46,22 @@ prod: env up-prod ## Inicializa y arranca en MODO PRODUCCIÓN (Nginx optimizado)
 
 up: ## Levantar contenedores en MODO DESARROLLO
 	@echo -e "$(COLOR_BLUE)🐳 Levantando entorno de DESARROLLO (Modo Debug)...$(COLOR_RESET)"
-	docker-compose up -d --build
+	docker compose up -d --build
 	@echo -e "$(COLOR_GREEN)🚀 ¡Entorno de desarrollo corriendo con éxito! Front listo en su puerto asignado.$(COLOR_RESET)"
 
 up-prod: ## Levantar contenedores en MODO PRODUCCIÓN
 	@echo -e "$(COLOR_BLUE)🐳 Compilando y levantando entorno de PRODUCCIÓN (Nginx)...$(COLOR_RESET)"
-	docker-compose -f docker-compose.yml -f docker-compose.prod.yml up -d --build
+	docker compose -f docker-compose.yml -f docker-compose.prod.yml up -d --build
 	@echo -e "$(COLOR_GREEN)🚀 ¡Entorno de producción corriendo con éxito!$(COLOR_RESET)"
 
 clean: ## Detiene contenedores sin perder datos ni imágenes
 	@echo -e "$(COLOR_YELLOW)🛑 Deteniendo y limpiando contenedores activos...$(COLOR_RESET)"
-	docker-compose down
+	docker compose down
 	@echo -e "$(COLOR_GREEN)✓ Contenedores limpios.$(COLOR_RESET)"
 
 rclean: ## Limpieza profunda total: Elimina contenedores, volúmenes, imágenes y .env
 	@echo -e "$(COLOR_RED)🚨 LIMPIEZA PROFUNDA: Eliminando contenedores, volúmenes e imágenes...$(COLOR_RESET)"
-	docker-compose -f docker-compose.yml -f docker-compose.prod.yml down --rmi all --volumes --remove-orphans
+	docker compose -f docker-compose.yml -f docker-compose.prod.yml down --rmi all --volumes --remove-orphans
 	@if [ -f .env ]; then \
 		rm .env; \
 		echo "$(COLOR_RED)🗑️ Archivo .env eliminado.$(COLOR_RESET)"; \

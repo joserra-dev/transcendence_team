@@ -66,6 +66,11 @@
     </div>
 
     <div class="booking-actions" *ngIf="booking.status === '1'">
+
+      <button class="btn btn-secondary" (click)="pdfGenerator()">
+        {{ 'HISTORY_DETAIL.PRINT_PDF' | translate }}
+      </button>
+
       <button class="btn btn-secondary" (click)="viewLicensePlate()">
         {{ 'HISTORY_DETAIL.PLATE' | translate }}
       </button>
