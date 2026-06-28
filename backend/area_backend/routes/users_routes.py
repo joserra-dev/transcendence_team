@@ -6,11 +6,13 @@ from werkzeug.security import generate_password_hash, check_password_hash
 from flask_jwt_extended import create_access_token, decode_token, jwt_required, get_jwt_identity
 from flask_mailman import EmailMessage
 
+
 from services.email_services import EmailService
 from utils.password_validator import PasswordValidator
+from utils.identity_validator import IdentityValidator
 
 # Importamos 'refresh' para actualizar el idioma en caliente dentro de la petición
-from flask_babel import gettext as _, refresh
+from flask_babel import gettext as _, get_locale
 
 import secrets
 
@@ -293,7 +295,8 @@ def update_profile():
                 profile.birth_day = datetime.strptime(fec_nac_str, "%Y-%m-%d").date()
             except ValueError:
                 pass
-                
+        if not IdentityValidator.validate_document(profile.dni):
+             return jsonify({"error": _("El documento de identidad no valido")}), 400        
         new_password = data.get("passPersona")
         if new_password and new_password.strip() != "":
             is_valid, mensagge = PasswordValidator.validar(new_password)
@@ -488,7 +491,7 @@ def solicitar_recuperacion():
     """
     data = request.get_json() or {}
     email = data.get('email')
-
+    
     if not email:
         return jsonify({"error": _("El campo email es obligatorio")}), 400
 

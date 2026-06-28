@@ -46,12 +46,12 @@ prod: env up-prod ## Inicializa y arranca en MODO PRODUCCIÓN (Nginx optimizado)
 
 up: ## Levantar contenedores en MODO DESARROLLO
 	@echo -e "$(COLOR_BLUE)🐳 Levantando entorno de DESARROLLO (Modo Debug)...$(COLOR_RESET)"
-	docker-compose up -d --build
+	docker-compose up -d --build --remove-orphans
 	@echo -e "$(COLOR_GREEN)🚀 ¡Entorno de desarrollo corriendo con éxito! Front listo en su puerto asignado.$(COLOR_RESET)"
 
 up-prod: ## Levantar contenedores en MODO PRODUCCIÓN
 	@echo -e "$(COLOR_BLUE)🐳 Compilando y levantando entorno de PRODUCCIÓN (Nginx)...$(COLOR_RESET)"
-	docker-compose -f docker-compose.yml -f docker-compose.prod.yml up -d --build
+	docker-compose -f docker-compose.yml -f docker-compose.prod.yml up -d --build --remove-orphans
 	@echo -e "$(COLOR_GREEN)🚀 ¡Entorno de producción corriendo con éxito!$(COLOR_RESET)"
 
 clean: ## Detiene contenedores sin perder datos ni imágenes
@@ -71,10 +71,7 @@ fclean: ## Limpieza profunda total: Elimina contenedores, volúmenes, imágenes,
 	@# 3. Limpieza de la caché interna de construcción de BuildKit
 	docker builder prune -a -f || true
 	
-	@# 4. Forzar borrado manual por si quedaba algún residuo con estos nombres exactos
-	docker rmi -f transcendence_team-backend transcendence_team-db transcendence_team-frontend || true
-	
-	@# 5. Eliminar el archivo de variables de entorno si existe
+	@# 4. Eliminar el archivo de variables de entorno si existe
 	@if [ -f .env ]; then \
 		rm .env; \
 		echo -e "$(COLOR_RED)🗑️ Archivo .env eliminado.$(COLOR_RESET)"; \
@@ -101,14 +98,13 @@ env:
 		echo ""; \
 		echo -e "$(COLOR_BLUE)🐘 Configuración de conexión a PostgreSQL:$(COLOR_RESET)"; \
 		read -p "Puerto de Postgres (ej. 5432): " db_port; \
-		read -p "Usuario de Postgres (ej. defaultdb_user): " db_user; \
 		read -p "Contraseña de Postgres: " db_pass; echo ""; \
 		read -p "Nombre de la Base de Datos (ej. defaultdb): " db_name; \
 		echo "POSTGRES_DB=$$db_name" >> .env;\
-		echo "POSTGRES_USER=$$db_user" >> .env;\
+		echo "POSTGRES_USER=defaultdb_user" >> .env;\
 		echo "POSTGRES_PASSWORD=$$db_pass" >> .env;\
 		echo "POSTGRES_PORT=$$db_port" >> .env;\
-		echo "DATABASE_URL=postgresql://$$db_user:$$db_pass@db:$$db_port/$$db_name" >> .env; \
+		echo "DATABASE_URL=postgresql://defaultdb_user:$$db_pass@db:$$db_port/$$db_name" >> .env; \
 		\
 		echo ""; \
 		echo -e "$(COLOR_BLUE)📧 Configuración de Correo (Gmail SMTP):$(COLOR_RESET)"; \

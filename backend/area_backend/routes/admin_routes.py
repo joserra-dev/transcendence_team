@@ -3,6 +3,7 @@ import secrets
 
 from flask import Blueprint, jsonify, request
 from werkzeug.security import generate_password_hash
+from flask_babel import gettext as _
 
 from database import db
 from models.booking import Booking
@@ -196,6 +197,28 @@ def _company_to_admin_dict(company: Company) -> dict:
 @admin_bp.route('/parking', methods=['GET'])
 @require_admin
 def list_parkings(_user, profile):
+    """
+    Listar parkings administrables
+    ---
+    tags:
+      - Admin Parking
+    security:
+      - Bearer: []
+    parameters:
+      - name: companyId
+        in: query
+        type: integer
+        required: false
+        description: ID de la empresa para filtrar (solo Super Admin)
+      - name: lang
+        in: query
+        type: string
+        required: false
+        description: Idioma para la internacionalización (ej. es, en, eu)
+    responses:
+      200:
+        description: Listado de parkings devuelto correctamente.
+    """
     query = _parking_query_for_profile(profile)
     company_id = request.args.get('companyId', type=int)
     if company_id and profile.role == UserRole.SUPER_ADMIN:
@@ -207,33 +230,127 @@ def list_parkings(_user, profile):
 @admin_bp.route('/parking/space/<int:spot_id>', methods=['GET'])
 @require_admin
 def get_spot(_user, profile, spot_id):
+    """
+    Obtener detalles de una plaza específica
+    ---
+    tags:
+      - Admin Parking
+    security:
+      - Bearer: []
+    parameters:
+      - name: spot_id
+        in: path
+        type: integer
+        required: true
+        description: ID único de la plaza
+      - name: lang
+        in: query
+        type: string
+        required: false
+        description: Idioma para la internacionalización
+    responses:
+      200:
+        description: Detalles estructurales de la plaza
+      403:
+        description: No autorizado para gestionar este parking
+      404:
+        description: Plaza no encontrada
+    """
     space = Space.query.get(spot_id)
     if not space or not space.parking:
-        return jsonify({"error": "Plaza no encontrada"}), 404
+        return jsonify({"error": _("Plaza no encontrada")}), 404
     if not _can_manage_parking(profile, space.parking):
-        return jsonify({"error": "No autorizado"}), 403
+        return jsonify({"error": _("No autorizado")}), 403
     return jsonify(_space_to_admin_dict(space)), 200
 
 
 @admin_bp.route('/parking/<int:parking_id>', methods=['GET'])
 @require_admin
 def get_parking(_user, profile, parking_id):
+    """
+    Obtener detalles de un parking específico
+    ---
+    tags:
+      - Admin Parking
+    security:
+      - Bearer: []
+    parameters:
+      - name: parking_id
+        in: path
+        type: integer
+        required: true
+        description: ID del parking
+      - name: lang
+        in: query
+        type: string
+        required: false
+    responses:
+      200:
+        description: Información detallada del parking
+      403:
+        description: No autorizado
+      404:
+        description: Parking no encontrado
+    """
     parking = Parking.query.get(parking_id)
     if not parking:
-        return jsonify({"error": "Parking no encontrado"}), 404
+        return jsonify({"error": _("Parking no encontrado")}), 404
     if not _can_manage_parking(profile, parking):
-        return jsonify({"error": "No autorizado"}), 403
+        return jsonify({"error": _("No autorizado")}), 403
     return jsonify(_parking_to_admin_dict(parking)), 200
 
 
 @admin_bp.route('/parking', methods=['POST'])
 @require_admin
 def create_parking(_user, profile):
+    """
+    Crear un nuevo parking
+    ---
+    tags:
+      - Admin Parking
+    security:
+      - Bearer: []
+    parameters:
+      - name: lang
+        in: query
+        type: string
+        required: false
+      - name: body
+        in: body
+        required: true
+        schema:
+          type: object
+          required:
+            - nombreParking
+            - municipioParking
+            - emailParking
+          properties:
+            nombreParking:
+              type: string
+              example: "Parking Centro"
+            provinciaParking:
+              type: string
+              example: "Madrid"
+            municipioParking:
+              type: string
+              example: "Madrid"
+            emailParking:
+              type: string
+              example: "centro@parking.com"
+            companyId:
+              type: integer
+              example: 1
+    responses:
+      201:
+        description: Parking creado con éxito
+      400:
+        description: Faltan campos obligatorios o no existen empresas registradas
+    """
     data = request.get_json() or {}
     fields = _map_parking_fields(data)
 
     if not fields.get("name") or not fields.get("municipality") or not fields.get("email"):
-        return jsonify({"error": "Nombre, municipio y email son obligatorios"}), 400
+        return jsonify({"error": _("Nombre, municipio y email son obligatorios")}), 400
 
     if profile.role == UserRole.ADMIN:
         company_id = profile.company_id
@@ -243,7 +360,7 @@ def create_parking(_user, profile):
     if not company_id:
         company = Company.query.first()
         if not company:
-            return jsonify({"error": "No hay empresas registradas"}), 400
+            return jsonify({"error": _("No hay empresas registradas")}), 400
         company_id = company.id
 
     parking = Parking(id_company=company_id, **fields)
@@ -255,16 +372,52 @@ def create_parking(_user, profile):
 @admin_bp.route('/parking', methods=['PUT'])
 @require_admin
 def update_parking(_user, profile):
+    """
+    Actualizar un parking existente
+    ---
+    tags:
+      - Admin Parking
+    security:
+      - Bearer: []
+    parameters:
+      - name: lang
+        in: query
+        type: string
+        required: false
+      - name: body
+        in: body
+        required: true
+        schema:
+          type: object
+          required:
+            - idParking
+          properties:
+            idParking:
+              type: integer
+              example: 1
+            nombreParking:
+              type: string
+              example: "Parking Centro Actualizado"
+    responses:
+      200:
+        description: Parking modificado con éxito
+      400:
+        description: ID del parking obligatorio
+      403:
+        description: No autorizado
+      404:
+        description: Parking no encontrado
+    """
     data = request.get_json() or {}
     parking_id = data.get("idParking")
     if not parking_id:
-        return jsonify({"error": "idParking es obligatorio"}), 400
+        return jsonify({"error": _("idParking es obligatorio")}), 400
 
     parking = Parking.query.get(parking_id)
     if not parking:
-        return jsonify({"error": "Parking no encontrado"}), 404
+        return jsonify({"error": _("Parking no encontrado")}), 404
     if not _can_manage_parking(profile, parking):
-        return jsonify({"error": "No autorizado"}), 403
+        return jsonify({"error": _("No autorizado")}), 403
 
     for key, value in _map_parking_fields(data).items():
         setattr(parking, key, value)
@@ -276,32 +429,88 @@ def update_parking(_user, profile):
 @admin_bp.route('/parking/<int:parking_id>', methods=['DELETE'])
 @require_admin
 def delete_parking(_user, profile, parking_id):
+    """
+    Eliminar un parking y sus plazas asociadas
+    ---
+    tags:
+      - Admin Parking
+    security:
+      - Bearer: []
+    parameters:
+      - name: parking_id
+        in: path
+        type: integer
+        required: true
+    responses:
+      200:
+        description: Parking eliminado correctamente
+      403:
+        description: No autorizado
+      404:
+        description: Parking no encontrado
+    """
     parking = Parking.query.get(parking_id)
     if not parking:
-        return jsonify({"error": "Parking no encontrado"}), 404
+        return jsonify({"error": _("Parking no encontrado")}), 404
     if not _can_manage_parking(profile, parking):
-        return jsonify({"error": "No autorizado"}), 403
+        return jsonify({"error": _("No autorizado")}), 403
 
     for space in list(parking.spaces):
         db.session.delete(space)
     db.session.delete(parking)
     db.session.commit()
-    return jsonify({"mensaje": "Parking eliminado correctamente"}), 200
+    return jsonify({"mensaje": _("Parking eliminado correctamente")}), 200
 
 
 @admin_bp.route('/parking/<int:parking_id>/space', methods=['POST'])
 @require_admin
 def create_spot(_user, profile, parking_id):
+    """
+    Crear una plaza de estacionamiento en un parking
+    ---
+    tags:
+      - Admin Parking
+    security:
+      - Bearer: []
+    parameters:
+      - name: parking_id
+        in: path
+        type: integer
+        required: true
+      - name: body
+        in: body
+        required: true
+        schema:
+          type: object
+          required:
+            - nombre
+          properties:
+            nombre:
+              type: string
+              example: "Plaza A-01"
+            precio:
+              type: number
+              example: 12.5
+    responses:
+      201:
+        description: Plaza creada con éxito
+      400:
+        description: Nombre de plaza obligatorio
+      403:
+        description: No autorizado
+      404:
+        description: Parking no encontrado
+    """
     parking = Parking.query.get(parking_id)
     if not parking:
-        return jsonify({"error": "Parking no encontrado"}), 404
+        return jsonify({"error": _("Parking no encontrado")}), 404
     if not _can_manage_parking(profile, parking):
-        return jsonify({"error": "No autorizado"}), 403
+        return jsonify({"error": _("No autorizado")}), 403
 
     data = request.get_json() or {}
     fields = _map_space_fields(data)
     if not fields.get("name"):
-        return jsonify({"error": "El nombre de la plaza es obligatorio"}), 400
+        return jsonify({"error": _("El nombre de la plaza es obligatorio")}), 400
 
     space = Space(id_parking=parking.id, **fields)
     db.session.add(space)
@@ -312,15 +521,44 @@ def create_spot(_user, profile, parking_id):
 @admin_bp.route('/parking/<int:parking_id>/space/<int:spot_id>', methods=['PUT'])
 @require_admin
 def update_spot(_user, profile, parking_id, spot_id):
+    """
+    Actualizar datos de una plaza específica
+    ---
+    tags:
+      - Admin Parking
+    security:
+      - Bearer: []
+    parameters:
+      - name: parking_id
+        in: path
+        type: integer
+        required: true
+      - name: spot_id
+        in: path
+        type: integer
+        required: true
+      - name: body
+        in: body
+        required: true
+        schema:
+          type: object
+    responses:
+      200:
+        description: Plaza actualizada correctamente
+      403:
+        description: No autorizado
+      404:
+        description: Parking o plaza no encontrada
+    """
     parking = Parking.query.get(parking_id)
     if not parking:
-        return jsonify({"error": "Parking no encontrado"}), 404
+        return jsonify({"error": _("Parking no encontrado")}), 404
     if not _can_manage_parking(profile, parking):
-        return jsonify({"error": "No autorizado"}), 403
+        return jsonify({"error": _("No autorizado")}), 403
 
     space = Space.query.filter_by(id=spot_id, id_parking=parking_id).first()
     if not space:
-        return jsonify({"error": "Plaza no encontrada"}), 404
+        return jsonify({"error": _("Plaza no encontrada")}), 404
 
     for key, value in _map_space_fields(request.get_json() or {}).items():
         setattr(space, key, value)
@@ -332,6 +570,30 @@ def update_spot(_user, profile, parking_id, spot_id):
 @admin_bp.route('/bookings', methods=['GET'])
 @require_admin
 def list_bookings(_user, profile):
+    """
+    Listar y filtrar reservas (Vista Global/Admin)
+    ---
+    tags:
+      - Admin Bookings
+    security:
+      - Bearer: []
+    parameters:
+      - name: parkingId
+        in: query
+        type: integer
+        required: false
+      - name: companyId
+        in: query
+        type: integer
+        required: false
+      - name: status
+        in: query
+        type: string
+        required: false
+    responses:
+      200:
+        description: Historial de reservas procesadas
+    """
     query = _booking_query_for_profile(profile)
 
     parking_id = request.args.get('parkingId', type=int)
@@ -353,33 +615,86 @@ def list_bookings(_user, profile):
 @admin_bp.route('/bookings/<int:booking_id>', methods=['GET'])
 @require_admin
 def get_booking(_user, profile, booking_id):
+    """
+    Obtener el detalle de una reserva gestionable
+    ---
+    tags:
+      - Admin Bookings
+    security:
+      - Bearer: []
+    parameters:
+      - name: booking_id
+        in: path
+        type: integer
+        required: true
+    responses:
+      200:
+        description: Esquema de datos de la reserva
+      403:
+        description: No autorizado
+      404:
+        description: Reserva no encontrada
+    """
     booking = Booking.query.get(booking_id)
     if not booking:
-        return jsonify({"error": "Reserva no encontrada"}), 404
+        return jsonify({"error": _("Reserva no encontrada")}), 404
     if not _can_manage_booking(profile, booking):
-        return jsonify({"error": "No autorizado"}), 403
+        return jsonify({"error": _("No autorizado")}), 403
     return jsonify(_booking_to_admin_dict(booking)), 200
 
 
 @admin_bp.route('/bookings/<int:booking_id>/cancel', methods=['PUT'])
 @require_admin
 def cancel_booking_admin(_user, profile, booking_id):
+    """
+    Cancelar administrativamente una reserva
+    ---
+    tags:
+      - Admin Bookings
+    security:
+      - Bearer: []
+    parameters:
+      - name: booking_id
+        in: path
+        type: integer
+        required: true
+    responses:
+      200:
+        description: Reserva cancelada correctamente
+      400:
+        description: La reserva ya se encuentra cancelada previamente
+      403:
+        description: No autorizado
+      404:
+        description: Reserva no encontrada
+    """
     booking = Booking.query.get(booking_id)
     if not booking:
-        return jsonify({"error": "Reserva no encontrada"}), 404
+        return jsonify({"error": _("Reserva no encontrada")}), 404
     if not _can_manage_booking(profile, booking):
-        return jsonify({"error": "No autorizado"}), 403
+        return jsonify({"error": _("No autorizado")}), 403
     if booking.status == '0':
-        return jsonify({"error": "La reserva ya está cancelada"}), 400
+        return jsonify({"error": _("La reserva ya está cancelada")}), 400
 
     booking.status = '0'
     db.session.commit()
-    return jsonify({"mensaje": "Reserva cancelada correctamente"}), 200
+    return jsonify({"mensaje": _("Reserva cancelada correctamente")}), 200
 
 
 @admin_bp.route('/companies', methods=['GET'])
 @require_super_admin
 def list_companies(_user, _profile):
+    """
+    Listar todas las empresas asignadas (Solo Super Admin)
+    ---
+    tags:
+      - Admin Companies
+    security:
+      - Bearer: []
+    responses:
+      200:
+        description: Listado de empresas registradas en el sistema
+    """
     companies = Company.query.all()
     return jsonify([_company_to_admin_dict(c) for c in companies]), 200
 
@@ -387,6 +702,46 @@ def list_companies(_user, _profile):
 @admin_bp.route('/companies', methods=['POST'])
 @require_super_admin
 def create_company(_user, _profile):
+    """
+    Registrar una nueva empresa junto a su administrador principal (Solo Super Admin)
+    ---
+    tags:
+      - Admin Companies
+    security:
+      - Bearer: []
+    parameters:
+      - name: body
+        in: body
+        required: true
+        schema:
+          type: object
+          required:
+            - name
+            - adminEmail
+            - adminPassword
+          properties:
+            name:
+              type: string
+              example: "Parkings S.A."
+            cif:
+              type: string
+              example: "A1234567B"
+            adminEmail:
+              type: string
+              example: "admin@parkingsa.com"
+            adminPassword:
+              type: string
+              example: "segura123"
+    responses:
+      201:
+        description: Empresa y administrador creados, correo de verificación emitido
+      400:
+        description: Faltan campos obligatorios
+      409:
+        description: El email del administrador ya está registrado
+      500:
+        description: Error crítico al enviar el email transaccional
+    """
     data = request.get_json() or {}
     name = data.get("name")
     cif = data.get("cif")
@@ -397,13 +752,13 @@ def create_company(_user, _profile):
     dni = data.get("adminDni", "")
 
     if not name:
-        return jsonify({"error": "El nombre de la empresa es obligatorio"}), 400
+        return jsonify({"error": _("El nombre de la empresa es obligatorio")}), 400
     if not email or not password:
         return jsonify(
-            {"error": "Email y contraseña del administrador son obligatorios"}
+            {"error": _("Email y contraseña del administrador son obligatorios")}
         ), 400
     if Users.query.filter_by(email=email).first():
-        return jsonify({"error": "El email ya está registrado"}), 409
+        return jsonify({"error": _("El email ya está registrado")}), 409
 
     company = Company(name=name, cif=cif or None)
     db.session.add(company)
@@ -428,7 +783,7 @@ def create_company(_user, _profile):
         db.session.commit()
     except Exception:
         db.session.rollback()
-        return jsonify({"error": "Error al enviar el correo de verificación"}), 500
+        return jsonify({"error": _("Error al enviar el correo de verificación")}), 500
 
     return jsonify(_company_to_admin_dict(company)), 201
 
@@ -436,23 +791,71 @@ def create_company(_user, _profile):
 @admin_bp.route('/companies/<int:company_id>', methods=['GET'])
 @require_super_admin
 def get_company(_user, _profile, company_id):
+    """
+    Visualizar datos de una empresa (Solo Super Admin)
+    ---
+    tags:
+      - Admin Companies
+    security:
+      - Bearer: []
+    parameters:
+      - name: company_id
+        in: path
+        type: integer
+        required: true
+    responses:
+      200:
+        description: Información de la empresa
+      404:
+        description: Empresa no encontrada
+    """
     company = Company.query.get(company_id)
     if not company:
-        return jsonify({"error": "Empresa no encontrada"}), 404
+        return jsonify({"error": _("Empresa no encontrada")}), 404
     return jsonify(_company_to_admin_dict(company)), 200
 
 
 @admin_bp.route('/companies/<int:company_id>', methods=['PUT'])
 @require_super_admin
 def update_company(_user, _profile, company_id):
+    """
+    Actualizar datos básicos de una empresa (Solo Super Admin)
+    ---
+    tags:
+      - Admin Companies
+    security:
+      - Bearer: []
+    parameters:
+      - name: company_id
+        in: path
+        type: integer
+        required: true
+      - name: body
+        in: body
+        required: true
+        schema:
+          type: object
+          required:
+            - name
+          properties:
+            name:
+              type: string
+    responses:
+      200:
+        description: Empresa modificada con éxito
+      400:
+        description: El nombre de la empresa es obligatorio
+      404:
+        description: Empresa no encontrada
+    """
     company = Company.query.get(company_id)
     if not company:
-        return jsonify({"error": "Empresa no encontrada"}), 404
+        return jsonify({"error": _("Empresa no encontrada")}), 404
 
     data = request.get_json() or {}
     name = data.get("name")
     if not name:
-        return jsonify({"error": "El nombre de la empresa es obligatorio"}), 400
+        return jsonify({"error": _("El nombre de la empresa es obligatorio")}), 400
 
     company.name = name
     if "cif" in data:
@@ -465,9 +868,27 @@ def update_company(_user, _profile, company_id):
 @admin_bp.route('/companies/<int:company_id>', methods=['DELETE'])
 @require_super_admin
 def delete_company(_user, _profile, company_id):
+    """
+    Eliminar empresa en cascada junto a parkings y plazas (Solo Super Admin)
+    ---
+    tags:
+      - Admin Companies
+    security:
+      - Bearer: []
+    parameters:
+      - name: company_id
+        in: path
+        type: integer
+        required: true
+    responses:
+      200:
+        description: Empresa eliminada correctamente
+      404:
+        description: Empresa no encontrada
+    """
     company = Company.query.get(company_id)
     if not company:
-        return jsonify({"error": "Empresa no encontrada"}), 404
+        return jsonify({"error": _("Empresa no encontrada")}), 404
 
     for parking in list(company.parkings):
         for space in list(parking.spaces):
@@ -481,15 +902,33 @@ def delete_company(_user, _profile, company_id):
 
     db.session.delete(company)
     db.session.commit()
-    return jsonify({"mensaje": "Empresa eliminada correctamente"}), 200
+    return jsonify({"mensaje": _("Empresa eliminada correctamente")}), 200
 
 
 @admin_bp.route('/companies/<int:company_id>/users', methods=['GET'])
 @require_super_admin
 def list_company_users(_user, _profile, company_id):
+    """
+    Listar los usuarios asociados a una empresa (Solo Super Admin)
+    ---
+    tags:
+      - Admin Companies
+    security:
+      - Bearer: []
+    parameters:
+      - name: company_id
+        in: path
+        type: integer
+        required: true
+    responses:
+      200:
+        description: Usuarios pertenecientes a la entidad corporativa
+      404:
+        description: Empresa no encontrada
+    """
     company = Company.query.get(company_id)
     if not company:
-        return jsonify({"error": "Empresa no encontrada"}), 404
+        return jsonify({"error": _("Empresa no encontrada")}), 404
 
     profiles = Profiles.query.filter_by(company_id=company_id).all()
     result = []
@@ -502,6 +941,17 @@ def list_company_users(_user, _profile, company_id):
 @admin_bp.route('/users', methods=['GET'])
 @require_super_admin
 def list_users(_user, _profile):
+    """
+    Listar todos los usuarios globales del ecosistema (Solo Super Admin)
+    ---
+    tags:
+      - Admin Users
+    security:
+      - Bearer: []
+    responses:
+      200:
+        description: Base total de usuarios
+    """
     users = Users.query.all()
     return jsonify([_user_to_admin_dict(user) for user in users]), 200
 
@@ -509,16 +959,52 @@ def list_users(_user, _profile):
 @admin_bp.route('/users', methods=['POST'])
 @require_super_admin
 def create_user(_user, _profile):
+    """
+    Crear un usuario nuevo con asignación de roles (Solo Super Admin)
+    ---
+    tags:
+      - Admin Users
+    security:
+      - Bearer: []
+    parameters:
+      - name: body
+        in: body
+        required: true
+        schema:
+          type: object
+          required:
+            - email
+            - password
+          properties:
+            email:
+              type: string
+            password:
+              type: string
+            role:
+              type: string
+              enum: [user, admin, super_admin]
+            companyId:
+              type: integer
+    responses:
+      201:
+        description: Cuenta pre-creada con envío de correo
+      400:
+        description: Faltan campos obligatorios o validación cruzada de rol fallida
+      409:
+        description: El email ya está en uso
+      500:
+        description: Incidencia al procesar la cola de emails
+    """
     data = request.get_json() or {}
     email = data.get("email")
     password = data.get("password")
     role_name = data.get("role", "user")
 
     if not email or not password:
-        return jsonify({"error": "Email y contraseña son obligatorios"}), 400
+        return jsonify({"error": _("Email y contraseña son obligatorios")}), 400
 
     if Users.query.filter_by(email=email).first():
-        return jsonify({"error": "El email ya está registrado"}), 409
+        return jsonify({"error": _("El email ya está registrado")}), 409
 
     role_map = {
         "user": UserRole.USER,
@@ -529,7 +1015,7 @@ def create_user(_user, _profile):
     company_id = data.get("companyId")
 
     if role == UserRole.ADMIN and not company_id:
-        return jsonify({"error": "Los admins deben pertenecer a una empresa"}), 400
+        return jsonify({"error": _("Los admins deben pertenecer a una empresa")}), 400
     if role == UserRole.SUPER_ADMIN:
         company_id = None
 
@@ -552,10 +1038,10 @@ def create_user(_user, _profile):
         db.session.commit()
     except Exception:
         db.session.rollback()
-        return jsonify({"error": "Error al enviar el correo de verificación"}), 500
+        return jsonify({"error": _("Error al enviar el correo de verificación")}), 500
 
     return jsonify({
-        "mensaje": "Usuario creado. Debe verificar su correo antes de iniciar sesión.",
+        "mensaje": _("Usuario creado. Debe verificar su correo antes de iniciar sesión."),
         "id": user.id,
     }), 201
 
@@ -563,17 +1049,42 @@ def create_user(_user, _profile):
 @admin_bp.route('/users/<int:user_id>', methods=['PUT'])
 @require_super_admin
 def update_user(_user, _profile, user_id):
+    """
+    Modificar perfil, accesos y credenciales de un usuario (Solo Super Admin)
+    ---
+    tags:
+      - Admin Users
+    security:
+      - Bearer: []
+    parameters:
+      - name: user_id
+        in: path
+        type: integer
+        required: true
+      - name: body
+        in: body
+        required: true
+        schema:
+          type: object
+    responses:
+      200:
+        description: Cambios aplicados con éxito
+      403:
+        description: Intento de alteración de un Super Admin denegado
+      404:
+        description: No encontrado
+    """
     data = request.get_json() or {}
     user = Users.query.get(user_id)
     if not user or not user.profile:
-        return jsonify({"error": "Usuario no encontrado"}), 404
+        return jsonify({"error": _("Usuario no encontrado")}), 404
     if user.profile.role == UserRole.SUPER_ADMIN:
-        return jsonify({"error": "No se puede modificar un superadministrador"}), 403
+        return jsonify({"error": _("No se puede modificar un superadministrador")}), 403
 
     new_email = data.get("email")
     if new_email and new_email != user.email:
         if Users.query.filter_by(email=new_email).first():
-            return jsonify({"error": "El email ya está registrado"}), 409
+            return jsonify({"error": _("El email ya está registrado")}), 409
         user.email = new_email
 
     password = data.get("password")
@@ -591,13 +1102,13 @@ def update_user(_user, _profile, user_id):
     role_name = data.get("role")
     if role_name:
         if role_name not in ("user", "admin"):
-            return jsonify({"error": "Rol no válido. Usa user o admin"}), 400
+            return jsonify({"error": _("Rol no válido. Usa user o admin")}), 400
         profile.role = UserRole.ADMIN if role_name == "admin" else UserRole.USER
 
     if "companyId" in data:
         company_id = data.get("companyId")
         if profile.role == UserRole.ADMIN and not company_id:
-            return jsonify({"error": "Los admins deben pertenecer a una empresa"}), 400
+            return jsonify({"error": _("Los admins deben pertenecer a una empresa")}), 400
         profile.company_id = company_id
 
     db.session.commit()
@@ -607,25 +1118,60 @@ def update_user(_user, _profile, user_id):
 @admin_bp.route('/users/<int:user_id>/role', methods=['PUT'])
 @require_super_admin
 def update_user_role(_user, _profile, user_id):
+    """
+    Cambiar de forma directa el rol operativo de un usuario (Solo Super Admin)
+    ---
+    tags:
+      - Admin Users
+    security:
+      - Bearer: []
+    parameters:
+      - name: user_id
+        in: path
+        type: integer
+        required: true
+      - name: body
+        in: body
+        required: true
+        schema:
+          type: object
+          required:
+            - role
+          properties:
+            role:
+              type: string
+              enum: [user, admin]
+            companyId:
+              type: integer
+    responses:
+      200:
+        description: Permisos actualizados correctamente
+      400:
+        description: Validación de rol o empresa incorrecta
+      403:
+        description: Intento de degradación o modificación de un Super Admin prohibido
+      404:
+        description: Usuario no encontrado
+    """
     data = request.get_json() or {}
     role_name = data.get("role")
     if role_name not in ("user", "admin"):
-        return jsonify({"error": "Rol no válido. Usa user o admin"}), 400
+        return jsonify({"error": _("Rol no válido. Usa user o admin")}), 400
 
     user = Users.query.get(user_id)
     if not user or not user.profile:
-        return jsonify({"error": "Usuario no encontrado"}), 404
+        return jsonify({"error": _("Usuario no encontrado")}), 404
     if user.profile.role == UserRole.SUPER_ADMIN:
-        return jsonify({"error": "No se puede modificar un superadministrador"}), 403
+        return jsonify({"error": _("No se puede modificar un superadministrador")}), 403
 
     role = UserRole.ADMIN if role_name == "admin" else UserRole.USER
     company_id = data.get("companyId")
 
     if role == UserRole.ADMIN and not company_id:
-        return jsonify({"error": "Los admins deben pertenecer a una empresa"}), 400
+        return jsonify({"error": _("Los admins deben pertenecer a una empresa")}), 400
 
     user.profile.role = role
     user.profile.company_id = company_id if role == UserRole.ADMIN else None
     db.session.commit()
 
-    return jsonify({"mensaje": "Permisos actualizados correctamente"}), 200
+    return jsonify({"mensaje": _("Permisos actualizados correctamente")}), 200

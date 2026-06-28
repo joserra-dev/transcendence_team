@@ -8,7 +8,8 @@
     "PROFILE": "Nire datuak",
     "DASHBOARD": "Administrazio panela",
     "HISTORY": "Erreserben historia",
-    "LOGOUT": "Irten"
+    "LOGOUT": "Irten",
+    "CLOSE": "Itxi"
   },
 
   "BREADCRUMB": {
@@ -215,6 +216,9 @@
     "CONTACT": "Kontaktua",
     "LOADING": "Aparkalekuaren informazioa kargatzen...",
     "SUCCESS": "Erreserba arrakastaz egin da!",
+    "LOCATIONOF":"Kokapena",
+    "DESCRIPTION":"Deskribapena",
+    "NO_SERVICES":"Ez du zerbitzurik",
     "ERRORS": {
       "NOT_FOUND": "Ez da bilatutako aparkalekua aurkitu.",
       "NO_RESULTS": "Ez da aparkalekurik aurkitu edo ez dago erabilgarri data hauetarako.",

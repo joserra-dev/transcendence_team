@@ -8,7 +8,8 @@
     "PROFILE": "Mis datos",
     "DASHBOARD": "Panel de Admin",
     "HISTORY": "Historial de reservas",
-    "LOGOUT": "Cerrar sesión"
+    "LOGOUT": "Cerrar sesión",
+    "CLOSE": "Cerrar"
   },
 
   "BREADCRUMB": {
@@ -215,6 +216,9 @@
     "CONTACT": "Contacto",
     "LOADING": "Cargando información del parking...",
     "SUCCESS": "¡Reserva realizada con éxito!",
+    "LOCATIONOF":"Ubicación de",
+    "DESCRIPTION":"Descripción",
+    "NO_SERVICES":"No dispone de servicios",
     "ERRORS": {
       "NOT_FOUND": "No se encontró el parking solicitado.",
       "NO_RESULTS": "Parking no encontrado o no disponible para estas fechas.",
