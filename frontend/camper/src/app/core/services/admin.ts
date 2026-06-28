@@ -5,6 +5,7 @@ import { Observable } from 'rxjs';
 import { Parking, Space } from '../models/parking';
 import { AdminUser, Company } from '../models/user';
 import { AdminBooking, AdminBookingFilters } from '../models/booking';
+import { CompanyMetrics, MetricsFilters } from '../models/metrics';
 
 @Injectable({
   providedIn: 'root',
@@ -130,6 +131,24 @@ export class Admin {
 
   getCompanyUsers(companyId: number): Observable<AdminUser[]> {
     return this.http.get<AdminUser[]>(`${this.apiUrl}/companies/${companyId}/users`);
+  }
+
+  getCompanyMetrics(companyId: number, filters: MetricsFilters): Observable<CompanyMetrics> {
+    return this.http.get<CompanyMetrics>(`${this.apiUrl}/companies/${companyId}/metrics`, {
+      params: this.metricsParams(filters),
+    });
+  }
+
+  getOwnCompanyMetrics(filters: MetricsFilters): Observable<CompanyMetrics> {
+    return this.http.get<CompanyMetrics>(`${this.apiUrl}/metrics`, {
+      params: this.metricsParams(filters),
+    });
+  }
+
+  private metricsParams(filters: MetricsFilters): Record<string, string> {
+    return {
+      year: String(filters.year),
+    };
   }
 
   updateUser(userId: number, data: {

@@ -30,6 +30,8 @@
     "MANAGE_COMPANIES": "Enpresak kudeatu",
     "COMPANY_PARKINGS": "Enpresaren aparkalekuak",
     "EDIT_COMPANY": "Enpresa editatu",
+    "COMPANY_METRICS": "Enpresaren metrikak",
+    "METRICS": "Metrikak",
     "MANAGE_BOOKINGS": "Erreserbak kudeatu"
   },
 
@@ -315,6 +317,11 @@
     "MANAGE_BOOKINGS": "Erreserbak kudeatu",
     "ACTIVE": "Aktibo",
     "INACTIVE": "Inaktibo",
+    "FILTER_STATUS": "Iragazi egoeraren arabera",
+    "FILTER_STATUS_ALL": "Egoera guztiak",
+    "FILTER_MUNICIPALITY": "Iragazi udalerriaren arabera",
+    "FILTER_MUNICIPALITY_ALL": "Udalerri guztiak",
+    "EMPTY_FILTERED": "Ez dago hautatutako iragazkiekin bat datorren aparkalekurik.",
     "ERRORS": {
       "LOAD_ADS": "Ezin izan dira zure iragarkiak kargatu."
     }
@@ -461,6 +468,30 @@
     "EMPTY": "Ez duzu aparkalekurik erregistratuta.",
     "SPOTS": "Plazak",
     "MANAGE": "Kudeatu"
+  },
+
+  "ADMIN_METRICS": {
+    "BUTTON": "Metrikak",
+    "TITLE": "Salmenta eta erreserba metrikak",
+    "BACK": "Itzuli",
+    "LOADING": "Metrikak kargatzen…",
+    "EMPTY": "Ez dago daturik hautatutako aldirako.",
+    "FILTER_GROUP": "Taldekatu",
+    "GROUP_YEAR": "Urteak (hilabeteak)",
+    "GROUP_MONTH": "Hilabeteak (asteak)",
+    "GROUP_WEEK": "Asteak (egunak)",
+    "FILTER_YEAR": "Urtea",
+    "FILTER_MONTH": "Hilabetea",
+    "FILTER_WEEK": "Hilabeteko astea",
+    "WEEK_OPTION": "{{week}}. astea",
+    "TOTAL_SALES": "Salmentak guztira",
+    "TOTAL_BOOKINGS": "Erreserbak guztira",
+    "SALES_BY_PARKING": "Salmentak aparkalekuka",
+    "BOOKINGS_BY_PARKING": "Erreserbak aparkalekuka",
+    "SALES_BY_MONTH": "Salmentak hilabeteka",
+    "ERRORS": {
+      "LOAD": "Ezin izan dira metrikak kargatu."
+    }
   },
 
   "ADMIN_BOOKINGS": {

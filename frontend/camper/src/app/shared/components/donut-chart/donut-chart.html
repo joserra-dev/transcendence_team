@@ -1,0 +1,19 @@
+<div class="donut-chart">
+  <div class="donut-ring" [style.background]="gradient">
+    <div class="donut-hole"></div>
+  </div>
+
+  <ul class="legend" *ngIf="hasData; else emptyLegend">
+    <li *ngFor="let slice of slices">
+      <span class="legend-dot" [style.background-color]="slice.color"></span>
+      <span class="legend-text">{{ slice.label }}: {{ formatValue(slice.value) }} ({{ slice.percent }}%)</span>
+    </li>
+  </ul>
+
+  <ng-template #emptyLegend>
+    <p class="legend-empty">
+      <span class="legend-dot legend-dot--empty"></span>
+      {{ emptyLabel }}
+    </p>
+  </ng-template>
+</div>

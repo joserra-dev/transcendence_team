@@ -69,6 +69,33 @@ class EmailService:
             f"Verifica tu cuenta accediendo a este enlace:\n{verification_url}"
         )
         return cls.base_mail(destinatario, asunto, html_content, plain_txt)
+
+    @classmethod
+    def admin_welcome(
+        cls,
+        destinatario: str,
+        token: str,
+        nombre: str | None = None,
+        company_name: str | None = None,
+    ):
+        display_name = nombre or destinatario
+        base_url = os.getenv('URL_BACK')
+        verification_url = f"{base_url}/api/users/verify?token={token}"
+        html_content = render_template(
+            'email/bienvenida_admin.html',
+            nombre=display_name,
+            company_name=company_name,
+            verification_url=verification_url,
+        )
+
+        company_line = f" de {company_name}" if company_name else ""
+        plain_txt = (
+            f"Hola {display_name},\n\n"
+            f"Has sido registrado como administrador{company_line} en HEMEN-GO.\n"
+            f"Verifica tu cuenta accediendo a este enlace:\n{verification_url}"
+        )
+        asunto = "HEMEN-GO - Bienvenido, administrador"
+        return cls.base_mail(destinatario, asunto, html_content, plain_txt)
     
     @classmethod
     def booking(cls, destinatario: str, user_name: str, booking_code: str, service_detail: str, booking_date: str, total_paid: str, management_url: str):

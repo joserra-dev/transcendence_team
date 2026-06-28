@@ -5,6 +5,7 @@ import { ManageUsers } from './manage-users/manage-users';
 import { ManageCompanies } from './manage-companies/manage-companies';
 import { ManageCompanyDetail } from './manage-company-detail/manage-company-detail';
 import { CompanyParkings } from './company-parkings/company-parkings';
+import { CompanyMetricsPage } from './company-metrics/company-metrics';
 import { ManageBookings } from './manage-bookings/manage-bookings';
 import { adminGuard, adminOnlyGuard, superAdminGuard } from '../../core/guards/admin.guard';
 
@@ -41,6 +42,20 @@ export const ADMIN_ROUTES: Routes = [
     title: 'Editar empresa',
     canActivate: [superAdminGuard],
     data: { breadcrumb: 'BREADCRUMB.EDIT_COMPANY' },
+  },
+  {
+    path: 'companies/:id/metrics',
+    component: CompanyMetricsPage,
+    title: 'Métricas de empresa',
+    canActivate: [superAdminGuard],
+    data: { breadcrumb: 'BREADCRUMB.COMPANY_METRICS' },
+  },
+  {
+    path: 'metrics',
+    component: CompanyMetricsPage,
+    title: 'Métricas',
+    canActivate: [adminOnlyGuard],
+    data: { breadcrumb: 'BREADCRUMB.METRICS' },
   },
   {
     path: 'users',

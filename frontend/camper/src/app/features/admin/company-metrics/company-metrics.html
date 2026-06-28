@@ -1,0 +1,84 @@
+<main class="company-metrics">
+  <header class="page-header">
+    <div>
+      <a [routerLink]="backLink" class="back-link">← {{ 'ADMIN_METRICS.BACK' | translate }}</a>
+      <h1>{{ 'ADMIN_METRICS.TITLE' | translate }}</h1>
+      <p class="subtitle" *ngIf="pageTitle">{{ pageTitle }}</p>
+    </div>
+  </header>
+
+  <div class="alert error" *ngIf="errorMessage">{{ errorMessage | translate }}</div>
+
+  <section class="filters-panel">
+    <label>
+      {{ 'ADMIN_METRICS.FILTER_YEAR' | translate }}
+      <select [(ngModel)]="year" [ngModelOptions]="{standalone: true}">
+        <option *ngFor="let yearOption of yearOptions" [ngValue]="yearOption">{{ yearOption }}</option>
+      </select>
+    </label>
+    <button class="btn btn-primary" type="button" (click)="applyFilters()" [disabled]="isLoading">
+      {{ 'HISTORY.FILTER' | translate }}
+    </button>
+  </section>
+
+  <div *ngIf="isLoading" class="loading-msg">{{ 'ADMIN_METRICS.LOADING' | translate }}</div>
+
+  <section class="summary-cards" [class.is-dimmed]="isLoading">
+    <article class="summary-card">
+      <p class="summary-label">{{ 'ADMIN_METRICS.TOTAL_SALES' | translate }}</p>
+      <p class="summary-value">{{ formattedSales }}</p>
+    </article>
+    <article class="summary-card">
+      <p class="summary-label">{{ 'ADMIN_METRICS.TOTAL_BOOKINGS' | translate }}</p>
+      <p class="summary-value">{{ totalBookings }}</p>
+    </article>
+  </section>
+
+  <section class="charts-grid" [class.is-dimmed]="isLoading">
+    <article class="chart-card">
+      <h2>{{ 'ADMIN_METRICS.BOOKINGS_BY_PARKING' | translate }}</h2>
+      <div class="donut-chart">
+        <div class="donut-ring" [style.background]="bookingsGradient">
+          <div class="donut-hole"></div>
+        </div>
+        <ul class="legend" *ngIf="bookingsSlices.length; else bookingsEmpty">
+          <li *ngFor="let slice of bookingsSlices">
+            <span class="legend-dot" [style.background-color]="slice.color"></span>
+            <span class="legend-text">
+              {{ slice.label }}: {{ formatValue(slice.value) }} ({{ slice.percent }}%)
+            </span>
+          </li>
+        </ul>
+        <ng-template #bookingsEmpty>
+          <p class="legend-empty">
+            <span class="legend-dot legend-dot--empty"></span>
+            {{ 'ADMIN_METRICS.EMPTY' | translate }}
+          </p>
+        </ng-template>
+      </div>
+    </article>
+
+    <article class="chart-card">
+      <h2>{{ 'ADMIN_METRICS.SALES_BY_MONTH' | translate }}</h2>
+      <div class="donut-chart">
+        <div class="donut-ring" [style.background]="salesGradient">
+          <div class="donut-hole"></div>
+        </div>
+        <ul class="legend" *ngIf="salesSlices.length; else salesEmpty">
+          <li *ngFor="let slice of salesSlices">
+            <span class="legend-dot" [style.background-color]="slice.color"></span>
+            <span class="legend-text">
+              {{ slice.label }}: {{ formatValue(slice.value, true) }} ({{ slice.percent }}%)
+            </span>
+          </li>
+        </ul>
+        <ng-template #salesEmpty>
+          <p class="legend-empty">
+            <span class="legend-dot legend-dot--empty"></span>
+            {{ 'ADMIN_METRICS.EMPTY' | translate }}
+          </p>
+        </ng-template>
+      </div>
+    </article>
+  </section>
+</main>

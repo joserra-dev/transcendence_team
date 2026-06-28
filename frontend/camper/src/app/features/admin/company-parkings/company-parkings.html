@@ -9,6 +9,9 @@
       </p>
     </div>
     <div class="header-actions">
+      <a class="btn btn-primary" [routerLink]="['/admin/companies', companyId, 'metrics']">
+        {{ 'ADMIN_METRICS.BUTTON' | translate }}
+      </a>
       <a class="btn btn-primary" [routerLink]="['/admin/companies', companyId, 'edit']">
         {{ 'ADMIN_COMPANIES.EDIT' | translate }}
       </a>

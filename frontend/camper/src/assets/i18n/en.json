@@ -30,6 +30,8 @@
     "MANAGE_COMPANIES": "Manage companies",
     "COMPANY_PARKINGS": "Company parkings",
     "EDIT_COMPANY": "Edit company",
+    "COMPANY_METRICS": "Company metrics",
+    "METRICS": "Metrics",
     "MANAGE_BOOKINGS": "Manage bookings"
   },
 
@@ -320,6 +322,11 @@
     "MANAGE_USERS_DESC": "Create users, assign admins and manage access.",
     "ACTIVE": "Active",
     "INACTIVE": "Inactive",
+    "FILTER_STATUS": "Filter by status",
+    "FILTER_STATUS_ALL": "All statuses",
+    "FILTER_MUNICIPALITY": "Filter by municipality",
+    "FILTER_MUNICIPALITY_ALL": "All municipalities",
+    "EMPTY_FILTERED": "No listings match the selected filters.",
     "ERRORS": {
       "LOAD_ADS": "Could not load your listings."
     }
@@ -466,6 +473,30 @@
     "EMPTY": "You don't have any registered parkings.",
     "SPOTS": "Spots",
     "MANAGE": "Manage"
+  },
+
+  "ADMIN_METRICS": {
+    "BUTTON": "Metrics",
+    "TITLE": "Sales and booking metrics",
+    "BACK": "Back",
+    "LOADING": "Loading metrics…",
+    "EMPTY": "No data for the selected period.",
+    "FILTER_GROUP": "Group by",
+    "GROUP_YEAR": "Years (months)",
+    "GROUP_MONTH": "Months (weeks)",
+    "GROUP_WEEK": "Weeks (days)",
+    "FILTER_YEAR": "Year",
+    "FILTER_MONTH": "Month",
+    "FILTER_WEEK": "Week of month",
+    "WEEK_OPTION": "Week {{week}}",
+    "TOTAL_SALES": "Total sales",
+    "TOTAL_BOOKINGS": "Total bookings",
+    "SALES_BY_PARKING": "Sales by parking",
+    "BOOKINGS_BY_PARKING": "Bookings by parking",
+    "SALES_BY_MONTH": "Sales by month",
+    "ERRORS": {
+      "LOAD": "Could not load metrics."
+    }
   },
 
   "ADMIN_BOOKINGS": {

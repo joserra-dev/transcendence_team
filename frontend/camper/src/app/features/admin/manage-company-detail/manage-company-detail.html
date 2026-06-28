@@ -4,9 +4,14 @@
       <a routerLink="/admin/companies" class="back-link">← {{ 'ADMIN_COMPANIES.BACK' | translate }}</a>
       <h1>{{ company?.name || ('ADMIN_COMPANIES.EDIT_TITLE' | translate) }}</h1>
     </div>
-    <a class="btn btn-primary" [routerLink]="['/admin/companies', companyId, 'parkings']">
-      {{ 'ADMIN_COMPANIES.VIEW_PARKINGS_BTN' | translate }}
-    </a>
+    <div class="header-actions">
+      <a class="btn btn-primary" [routerLink]="['/admin/companies', companyId, 'metrics']">
+        {{ 'ADMIN_METRICS.BUTTON' | translate }}
+      </a>
+      <a class="btn btn-primary" [routerLink]="['/admin/companies', companyId, 'parkings']">
+        {{ 'ADMIN_COMPANIES.VIEW_PARKINGS_BTN' | translate }}
+      </a>
+    </div>
   </header>
 
   <div class="alert success" *ngIf="successMessage">{{ successMessage | translate }}</div>

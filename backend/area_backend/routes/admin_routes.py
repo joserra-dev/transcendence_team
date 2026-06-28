@@ -1,4 +1,4 @@
-from datetime import date
+from datetime import date, datetime
 import secrets
 
 from flask import Blueprint, jsonify, request
@@ -164,6 +164,90 @@ def _booking_to_admin_dict(booking: Booking) -> dict:
         "status": booking.status,
         "rating": float(booking.rating) if booking.rating is not None else None,
         "licensePlate": booking.license_plate,
+    }
+
+
+MONTH_LABELS = [
+    'Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio',
+    'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre',
+]
+
+
+def _parse_metric_int(value, default: int) -> int:
+    try:
+        return int(value)
+    except (TypeError, ValueError):
+        return default
+
+
+def _booking_revenue(booking: Booking) -> float:
+    days = 1
+    if booking.start_date and booking.end_date:
+        days = (booking.end_date - booking.start_date).days + 1
+    space = booking.space
+    price = float(space.price or 0) if space else 0.0
+    return float(booking.total_price) if booking.total_price else days * price
+
+
+def _company_confirmed_bookings(company_id: int):
+    return (
+        Booking.query.join(Space).join(Parking)
+        .filter(Parking.id_company == company_id, Booking.status == '1')
+    )
+
+
+def _parking_name(booking: Booking) -> str:
+    if booking.space and booking.space.parking and booking.space.parking.name:
+        return booking.space.parking.name
+    return 'Sin parking'
+
+
+def _chart_items(data: dict) -> list[dict]:
+    return [
+        {'label': label, 'value': round(value, 2) if isinstance(value, float) else value}
+        for label, value in sorted(data.items(), key=lambda item: item[1], reverse=True)
+        if value > 0
+    ]
+
+
+def _build_company_metrics(company: Company, year: int) -> dict:
+    today = date.today()
+    year = year or today.year
+    year_start = date(year, 1, 1)
+    year_end = date(year, 12, 31)
+
+    bookings = [
+        booking for booking in _company_confirmed_bookings(company.id).all()
+        if booking.created_at and year_start <= booking.created_at.date() <= year_end
+    ]
+
+    bookings_by_parking: dict[str, int] = {}
+    sales_by_month: dict[str, float] = {label: 0.0 for label in MONTH_LABELS}
+
+    total_sales = 0.0
+    for booking in bookings:
+        parking_name = _parking_name(booking)
+        revenue = _booking_revenue(booking)
+        bookings_by_parking[parking_name] = bookings_by_parking.get(parking_name, 0) + 1
+        if booking.created_at:
+            month_label = MONTH_LABELS[booking.created_at.month - 1]
+            sales_by_month[month_label] += revenue
+        total_sales += revenue
+
+    return {
+        'companyId': company.id,
+        'companyName': company.name,
+        'year': year,
+        'totals': {
+            'sales': round(total_sales, 2),
+            'bookings': len(bookings),
+        },
+        'bookingsByParking': _chart_items(bookings_by_parking),
+        'salesByMonth': [
+            {'label': label, 'value': round(sales_by_month[label], 2)}
+            for label in MONTH_LABELS
+            if sales_by_month[label] > 0
+        ],
     }
 
 
@@ -463,7 +547,12 @@ def create_company(_user, _profile):
     )
     db.session.add(admin_profile)
     try:
-        EmailService.welcome(email, verification_token)
+        EmailService.admin_welcome(
+            email,
+            verification_token,
+            nombre=nombre or "Admin",
+            company_name=name,
+        )
         db.session.commit()
     except Exception:
         db.session.rollback()
@@ -538,6 +627,32 @@ def list_company_users(_user, _profile, company_id):
     return jsonify(result), 200
 
 
+@admin_bp.route('/metrics', methods=['GET'])
+@require_admin
+def get_own_company_metrics(_user, profile):
+    if profile.role != UserRole.ADMIN or not profile.company_id:
+        return jsonify({"error": "No autorizado"}), 403
+    company = Company.query.get(profile.company_id)
+    if not company:
+        return jsonify({"error": "Empresa no encontrada"}), 404
+    return jsonify(_metrics_response(company)), 200
+
+
+@admin_bp.route('/companies/<int:company_id>/metrics', methods=['GET'])
+@require_super_admin
+def get_company_metrics(_user, _profile, company_id):
+    company = Company.query.get(company_id)
+    if not company:
+        return jsonify({"error": "Empresa no encontrada"}), 404
+    return jsonify(_metrics_response(company)), 200
+
+
+def _metrics_response(company: Company) -> dict:
+    today = date.today()
+    year = _parse_metric_int(request.args.get('year'), today.year)
+    return _build_company_metrics(company, year)
+
+
 @admin_bp.route('/users', methods=['GET'])
 @require_super_admin
 def list_users(_user, _profile):
@@ -587,7 +702,19 @@ def create_user(_user, _profile):
     )
     db.session.add(profile)
     try:
-        EmailService.welcome(email, verification_token)
+        if role == UserRole.ADMIN:
+            company_name = None
+            if company_id:
+                company = Company.query.get(company_id)
+                company_name = company.name if company else None
+            EmailService.admin_welcome(
+                email,
+                verification_token,
+                nombre=data.get("nombre", "Admin"),
+                company_name=company_name,
+            )
+        else:
+            EmailService.welcome(email, verification_token)
         db.session.commit()
     except Exception:
         db.session.rollback()

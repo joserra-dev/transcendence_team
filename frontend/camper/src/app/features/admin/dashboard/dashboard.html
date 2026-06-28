@@ -6,6 +6,9 @@
       <p class="subtitle">{{ 'ADMIN_DASHBOARD.ADMIN_DESC' | translate }}</p>
     </div>
     <div class="hero-actions">
+      <a routerLink="/admin/metrics" class="btn btn-primary">
+        {{ 'ADMIN_METRICS.BUTTON' | translate }}
+      </a>
       <a routerLink="/admin/bookings" class="btn btn-primary">
         {{ 'ADMIN_DASHBOARD.MANAGE_BOOKINGS' | translate }}
       </a>
@@ -37,6 +40,40 @@
     </p>
 
     <div class="ads-results" *ngIf="!isLoading && parkings.length > 0">
+      <div class="table-filters">
+        <label>
+          {{ 'ADMIN_DASHBOARD.FILTER_STATUS' | translate }}
+          <select [(ngModel)]="filterStatus" [ngModelOptions]="{standalone: true}" (ngModelChange)="onFiltersChange()">
+            <option [ngValue]="'all'">{{ 'ADMIN_DASHBOARD.FILTER_STATUS_ALL' | translate }}</option>
+            <option [ngValue]="'active'">{{ 'ADMIN_DASHBOARD.ACTIVE' | translate }}</option>
+            <option [ngValue]="'inactive'">{{ 'ADMIN_DASHBOARD.INACTIVE' | translate }}</option>
+          </select>
+        </label>
+
+        <label>
+          {{ 'ADMIN_DASHBOARD.FILTER_MUNICIPALITY' | translate }}
+          <select [(ngModel)]="filterMunicipality" [ngModelOptions]="{standalone: true}" (ngModelChange)="onFiltersChange()">
+            <option [ngValue]="'all'">{{ 'ADMIN_DASHBOARD.FILTER_MUNICIPALITY_ALL' | translate }}</option>
+            <option *ngFor="let municipality of municipalityOptions" [ngValue]="municipality">
+              {{ municipality }}
+            </option>
+          </select>
+        </label>
+
+        <label>
+          {{ 'ADMIN_USERS.SORT' | translate }}
+          <select [(ngModel)]="sortOrder" [ngModelOptions]="{standalone: true}" (ngModelChange)="onFiltersChange()">
+            <option [ngValue]="'asc'">{{ 'ADMIN_USERS.SORT_ASC' | translate }}</option>
+            <option [ngValue]="'desc'">{{ 'ADMIN_USERS.SORT_DESC' | translate }}</option>
+          </select>
+        </label>
+      </div>
+
+      <p *ngIf="filteredParkings.length === 0" class="empty-msg">
+        {{ 'ADMIN_DASHBOARD.EMPTY_FILTERED' | translate }}
+      </p>
+
+      <div *ngIf="filteredParkings.length > 0">
       <div #adsListScroll class="ads-list-scroll">
         <article
           *ngFor="let parking of paginatedAds"
@@ -78,11 +115,11 @@
         </article>
       </div>
 
-      <nav class="pagination" [attr.aria-label]="'ADMIN_DASHBOARD.ADS_PAGINATION_LABEL' | translate">
+      <nav class="pagination" *ngIf="filteredParkings.length > 0" [attr.aria-label]="'ADMIN_DASHBOARD.ADS_PAGINATION_LABEL' | translate">
         <p class="pagination-info">
           {{
             'ADMIN_COMPANIES.PAGE_INFO'
-              | translate:{ from: adsPageRangeStart, to: adsPageRangeEnd, total: parkings.length }
+              | translate:{ from: adsPageRangeStart, to: adsPageRangeEnd, total: filteredParkings.length }
           }}
         </p>
         <div class="pagination-controls" *ngIf="adsTotalPages > 1">
@@ -105,6 +142,7 @@
           </button>
         </div>
       </nav>
+      </div>
     </div>
   </section>
 </main>

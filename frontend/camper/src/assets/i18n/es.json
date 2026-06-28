@@ -30,6 +30,8 @@
     "MANAGE_COMPANIES": "Gestionar empresas",
     "COMPANY_PARKINGS": "Parkings de empresa",
     "EDIT_COMPANY": "Editar empresa",
+    "COMPANY_METRICS": "Métricas de empresa",
+    "METRICS": "Métricas",
     "MANAGE_BOOKINGS": "Gestionar reservas"
   },
 
@@ -319,6 +321,11 @@
     "MANAGE_USERS_DESC": "Crear usuarios, asignar admins y gestionar accesos.",
     "ACTIVE": "Activo",
     "INACTIVE": "Inactivo",
+    "FILTER_STATUS": "Filtrar por estado",
+    "FILTER_STATUS_ALL": "Todos los estados",
+    "FILTER_MUNICIPALITY": "Filtrar por municipio",
+    "FILTER_MUNICIPALITY_ALL": "Todos los municipios",
+    "EMPTY_FILTERED": "No hay parkings que coincidan con los filtros seleccionados.",
     "ERRORS": {
       "LOAD_ADS": "No se pudieron cargar tus anuncios."
     }
@@ -465,6 +472,30 @@
     "EMPTY": "No tienes parkings registrados.",
     "SPOTS": "Plazas",
     "MANAGE": "Gestionar"
+  },
+
+  "ADMIN_METRICS": {
+    "BUTTON": "Métricas",
+    "TITLE": "Métricas de ventas y reservas",
+    "BACK": "Volver",
+    "LOADING": "Cargando métricas…",
+    "EMPTY": "No hay datos para el periodo seleccionado.",
+    "FILTER_GROUP": "Agrupar por",
+    "GROUP_YEAR": "Años (meses)",
+    "GROUP_MONTH": "Meses (semanas)",
+    "GROUP_WEEK": "Semanas (días)",
+    "FILTER_YEAR": "Año",
+    "FILTER_MONTH": "Mes",
+    "FILTER_WEEK": "Semana del mes",
+    "WEEK_OPTION": "Semana {{week}}",
+    "TOTAL_SALES": "Ventas totales",
+    "TOTAL_BOOKINGS": "Reservas totales",
+    "SALES_BY_PARKING": "Ventas por parking",
+    "BOOKINGS_BY_PARKING": "Reservas por parking",
+    "SALES_BY_MONTH": "Ventas por mes",
+    "ERRORS": {
+      "LOAD": "No se pudieron cargar las métricas."
+    }
   },
 
   "ADMIN_BOOKINGS": {
