@@ -43,7 +43,7 @@ def _get_booking_details(booking):
     return {
         "id": booking.id,
         "createDate": booking.created_at.strftime('%Y-%m-%d') if booking.created_at else None,
-        "starDate": booking.start_date.isoformat() if booking.start_date else None,
+        "startDate": booking.start_date.isoformat() if booking.start_date else None,
         "endDate": booking.end_date.isoformat() if booking.end_date else None,
         "parkingName": parking_name,
         "status": booking.status,
@@ -272,8 +272,10 @@ def create_booking():
         return _("La matrícula del vehículo es obligatoria"), 400
         
     try:
-        startDate = datetime.strptime(start_date, "%Y-%m-%d").date()
-        endDate = datetime.strptime(end_date, "%Y-%m-%d").date()
+        start_date_str = start_date[:10] if isinstance(start_date, str) else start_date
+        end_date_str = end_date[:10] if isinstance(end_date, str) else end_date
+        startDate = datetime.strptime(start_date_str, "%Y-%m-%d").date()
+        endDate = datetime.strptime(end_date_str, "%Y-%m-%d").date()
     except ValueError:
         return _("Formato de fecha inválido"), 400
 
@@ -317,7 +319,7 @@ def create_booking():
         space = Space.query.get(new_booking.id_space)
         parking = space.parking if space else None
         if user and parking:
-            management_url = f"{os.getenv('URL_FRONT', 'http://localhost:4200').rstrip('/')}/client/booking/{new_booking.id}"
+            management_url = f"{os.getenv('URL_FRONT', 'https://localhost:4200').rstrip('/')}/client/booking/{new_booking.id}"
             EmailService.booking(
                 destinatario=user.email,
                 user_name=user.profile.name if user.profile else user.email,

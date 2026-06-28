@@ -18,11 +18,11 @@ export class ParkingService {
     if (filters.id) {
       params.id = filters.id.toString();
     }
-    if (filters.fechaDesde) {
-      params.fechaDesde = filters.fechaDesde;
+    if (filters.startDate) {
+      params.startDate = filters.startDate;
     }
-    if (filters.fechaHasta) {
-      params.fechaHasta = filters.fechaHasta;
+    if (filters.endDate) {
+      params.endDate = filters.endDate;
     }
     if (filters.localidad) {
       params.municipio = filters.localidad;

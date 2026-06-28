@@ -301,3 +301,115 @@ parking-detail.ts: Agregué manejo de error 404 en la suscripción del servicio
 parking-detail.html: Reordené el template para mostrar error antes del loading
 i18n/es.json, i18n/en.json, i18n/eu.json: Agregué clave NOT_FOUND con los mensajes de error
 
+### 26/06/28 ccorreccion de uso de fechas
+
+## Revisión de código relacionado con fechas
+
+Encontré **25 errores y problemas** en el manejo de fechas en backend y frontend:
+
+---
+
+### Backend
+
+| # | Archivo:línea | Tipo | Descripción |
+|---|---------------|------|-------------|
+| 1 | `booking_routes.py:46` | **Bug crítico** | Devuelve `"starDate"` en vez de `"startDate"` (typo). El frontend espera `startDate` en `BookingHistoryResponse` y `AdminBooking`; el valor será `undefined` y las fechas no se mostrarán. **Arreglar:** cambiar `"starDate"` por `"startDate"`. |
+| 2 | `booking_routes.py:28` y `:185` | **Inconsistencia** | Calcula días con `max((end - start).days, 0)`. Una reserva de un solo día (misma fecha entrada y salida) da 0 días = precio 0. **Arreglar:** usar `+ 1` como en admin, o rechazar salida = entrada (ya lo hace en línea 280). |
+| 3 | `admin_routes.py:107` | **Inconsistencia** | Calcula días con `(end - start).days + 1`, contando inclusivo. El endpoint de usuario usa `max(..., 0)` sin `+1`. Los precios difieren entre panel admin y vista de usuario. **Arreglar:** unificar la lógica. |
+| 4 | `public_api_routes.py:115-116` | **Bug / Falta de robustez** | `datetime.strptime(to_date, '%Y-%m-%d')` sin `try/except`. Si el JSON trae un formato inválido, lanza 500 en vez de 400. **Arreglar:** envolver en `try/except ValueError`. |
+| 5 | `booking_routes.py:275-278` | **Bug potencial** | `datetime.strptime(start_date, "%Y-%m-%d")` falla si el input viene como ISO completo (`2026-07-01T00:00:00`) desde un `datetime-local`. **Arreglar:** usar `start_date[:10]` antes de parsear. |
+| 6 | `public_api_routes.py:113-118` | **Inconsistencia lógica** | Usa `<=` y `>=` para overlap, mientras `booking_routes.py:285-286` usa `<` y `>`. La API pública marca ocupado un espacio que en la web se podría reservar. **Arreglar:** alinear con `<`/`>` como en el resto. |
+| 7 | `parking_routes.py:84-85` | **Validación nula** | Pasa `from_date` y `to_date` a `to_dict()` sin validar formato. Si llega `fechaDesde=foo`, el modelo hace `print` pero sigue devolviendo datos sin filtrar. **Arreglar:** validar formato antes de llamar a `to_dict()`. |
+| 8 | `access_routes.py:68` | **Bug timezone potencial** | `date.today()` usa la hora local del servidor. Si el servidor está en UTC y el usuario en UTC+2, la verificación de acceso puede rechazar una reserva válida o admitir una no iniciada. **Arreglar:** usar `datetime.now(timezone.utc).date()` o guardar timezone del parking. |
+| 9 | N/A | **Nombres inconsistentes** | El API usa `fechaDesde`/`fechaHasta`, el frontend envía `fechaDesde`/`fechaHasta` en búsquedas pero `startDate`/`endDate` en booking. Las rutas públicas también aceptan `start_date`/`end_date`. **Arreglar:** estandarizar nombres. |
+
+---
+
+### Frontend
+
+| # | Archivo:línea | Tipo | Descripción |
+|---|---------------|------|-------------|
+| 10 | `search-parking.ts:50`, `parking-detail.ts:70` | **Bug timezone** | `new Date().toISOString().split('T')[0]` devuelve la fecha UTC. En husos horarios positivos (ej. España UTC+2), "hoy" local puede ser "ayer" en UTC, mostrando fechas incorrectas. **Arreglar:** usar `new Date().toLocaleDateString('en-CA')` (formato ISO local). |
+| 11 | `parking-detail.ts:128-132` | **Inconsistencia precio** | `Math.ceil(diffDays)` para calcular días. Backend usa `.days` (floor). Para una reserva de 1 día ( entrada=01, salida=02 ), `diffDays=1`, `ceil=1`. Pero si entrada=01 00:30 y salida=02 00:20 local, el diff podría dar 0.9 días → `ceil=1` pero backend da 0 días. **Arreglar:** alinear con backend usando `Math.max(diffDays, 0)` o redondear ambos igual. |
+| 12 | `search-parking.ts:161-164` | **UX bug** | `onEntryDateChange` sobrescribe `fechaHasta` con el día siguiente sin importar qué fecha tenía el usuario. Si el usuario ya había seleccionado salida=10, al cambiar entrada=05 se pierde la fecha de salida original. **Arreglar:** solo actualizar si `fechaHasta` es menor que el nuevo día mínimo. |
+| 13 | `history.ts:79` | **Bug crítico** | `filters.status` pero el control del form es `estado`. El filtro por estado nunca funciona porque `filters.status` siempre es `undefined`. **Arreglar:** cambiar a `filters.estado`. |
+| 14 | `history.ts:65-66` y `manage-bookings.ts:110-111` | **Comparación frágil** | `new Date(booking.startDate) >= new Date(filters.fechaDesde)` compara timestamps completos. Si ambas son `YYYY-MM-DD`, funciona, pero si alguna trae hora (`2026-07-01T10:00:00`), la comparación es incorrecta. **Arreglar:** extraer solo la fecha (`split('T')[0]`) antes de comparar. |
+| 15 | `booking-detail.html` (revisión anterior) | **Referencia a campo inexistente** | Usa `booking.starDate` (otro typo) que no existe en ningún lado; el frontend recibe `startDate` del historial. La fecha no se muestra. |
+
+---
+
+### Cross-cutting
+
+| # | Archivo | Tipo | Descripción |
+|---|---------|------|-------------|
+| 16 | Global | **Time zones** | El backend almacena `date` (sin hora). El frontend usa `new Date('YYYY-MM-DD')` que interpreta como UTC medianoche. En zonas negativas, `2026-07-01` UTC es localmente `2026-06-30`. Esto puede causar descuadres de 1 día en filtros, disponibilidad y precios. **Arreglar:** en el frontend, construir fechas como `new Date(year, month-1, day)` para evitar la interpretación UTC. |
+
+---
+
+### Resumen de prioridad alta
+
+1. **`booking_routes.py:46`** — typo `starDate` rompe visualización de fechas en detalle de reserva.
+2. **`history.ts:79`** — `filters.status` vs `estado` rompe filtro de estado.
+3. **Timezone en frontend** — `toISOString().split('T')[0]` muestra fechas incorrectas para husos positivos.
+4. **Inconsistencia overlap** — public API vs web usan reglas distintas para "fechas solapadas".
+5. **Inconsistencia cálculo días** — `+1` en admin, `max(...,0)` en usuario → precios distintos.
+6. **`public_api_routes.py:115-116`** — sin try/except, 500 ante fechas inválidas.
+
+1.- TypeScript compila sin errores. Backend y frontend están clean. Resumen de lo arreglado:
+
+| # | Archivo | Fix |
+|---|---------|-----|
+| 1 | `booking_routes.py:46` | `starDate` → `startDate` (typo crítico) |
+| 2 | `booking_routes.py:28,185` | Cálculo días con `max((end-start).days, 0)` |
+| 3 | `admin_routes.py:107` | Cálculo días alineado: `max(..., 0)` en vez de `+ 1` |
+| 4 | `public_api_routes.py:115-116` | fechas parseadas con `try/except` (respeta 400, no 500) + alineado overlap con `<`/`>` |
+| 5 | `booking_routes.py:275-278` | `start_date[:10]` para soportar ISO completo con hora |
+| 6 | `public_api_routes.py:113-118` | Overlap alineado a `<`/`>` como el resto del sistema |
+| 7 | `parking_routes.py:84-100` | Validación de formato YYYY-MM-DD con respuesta 400 clara |
+| 8 | `access_routes.py:68` | `date.today()` → `datetime.now(timezone.utc).date()` |
+| 9 | `search-parking.ts:50-56` | Fechas locales sin `toISOString()` (fix timezone) |
+| 10 | `parking-detail.ts:70-71` | Mismo fix timezone para fechas iniciales |
+| 11 | `search-parking.ts:158-167` | `onEntryDateChange`: no sobrescribe `fechaHasta` si ya es válida |
+| 12 | `history.ts:79` | `filters.status` → `filters.estado` (bug filtro estado) |
+| 13 | `history.ts:104-106` + `manage-bookings.ts:108-109` | Comparación de fechas extrae solo la parte fecha (no hora) |
+| 14 | `parking-detail.ts:108-117` | Resuelto conflicto de merge sin resolver |
+
+2.- Todo limpio. Aquí va el resumen de la unificación a inglés:
+
+| Archivo | Cambio |
+|---------|--------|
+| `search-parking.ts` | Form controls, filtros, `onEntryDateChange`, `clearFilters`, query params de router |
+| `search-parking.html` | `formControlName` + `queryParams` |
+| `parking-detail.ts` | Lectura de query params |
+| `models/parking.ts` | `SearchFilters` interface |
+| `services/parking.ts` | Mapeo de params HTTP |
+| `history.ts` | Form controls, filtros, `clearFilters`, `onEntryDateChange` |
+| `history.html` | `formControlName` |
+| `manage-bookings.ts` | Form controls, `clearFilters` |
+| `manage-bookings.html` | `formControlName` |
+| `parking_routes.py` | Query params `startDate`/`endDate` + mensajes de error |
+| `public_api_routes.py` | Campos JSON `startDate`/`endDate` |
+
+TypeScript compila sin errores. Backend y frontend ya no tienen ni un `fechaDesde`/`fechaHasta` en el código.
+
+
+
+3.- He pasado el proyecto de HTTP a HTTPS. Estos son los cambios realizados:
+
+**Frontend / Nginx:**
+- `frontend/nginx.conf`: Nginx ahora sirve en puerto 443 con SSL, redirige HTTP→HTTPS y hace proxy de `/api/` al backend por `http://backend:8000`.
+- `frontend/Dockerfile`: Genera certificados auto-firmados durante el build con OpenSSL y expone puerto 443.
+
+**Producción (`docker-compose.prod.yml`):**
+- Frontend mapea `${FRONT_PORT}:443`.
+- Backend ya no expone puerto externamente (`ports: []`).
+- Inyecta `URL_BACK=/` al frontend para que las llamadas a la API sean relativas y pasen por el proxy HTTPS de Nginx (sin mixed-content).
+
+**Backend:**
+- Fallbacks de `URL_FRONT` actualizados a `https://localhost:8001`.
+- `users_routes.py` y `email_services.py` ahora usan `URL_FRONT` para construir enlaces de emails/verificación, ya que en producción el backend se accede por el mismo dominio HTTPS del frontend.
+
+**Desarrollo:**
+- `.env` y `Makefile` se mantienen en HTTP para que `make dev` siga funcionando sin cambios.
+
+Para desplegar en producción: edita `.env` con `URL_FRONT=https://tu-dominio` y ejecuta `make prod`.

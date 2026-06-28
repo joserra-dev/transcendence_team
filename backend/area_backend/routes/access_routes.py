@@ -1,6 +1,6 @@
 import base64
 import re
-from datetime import date
+from datetime import date, datetime, timezone
 import cv2
 import numpy as np
 # Importante añadir 'render_template'
@@ -65,7 +65,7 @@ def verify_plate():
             return jsonify({"access": False, "plate": None, "message": "No se distingue la matrícula clara"}), 200
 
         # Validar en DB
-        today = date.today()
+        today = datetime.now(timezone.utc).date()
         active_booking = Booking.query.filter(
             Booking.license_plate == detected_plate,
             Booking.start_date <= today,

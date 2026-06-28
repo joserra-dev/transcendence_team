@@ -29,8 +29,8 @@ export class SearchParking implements OnInit, OnDestroy {
   private langFormatSub!: Subscription;
 
   searchForm: FormGroup = this.fb.group({
-    fechaDesde: [''],
-    fechaHasta: [''],
+    startDate: [''],
+    endDate: [''],
     localidad: [''],
     provincia: [''],
     tomaElectricidad: [false],
@@ -47,12 +47,15 @@ export class SearchParking implements OnInit, OnDestroy {
     // 2. Establecer formato inicial
     this.dateformatdefine(this.translate.currentLang || this.translate.defaultLang || 'es');
 
-    const today = new Date().toISOString().split('T')[0];
-    const tomorrow = new Date(new Date().setDate(new Date().getDate() + 1)).toISOString().split('T')[0];
+    const today = new Date();
+    const todayStr = `${today.getFullYear()}-${String(today.getMonth() + 1).padStart(2, '0')}-${String(today.getDate()).padStart(2, '0')}`;
+    const tomorrow = new Date(today);
+    tomorrow.setDate(tomorrow.getDate() + 1);
+    const tomorrowStr = `${tomorrow.getFullYear()}-${String(tomorrow.getMonth() + 1).padStart(2, '0')}-${String(tomorrow.getDate()).padStart(2, '0')}`;
 
     this.searchForm.patchValue({
-      fechaDesde: today,
-      fechaHasta: tomorrow
+      startDate: todayStr,
+      endDate: tomorrowStr
     });
 
     this.onSearch();
@@ -69,11 +72,11 @@ export class SearchParking implements OnInit, OnDestroy {
 
   // Getters auxiliares para leer cómodamente el valor ISO crudo desde el HTML
   get rawEntryDate(): string {
-    return this.searchForm.get('fechaDesde')?.value || '';
+    return this.searchForm.get('startDate')?.value || '';
   }
 
   get rawExitDate(): string {
-    return this.searchForm.get('fechaHasta')?.value || '';
+    return this.searchForm.get('endDate')?.value || '';
   }
 
   onSearch() {
@@ -88,8 +91,8 @@ export class SearchParking implements OnInit, OnDestroy {
     const formVal = this.searchForm.value;
 
     const filters: any = {
-      fechaDesde: formVal.fechaDesde,
-      fechaHasta: formVal.fechaHasta,
+      startDate: formVal.startDate,
+      endDate: formVal.endDate,
     };
 
     if (formVal.localidad && formVal.localidad.trim() !== '') {
@@ -135,8 +138,8 @@ export class SearchParking implements OnInit, OnDestroy {
 
   clearFilters() {
     const currentDates = {
-      fechaDesde: this.searchForm.get('fechaDesde')?.value,
-      fechaHasta: this.searchForm.get('fechaHasta')?.value
+      startDate: this.searchForm.get('startDate')?.value,
+      endDate: this.searchForm.get('endDate')?.value
     };
 
     this.searchForm.reset({
@@ -156,13 +159,17 @@ export class SearchParking implements OnInit, OnDestroy {
   }
 
   onEntryDateChange() {
-    const fechaDesde = this.searchForm.get('fechaDesde')?.value;
-    if (fechaDesde) {
-      const nextDay = new Date(fechaDesde);
+    const startDate = this.searchForm.get('startDate')?.value;
+    if (startDate) {
+      const nextDay = new Date(startDate);
       nextDay.setDate(nextDay.getDate() + 1);
-      this.searchForm.patchValue({
-        fechaHasta: nextDay.toISOString().split('T')[0]
-      });
+      const nextDayStr = `${nextDay.getFullYear()}-${String(nextDay.getMonth() + 1).padStart(2, '0')}-${String(nextDay.getDate()).padStart(2, '0')}`;
+      const currentEnd = this.searchForm.get('endDate')?.value;
+      if (!currentEnd || currentEnd < nextDayStr) {
+        this.searchForm.patchValue({
+          endDate: nextDayStr
+        });
+      }
     }
   }
 

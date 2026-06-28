@@ -102,9 +102,9 @@ def _can_manage_booking(profile: Profiles, booking: Booking) -> bool:
 
 
 def _booking_to_admin_dict(booking: Booking) -> dict:
-    days = 1
+    days = 0
     if booking.start_date and booking.end_date:
-        days = (booking.end_date - booking.start_date).days + 1
+        days = max((booking.end_date - booking.start_date).days, 0)
 
     space = booking.space
     parking_name = ""

@@ -27,8 +27,8 @@ export class History implements OnInit {
   currentQrCode: string | null = null;
 
   filterForm: FormGroup = this.fb.group({
-    fechaDesde: [''],
-    fechaHasta: [''],
+    startDate: [''],
+    endDate: [''],
     nombreParking: [''],
     estado: ['']
   });
@@ -62,12 +62,12 @@ export class History implements OnInit {
     this.filteredBookings = this.allBookings.filter(booking => {
       let matches = true;
 
-      if (filters.fechaDesde && booking.startDate) {
-        matches = matches && new Date(booking.startDate) >= new Date(filters.fechaDesde);
+      if (filters.startDate && booking.startDate) {
+        matches = matches && this.extractDate(booking.startDate) >= this.extractDate(filters.startDate);
       }
 
-      if (filters.fechaHasta && booking.endDate) {
-        matches = matches && new Date(booking.endDate) <= new Date(filters.fechaHasta);
+      if (filters.endDate && booking.endDate) {
+        matches = matches && this.extractDate(booking.endDate) <= this.extractDate(filters.endDate);
       }
 
       if (filters.nombreParking) {
@@ -76,7 +76,7 @@ export class History implements OnInit {
         matches = matches && pName.includes(searchStr);
       }
 
-      if (filters.status && filters.status !== '') {
+      if (filters.estado && filters.estado !== '') {
         matches = matches && booking.status === filters.estado;
       }
 
@@ -86,8 +86,8 @@ export class History implements OnInit {
 
   clearFilters() {
     this.filterForm.reset({
-        fechaDesde: '',
-        fechaHasta: '',
+        startDate: '',
+        endDate: '',
         nombreParking: '',
         estado: ''
     });
@@ -104,13 +104,18 @@ export class History implements OnInit {
     input.showPicker?.();
   }
 
+  private extractDate(value: string): string {
+    return value.split('T')[0].split(' ')[0];
+  }
+
   onEntryDateChange() {
-    const fechaDesde = this.filterForm.get('fechaDesde')?.value;
-    if (fechaDesde) {
-      const nextDay = new Date(fechaDesde);
+    const startDate = this.filterForm.get('startDate')?.value;
+    if (startDate) {
+      const nextDay = new Date(startDate);
       nextDay.setDate(nextDay.getDate() + 1);
+      const nextDayStr = `${nextDay.getFullYear()}-${String(nextDay.getMonth() + 1).padStart(2, '0')}-${String(nextDay.getDate()).padStart(2, '0')}`;
       this.filterForm.patchValue({
-        fechaHasta: nextDay.toISOString().split('T')[0]
+        endDate: nextDayStr
       });
     }
   }

@@ -3,6 +3,7 @@ from werkzeug.security import generate_password_hash, check_password_hash
 from flask_jwt_extended import create_access_token, jwt_required, get_jwt_identity
 from sqlalchemy import func
 from flask_babel import gettext as _, refresh
+from datetime import datetime
 
 from database import db
 from models.parking import Parking
@@ -33,13 +34,13 @@ def search_parkings():
         type: string
         required: false
         description: Filtrar por municipio.
-      - name: fechaDesde
+      - name: startDate
         in: query
         type: string
         format: date
         required: false
         description: Fecha de inicio para comprobar disponibilidad (YYYY-MM-DD).
-      - name: fechaHasta
+      - name: endDate
         in: query
         type: string
         format: date
@@ -81,8 +82,20 @@ def search_parkings():
     province = request.args.get('provincia')
     municipality = request.args.get('municipio')
     id_parking = request.args.get('id')
-    from_date = request.args.get('fechaDesde')
-    to_date = request.args.get('fechaHasta')
+    from_date_str = request.args.get('startDate')
+    to_date_str = request.args.get('endDate')
+    from_date = None
+    to_date = None
+    if from_date_str:
+        try:
+            from_date = datetime.strptime(from_date_str, "%Y-%m-%d").date()
+        except ValueError:
+            return jsonify({"error": _("Formato de fecha inválido para startDate. Usa YYYY-MM-DD.")}), 400
+    if to_date_str:
+        try:
+            to_date = datetime.strptime(to_date_str, "%Y-%m-%d").date()
+        except ValueError:
+            return jsonify({"error": _("Formato de fecha inválido para endDate. Usa YYYY-MM-DD.")}), 400
     
     # 3. Capturamos los booleanos (Flask los recibe como string, hay que convertirlos)
     isactive = request.args.get('isactive', default='true') # Por defecto 'true' para no mostrar parkings caídos

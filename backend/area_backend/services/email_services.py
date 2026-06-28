@@ -55,7 +55,7 @@ class EmailService:
         Método especializado (ejemplo) para correos de bienvenida.
         Mantiene limpia la lógica de tus vistas/rutas.
         """
-        base_url = os.getenv('URL_BACK')
+        base_url = os.getenv('URL_FRONT')
         verification_url = f"{base_url}/api/users/verify?token={token}"
         html_content = render_template(
             'email/bienvenida.html', 
