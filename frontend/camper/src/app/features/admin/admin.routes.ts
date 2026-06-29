@@ -7,6 +7,7 @@ import { ManageCompanyDetail } from './manage-company-detail/manage-company-deta
 import { CompanyParkings } from './company-parkings/company-parkings';
 import { CompanyMetricsPage } from './company-metrics/company-metrics';
 import { ManageBookings } from './manage-bookings/manage-bookings';
+import { AdminChat } from './admin-chat/admin-chat';
 import { adminGuard, adminOnlyGuard, superAdminGuard } from '../../core/guards/admin.guard';
 
 export const ADMIN_ROUTES: Routes = [
@@ -70,6 +71,13 @@ export const ADMIN_ROUTES: Routes = [
     title: 'Gestionar reservas',
     canActivate: [adminOnlyGuard],
     data: { breadcrumb: 'BREADCRUMB.MANAGE_BOOKINGS' },
+  },
+  {
+    path: 'chat',
+    component: AdminChat,
+    title: 'Chat de incidencias',
+    canActivate: [adminGuard],
+    data: { breadcrumb: 'BREADCRUMB.ADMIN_CHAT' },
   },
   {
     path: 'parking/new',

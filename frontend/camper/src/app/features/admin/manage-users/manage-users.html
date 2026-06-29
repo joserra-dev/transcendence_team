@@ -10,7 +10,12 @@
     </button>
   </header>
 
-  <div class="alert success" *ngIf="successMessage">{{ successMessage | translate }}</div>
+  <div class="alert success-user" *ngIf="successMessage && successAlertType === 'user'">
+    {{ successMessage | translate }}
+  </div>
+  <div class="alert success-admin" *ngIf="successMessage && successAlertType === 'admin'">
+    {{ successMessage | translate }}
+  </div>
   <div class="alert error" *ngIf="errorMessage">{{ errorMessage | translate }}</div>
 
   <section class="create-form" *ngIf="showForm">

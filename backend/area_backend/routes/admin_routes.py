@@ -2,10 +2,12 @@ from datetime import date, datetime
 import secrets
 
 from flask import Blueprint, jsonify, request
+from sqlalchemy.exc import SQLAlchemyError
 from werkzeug.security import generate_password_hash
 
 from database import db
 from models.booking import Booking
+from models.chat_message import ChatMessage
 from models.company import Company
 from models.parking import Parking
 from models.space import Space
@@ -809,6 +811,13 @@ def delete_user(user, _profile, user_id):
     if target.profile.role == UserRole.SUPER_ADMIN:
         return jsonify({"error": "No se puede eliminar un superadministrador"}), 403
 
-    db.session.delete(target)
-    db.session.commit()
+    try:
+        ChatMessage.query.filter_by(sender_id=target.id).delete(synchronize_session=False)
+        Booking.query.filter_by(id_user=target.id).delete(synchronize_session=False)
+        db.session.delete(target)
+        db.session.commit()
+    except SQLAlchemyError:
+        db.session.rollback()
+        return jsonify({"error": "No se puede eliminar el usuario por datos asociados"}), 409
+
     return jsonify({"mensaje": "Usuario eliminado correctamente"}), 200

@@ -32,7 +32,8 @@
     "EDIT_COMPANY": "Enpresa editatu",
     "COMPANY_METRICS": "Enpresaren metrikak",
     "METRICS": "Metrikak",
-    "MANAGE_BOOKINGS": "Erreserbak kudeatu"
+    "MANAGE_BOOKINGS": "Erreserbak kudeatu",
+    "ADMIN_CHAT": "Gorabeheren txata"
   },
 
   "COMMON": {
@@ -363,18 +364,21 @@
     "ACTIONS": "Ekintzak",
     "NO_COMPANY": "—",
     "EMPTY_FILTERED": "Ez dago hautatutako iragazkiekin bat datorren erabiltzailerik.",
-    "SUCCESS_CREATE": "Erabiltzailea sortu da. Egiaztapen mezu bat bidali da.",
+    "SUCCESS_CREATE_USER": "Erabiltzailea sortu da. Egiaztapen mezu bat bidali da.",
+    "SUCCESS_CREATE_ADMIN": "Administratzailea sortu da. Egiaztapen mezu bat bidali da.",
     "SUCCESS_UPDATE": "Erabiltzailea ongi eguneratu da.",
     "SUCCESS_PROMOTE": "Admin baimenak ongi eman dira.",
     "SUCCESS_REVOKE": "Admin baimenak ongi kendu dira.",
-    "SUCCESS_DELETE": "Erabiltzailea ongi ezabatu da.",
+    "SUCCESS_DELETE_USER": "Erabiltzailea ongi ezabatu da.",
+    "SUCCESS_DELETE_ADMIN": "Administratzailea ongi ezabatu da.",
     "CONFIRM_REVOKE_TITLE": "Ekintza berretsi",
     "CONFIRM_REVOKE_TEXT": "Ziur zaude {{name}} erabiltzaileari admin baimenak kendu nahi diozula? Ekintza hau ezin da desegin.",
     "CONFIRM_DELETE_TITLE": "Ezabatzea berretsi",
     "CONFIRM_DELETE_TEXT": "Ziur zaude {{name}} erabiltzailea ezabatu nahi duzula? Ekintza hau ezin da desegin.",
     "ERRORS": {
       "LOAD": "Ezin izan dira erabiltzaileak kargatu.",
-      "CREATE": "Errorea erabiltzailea sortzean.",
+      "CREATE_USER": "Ezin izan da erabiltzailea sortu.",
+      "CREATE_ADMIN": "Ezin izan da administratzailea sortu.",
       "UPDATE": "Errorea baimenak eguneratzean.",
       "DELETE": "Errorea erabiltzailea ezabatzean.",
       "NO_COMPANY": "Ez dago enpresarik adminari esleitzeko."
@@ -572,6 +576,29 @@
       "UPDATE_SPOT": "Errorea plaza eguneratzean.",
       "DELETE_SPOT": "Errorea plaza ezabatzean.",
       "DELETE": "Errorea aparkalekua ezabatzean."
+    }
+  },
+
+  "ADMIN_CHAT": {
+    "OPEN": "Gorabeheren txata ireki",
+    "TITLE": "Gorabeheren txata",
+    "SUBTITLE": "Komunikatu superadministratzailearekin edo enpresako administratzaileekin.",
+    "BACK": "Panelera itzuli",
+    "THREADS_TITLE": "Elkarrizketak",
+    "NO_THREADS": "Oraindik ez dago elkarrizketarik.",
+    "NO_MESSAGES": "Mezurik ez",
+    "SELECT_THREAD": "Hautatu elkarrizketa bat hasteko.",
+    "WITH_ADMIN": "Administratzailea: {{name}}",
+    "LOADING_THREADS": "Elkarrizketak kargatzen...",
+    "LOADING_MESSAGES": "Mezuak kargatzen...",
+    "EMPTY_CHAT": "Oraindik ez dago mezurik. Idatzi lehenengoa.",
+    "PLACEHOLDER": "Idatzi zure mezua...",
+    "SEND": "Bidali",
+    "UNKNOWN_SENDER": "Erabiltzailea",
+    "ERRORS": {
+      "LOAD_THREADS": "Ezin izan dira elkarrizketak kargatu.",
+      "LOAD_MESSAGES": "Ezin izan dira mezuak kargatu.",
+      "SEND": "Errorea mezua bidaltzean."
     }
   }
 }

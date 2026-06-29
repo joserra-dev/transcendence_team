@@ -32,7 +32,8 @@
     "EDIT_COMPANY": "Edit company",
     "COMPANY_METRICS": "Company metrics",
     "METRICS": "Metrics",
-    "MANAGE_BOOKINGS": "Manage bookings"
+    "MANAGE_BOOKINGS": "Manage bookings",
+    "ADMIN_CHAT": "Incident chat"
   },
 
   "COMMON": {
@@ -368,18 +369,21 @@
     "ACTIONS": "Actions",
     "NO_COMPANY": "—",
     "EMPTY_FILTERED": "No users match the selected filters.",
-    "SUCCESS_CREATE": "User created. A verification email has been sent.",
+    "SUCCESS_CREATE_USER": "User created. A verification email has been sent.",
+    "SUCCESS_CREATE_ADMIN": "Administrator created. A verification email has been sent.",
     "SUCCESS_UPDATE": "User updated successfully.",
     "SUCCESS_PROMOTE": "Admin permissions granted.",
     "SUCCESS_REVOKE": "Admin permissions revoked.",
-    "SUCCESS_DELETE": "User deleted successfully.",
+    "SUCCESS_DELETE_USER": "User deleted successfully.",
+    "SUCCESS_DELETE_ADMIN": "Administrator deleted successfully.",
     "CONFIRM_REVOKE_TITLE": "Confirm action",
     "CONFIRM_REVOKE_TEXT": "Are you sure you want to revoke admin permissions from {{name}}? This action cannot be undone.",
     "CONFIRM_DELETE_TITLE": "Confirm deletion",
     "CONFIRM_DELETE_TEXT": "Are you sure you want to delete user {{name}}? This action cannot be undone.",
     "ERRORS": {
       "LOAD": "Could not load users.",
-      "CREATE": "Error creating user.",
+      "CREATE_USER": "Could not create the user.",
+      "CREATE_ADMIN": "Could not create the administrator.",
       "UPDATE": "Error updating permissions.",
       "DELETE": "Error deleting user.",
       "NO_COMPANY": "No companies available to assign to admin."
@@ -577,6 +581,29 @@
       "UPDATE_SPOT": "Error updating the spot.",
       "DELETE_SPOT": "Error deleting the spot.",
       "DELETE": "Error deleting the parking."
+    }
+  },
+
+  "ADMIN_CHAT": {
+    "OPEN": "Open incident chat",
+    "TITLE": "Incident chat",
+    "SUBTITLE": "Communicate with the superadministrator or company administrators.",
+    "BACK": "Back to panel",
+    "THREADS_TITLE": "Conversations",
+    "NO_THREADS": "No conversations yet.",
+    "NO_MESSAGES": "No messages",
+    "SELECT_THREAD": "Select a conversation to get started.",
+    "WITH_ADMIN": "Administrator: {{name}}",
+    "LOADING_THREADS": "Loading conversations...",
+    "LOADING_MESSAGES": "Loading messages...",
+    "EMPTY_CHAT": "No messages yet. Write the first one.",
+    "PLACEHOLDER": "Write your message...",
+    "SEND": "Send",
+    "UNKNOWN_SENDER": "User",
+    "ERRORS": {
+      "LOAD_THREADS": "Could not load conversations.",
+      "LOAD_MESSAGES": "Could not load messages.",
+      "SEND": "Error sending the message."
     }
   }
 }

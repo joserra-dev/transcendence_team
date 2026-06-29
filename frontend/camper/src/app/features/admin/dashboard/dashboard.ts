@@ -1,4 +1,4 @@
-import { Component, ElementRef, OnInit, ViewChild, inject } from '@angular/core';
+import { Component, ElementRef, OnDestroy, OnInit, ViewChild, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { Router, RouterLink } from '@angular/router';
@@ -6,6 +6,8 @@ import { TranslateModule } from '@ngx-translate/core';
 import { Admin } from '../../../core/services/admin';
 import { Auth } from '../../../core/services/auth';
 import { Parking } from '../../../core/models/parking';
+import { Chat } from '../../../core/services/chat';
+import { interval, Subscription } from 'rxjs';
 
 @Component({
   selector: 'app-dashboard',
@@ -13,11 +15,12 @@ import { Parking } from '../../../core/models/parking';
   templateUrl: './dashboard.html',
   styleUrl: './dashboard.scss',
 })
-export class Dashboard implements OnInit {
+export class Dashboard implements OnInit, OnDestroy {
   @ViewChild('adsListScroll') adsListScroll?: ElementRef<HTMLElement>;
 
   private adminService = inject(Admin);
   private authService = inject(Auth);
+  private chatService = inject(Chat);
   private router = inject(Router);
 
   readonly adsPageSize = 8;
@@ -27,14 +30,30 @@ export class Dashboard implements OnInit {
   isLoading = true;
   errorMessage = '';
   userName = '';
+  unreadCount = 0;
   filterStatus: 'all' | 'active' | 'inactive' = 'all';
   filterMunicipality: string | 'all' = 'all';
   sortOrder: 'asc' | 'desc' = 'asc';
+  private unreadPollSub?: Subscription;
 
   ngOnInit() {
     const user = this.authService.getUser();
     this.userName = user?.nombrePersona || user?.emailPersona || '';
     this.loadParkings();
+    this.loadUnreadCount();
+    this.unreadPollSub = interval(30000).subscribe(() => this.loadUnreadCount());
+  }
+
+  ngOnDestroy() {
+    this.unreadPollSub?.unsubscribe();
+  }
+
+  loadUnreadCount() {
+    this.chatService.getUnreadCount().subscribe({
+      next: ({ count }) => {
+        this.unreadCount = count;
+      },
+    });
   }
 
   get adsTotalPages(): number {

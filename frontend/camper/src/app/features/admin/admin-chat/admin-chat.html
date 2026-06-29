@@ -1,0 +1,102 @@
+<main class="admin-chat">
+  <header class="page-header">
+    <div>
+      <a [routerLink]="backLink" class="back-link">← {{ 'ADMIN_CHAT.BACK' | translate }}</a>
+      <h1>{{ 'ADMIN_CHAT.TITLE' | translate }}</h1>
+    </div>
+  </header>
+
+  <div class="alert error" *ngIf="errorMessage">{{ errorMessage | translate }}</div>
+
+  <div *ngIf="isLoadingThreads" class="loading-msg">
+    {{ 'ADMIN_CHAT.LOADING_THREADS' | translate }}
+  </div>
+
+  <section class="chat-layout" *ngIf="!isLoadingThreads">
+    <aside class="thread-list" *ngIf="isSuperAdmin">
+      <h2>{{ 'ADMIN_CHAT.THREADS_TITLE' | translate }}</h2>
+
+      <div class="thread-list-scroll">
+        <p *ngIf="threads.length === 0" class="empty-msg">
+          {{ 'ADMIN_CHAT.NO_THREADS' | translate }}
+        </p>
+
+        <button
+          *ngFor="let thread of threads"
+          type="button"
+          class="thread-item"
+          [class.active]="thread.companyId === selectedCompanyId"
+          (click)="selectThread(thread.companyId)">
+          <div class="thread-main">
+            <strong>{{ thread.companyName }}</strong>
+            <span class="thread-admin" *ngIf="thread.adminName">{{ thread.adminName }}</span>
+            <p class="thread-preview" *ngIf="thread.lastMessage">{{ thread.lastMessage }}</p>
+            <p class="thread-preview muted" *ngIf="!thread.lastMessage">
+              {{ 'ADMIN_CHAT.NO_MESSAGES' | translate }}
+            </p>
+          </div>
+          <div class="thread-meta">
+            <span class="thread-time" *ngIf="thread.lastMessageAt">
+              {{ formatTime(thread.lastMessageAt) }}
+            </span>
+            <span class="thread-badge" *ngIf="thread.unreadCount > 0">
+              {{ thread.unreadCount }}
+            </span>
+          </div>
+        </button>
+      </div>
+    </aside>
+
+    <section class="chat-panel" *ngIf="selectedCompanyId">
+      <header class="chat-panel-header" *ngIf="selectedThread">
+        <h2>{{ selectedThread.companyName }}</h2>
+        <p *ngIf="selectedThread.adminName" class="chat-with">
+          {{ 'ADMIN_CHAT.WITH_ADMIN' | translate:{ name: selectedThread.adminName } }}
+        </p>
+      </header>
+
+      <div class="chat-body">
+        <div *ngIf="isLoadingMessages" class="loading-msg chat-loading">
+          {{ 'ADMIN_CHAT.LOADING_MESSAGES' | translate }}
+        </div>
+
+        <div #messagesContainer class="messages" *ngIf="!isLoadingMessages">
+          <p *ngIf="messages.length === 0" class="empty-msg">
+            {{ 'ADMIN_CHAT.EMPTY_CHAT' | translate }}
+          </p>
+
+          <article
+            *ngFor="let message of messages"
+            class="message"
+            [class.own]="isOwnMessage(message)">
+            <div class="message-bubble">
+              <span class="message-sender" *ngIf="!isOwnMessage(message)">
+                {{ message.senderName || ('ADMIN_CHAT.UNKNOWN_SENDER' | translate) }}
+              </span>
+              <p class="message-content">{{ message.content }}</p>
+              <time class="message-time">{{ formatTime(message.createdAt) }}</time>
+            </div>
+          </article>
+        </div>
+      </div>
+
+      <form class="compose" (ngSubmit)="sendMessage()">
+        <textarea
+          [(ngModel)]="newMessage"
+          name="newMessage"
+          [placeholder]="'ADMIN_CHAT.PLACEHOLDER' | translate"
+          rows="1"
+          (keydown)="onKeydown($event)"
+          [disabled]="isSending">
+        </textarea>
+        <button class="btn btn-primary" type="submit" [disabled]="!newMessage.trim() || isSending">
+          {{ 'ADMIN_CHAT.SEND' | translate }}
+        </button>
+      </form>
+    </section>
+
+    <section class="chat-panel empty-panel" *ngIf="!selectedCompanyId && isSuperAdmin">
+      <p class="empty-msg">{{ 'ADMIN_CHAT.SELECT_THREAD' | translate }}</p>
+    </section>
+  </section>
+</main>

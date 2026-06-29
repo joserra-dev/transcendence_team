@@ -36,7 +36,7 @@ class Profiles(db.Model):
     __table_args__ = {'schema': 'public'}
 
     id = db.Column(db.BigInteger, primary_key=True)
-    user_id = db.Column(db.BigInteger, db.ForeignKey('public.users.id'), unique=True, nullable=False)
+    user_id = db.Column(db.BigInteger, db.ForeignKey('public.users.id', ondelete='CASCADE'), unique=True, nullable=False)
     company_id = db.Column(db.Integer, db.ForeignKey('public.company.id'), nullable=True)
     
     dni = db.Column(db.String(255), nullable=True)

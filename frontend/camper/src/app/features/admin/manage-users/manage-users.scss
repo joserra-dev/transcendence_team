@@ -30,15 +30,23 @@
   padding: 0.75rem 1rem;
   border-radius: $radius-sm;
   margin-bottom: 1rem;
+  border: 1px solid $color-border;
+  background: $color-white;
+  font-weight: $font-weight-medium;
 
-  &.success {
-    background: rgba($color-primary, 0.1);
+  &.success-admin {
+    color: darken($color-success, 18%);
+    border-left: 4px solid $color-success;
+  }
+
+  &.success-user {
     color: $color-primary;
+    border-left: 4px solid $color-primary;
   }
 
   &.error {
-    background: rgba(#c0392b, 0.1);
-    color: #c0392b;
+    color: $color-error;
+    border-left: 4px solid $color-error;
   }
 }
 

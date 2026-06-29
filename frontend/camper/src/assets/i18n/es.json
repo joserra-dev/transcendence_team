@@ -32,7 +32,8 @@
     "EDIT_COMPANY": "Editar empresa",
     "COMPANY_METRICS": "Métricas de empresa",
     "METRICS": "Métricas",
-    "MANAGE_BOOKINGS": "Gestionar reservas"
+    "MANAGE_BOOKINGS": "Gestionar reservas",
+    "ADMIN_CHAT": "Chat de incidencias"
   },
 
   "COMMON": {
@@ -367,18 +368,21 @@
     "ACTIONS": "Acciones",
     "NO_COMPANY": "—",
     "EMPTY_FILTERED": "No hay usuarios que coincidan con los filtros seleccionados.",
-    "SUCCESS_CREATE": "Usuario creado. Se ha enviado un correo de verificación.",
+    "SUCCESS_CREATE_USER": "Usuario creado. Se ha enviado un correo de verificación.",
+    "SUCCESS_CREATE_ADMIN": "Administrador creado. Se ha enviado un correo de verificación.",
     "SUCCESS_UPDATE": "Usuario actualizado correctamente.",
     "SUCCESS_PROMOTE": "Permisos de admin concedidos.",
     "SUCCESS_REVOKE": "Permisos de admin revocados.",
-    "SUCCESS_DELETE": "Usuario eliminado correctamente.",
+    "SUCCESS_DELETE_USER": "Usuario eliminado correctamente.",
+    "SUCCESS_DELETE_ADMIN": "Administrador eliminado correctamente.",
     "CONFIRM_REVOKE_TITLE": "Confirmar acción",
     "CONFIRM_REVOKE_TEXT": "¿Estás seguro de que deseas quitar los permisos de administrador a {{name}}? Esta acción no se puede deshacer.",
     "CONFIRM_DELETE_TITLE": "Confirmar eliminación",
     "CONFIRM_DELETE_TEXT": "¿Estás seguro de que deseas eliminar al usuario {{name}}? Esta acción no se puede deshacer.",
     "ERRORS": {
       "LOAD": "No se pudieron cargar los usuarios.",
-      "CREATE": "Error al crear el usuario.",
+      "CREATE_USER": "No ha sido posible crear el usuario.",
+      "CREATE_ADMIN": "No ha sido posible crear el administrador.",
       "UPDATE": "Error al actualizar permisos.",
       "DELETE": "Error al eliminar el usuario.",
       "NO_COMPANY": "No hay empresas disponibles para asignar al admin."
@@ -576,6 +580,29 @@
       "UPDATE_SPOT": "Error al actualizar la plaza en el servidor.",
       "DELETE_SPOT": "Error al eliminar la plaza.",
       "DELETE": "Error al eliminar el parking."
+    }
+  },
+
+  "ADMIN_CHAT": {
+    "OPEN": "Abrir chat de incidencias",
+    "TITLE": "Chat de incidencias",
+    "SUBTITLE": "Comunícate con el superadministrador o con los administradores de empresa.",
+    "BACK": "Volver al panel",
+    "THREADS_TITLE": "Conversaciones",
+    "NO_THREADS": "No hay conversaciones todavía.",
+    "NO_MESSAGES": "Sin mensajes",
+    "SELECT_THREAD": "Selecciona una conversación para empezar.",
+    "WITH_ADMIN": "Administrador: {{name}}",
+    "LOADING_THREADS": "Cargando conversaciones...",
+    "LOADING_MESSAGES": "Cargando mensajes...",
+    "EMPTY_CHAT": "Aún no hay mensajes. Escribe el primero.",
+    "PLACEHOLDER": "Escribe tu mensaje...",
+    "SEND": "Enviar",
+    "UNKNOWN_SENDER": "Usuario",
+    "ERRORS": {
+      "LOAD_THREADS": "No se pudieron cargar las conversaciones.",
+      "LOAD_MESSAGES": "No se pudieron cargar los mensajes.",
+      "SEND": "Error al enviar el mensaje."
     }
   }
 }

@@ -6,6 +6,13 @@
       <p class="subtitle">{{ 'ADMIN_DASHBOARD.ADMIN_DESC' | translate }}</p>
     </div>
     <div class="hero-actions">
+      <a
+        routerLink="/admin/chat"
+        class="btn btn-primary btn-chat"
+        [attr.aria-label]="'ADMIN_CHAT.OPEN' | translate">
+        <i class="fa-solid fa-comment-dots" aria-hidden="true"></i>
+        <span class="chat-badge" *ngIf="unreadCount > 0">{{ unreadCount > 9 ? '9+' : unreadCount }}</span>
+      </a>
       <a routerLink="/admin/metrics" class="btn btn-primary">
         {{ 'ADMIN_METRICS.BUTTON' | translate }}
       </a>
