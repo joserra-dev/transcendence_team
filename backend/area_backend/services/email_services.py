@@ -56,6 +56,9 @@ class EmailService:
         Método especializado (ejemplo) para correos de bienvenida.
         Mantiene limpia la lógica de tus vistas/rutas.
         """
+        actual_locale = get_locale()
+        idioma = actual_locale.language 
+        
         base_url = os.getenv('URL_BACK')
         verification_url = f"{base_url}/api/users/verify?token={token}"
         html_content = render_template(
@@ -79,11 +82,13 @@ class EmailService:
         nombre: str | None = None,
         company_name: str | None = None,
     ):
+        actual_locale = get_locale()
+        idioma = actual_locale.language 
         display_name = nombre or destinatario
         base_url = os.getenv('URL_BACK')
         verification_url = f"{base_url}/api/users/verify?token={token}"
         html_content = render_template(
-            'email/bienvenida_admin.html',
+            f'email/{idioma}/bienvenida_admin.html', 
             nombre=display_name,
             company_name=company_name,
             verification_url=verification_url,

@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bienvenue administrateur - HEMEN-GO</title>
+</head>
+<body style="margin: 0; padding: 0; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background-color: #f4f6f8; color: #333333;">
+
+    <table role="presentation" cellspacing="0" cellpadding="0" border="0" align="center" width="100%" style="max-width: 600px; margin: 40px auto; background-color: #ffffff; border-radius: 8px; box-shadow: 0 4px 10px rgba(0,0,0,0.05); overflow: hidden;">
+
+        <tr>
+            <td style="background-color: #059669; padding: 40px 20px; text-align: center;">
+                <h1 style="margin: 0; color: #ffffff; font-size: 28px; font-weight: 700; letter-spacing: -0.5px;">
+                    Bienvenue, administrateur !
+                </h1>
+                <p style="margin: 8px 0 0 0; color: #D1FAE5; font-size: 14px;">
+                    HEMEN-GO · Panneau de gestion
+                </p>
+            </td>
+        </tr>
+
+        <tr>
+            <td style="padding: 40px 30px;">
+                <p style="margin: 0 0 16px 0; font-size: 18px; line-height: 1.5; font-weight: 600; color: #111827;">
+                    Bonjour, {{ nombre }} ! 👋
+                </p>
+                <p style="margin: 0 0 24px 0; font-size: 16px; line-height: 1.6; color: #4B5563;">
+                    Vous avez été enregistré en tant qu'<strong>administrateur</strong>{% if company_name %} de <strong>{{ company_name }}</strong>{% endif %} sur HEMEN-GO.
+                    Depuis votre panneau, vous pourrez gérer les parkings, las places et les réservations de votre entreprise.
+                </p>
+                <p style="margin: 0 0 24px 0; font-size: 16px; line-height: 1.6; color: #4B5563;">
+                    Pour activer votre compte et accéder au panneau d'administration, veuillez confirmer votre e-mail en cliquant sur le bouton suivant :
+                </p>
+
+                <table role="presentation" cellspacing="0" cellpadding="0" border="0" align="center" style="margin: 30px auto;">
+                    <tr>
+                        <td style="border-radius: 6px; background-color: #059669; text-align: center;">
+                            <a href="{{ verification_url }}" target="_blank" style="background-color: #059669; border: 1px solid #059669; border-radius: 6px; color: #ffffff; display: inline-block; font-size: 16px; font-weight: 600; line-height: 1; padding: 15px 30px; text-decoration: none; text-transform: uppercase; letter-spacing: 0.5px;">
+                                Vérifier le compte
+                            </a>
+                        </td>
+                    </tr>
+                </table>
+
+                <p style="margin: 24px 0 0 0; font-size: 14px; line-height: 1.6; color: #6B7280; text-align: center;">
+                    Ce lien expirera bientôt pour des raisons de sécurité.
+                </p>
+
+                <hr style="border: 0; border-top: 1px solid #E5E7EB; margin: 30px 0;">
+
+                <p style="margin: 0; font-size: 12px; line-height: 1.5; color: #9CA3AF; word-break: break-all;">
+                    Si vous rencontrez des problèmes avec le bouton ci-dessus, copiez et collez cette URL dans votre navigateur :<br>
+                    <a href="{{ verification_url }}" style="color: #059669; text-decoration: underline;">{{ verification_url }}</a>
+                </p>
+            </td>
+        </tr>
+
+        <tr>
+            <td style="background-color: #F9FAFB; padding: 24px 30px; text-align: center; font-size: 12px; line-height: 1.5; color: #9CA3AF;">
+                <p style="margin: 0 0 8px 0;">E-mail automatique de HEMEN-GO. Veuillez ne pas répondre à ce message.</p>
+                <p style="margin: 0;">© 2026 HEMEN-GO. Tous droits réservés.</p>
+            </td>
+        </tr>
+
+    </table>
+
+</body>
+</html>
