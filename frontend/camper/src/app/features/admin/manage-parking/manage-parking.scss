@@ -15,6 +15,32 @@
   padding: $space-lg;
   border-radius: $radius-lg;
   box-shadow: $shadow-soft;
+
+  .form-group-standard {
+    textarea {
+      width: 100%;
+      padding: 0.65rem;
+      border: 1px solid $color-brown-main;
+      border-radius: $radius-sm;
+      font-size: 1rem;
+      resize: vertical;
+      min-height: 100px;
+      font-family: inherit;
+
+      &:focus {
+        outline: none;
+        border-color: $color-primary;
+      }
+    }
+
+    .char-counter {
+      display: block;
+      margin-top: 0.25rem;
+      text-align: right;
+      color: $color-grey-soft;
+      font-size: 0.85rem;
+    }
+  }
 }
 
 .free {
@@ -115,6 +141,12 @@
   overflow-x: auto;
   -webkit-overflow-scrolling: touch;
   border-radius: $radius-md;
+}
+
+.spot-actions {
+  display: flex;
+  gap: 0.5rem;
+  flex-wrap: nowrap;
 }
 
 .table-wrapper::-webkit-scrollbar {

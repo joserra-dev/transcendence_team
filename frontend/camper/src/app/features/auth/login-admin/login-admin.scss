@@ -5,6 +5,71 @@
   max-width: 420px;
 }
 
+.btn-link-recovery {
+  background: none;
+  border: 0;
+  color: $color-primary;
+  cursor: pointer;
+  display: inline-flex;
+  font-weight: 600;
+  margin: 0 0 $space-md;
+  padding: 0;
+  text-decoration: underline;
+}
+
+.recovery-modal-backdrop {
+  align-items: center;
+  background: rgba(15, 23, 42, 0.62);
+  display: flex;
+  inset: 0;
+  justify-content: center;
+  padding: $space-lg;
+  position: fixed;
+  z-index: 999;
+}
+
+.recovery-modal {
+  background: $color-white;
+  border-radius: $radius-lg;
+  box-shadow: 0 24px 80px rgba(15, 23, 42, 0.24);
+  max-width: 520px;
+  padding: $space-xl;
+  width: 100%;
+}
+
+.recovery-modal__header {
+  align-items: center;
+  display: flex;
+  justify-content: space-between;
+  gap: $space-md;
+  margin-bottom: $space-md;
+}
+
+.recovery-modal__close {
+  background: transparent;
+  border: 0;
+  color: $color-grey-soft;
+  cursor: pointer;
+  font-size: 2rem;
+  line-height: 1;
+}
+
+.recovery-modal__text {
+  color: $color-grey-soft;
+  margin-bottom: $space-lg;
+}
+
+.recovery-modal__actions {
+  display: flex;
+  gap: $space-md;
+  justify-content: flex-end;
+  margin-top: $space-lg;
+}
+
+.recovery-modal__actions .btn {
+  min-width: 140px;
+}
+
 // ERROR
 .error-general {
   background-color: rgba($color-error, 0.08);
@@ -18,4 +83,51 @@
     margin: 0;
     padding-left: 1rem;
   }
+}
+
+.success-general {
+  background-color: rgba($color-success, 0.12);
+  border-left: 4px solid $color-success;
+  padding: $space-sm $space-md;
+  border-radius: $radius-sm;
+  margin-bottom: $space-lg;
+  color: darken($color-success, 20%);
+
+  ul {
+    margin: 0;
+    padding-left: 1rem;
+  }
+}
+
+.password-wrapper {
+  position: relative;
+  width: 100%;
+}
+
+.password-wrapper input {
+  width: 100%;
+  padding-right: 40px;
+}
+
+.toggle-password-btn {
+  position: absolute;
+  right: 12px;
+  top: 50%;
+  transform: translateY(-50%);
+  background: none;
+  border: none;
+  padding: 0;
+  cursor: pointer;
+  color: #6c757d;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.toggle-password-btn:hover {
+  color: #343a40;
+}
+
+.toggle-password-btn:focus {
+  outline: none;
 }

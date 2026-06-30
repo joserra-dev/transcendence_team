@@ -1,4 +1,4 @@
-<div class="form-page-wrapper">
+<div class="form-page-wrapper parking-card">
 
   <h2 class="page-title">{{ 'LOGIN.TITLE' | translate }}</h2>
 
@@ -24,17 +24,35 @@
 
     <div class="form-group-standard">
         <label class="form-label-custom" for="password">{{ 'LOGIN.PASSWORD' | translate }}</label>
-        <input
-            id="password"
-            type="password"
-            formControlName="password"
-            placeholder="******"
-            [class.error-input]="isFieldInvalid('password')"
-        >
+
+        <div class="password-wrapper">
+            <input
+                id="password"
+                [type]="hidePassword ? 'password' : 'text'"
+                minlength="8"
+                maxlength="254"
+                formControlName="password"
+                placeholder="******"
+                [class.error-input]="isFieldInvalid('password')"
+            >
+
+            <button
+                type="button"
+                class="toggle-password-btn"
+                (click)="hidePassword = !hidePassword"
+                [attr.aria-label]="hidePassword ? 'Mostrar contraseña' : 'Ocultar contraseña'">
+                <i class="fa" [ngClass]="hidePassword ? 'fa-eye-slash' : 'fa-eye'"></i>
+            </button>
+        </div>
+
         <div class="error-msg-standard" *ngIf="isFieldInvalid('password')">
             <small>{{ 'LOGIN.ERROR.REQUIRED_PASSWORD' | translate }}</small>
         </div>
     </div>
+
+    <button type="button" class="btn-link-recovery" (click)="openRecoveryModal()">
+      {{ 'LOGIN.FORGOT_PASSWORD' | translate }}
+    </button>
 
     <button class="btn btn-primary button-wide" type="submit"
         [disabled]="loginForm.invalid && loginForm.touched || isLoading">
@@ -46,4 +64,49 @@
       {{ 'LOGIN.LOADING' | translate }}
     </div>
   </form>
+
+  <div class="recovery-modal-backdrop" *ngIf="showRecoveryModal" (click)="closeRecoveryModal()">
+    <div class="recovery-modal" (click)="$event.stopPropagation()">
+      <div class="recovery-modal__header">
+        <h3>{{ 'LOGIN.RECOVERY.TITLE' | translate }}</h3>
+        <button type="button" class="recovery-modal__close" (click)="closeRecoveryModal()">×</button>
+      </div>
+
+      <p class="recovery-modal__text">{{ 'LOGIN.RECOVERY.DESCRIPTION' | translate }}</p>
+
+      <div
+        class="error-msg-standard"
+        [ngClass]="recoveryMessageType === 'success' ? 'success-general' : 'error-general'"
+        *ngIf="recoveryMessage"
+      >
+        {{ recoveryMessage | translate }}
+      </div>
+
+      <form [formGroup]="recoveryForm" (ngSubmit)="sendRecoveryEmail()" class="form-standard recovery-modal__form">
+        <div class="form-group-standard">
+          <label class="form-label-custom" for="recovery-email">{{ 'LOGIN.EMAIL' | translate }}</label>
+          <input
+            id="recovery-email"
+            type="email"
+            formControlName="email"
+            placeholder="ejemplo@correo.com"
+            [class.error-input]="isRecoveryFieldInvalid('email')"
+          >
+          <div class="error-msg-standard" *ngIf="isRecoveryFieldInvalid('email')">
+            <small *ngIf="recoveryForm.get('email')?.hasError('required')">{{ 'LOGIN.ERROR.REQUIRED_EMAIL' | translate }}</small>
+            <small *ngIf="recoveryForm.get('email')?.hasError('email')">{{ 'LOGIN.ERROR.INVALID_EMAIL' | translate }}</small>
+          </div>
+        </div>
+
+        <div class="recovery-modal__actions">
+          <button type="button" class="btn btn-secondary" (click)="closeRecoveryModal()">
+            {{ 'LOGIN.RECOVERY.CANCEL' | translate }}
+          </button>
+          <button class="btn btn-primary" type="submit" [disabled]="isRecoveryLoading">
+            {{ isRecoveryLoading ? ('LOGIN.LOADING' | translate) : ('LOGIN.RECOVERY.SEND' | translate) }}
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
 </div>

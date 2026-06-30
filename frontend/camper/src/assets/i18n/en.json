@@ -30,7 +30,17 @@
     "MANAGE_COMPANIES": "Manage companies",
     "COMPANY_PARKINGS": "Company parkings",
     "EDIT_COMPANY": "Edit company",
-    "MANAGE_BOOKINGS": "Manage bookings"
+    "COMPANY_METRICS": "Company metrics",
+    "METRICS": "Metrics",
+    "MANAGE_BOOKINGS": "Manage bookings",
+    "ADMIN_CHAT": "Incident chat"
+  },
+
+  "COMMON": {
+    "CONFIRM_NO": "No, go back",
+    "CONFIRM_YES_DELETE": "Yes, delete",
+    "CONFIRM_YES_CANCEL": "Yes, cancel",
+    "CONFIRM_YES_REVOKE": "Yes, revoke"
   },
 
   "FOOTER": {
@@ -314,6 +324,11 @@
     "MANAGE_USERS_DESC": "Create users, assign admins and manage access.",
     "ACTIVE": "Active",
     "INACTIVE": "Inactive",
+    "FILTER_STATUS": "Filter by status",
+    "FILTER_STATUS_ALL": "All statuses",
+    "FILTER_MUNICIPALITY": "Filter by municipality",
+    "FILTER_MUNICIPALITY_ALL": "All municipalities",
+    "EMPTY_FILTERED": "No listings match the selected filters.",
     "ERRORS": {
       "LOAD_ADS": "Could not load your listings."
     }
@@ -341,6 +356,7 @@
     "ROLE_USER": "User",
     "GRANT_ADMIN": "Grant admin permissions",
     "REVOKE_ADMIN": "Revoke admin permissions",
+    "DELETE": "Delete user",
     "EDIT": "Edit profile",
     "PROMOTE_DESC": "Select the company to assign administrator permissions.",
     "FILTER_ROLE": "Filter by permissions",
@@ -354,14 +370,23 @@
     "ACTIONS": "Actions",
     "NO_COMPANY": "—",
     "EMPTY_FILTERED": "No users match the selected filters.",
-    "SUCCESS_CREATE": "User created. A verification email has been sent.",
+    "SUCCESS_CREATE_USER": "User created. A verification email has been sent.",
+    "SUCCESS_CREATE_ADMIN": "Administrator created. A verification email has been sent.",
     "SUCCESS_UPDATE": "User updated successfully.",
     "SUCCESS_PROMOTE": "Admin permissions granted.",
     "SUCCESS_REVOKE": "Admin permissions revoked.",
+    "SUCCESS_DELETE_USER": "User deleted successfully.",
+    "SUCCESS_DELETE_ADMIN": "Administrator deleted successfully.",
+    "CONFIRM_REVOKE_TITLE": "Confirm action",
+    "CONFIRM_REVOKE_TEXT": "Are you sure you want to revoke admin permissions from {{name}}? This action cannot be undone.",
+    "CONFIRM_DELETE_TITLE": "Confirm deletion",
+    "CONFIRM_DELETE_TEXT": "Are you sure you want to delete user {{name}}? This action cannot be undone.",
     "ERRORS": {
       "LOAD": "Could not load users.",
-      "CREATE": "Error creating user.",
+      "CREATE_USER": "Could not create the user.",
+      "CREATE_ADMIN": "Could not create the administrator.",
       "UPDATE": "Error updating permissions.",
+      "DELETE": "Error deleting user.",
       "NO_COMPANY": "No companies available to assign to admin."
     }
   },
@@ -410,6 +435,8 @@
     "NEXT_PAGE": "Next",
     "PAGINATION_LABEL": "Companies pagination",
     "CONFIRM_DELETE": "Delete company \"{{name}}\"? Its parkings will also be removed.",
+    "CONFIRM_DELETE_TITLE": "Confirm deletion",
+    "CONFIRM_DELETE_TEXT": "Are you sure you want to delete company \"{{name}}\"? Its parkings will also be removed. This action cannot be undone.",
     "EDIT_TITLE": "Edit company",
     "SAVE_COMPANY": "Save company",
     "SAVE_ADMIN": "Save administrator",
@@ -453,6 +480,30 @@
     "MANAGE": "Manage"
   },
 
+  "ADMIN_METRICS": {
+    "BUTTON": "Metrics",
+    "TITLE": "Sales and booking metrics",
+    "BACK": "Back",
+    "LOADING": "Loading metrics…",
+    "EMPTY": "No data for the selected period.",
+    "FILTER_GROUP": "Group by",
+    "GROUP_YEAR": "Years (months)",
+    "GROUP_MONTH": "Months (weeks)",
+    "GROUP_WEEK": "Weeks (days)",
+    "FILTER_YEAR": "Year",
+    "FILTER_MONTH": "Month",
+    "FILTER_WEEK": "Week of month",
+    "WEEK_OPTION": "Week {{week}}",
+    "TOTAL_SALES": "Total sales",
+    "TOTAL_BOOKINGS": "Total bookings",
+    "SALES_BY_PARKING": "Sales by parking",
+    "BOOKINGS_BY_PARKING": "Bookings by parking",
+    "SALES_BY_MONTH": "Sales by month",
+    "ERRORS": {
+      "LOAD": "Could not load metrics."
+    }
+  },
+
   "ADMIN_BOOKINGS": {
     "TITLE": "Customer bookings",
     "SUBTITLE": "View and manage bookings for your parkings",
@@ -470,6 +521,8 @@
     "PLATE_PLACEHOLDER": "E.g. 1234ABC",
     "PAGINATION_LABEL": "Bookings pagination",
     "CONFIRM_CANCEL": "Cancel booking #{{ref}} at {{parking}}?",
+    "CONFIRM_CANCEL_TITLE": "Confirm cancellation",
+    "CONFIRM_CANCEL_TEXT": "Are you sure you want to cancel booking #{{ref}} at {{parking}}? This action cannot be undone.",
     "SUCCESS_CANCEL": "Booking cancelled successfully.",
     "ERRORS": {
       "LOAD": "Could not load bookings.",
@@ -488,6 +541,9 @@
     "CITY": "City",
     "WEB": "Website",
     "PHONE": "Phone",
+    "LATITUDE": "Latitude",
+    "LONGITUDE": "Longitude",
+    "DESCRIPTION": "Description",
     "ACTIVE": "Active",
     "ELECTRICITY": "Electricity",
     "RESIDUALS": "Waste water",
@@ -503,22 +559,52 @@
     "FREE": "Free",
     "OCCUPIED": "Maintenance",
     "EDIT_SPOT": "Edit",
+    "DELETE_SPOT": "Delete",
     "NO_SPOTS": "This parking has no spots.",
     "CANCEL": "Delete",
     "SAVE_SPOT": "Save spot",
     "DELETE": "Delete listing",
     "DELETING": "Deleting...",
     "CONFIRM_DELETE": "Delete listing \"{{name}}\"? Its spots and associated bookings will also be removed.",
+    "CONFIRM_DELETE_TITLE": "Confirm deletion",
+    "CONFIRM_DELETE_TEXT": "Are you sure you want to delete listing \"{{name}}\"? Its spots and associated bookings will also be removed. This action cannot be undone.",
+    "CONFIRM_DELETE_SPOT_TITLE": "Confirm deletion",
+    "CONFIRM_DELETE_SPOT_TEXT": "Are you sure you want to delete spot \"{{name}}\"? This action cannot be undone.",
     "SUCCESS_UPDATE": "Parking correctly updated",
     "SUCCESS_CREATE": "Parking correctly created",
     "SUCCESS_CREATE_SPOT": "Spot correctly created",
     "SUCCESS_UPDATE_SPOT": "Spot correctly updated",
+    "SUCCESS_DELETE_SPOT": "Spot deleted successfully",
     "ERRORS": {
       "CREATE": "Error creating the parking",
       "UPDATE": "Error updating the parking. Try again.",
       "CREATE_SPOT": "Error creating the spot.",
       "UPDATE_SPOT": "Error updating the spot.",
+      "DELETE_SPOT": "Error deleting the spot.",
       "DELETE": "Error deleting the parking."
+    }
+  },
+
+  "ADMIN_CHAT": {
+    "OPEN": "Open incident chat",
+    "TITLE": "Incident chat",
+    "SUBTITLE": "Communicate with the superadministrator or company administrators.",
+    "BACK": "Back to panel",
+    "THREADS_TITLE": "Conversations",
+    "NO_THREADS": "No conversations yet.",
+    "NO_MESSAGES": "No messages",
+    "SELECT_THREAD": "Select a conversation to get started.",
+    "WITH_ADMIN": "Administrator: {{name}}",
+    "LOADING_THREADS": "Loading conversations...",
+    "LOADING_MESSAGES": "Loading messages...",
+    "EMPTY_CHAT": "No messages yet. Write the first one.",
+    "PLACEHOLDER": "Write your message...",
+    "SEND": "Send",
+    "UNKNOWN_SENDER": "User",
+    "ERRORS": {
+      "LOAD_THREADS": "Could not load conversations.",
+      "LOAD_MESSAGES": "Could not load messages.",
+      "SEND": "Error sending the message."
     }
   }
 }

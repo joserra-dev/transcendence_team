@@ -1,12 +1,14 @@
-from datetime import date
+from datetime import date, datetime
 import secrets
 
 from flask import Blueprint, jsonify, request
+from sqlalchemy.exc import SQLAlchemyError
 from werkzeug.security import generate_password_hash
 from flask_babel import gettext as _
 
 from database import db
 from models.booking import Booking
+from models.chat_message import ChatMessage
 from models.company import Company
 from models.parking import Parking
 from models.space import Space
@@ -45,6 +47,24 @@ def _space_to_admin_dict(space: Space) -> dict:
     }
 
 
+def _optional_float(value):
+    if value is None or value == '':
+        return None
+    try:
+        return float(value)
+    except (TypeError, ValueError):
+        return None
+
+
+def _optional_description(value):
+    if value is None:
+        return None
+    text = str(value).strip()
+    if not text:
+        return None
+    return text[:254]
+
+
 def _map_parking_fields(data: dict) -> dict:
     return {
         "name": data.get("nombreParking"),
@@ -58,6 +78,9 @@ def _map_parking_fields(data: dict) -> dict:
         "has_electricity": data.get("tieneElectricidadParking", False),
         "has_waste_disposal": data.get("tieneResidualesParking", False),
         "has_vip_spots": data.get("tienePlazasVipParking", False),
+        "latitude": _optional_float(data.get("latitudParking")),
+        "longitude": _optional_float(data.get("longitudParking")),
+        "description": _optional_description(data.get("descripcionParking")),
     }
 
 
@@ -144,6 +167,90 @@ def _booking_to_admin_dict(booking: Booking) -> dict:
         "status": booking.status,
         "rating": float(booking.rating) if booking.rating is not None else None,
         "licensePlate": booking.license_plate,
+    }
+
+
+MONTH_LABELS = [
+    'Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio',
+    'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre',
+]
+
+
+def _parse_metric_int(value, default: int) -> int:
+    try:
+        return int(value)
+    except (TypeError, ValueError):
+        return default
+
+
+def _booking_revenue(booking: Booking) -> float:
+    days = 1
+    if booking.start_date and booking.end_date:
+        days = (booking.end_date - booking.start_date).days + 1
+    space = booking.space
+    price = float(space.price or 0) if space else 0.0
+    return float(booking.total_price) if booking.total_price else days * price
+
+
+def _company_confirmed_bookings(company_id: int):
+    return (
+        Booking.query.join(Space).join(Parking)
+        .filter(Parking.id_company == company_id, Booking.status == '1')
+    )
+
+
+def _parking_name(booking: Booking) -> str:
+    if booking.space and booking.space.parking and booking.space.parking.name:
+        return booking.space.parking.name
+    return 'Sin parking'
+
+
+def _chart_items(data: dict) -> list[dict]:
+    return [
+        {'label': label, 'value': round(value, 2) if isinstance(value, float) else value}
+        for label, value in sorted(data.items(), key=lambda item: item[1], reverse=True)
+        if value > 0
+    ]
+
+
+def _build_company_metrics(company: Company, year: int) -> dict:
+    today = date.today()
+    year = year or today.year
+    year_start = date(year, 1, 1)
+    year_end = date(year, 12, 31)
+
+    bookings = [
+        booking for booking in _company_confirmed_bookings(company.id).all()
+        if booking.created_at and year_start <= booking.created_at.date() <= year_end
+    ]
+
+    bookings_by_parking: dict[str, int] = {}
+    sales_by_month: dict[str, float] = {label: 0.0 for label in MONTH_LABELS}
+
+    total_sales = 0.0
+    for booking in bookings:
+        parking_name = _parking_name(booking)
+        revenue = _booking_revenue(booking)
+        bookings_by_parking[parking_name] = bookings_by_parking.get(parking_name, 0) + 1
+        if booking.created_at:
+            month_label = MONTH_LABELS[booking.created_at.month - 1]
+            sales_by_month[month_label] += revenue
+        total_sales += revenue
+
+    return {
+        'companyId': company.id,
+        'companyName': company.name,
+        'year': year,
+        'totals': {
+            'sales': round(total_sales, 2),
+            'bookings': len(bookings),
+        },
+        'bookingsByParking': _chart_items(bookings_by_parking),
+        'salesByMonth': [
+            {'label': label, 'value': round(sales_by_month[label], 2)}
+            for label in MONTH_LABELS
+            if sales_by_month[label] > 0
+        ],
     }
 
 
@@ -567,6 +674,24 @@ def update_spot(_user, profile, parking_id, spot_id):
     return jsonify(_space_to_admin_dict(space)), 200
 
 
+@admin_bp.route('/parking/<int:parking_id>/space/<int:spot_id>', methods=['DELETE'])
+@require_admin
+def delete_spot(_user, profile, parking_id, spot_id):
+    parking = Parking.query.get(parking_id)
+    if not parking:
+        return jsonify({"error": "Parking no encontrado"}), 404
+    if not _can_manage_parking(profile, parking):
+        return jsonify({"error": "No autorizado"}), 403
+
+    space = Space.query.filter_by(id=spot_id, id_parking=parking_id).first()
+    if not space:
+        return jsonify({"error": "Plaza no encontrada"}), 404
+
+    db.session.delete(space)
+    db.session.commit()
+    return jsonify({"mensaje": "Plaza eliminada correctamente"}), 200
+
+
 @admin_bp.route('/bookings', methods=['GET'])
 @require_admin
 def list_bookings(_user, profile):
@@ -779,7 +904,12 @@ def create_company(_user, _profile):
     )
     db.session.add(admin_profile)
     try:
-        EmailService.welcome(email, verification_token)
+        EmailService.admin_welcome(
+            email,
+            verification_token,
+            nombre=nombre or "Admin",
+            company_name=name,
+        )
         db.session.commit()
     except Exception:
         db.session.rollback()
@@ -938,6 +1068,32 @@ def list_company_users(_user, _profile, company_id):
     return jsonify(result), 200
 
 
+@admin_bp.route('/metrics', methods=['GET'])
+@require_admin
+def get_own_company_metrics(_user, profile):
+    if profile.role != UserRole.ADMIN or not profile.company_id:
+        return jsonify({"error": "No autorizado"}), 403
+    company = Company.query.get(profile.company_id)
+    if not company:
+        return jsonify({"error": "Empresa no encontrada"}), 404
+    return jsonify(_metrics_response(company)), 200
+
+
+@admin_bp.route('/companies/<int:company_id>/metrics', methods=['GET'])
+@require_super_admin
+def get_company_metrics(_user, _profile, company_id):
+    company = Company.query.get(company_id)
+    if not company:
+        return jsonify({"error": "Empresa no encontrada"}), 404
+    return jsonify(_metrics_response(company)), 200
+
+
+def _metrics_response(company: Company) -> dict:
+    today = date.today()
+    year = _parse_metric_int(request.args.get('year'), today.year)
+    return _build_company_metrics(company, year)
+
+
 @admin_bp.route('/users', methods=['GET'])
 @require_super_admin
 def list_users(_user, _profile):
@@ -1034,7 +1190,19 @@ def create_user(_user, _profile):
     )
     db.session.add(profile)
     try:
-        EmailService.welcome(email, verification_token)
+        if role == UserRole.ADMIN:
+            company_name = None
+            if company_id:
+                company = Company.query.get(company_id)
+                company_name = company.name if company else None
+            EmailService.admin_welcome(
+                email,
+                verification_token,
+                nombre=data.get("nombre", "Admin"),
+                company_name=company_name,
+            )
+        else:
+            EmailService.welcome(email, verification_token)
         db.session.commit()
     except Exception:
         db.session.rollback()
@@ -1174,4 +1342,28 @@ def update_user_role(_user, _profile, user_id):
     user.profile.company_id = company_id if role == UserRole.ADMIN else None
     db.session.commit()
 
-    return jsonify({"mensaje": _("Permisos actualizados correctamente")}), 200
+    return jsonify({"mensaje": "Permisos actualizados correctamente"}), 200
+
+
+@admin_bp.route('/users/<int:user_id>', methods=['DELETE'])
+@require_super_admin
+def delete_user(user, _profile, user_id):
+    if user.id == user_id:
+        return jsonify({"error": "No puedes eliminar tu propia cuenta"}), 403
+
+    target = Users.query.get(user_id)
+    if not target or not target.profile:
+        return jsonify({"error": "Usuario no encontrado"}), 404
+    if target.profile.role == UserRole.SUPER_ADMIN:
+        return jsonify({"error": "No se puede eliminar un superadministrador"}), 403
+
+    try:
+        ChatMessage.query.filter_by(sender_id=target.id).delete(synchronize_session=False)
+        Booking.query.filter_by(id_user=target.id).delete(synchronize_session=False)
+        db.session.delete(target)
+        db.session.commit()
+    except SQLAlchemyError:
+        db.session.rollback()
+        return jsonify({"error": "No se puede eliminar el usuario por datos asociados"}), 409
+
+    return jsonify({"mensaje": "Usuario eliminado correctamente"}), 200

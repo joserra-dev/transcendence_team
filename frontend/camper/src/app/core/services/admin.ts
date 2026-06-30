@@ -5,6 +5,7 @@ import { Observable } from 'rxjs';
 import { Parking, Space } from '../models/parking';
 import { AdminUser, Company } from '../models/user';
 import { AdminBooking, AdminBookingFilters } from '../models/booking';
+import { CompanyMetrics, MetricsFilters } from '../models/metrics';
 
 @Injectable({
   providedIn: 'root',
@@ -59,6 +60,12 @@ export class Admin {
     return this.http.put<Space>(
       `${this.apiUrl}/parking/${parkingId}/space/${spotId}`,
       spot
+    );
+  }
+
+  deleteSpot(parkingId: number, spotId: number): Observable<{ mensaje: string }> {
+    return this.http.delete<{ mensaje: string }>(
+      `${this.apiUrl}/parking/${parkingId}/space/${spotId}`
     );
   }
 
@@ -126,6 +133,24 @@ export class Admin {
     return this.http.get<AdminUser[]>(`${this.apiUrl}/companies/${companyId}/users`);
   }
 
+  getCompanyMetrics(companyId: number, filters: MetricsFilters): Observable<CompanyMetrics> {
+    return this.http.get<CompanyMetrics>(`${this.apiUrl}/companies/${companyId}/metrics`, {
+      params: this.metricsParams(filters),
+    });
+  }
+
+  getOwnCompanyMetrics(filters: MetricsFilters): Observable<CompanyMetrics> {
+    return this.http.get<CompanyMetrics>(`${this.apiUrl}/metrics`, {
+      params: this.metricsParams(filters),
+    });
+  }
+
+  private metricsParams(filters: MetricsFilters): Record<string, string> {
+    return {
+      year: String(filters.year),
+    };
+  }
+
   updateUser(userId: number, data: {
     email?: string;
     password?: string;
@@ -152,5 +177,9 @@ export class Admin {
 
   updateUserRole(userId: number, data: { role: string; companyId?: number | null }): Observable<{ mensaje: string }> {
     return this.http.put<{ mensaje: string }>(`${this.apiUrl}/users/${userId}/role`, data);
+  }
+
+  deleteUser(userId: number): Observable<{ mensaje: string }> {
+    return this.http.delete<{ mensaje: string }>(`${this.apiUrl}/users/${userId}`);
   }
 }

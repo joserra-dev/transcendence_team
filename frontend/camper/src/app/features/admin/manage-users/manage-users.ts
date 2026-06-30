@@ -5,10 +5,11 @@ import { RouterLink } from '@angular/router';
 import { TranslateModule } from '@ngx-translate/core';
 import { Admin } from '../../../core/services/admin';
 import { AdminUser, Company } from '../../../core/models/user';
+import { ConfirmDialog } from '../../../shared/components/confirm-dialog/confirm-dialog';
 
 @Component({
   selector: 'app-manage-users',
-  imports: [CommonModule, ReactiveFormsModule, FormsModule, RouterLink, TranslateModule],
+  imports: [CommonModule, ReactiveFormsModule, FormsModule, RouterLink, TranslateModule, ConfirmDialog],
   templateUrl: './manage-users.html',
   styleUrl: './manage-users.scss',
 })
@@ -24,7 +25,14 @@ export class ManageUsers implements OnInit {
   promotingUserId: number | null = null;
   promoteCompanyId: number | null = null;
   successMessage = '';
+  successAlertType: 'user' | 'admin' = 'admin';
   errorMessage = '';
+  showRevokeConfirm = false;
+  revokeConfirmParams: Record<string, string> = {};
+  private userPendingRevoke: AdminUser | null = null;
+  showDeleteConfirm = false;
+  deleteConfirmParams: Record<string, string> = {};
+  private userPendingDelete: AdminUser | null = null;
 
   filterRole = 'all';
   filterCompanyId: number | 'all' = 'all';
@@ -91,6 +99,7 @@ export class ManageUsers implements OnInit {
     this.showForm = !this.showForm;
     this.errorMessage = '';
     this.successMessage = '';
+    this.successAlertType = 'admin';
     this.cancelEditUser();
     if (!this.showForm) {
       this.userForm.reset({ role: 'user' });
@@ -103,15 +112,29 @@ export class ManageUsers implements OnInit {
       return;
     }
 
+    const role = this.userForm.get('role')?.value;
+    this.errorMessage = '';
+
     this.adminService.createUser(this.userForm.value).subscribe({
       next: () => {
-        this.successMessage = 'ADMIN_USERS.SUCCESS_CREATE';
+        if (role === 'admin') {
+          this.successMessage = 'ADMIN_USERS.SUCCESS_CREATE_ADMIN';
+          this.successAlertType = 'admin';
+        } else {
+          this.successMessage = 'ADMIN_USERS.SUCCESS_CREATE_USER';
+          this.successAlertType = 'user';
+        }
         this.userForm.reset({ role: 'user' });
         this.showForm = false;
         this.loadData();
       },
       error: (err) => {
-        this.errorMessage = err.error?.error || 'ADMIN_USERS.ERRORS.CREATE';
+        this.successMessage = '';
+        this.errorMessage = err.error?.error || (
+          role === 'admin'
+            ? 'ADMIN_USERS.ERRORS.CREATE_ADMIN'
+            : 'ADMIN_USERS.ERRORS.CREATE_USER'
+        );
       },
     });
   }
@@ -149,6 +172,7 @@ export class ManageUsers implements OnInit {
     this.adminService.updateUser(this.editingUserId, data).subscribe({
       next: () => {
         this.successMessage = 'ADMIN_USERS.SUCCESS_UPDATE';
+        this.successAlertType = 'admin';
         this.cancelEditUser();
         this.loadData();
       },
@@ -181,6 +205,7 @@ export class ManageUsers implements OnInit {
     }).subscribe({
       next: () => {
         this.successMessage = 'ADMIN_USERS.SUCCESS_PROMOTE';
+        this.successAlertType = 'admin';
         this.cancelPromote();
         this.loadData();
       },
@@ -191,13 +216,74 @@ export class ManageUsers implements OnInit {
   }
 
   revokeAdmin(user: AdminUser) {
+    this.userPendingRevoke = user;
+    this.revokeConfirmParams = { name: this.fullName(user) || user.email };
+    this.showRevokeConfirm = true;
+  }
+
+  cancelRevokeAdmin() {
+    this.showRevokeConfirm = false;
+    this.userPendingRevoke = null;
+  }
+
+  confirmRevokeAdmin() {
+    const user = this.userPendingRevoke;
+    if (!user) {
+      return;
+    }
+
+    this.showRevokeConfirm = false;
+    this.userPendingRevoke = null;
+
     this.adminService.updateUserRole(user.id, { role: 'user' }).subscribe({
       next: () => {
         this.successMessage = 'ADMIN_USERS.SUCCESS_REVOKE';
+        this.successAlertType = 'admin';
         this.loadData();
       },
       error: (err) => {
         this.errorMessage = err.error?.error || 'ADMIN_USERS.ERRORS.UPDATE';
+      },
+    });
+  }
+
+  deleteUser(user: AdminUser) {
+    this.userPendingDelete = user;
+    this.deleteConfirmParams = { name: this.fullName(user) || user.email };
+    this.showDeleteConfirm = true;
+  }
+
+  cancelDeleteUser() {
+    this.showDeleteConfirm = false;
+    this.userPendingDelete = null;
+  }
+
+  confirmDeleteUser() {
+    const user = this.userPendingDelete;
+    if (!user) {
+      return;
+    }
+
+    const wasAdmin = user.role === 'admin';
+    this.showDeleteConfirm = false;
+    this.userPendingDelete = null;
+    this.errorMessage = '';
+
+    this.adminService.deleteUser(user.id).subscribe({
+      next: () => {
+        if (wasAdmin) {
+          this.successMessage = 'ADMIN_USERS.SUCCESS_DELETE_ADMIN';
+          this.successAlertType = 'admin';
+        } else {
+          this.successMessage = 'ADMIN_USERS.SUCCESS_DELETE_USER';
+          this.successAlertType = 'user';
+        }
+        this.cancelEditUser();
+        this.cancelPromote();
+        this.loadData();
+      },
+      error: (err) => {
+        this.errorMessage = err.error?.error || 'ADMIN_USERS.ERRORS.DELETE';
       },
     });
   }

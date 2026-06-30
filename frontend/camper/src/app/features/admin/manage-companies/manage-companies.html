@@ -5,12 +5,21 @@
       <h1>{{ 'ADMIN_DASHBOARD.WELCOME' | translate:{ name: userName } }}</h1>
       <p class="subtitle">{{ 'ADMIN_COMPANIES.SUBTITLE' | translate }}</p>
     </div>
-    <button class="btn btn-primary" type="button" (click)="logout()">
-      {{ 'HEADER.LOGOUT' | translate }}
-    </button>
+    <div class="hero-actions">
+      <a
+        routerLink="/admin/chat"
+        class="btn btn-primary btn-chat"
+        [attr.aria-label]="'ADMIN_CHAT.OPEN' | translate">
+        <i class="fa-solid fa-comment-dots" aria-hidden="true"></i>
+        <span class="chat-badge" *ngIf="unreadCount > 0">{{ unreadCount > 9 ? '9+' : unreadCount }}</span>
+      </a>
+      <button class="btn btn-primary" type="button" (click)="logout()">
+        {{ 'HEADER.LOGOUT' | translate }}
+      </button>
+    </div>
   </header>
 
-  <div class="alert success" *ngIf="successMessage">{{ successMessage | translate }}</div>
+  <div class="alert success-admin" *ngIf="successMessage">{{ successMessage | translate }}</div>
   <div class="alert error" *ngIf="errorMessage">{{ errorMessage | translate }}</div>
 
   <header class="page-header">
@@ -257,4 +266,13 @@
       </div>
     </nav>
   </section>
+
+  <app-confirm-dialog
+    [visible]="showDeleteConfirm"
+    titleKey="ADMIN_COMPANIES.CONFIRM_DELETE_TITLE"
+    messageKey="ADMIN_COMPANIES.CONFIRM_DELETE_TEXT"
+    [messageParams]="deleteConfirmParams"
+    (cancelled)="cancelDeleteCompany()"
+    (confirmed)="confirmDeleteCompany()">
+  </app-confirm-dialog>
 </main>

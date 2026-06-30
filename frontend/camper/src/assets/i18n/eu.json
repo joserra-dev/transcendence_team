@@ -30,7 +30,17 @@
     "MANAGE_COMPANIES": "Enpresak kudeatu",
     "COMPANY_PARKINGS": "Enpresaren aparkalekuak",
     "EDIT_COMPANY": "Enpresa editatu",
-    "MANAGE_BOOKINGS": "Erreserbak kudeatu"
+    "COMPANY_METRICS": "Enpresaren metrikak",
+    "METRICS": "Metrikak",
+    "MANAGE_BOOKINGS": "Erreserbak kudeatu",
+    "ADMIN_CHAT": "Gorabeheren txata"
+  },
+
+  "COMMON": {
+    "CONFIRM_NO": "Ez, itzuli",
+    "CONFIRM_YES_DELETE": "Bai, ezabatu",
+    "CONFIRM_YES_CANCEL": "Bai, ezeztatu",
+    "CONFIRM_YES_REVOKE": "Bai, kendu"
   },
 
   "FOOTER": {
@@ -309,6 +319,11 @@
     "MANAGE_BOOKINGS": "Erreserbak kudeatu",
     "ACTIVE": "Aktibo",
     "INACTIVE": "Inaktibo",
+    "FILTER_STATUS": "Iragazi egoeraren arabera",
+    "FILTER_STATUS_ALL": "Egoera guztiak",
+    "FILTER_MUNICIPALITY": "Iragazi udalerriaren arabera",
+    "FILTER_MUNICIPALITY_ALL": "Udalerri guztiak",
+    "EMPTY_FILTERED": "Ez dago hautatutako iragazkiekin bat datorren aparkalekurik.",
     "ERRORS": {
       "LOAD_ADS": "Ezin izan dira zure iragarkiak kargatu."
     }
@@ -336,6 +351,7 @@
     "ROLE_USER": "Erabiltzailea",
     "GRANT_ADMIN": "Eman admin baimenak",
     "REVOKE_ADMIN": "Kendu admin baimenak",
+    "DELETE": "Erabiltzailea ezabatu",
     "EDIT": "Profila editatu",
     "PROMOTE_DESC": "Hautatu administratzaile baimenak emateko enpresa.",
     "FILTER_ROLE": "Iragazi baimenen arabera",
@@ -349,14 +365,23 @@
     "ACTIONS": "Ekintzak",
     "NO_COMPANY": "—",
     "EMPTY_FILTERED": "Ez dago hautatutako iragazkiekin bat datorren erabiltzailerik.",
-    "SUCCESS_CREATE": "Erabiltzailea sortu da. Egiaztapen mezu bat bidali da.",
+    "SUCCESS_CREATE_USER": "Erabiltzailea sortu da. Egiaztapen mezu bat bidali da.",
+    "SUCCESS_CREATE_ADMIN": "Administratzailea sortu da. Egiaztapen mezu bat bidali da.",
     "SUCCESS_UPDATE": "Erabiltzailea ongi eguneratu da.",
     "SUCCESS_PROMOTE": "Admin baimenak ongi eman dira.",
     "SUCCESS_REVOKE": "Admin baimenak ongi kendu dira.",
+    "SUCCESS_DELETE_USER": "Erabiltzailea ongi ezabatu da.",
+    "SUCCESS_DELETE_ADMIN": "Administratzailea ongi ezabatu da.",
+    "CONFIRM_REVOKE_TITLE": "Ekintza berretsi",
+    "CONFIRM_REVOKE_TEXT": "Ziur zaude {{name}} erabiltzaileari admin baimenak kendu nahi diozula? Ekintza hau ezin da desegin.",
+    "CONFIRM_DELETE_TITLE": "Ezabatzea berretsi",
+    "CONFIRM_DELETE_TEXT": "Ziur zaude {{name}} erabiltzailea ezabatu nahi duzula? Ekintza hau ezin da desegin.",
     "ERRORS": {
       "LOAD": "Ezin izan dira erabiltzaileak kargatu.",
-      "CREATE": "Errorea erabiltzailea sortzean.",
+      "CREATE_USER": "Ezin izan da erabiltzailea sortu.",
+      "CREATE_ADMIN": "Ezin izan da administratzailea sortu.",
       "UPDATE": "Errorea baimenak eguneratzean.",
+      "DELETE": "Errorea erabiltzailea ezabatzean.",
       "NO_COMPANY": "Ez dago enpresarik adminari esleitzeko."
     }
   },
@@ -405,6 +430,8 @@
     "NEXT_PAGE": "Hurrengoa",
     "PAGINATION_LABEL": "Enpresen orrialdekatzea",
     "CONFIRM_DELETE": "\"{{name}}\" enpresa ezabatu? Bere aparkalekuak ere kenduko dira.",
+    "CONFIRM_DELETE_TITLE": "Ezabatzea berretsi",
+    "CONFIRM_DELETE_TEXT": "Ziur zaude \"{{name}}\" enpresa ezabatu nahi duzula? Bere aparkalekuak ere ezabatuko dira. Ekintza hau ezin da desegin.",
     "EDIT_TITLE": "Enpresa editatu",
     "SAVE_COMPANY": "Enpresa gorde",
     "SAVE_ADMIN": "Administratzailea gorde",
@@ -448,6 +475,30 @@
     "MANAGE": "Kudeatu"
   },
 
+  "ADMIN_METRICS": {
+    "BUTTON": "Metrikak",
+    "TITLE": "Salmenta eta erreserba metrikak",
+    "BACK": "Itzuli",
+    "LOADING": "Metrikak kargatzen…",
+    "EMPTY": "Ez dago daturik hautatutako aldirako.",
+    "FILTER_GROUP": "Taldekatu",
+    "GROUP_YEAR": "Urteak (hilabeteak)",
+    "GROUP_MONTH": "Hilabeteak (asteak)",
+    "GROUP_WEEK": "Asteak (egunak)",
+    "FILTER_YEAR": "Urtea",
+    "FILTER_MONTH": "Hilabetea",
+    "FILTER_WEEK": "Hilabeteko astea",
+    "WEEK_OPTION": "{{week}}. astea",
+    "TOTAL_SALES": "Salmentak guztira",
+    "TOTAL_BOOKINGS": "Erreserbak guztira",
+    "SALES_BY_PARKING": "Salmentak aparkalekuka",
+    "BOOKINGS_BY_PARKING": "Erreserbak aparkalekuka",
+    "SALES_BY_MONTH": "Salmentak hilabeteka",
+    "ERRORS": {
+      "LOAD": "Ezin izan dira metrikak kargatu."
+    }
+  },
+
   "ADMIN_BOOKINGS": {
     "TITLE": "Bezeroen erreserbak",
     "SUBTITLE": "Kontsultatu eta kudeatu zure aparkalekuen erreserbak",
@@ -465,6 +516,8 @@
     "PLATE_PLACEHOLDER": "Adib. 1234ABC",
     "PAGINATION_LABEL": "Erreserben orrialdekatzea",
     "CONFIRM_CANCEL": "Utzi #{{ref}} erreserba {{parking}} aparkalekuan?",
+    "CONFIRM_CANCEL_TITLE": "Ezeztapena berretsi",
+    "CONFIRM_CANCEL_TEXT": "Ziur zaude #{{ref}} erreserba {{parking}} aparkalekuan bertan behera utzi nahi duzula? Ekintza hau ezin da desegin.",
     "SUCCESS_CANCEL": "Erreserba ongi utzi da.",
     "ERRORS": {
       "LOAD": "Ezin izan dira erreserbak kargatu.",
@@ -483,6 +536,9 @@
     "CITY": "Udalerria",
     "WEB": "Webgunea",
     "PHONE": "Telefonoa",
+    "LATITUDE": "Latitudea",
+    "LONGITUDE": "Longitudea",
+    "DESCRIPTION": "Deskribapena",
     "ACTIVE": "Aktibo",
     "ELECTRICITY": "Argindar orokorra",
     "RESIDUALS": "Hondakin-urak",
@@ -498,22 +554,52 @@
     "FREE": "Libre",
     "OCCUPIED": "Okupatuta",
     "EDIT_SPOT": "Editatu",
+    "DELETE_SPOT": "Ezabatu",
     "NO_SPOTS": "Aparkaleku honek ez du plazarik sortuta.",
     "CANCEL": "Utzi",
     "SAVE_SPOT": "Gorde plaza",
     "DELETE": "Iragarkia ezabatu",
     "DELETING": "Ezabatzen...",
     "CONFIRM_DELETE": "\"{{name}}\" iragarkia ezabatu? Bere plazak eta erlazionatutako erreserbak ere ezabatuko dira.",
+    "CONFIRM_DELETE_TITLE": "Ezabatzea berretsi",
+    "CONFIRM_DELETE_TEXT": "Ziur zaude \"{{name}}\" iragarkia ezabatu nahi duzula? Bere plazak eta erlazionatutako erreserbak ere ezabatuko dira. Ekintza hau ezin da desegin.",
+    "CONFIRM_DELETE_SPOT_TITLE": "Ezabatzea berretsi",
+    "CONFIRM_DELETE_SPOT_TEXT": "Ziur zaude \"{{name}}\" plaza ezabatu nahi duzula? Ekintza hau ezin da desegin.",
     "SUCCESS_UPDATE": "Aparkalekua eguneratu da",
     "SUCCESS_CREATE": "Aparkalekua sortu da",
     "SUCCESS_CREATE_SPOT": "Plaza sortu da",
     "SUCCESS_UPDATE_SPOT": "Plaza eguneratu da",
+    "SUCCESS_DELETE_SPOT": "Plaza ongi ezabatu da",
     "ERRORS": {
       "CREATE": "Errorea aparkalekua sortzean",
       "UPDATE": "Errorea aparkalekua eguneratzean. Saiatu berriro.",
       "CREATE_SPOT": "Errorea plaza sortzean.",
       "UPDATE_SPOT": "Errorea plaza eguneratzean.",
+      "DELETE_SPOT": "Errorea plaza ezabatzean.",
       "DELETE": "Errorea aparkalekua ezabatzean."
+    }
+  },
+
+  "ADMIN_CHAT": {
+    "OPEN": "Gorabeheren txata ireki",
+    "TITLE": "Gorabeheren txata",
+    "SUBTITLE": "Komunikatu superadministratzailearekin edo enpresako administratzaileekin.",
+    "BACK": "Panelera itzuli",
+    "THREADS_TITLE": "Elkarrizketak",
+    "NO_THREADS": "Oraindik ez dago elkarrizketarik.",
+    "NO_MESSAGES": "Mezurik ez",
+    "SELECT_THREAD": "Hautatu elkarrizketa bat hasteko.",
+    "WITH_ADMIN": "Administratzailea: {{name}}",
+    "LOADING_THREADS": "Elkarrizketak kargatzen...",
+    "LOADING_MESSAGES": "Mezuak kargatzen...",
+    "EMPTY_CHAT": "Oraindik ez dago mezurik. Idatzi lehenengoa.",
+    "PLACEHOLDER": "Idatzi zure mezua...",
+    "SEND": "Bidali",
+    "UNKNOWN_SENDER": "Erabiltzailea",
+    "ERRORS": {
+      "LOAD_THREADS": "Ezin izan dira elkarrizketak kargatu.",
+      "LOAD_MESSAGES": "Ezin izan dira mezuak kargatu.",
+      "SEND": "Errorea mezua bidaltzean."
     }
   }
 }

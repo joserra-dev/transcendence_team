@@ -30,7 +30,17 @@
     "MANAGE_COMPANIES": "Gestionar empresas",
     "COMPANY_PARKINGS": "Parkings de empresa",
     "EDIT_COMPANY": "Editar empresa",
-    "MANAGE_BOOKINGS": "Gestionar reservas"
+    "COMPANY_METRICS": "Métricas de empresa",
+    "METRICS": "Métricas",
+    "MANAGE_BOOKINGS": "Gestionar reservas",
+    "ADMIN_CHAT": "Chat de incidencias"
+  },
+
+  "COMMON": {
+    "CONFIRM_NO": "No, volver",
+    "CONFIRM_YES_DELETE": "Sí, eliminar",
+    "CONFIRM_YES_CANCEL": "Sí, cancelar",
+    "CONFIRM_YES_REVOKE": "Sí, quitar"
   },
 
   "FOOTER": {
@@ -303,7 +313,7 @@
     "WELCOME": "Hola, {{name}}",
     "SUPER_DESC": "Gestiona anuncios, usuarios, permisos de admin y clientes finales.",
     "ADMIN_DESC": "Gestiona los anuncios de parkings y las reservas de tu empresa.",
-    "ADS_SECTION_TITLE": "Mis anuncios",
+    "ADS_SECTION_TITLE": "Mis parkings",
     "ADS_SECTION_DESC": "Consulta, edita y publica los parkings de tu empresa.",
     "ADS_PAGINATION_LABEL": "Paginación de anuncios",
     "MANAGE_BOOKINGS": "Gestionar reservas",
@@ -313,6 +323,11 @@
     "MANAGE_USERS_DESC": "Crear usuarios, asignar admins y gestionar accesos.",
     "ACTIVE": "Activo",
     "INACTIVE": "Inactivo",
+    "FILTER_STATUS": "Filtrar por estado",
+    "FILTER_STATUS_ALL": "Todos los estados",
+    "FILTER_MUNICIPALITY": "Filtrar por municipio",
+    "FILTER_MUNICIPALITY_ALL": "Todos los municipios",
+    "EMPTY_FILTERED": "No hay parkings que coincidan con los filtros seleccionados.",
     "ERRORS": {
       "LOAD_ADS": "No se pudieron cargar tus anuncios."
     }
@@ -340,6 +355,7 @@
     "ROLE_USER": "Usuario",
     "GRANT_ADMIN": "Dar permisos de admin",
     "REVOKE_ADMIN": "Quitar permisos de admin",
+    "DELETE": "Eliminar usuario",
     "EDIT": "Editar perfil",
     "PROMOTE_DESC": "Selecciona la empresa a la que asignar permisos de administrador.",
     "FILTER_ROLE": "Filtrar por permisos",
@@ -353,14 +369,23 @@
     "ACTIONS": "Acciones",
     "NO_COMPANY": "—",
     "EMPTY_FILTERED": "No hay usuarios que coincidan con los filtros seleccionados.",
-    "SUCCESS_CREATE": "Usuario creado. Se ha enviado un correo de verificación.",
+    "SUCCESS_CREATE_USER": "Usuario creado. Se ha enviado un correo de verificación.",
+    "SUCCESS_CREATE_ADMIN": "Administrador creado. Se ha enviado un correo de verificación.",
     "SUCCESS_UPDATE": "Usuario actualizado correctamente.",
     "SUCCESS_PROMOTE": "Permisos de admin concedidos.",
     "SUCCESS_REVOKE": "Permisos de admin revocados.",
+    "SUCCESS_DELETE_USER": "Usuario eliminado correctamente.",
+    "SUCCESS_DELETE_ADMIN": "Administrador eliminado correctamente.",
+    "CONFIRM_REVOKE_TITLE": "Confirmar acción",
+    "CONFIRM_REVOKE_TEXT": "¿Estás seguro de que deseas quitar los permisos de administrador a {{name}}? Esta acción no se puede deshacer.",
+    "CONFIRM_DELETE_TITLE": "Confirmar eliminación",
+    "CONFIRM_DELETE_TEXT": "¿Estás seguro de que deseas eliminar al usuario {{name}}? Esta acción no se puede deshacer.",
     "ERRORS": {
       "LOAD": "No se pudieron cargar los usuarios.",
-      "CREATE": "Error al crear el usuario.",
+      "CREATE_USER": "No ha sido posible crear el usuario.",
+      "CREATE_ADMIN": "No ha sido posible crear el administrador.",
       "UPDATE": "Error al actualizar permisos.",
+      "DELETE": "Error al eliminar el usuario.",
       "NO_COMPANY": "No hay empresas disponibles para asignar al admin."
     }
   },
@@ -409,6 +434,8 @@
     "NEXT_PAGE": "Siguiente",
     "PAGINATION_LABEL": "Paginación de empresas",
     "CONFIRM_DELETE": "¿Eliminar la empresa \"{{name}}\"? Se borrarán también sus parkings.",
+    "CONFIRM_DELETE_TITLE": "Confirmar eliminación",
+    "CONFIRM_DELETE_TEXT": "¿Estás seguro de que deseas eliminar la empresa \"{{name}}\"? Se borrarán también sus parkings. Esta acción no se puede deshacer.",
     "EDIT_TITLE": "Editar empresa",
     "SAVE_COMPANY": "Guardar empresa",
     "SAVE_ADMIN": "Guardar administrador",
@@ -452,6 +479,30 @@
     "MANAGE": "Gestionar"
   },
 
+  "ADMIN_METRICS": {
+    "BUTTON": "Métricas",
+    "TITLE": "Métricas de ventas y reservas",
+    "BACK": "Volver",
+    "LOADING": "Cargando métricas…",
+    "EMPTY": "No hay datos para el periodo seleccionado.",
+    "FILTER_GROUP": "Agrupar por",
+    "GROUP_YEAR": "Años (meses)",
+    "GROUP_MONTH": "Meses (semanas)",
+    "GROUP_WEEK": "Semanas (días)",
+    "FILTER_YEAR": "Año",
+    "FILTER_MONTH": "Mes",
+    "FILTER_WEEK": "Semana del mes",
+    "WEEK_OPTION": "Semana {{week}}",
+    "TOTAL_SALES": "Ventas totales",
+    "TOTAL_BOOKINGS": "Reservas totales",
+    "SALES_BY_PARKING": "Ventas por parking",
+    "BOOKINGS_BY_PARKING": "Reservas por parking",
+    "SALES_BY_MONTH": "Ventas por mes",
+    "ERRORS": {
+      "LOAD": "No se pudieron cargar las métricas."
+    }
+  },
+
   "ADMIN_BOOKINGS": {
     "TITLE": "Reservas de clientes",
     "SUBTITLE": "Consulta y gestiona las reservas de tus parkings",
@@ -469,6 +520,8 @@
     "PLATE_PLACEHOLDER": "Ej. 1234ABC",
     "PAGINATION_LABEL": "Paginación de reservas",
     "CONFIRM_CANCEL": "¿Cancelar la reserva #{{ref}} en {{parking}}?",
+    "CONFIRM_CANCEL_TITLE": "Confirmar cancelación",
+    "CONFIRM_CANCEL_TEXT": "¿Estás seguro de que deseas cancelar la reserva #{{ref}} en {{parking}}? Esta acción no se puede deshacer.",
     "SUCCESS_CANCEL": "Reserva cancelada correctamente.",
     "ERRORS": {
       "LOAD": "No se pudieron cargar las reservas.",
@@ -487,6 +540,9 @@
     "CITY": "Municipio",
     "WEB": "Web",
     "PHONE": "Teléfono",
+    "LATITUDE": "Latitud",
+    "LONGITUDE": "Longitud",
+    "DESCRIPTION": "Descripción",
     "ACTIVE": "Activo",
     "ELECTRICITY": "Electricidad general",
     "RESIDUALS": "Aguas residuales",
@@ -502,22 +558,52 @@
     "FREE": "Libre",
     "OCCUPIED": "Mantenimiento",
     "EDIT_SPOT": "Editar",
+    "DELETE_SPOT": "Eliminar",
     "NO_SPOTS": "Este parking no tiene plazas creadas.",
     "CANCEL": "Cancelar",
     "SAVE_SPOT": "Guardar plaza",
     "DELETE": "Eliminar anuncio",
     "DELETING": "Eliminando...",
     "CONFIRM_DELETE": "¿Eliminar el anuncio \"{{name}}\"? Se borrarán también sus plazas y reservas asociadas.",
+    "CONFIRM_DELETE_TITLE": "Confirmar eliminación",
+    "CONFIRM_DELETE_TEXT": "¿Estás seguro de que deseas eliminar el anuncio \"{{name}}\"? Se borrarán también sus plazas y reservas asociadas. Esta acción no se puede deshacer.",
+    "CONFIRM_DELETE_SPOT_TITLE": "Confirmar eliminación",
+    "CONFIRM_DELETE_SPOT_TEXT": "¿Estás seguro de que deseas eliminar la plaza \"{{name}}\"? Esta acción no se puede deshacer.",
     "SUCCESS_UPDATE": "Parking actualizado correctamente",
     "SUCCESS_CREATE": "Parking creado correctamente",
     "SUCCESS_CREATE_SPOT": "Plaza creada correctamente",
     "SUCCESS_UPDATE_SPOT": "Plaza actualizada correctamente",
+    "SUCCESS_DELETE_SPOT": "Plaza eliminada correctamente",
     "ERRORS": {
       "CREATE": "Error al crear el parking",
       "UPDATE": "Error al actualizar el parking. Inténtalo de nuevo.",
       "CREATE_SPOT": "Error al crear la plaza en el servidor.",
       "UPDATE_SPOT": "Error al actualizar la plaza en el servidor.",
+      "DELETE_SPOT": "Error al eliminar la plaza.",
       "DELETE": "Error al eliminar el parking."
+    }
+  },
+
+  "ADMIN_CHAT": {
+    "OPEN": "Abrir chat de incidencias",
+    "TITLE": "Chat de incidencias",
+    "SUBTITLE": "Comunícate con el superadministrador o con los administradores de empresa.",
+    "BACK": "Volver al panel",
+    "THREADS_TITLE": "Conversaciones",
+    "NO_THREADS": "No hay conversaciones todavía.",
+    "NO_MESSAGES": "Sin mensajes",
+    "SELECT_THREAD": "Selecciona una conversación para empezar.",
+    "WITH_ADMIN": "Administrador: {{name}}",
+    "LOADING_THREADS": "Cargando conversaciones...",
+    "LOADING_MESSAGES": "Cargando mensajes...",
+    "EMPTY_CHAT": "Aún no hay mensajes. Escribe el primero.",
+    "PLACEHOLDER": "Escribe tu mensaje...",
+    "SEND": "Enviar",
+    "UNKNOWN_SENDER": "Usuario",
+    "ERRORS": {
+      "LOAD_THREADS": "No se pudieron cargar las conversaciones.",
+      "LOAD_MESSAGES": "No se pudieron cargar los mensajes.",
+      "SEND": "Error al enviar el mensaje."
     }
   }
 }

@@ -1,28 +1,31 @@
-import { Component, ElementRef, OnInit, ViewChild, inject } from '@angular/core';
+import { Component, ElementRef, OnDestroy, OnInit, ViewChild, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { Router, RouterLink } from '@angular/router';
-import { TranslateModule, TranslateService } from '@ngx-translate/core';
+import { TranslateModule } from '@ngx-translate/core';
 import { Admin } from '../../../core/services/admin';
 import { Auth } from '../../../core/services/auth';
 import { Parking } from '../../../core/models/parking';
 import { Company } from '../../../core/models/user';
+import { ConfirmDialog } from '../../../shared/components/confirm-dialog/confirm-dialog';
+import { Chat } from '../../../core/services/chat';
+import { interval, Subscription } from 'rxjs';
 
 @Component({
   selector: 'app-manage-companies',
-  imports: [CommonModule, ReactiveFormsModule, RouterLink, TranslateModule],
+  imports: [CommonModule, ReactiveFormsModule, RouterLink, TranslateModule, ConfirmDialog],
   templateUrl: './manage-companies.html',
   styleUrl: './manage-companies.scss',
 })
-export class ManageCompanies implements OnInit {
+export class ManageCompanies implements OnInit, OnDestroy {
   @ViewChild('companyListScroll') companyListScroll?: ElementRef<HTMLElement>;
   @ViewChild('adsListScroll') adsListScroll?: ElementRef<HTMLElement>;
 
   private fb = inject(FormBuilder);
   private adminService = inject(Admin);
   private authService = inject(Auth);
+  private chatService = inject(Chat);
   private router = inject(Router);
-  private translate = inject(TranslateService);
 
   readonly pageSize = 8;
   readonly adsPageSize = 8;
@@ -40,6 +43,11 @@ export class ManageCompanies implements OnInit {
   errorMessage = '';
   formErrorMessage = '';
   userName = '';
+  unreadCount = 0;
+  showDeleteConfirm = false;
+  deleteConfirmParams: Record<string, string> = {};
+  private companyPendingDelete: Company | null = null;
+  private unreadPollSub?: Subscription;
 
   companyForm: FormGroup = this.fb.group({
     name: ['', Validators.required],
@@ -55,6 +63,20 @@ export class ManageCompanies implements OnInit {
     const user = this.authService.getUser();
     this.userName = user?.nombrePersona || user?.emailPersona || '';
     this.loadCompanies();
+    this.loadUnreadCount();
+    this.unreadPollSub = interval(30000).subscribe(() => this.loadUnreadCount());
+  }
+
+  ngOnDestroy() {
+    this.unreadPollSub?.unsubscribe();
+  }
+
+  loadUnreadCount() {
+    this.chatService.getUnreadCount().subscribe({
+      next: ({ count }) => {
+        this.unreadCount = count;
+      },
+    });
   }
 
   get totalPages(): number {
@@ -229,10 +251,24 @@ export class ManageCompanies implements OnInit {
 
   deleteCompany(event: Event, company: Company) {
     event.stopPropagation();
-    const msg = this.translate.instant('ADMIN_COMPANIES.CONFIRM_DELETE', { name: company.name });
-    if (!confirm(msg)) {
+    this.companyPendingDelete = company;
+    this.deleteConfirmParams = { name: company.name };
+    this.showDeleteConfirm = true;
+  }
+
+  cancelDeleteCompany() {
+    this.showDeleteConfirm = false;
+    this.companyPendingDelete = null;
+  }
+
+  confirmDeleteCompany() {
+    const company = this.companyPendingDelete;
+    if (!company) {
       return;
     }
+
+    this.showDeleteConfirm = false;
+    this.companyPendingDelete = null;
 
     this.adminService.deleteCompany(company.id).subscribe({
       next: () => {
