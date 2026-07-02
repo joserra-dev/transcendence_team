@@ -89,11 +89,6 @@ export class BookingDetail implements OnInit {
     this.loadBooking(this.booking.id);
   }
 
-  pdfGenerator()
-  {
-    console.log("Hola mundo");
-  }
-
   viewLicensePlate() {
     if (!this.booking) return;
     this.showlPlateModal = true;
@@ -165,5 +160,21 @@ export class BookingDetail implements OnInit {
 
   getStatusLabel(status: string): string {
     return status === '1' ? 'HISTORY_DETAIL.CONFIRMED' : 'HISTORY_DETAIL.CANCELLED';
+  }
+
+  send_bill() {
+    this.isLoading = true;
+
+    this.bookingService.send_bill(this.booking.id).subscribe({
+      next: (data) => {
+        console.log(data);
+        this.isLoading = false;
+      },
+      error: (err) => {
+        console.error(err);
+        this.errorMessage = 'HISTORY_DETAIL.ERRORS.LOADING';
+        this.isLoading = false;
+      }
+    });
   }
 }
