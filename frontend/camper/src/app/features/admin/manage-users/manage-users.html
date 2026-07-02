@@ -91,6 +91,16 @@
           <option [ngValue]="'desc'">{{ 'ADMIN_USERS.SORT_DESC' | translate }}</option>
         </select>
       </label>
+
+      <div class="export-action">
+        <button
+          class="btn btn-primary"
+          type="button"
+          (click)="exportCsv()"
+          [disabled]="filteredUsers.length === 0">
+          {{ 'ADMIN_USERS.EXPORT_CSV' | translate }}
+        </button>
+      </div>
     </div>
 
     <p *ngIf="filteredUsers.length === 0" class="empty-msg">{{ 'ADMIN_USERS.EMPTY_FILTERED' | translate }}</p>
