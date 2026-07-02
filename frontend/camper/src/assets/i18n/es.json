@@ -33,6 +33,7 @@
     "COMPANY_METRICS": "Métricas de empresa",
     "METRICS": "Métricas",
     "MANAGE_BOOKINGS": "Gestionar reservas",
+    "CALENDAR": "Calendarios",
     "ADMIN_CHAT": "Chat de incidencias"
   },
 
@@ -333,6 +334,55 @@
     }
   },
 
+  "ADMIN_CALENDAR": {
+    "BUTTON": "Calendarios",
+    "TITLE": "Calendario de ocupación",
+    "SUBTITLE": "Consulta la ocupación y bloquea días manualmente por parking.",
+    "BACK": "Volver al panel",
+    "SELECT_PARKING": "Parking",
+    "SELECT_PARKING_PLACEHOLDER": "Selecciona un parking",
+    "CHOOSE_PARKING": "Selecciona un parking para ver su calendario.",
+    "LOADING": "Cargando calendario...",
+    "LEGEND_OCCUPIED": "Ocupado",
+    "LEGEND_BLOCKED": "Bloqueado",
+    "LEGEND_FREE": "Libre",
+    "HINT": "Haz clic en un día ocupado para ver sus reservas. Haz clic en un día libre para bloquearlo, o en uno bloqueado para desbloquearlo.",
+    "DAY_DETAIL": "Reservas del",
+    "CLOSE": "Cerrar",
+    "NO_BOOKINGS": "No hay reservas este día.",
+    "SPACE": "Plaza",
+    "PLATE": "Matrícula",
+    "MONTHS": {
+      "1": "Enero",
+      "2": "Febrero",
+      "3": "Marzo",
+      "4": "Abril",
+      "5": "Mayo",
+      "6": "Junio",
+      "7": "Julio",
+      "8": "Agosto",
+      "9": "Septiembre",
+      "10": "Octubre",
+      "11": "Noviembre",
+      "12": "Diciembre"
+    },
+    "WEEKDAYS": {
+      "1": "Lun",
+      "2": "Mar",
+      "3": "Mié",
+      "4": "Jue",
+      "5": "Vie",
+      "6": "Sáb",
+      "7": "Dom"
+    },
+    "ERRORS": {
+      "LOAD_PARKINGS": "No se pudieron cargar los parkings.",
+      "LOAD_CALENDAR": "No se pudo cargar el calendario.",
+      "BLOCK": "No se pudo bloquear el día.",
+      "UNBLOCK": "No se pudo desbloquear el día."
+    }
+  },
+
   "ADMIN_USERS": {
     "TITLE": "Usuarios y permisos",
     "SUBTITLE": "Crea usuarios finales y concede permisos de administrador.",
@@ -381,6 +431,11 @@
     "CONFIRM_REVOKE_TEXT": "¿Estás seguro de que deseas quitar los permisos de administrador a {{name}}? Esta acción no se puede deshacer.",
     "CONFIRM_DELETE_TITLE": "Confirmar eliminación",
     "CONFIRM_DELETE_TEXT": "¿Estás seguro de que deseas eliminar al usuario {{name}}? Esta acción no se puede deshacer.",
+    "VALIDATION": {
+      "INVALID_EMAIL": "Formato inválido.",
+      "INVALID_DNI_FORMAT": "Formato inválido.",
+      "MAX_LENGTH_35": "Máximo 35 caracteres."
+    },
     "ERRORS": {
       "LOAD": "No se pudieron cargar los usuarios.",
       "CREATE_USER": "No ha sido posible crear el usuario.",
@@ -467,7 +522,10 @@
       "INVALID_EMAIL": "Introduce un email válido.",
       "REQUIRED_PASSWORD": "La contraseña del administrador es obligatoria.",
       "MIN_PASSWORD": "La contraseña debe tener al menos 6 caracteres.",
-      "REQUIRED_ADMIN_NAME": "El nombre del administrador es obligatorio."
+      "REQUIRED_ADMIN_NAME": "El nombre del administrador es obligatorio.",
+      "INVALID_CIF": "Formato inválido.",
+      "INVALID_DNI_FORMAT": "Formato inválido.",
+      "MAX_LENGTH_35": "Máximo 35 caracteres."
     }
   },
 

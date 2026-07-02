@@ -66,3 +66,11 @@ export interface AdminBookingFilters {
   status?: string;
   companyId?: number;
 }
+
+export interface ParkingCalendar {
+  parkingId: number;
+  year: number;
+  month: number;
+  blockedDays: string[];
+  bookings: AdminBooking[];
+}

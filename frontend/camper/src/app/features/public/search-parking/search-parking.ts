@@ -153,9 +153,20 @@ export class SearchParking implements OnInit, OnDestroy {
     this.onSearch();
   }
 
-  // Abre el selector nativo del input oculto subyacente o un datepicker personalizado
+  // Abre el selector nativo del input oculto subyacente (cross-browser)
   openDatePicker(hiddenInput: HTMLInputElement) {
-    hiddenInput.showPicker?.();
+    if (!hiddenInput) return;
+    try {
+      if (typeof hiddenInput.showPicker === 'function') {
+        hiddenInput.showPicker();
+      } else {
+        hiddenInput.focus();
+        hiddenInput.click();
+      }
+    } catch {
+      // showPicker puede lanzar si el picker ya se está abriendo (p. ej. clic sobre el propio input nativo en Chrome).
+      // En ese caso el navegador ya lo gestiona, así que lo ignoramos.
+    }
   }
 
   onEntryDateChange() {

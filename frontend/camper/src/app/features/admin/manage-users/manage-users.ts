@@ -6,6 +6,7 @@ import { TranslateModule } from '@ngx-translate/core';
 import { Admin } from '../../../core/services/admin';
 import { AdminUser, Company } from '../../../core/models/user';
 import { ConfirmDialog } from '../../../shared/components/confirm-dialog/confirm-dialog';
+import { CustomValidators } from '../../../shared/validators/custom-validators/custom-validators';
 
 @Component({
   selector: 'app-manage-users',
@@ -14,6 +15,8 @@ import { ConfirmDialog } from '../../../shared/components/confirm-dialog/confirm
   styleUrl: './manage-users.scss',
 })
 export class ManageUsers implements OnInit {
+  readonly maxFieldLength = 35;
+
   private fb = inject(FormBuilder);
   private adminService = inject(Admin);
 
@@ -39,21 +42,21 @@ export class ManageUsers implements OnInit {
   sortOrder: 'asc' | 'desc' = 'asc';
 
   userForm: FormGroup = this.fb.group({
-    email: ['', [Validators.required, Validators.email]],
-    password: ['', [Validators.required, Validators.minLength(6)]],
-    nombre: ['', Validators.required],
-    apellidos: [''],
-    dni: [''],
+    email: ['', [Validators.required, Validators.email, Validators.maxLength(this.maxFieldLength)]],
+    password: ['', [Validators.required, Validators.minLength(6), Validators.maxLength(this.maxFieldLength)]],
+    nombre: ['', [Validators.required, Validators.maxLength(this.maxFieldLength)]],
+    apellidos: ['', [Validators.maxLength(this.maxFieldLength)]],
+    dni: ['', [CustomValidators.dniValido]],
     role: ['user', Validators.required],
     companyId: [null],
   });
 
   editForm: FormGroup = this.fb.group({
-    email: ['', [Validators.required, Validators.email]],
-    password: [''],
-    nombre: ['', Validators.required],
-    apellidos: [''],
-    dni: [''],
+    email: ['', [Validators.required, Validators.email, Validators.maxLength(this.maxFieldLength)]],
+    password: ['', [Validators.maxLength(this.maxFieldLength)]],
+    nombre: ['', [Validators.required, Validators.maxLength(this.maxFieldLength)]],
+    apellidos: ['', [Validators.maxLength(this.maxFieldLength)]],
+    dni: ['', [CustomValidators.dniValido]],
     role: ['user', Validators.required],
     companyId: [null],
   });
@@ -362,5 +365,10 @@ export class ManageUsers implements OnInit {
       return `"${text.replace(/"/g, '""')}"`;
     }
     return text;
+  }
+
+  showFieldError(form: FormGroup, fieldName: string, errorKey: string): boolean {
+    const control = form.get(fieldName);
+    return !!control && control.touched && control.hasError(errorKey);
   }
 }

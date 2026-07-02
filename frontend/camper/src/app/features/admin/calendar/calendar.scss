@@ -1,0 +1,252 @@
+@use "../../../../styles/abstracts/variables" as *;
+
+.admin-calendar {
+  max-width: 1000px;
+  margin: 0 auto;
+  padding: 2rem 1rem;
+}
+
+.page-header {
+  margin-bottom: 1.5rem;
+
+  h1 {
+    margin: 0.35rem 0 0;
+    font-size: 1.6rem;
+  }
+
+  .subtitle {
+    margin: 0.25rem 0 0;
+    color: $color-grey-soft;
+  }
+}
+
+.back-link {
+  color: $color-primary;
+  text-decoration: none;
+  font-weight: 600;
+}
+
+.alert {
+  padding: 0.75rem 1rem;
+  border-radius: $radius-sm;
+  margin-bottom: 1rem;
+
+  &.error {
+    background: rgba(#c0392b, 0.1);
+    color: #c0392b;
+  }
+}
+
+.calendar-controls {
+  margin-bottom: 1.5rem;
+
+  .parking-select {
+    display: flex;
+    flex-direction: column;
+    gap: 0.35rem;
+    max-width: 360px;
+    font-weight: 600;
+
+    select {
+      padding: 0.6rem 0.75rem;
+      border: 1px solid $color-border;
+      border-radius: $radius-sm;
+      font-weight: 400;
+    }
+  }
+}
+
+.empty-msg {
+  color: $color-grey-soft;
+  padding: 1rem 0;
+}
+
+.calendar-panel {
+  background: $color-white;
+  border: 1px solid $color-border;
+  border-radius: $radius-md;
+  padding: 1.25rem;
+}
+
+.calendar-nav {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 1rem;
+  margin-bottom: 1rem;
+
+  .month-title {
+    margin: 0;
+    min-width: 220px;
+    text-align: center;
+    font-size: 1.25rem;
+    text-transform: capitalize;
+  }
+
+  .btn {
+    padding: 0.35rem 0.9rem;
+    font-size: 1.1rem;
+    line-height: 1;
+  }
+}
+
+.legend {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1.25rem;
+  justify-content: center;
+  margin-bottom: 0.75rem;
+
+  .legend-item {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+    font-size: 0.9rem;
+  }
+
+  .dot {
+    width: 14px;
+    height: 14px;
+    border-radius: 3px;
+    border: 1px solid $color-border;
+  }
+
+  .dot-occupied { background: #2ecc71; border-color: #27ae60; }
+  .dot-blocked { background: #e74c3c; border-color: #c0392b; }
+  .dot-free { background: $color-white; }
+}
+
+.hint {
+  text-align: center;
+  color: $color-grey-soft;
+  font-size: 0.85rem;
+  margin: 0 0 1rem;
+}
+
+.calendar-grid {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  gap: 6px;
+
+  .weekday {
+    text-align: center;
+    font-weight: 700;
+    color: $color-primary;
+    padding: 0.35rem 0;
+    text-transform: uppercase;
+    font-size: 0.8rem;
+  }
+
+  .day-cell {
+    aspect-ratio: 1 / 1;
+    display: flex;
+    align-items: flex-start;
+    justify-content: flex-end;
+    padding: 0.35rem 0.45rem;
+    border: 1px solid $color-border;
+    border-radius: $radius-sm;
+    background: $color-white;
+    cursor: pointer;
+    transition: transform 0.08s ease, box-shadow 0.08s ease;
+
+    &:hover:not(.empty) {
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.12);
+      transform: translateY(-1px);
+    }
+
+    &.empty {
+      background: transparent;
+      border: none;
+      cursor: default;
+    }
+
+    &.occupied {
+      background: #2ecc71;
+      border-color: #27ae60;
+      color: #0b3d1f;
+    }
+
+    &.blocked {
+      background: #e74c3c;
+      border-color: #c0392b;
+      color: #fff;
+    }
+
+    &.past:not(.empty) {
+      opacity: 0.55;
+    }
+
+    .day-num {
+      font-weight: 600;
+      font-size: 0.9rem;
+    }
+  }
+}
+
+.day-detail {
+  margin-top: 1.5rem;
+  background: $color-white;
+  border: 1px solid $color-border;
+  border-radius: $radius-md;
+  padding: 1.25rem;
+
+  .day-detail-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+    margin-bottom: 1rem;
+
+    h3 {
+      margin: 0;
+      font-size: 1.15rem;
+    }
+  }
+}
+
+.booking-list {
+  display: grid;
+  gap: 0.75rem;
+}
+
+.booking-card {
+  display: flex;
+  justify-content: space-between;
+  gap: 1rem;
+  border: 1px solid $color-border;
+  border-radius: $radius-sm;
+  padding: 0.85rem 1rem;
+
+  .booking-main {
+    h4 {
+      margin: 0 0 0.25rem;
+      font-size: 1rem;
+    }
+
+    .meta {
+      margin: 0.1rem 0;
+      font-size: 0.88rem;
+      color: $color-grey-soft;
+    }
+  }
+
+  .booking-side {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+    gap: 0.4rem;
+
+    .badge {
+      background: rgba($color-primary, 0.12);
+      color: $color-primary;
+      padding: 0.2rem 0.6rem;
+      border-radius: 999px;
+      font-size: 0.8rem;
+      font-weight: 600;
+    }
+
+    .price {
+      font-weight: 700;
+    }
+  }
+}

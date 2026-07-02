@@ -23,23 +23,44 @@
     <form [formGroup]="userForm" (ngSubmit)="createUser()" class="form-grid">
       <label>
         {{ 'ADMIN_USERS.EMAIL' | translate }}
-        <input type="email" formControlName="email" />
+        <input type="email" formControlName="email" [attr.maxlength]="maxFieldLength" />
+        <small class="error-msg-standard" *ngIf="showFieldError(userForm, 'email', 'email')">
+          {{ 'ADMIN_USERS.VALIDATION.INVALID_EMAIL' | translate }}
+        </small>
+        <small class="error-msg-standard" *ngIf="showFieldError(userForm, 'email', 'maxlength')">
+          {{ 'ADMIN_USERS.VALIDATION.MAX_LENGTH_35' | translate }}
+        </small>
       </label>
       <label>
         {{ 'ADMIN_USERS.PASSWORD' | translate }}
-        <input type="password" formControlName="password" />
+        <input type="password" formControlName="password" [attr.maxlength]="maxFieldLength" />
+        <small class="error-msg-standard" *ngIf="showFieldError(userForm, 'password', 'maxlength')">
+          {{ 'ADMIN_USERS.VALIDATION.MAX_LENGTH_35' | translate }}
+        </small>
       </label>
       <label>
         {{ 'ADMIN_USERS.NAME' | translate }}
-        <input type="text" formControlName="nombre" />
+        <input type="text" formControlName="nombre" [attr.maxlength]="maxFieldLength" />
+        <small class="error-msg-standard" *ngIf="showFieldError(userForm, 'nombre', 'maxlength')">
+          {{ 'ADMIN_USERS.VALIDATION.MAX_LENGTH_35' | translate }}
+        </small>
       </label>
       <label>
         {{ 'ADMIN_USERS.LASTNAME' | translate }}
-        <input type="text" formControlName="apellidos" />
+        <input type="text" formControlName="apellidos" [attr.maxlength]="maxFieldLength" />
+        <small class="error-msg-standard" *ngIf="showFieldError(userForm, 'apellidos', 'maxlength')">
+          {{ 'ADMIN_USERS.VALIDATION.MAX_LENGTH_35' | translate }}
+        </small>
       </label>
       <label>
         {{ 'ADMIN_USERS.DNI' | translate }}
-        <input type="text" formControlName="dni" />
+        <input type="text" formControlName="dni" maxlength="9" />
+        <small class="error-msg-standard" *ngIf="showFieldError(userForm, 'dni', 'dniFormato')">
+          {{ 'ADMIN_USERS.VALIDATION.INVALID_DNI_FORMAT' | translate }}
+        </small>
+        <small class="error-msg-standard" *ngIf="showFieldError(userForm, 'dni', 'dniInvalido')">
+          {{ 'ADMIN_USERS.VALIDATION.INVALID_DNI_FORMAT' | translate }}
+        </small>
       </label>
       <label>
         {{ 'ADMIN_USERS.ROLE' | translate }}
@@ -177,23 +198,44 @@
                 <form [formGroup]="editForm" (ngSubmit)="saveUser()" class="form-grid edit-form">
                   <label>
                     {{ 'ADMIN_USERS.EMAIL' | translate }}
-                    <input type="email" formControlName="email" />
+                    <input type="email" formControlName="email" [attr.maxlength]="maxFieldLength" />
+                    <small class="error-msg-standard" *ngIf="showFieldError(editForm, 'email', 'email')">
+                      {{ 'ADMIN_USERS.VALIDATION.INVALID_EMAIL' | translate }}
+                    </small>
+                    <small class="error-msg-standard" *ngIf="showFieldError(editForm, 'email', 'maxlength')">
+                      {{ 'ADMIN_USERS.VALIDATION.MAX_LENGTH_35' | translate }}
+                    </small>
                   </label>
                   <label>
                     {{ 'ADMIN_USERS.PASSWORD' | translate }}
-                    <input type="password" formControlName="password" [placeholder]="'ADMIN_COMPANIES.PASSWORD_OPTIONAL' | translate" />
+                    <input type="password" formControlName="password" [placeholder]="'ADMIN_COMPANIES.PASSWORD_OPTIONAL' | translate" [attr.maxlength]="maxFieldLength" />
+                    <small class="error-msg-standard" *ngIf="showFieldError(editForm, 'password', 'maxlength')">
+                      {{ 'ADMIN_USERS.VALIDATION.MAX_LENGTH_35' | translate }}
+                    </small>
                   </label>
                   <label>
                     {{ 'ADMIN_USERS.NAME' | translate }}
-                    <input type="text" formControlName="nombre" />
+                    <input type="text" formControlName="nombre" [attr.maxlength]="maxFieldLength" />
+                    <small class="error-msg-standard" *ngIf="showFieldError(editForm, 'nombre', 'maxlength')">
+                      {{ 'ADMIN_USERS.VALIDATION.MAX_LENGTH_35' | translate }}
+                    </small>
                   </label>
                   <label>
                     {{ 'ADMIN_USERS.LASTNAME' | translate }}
-                    <input type="text" formControlName="apellidos" />
+                    <input type="text" formControlName="apellidos" [attr.maxlength]="maxFieldLength" />
+                    <small class="error-msg-standard" *ngIf="showFieldError(editForm, 'apellidos', 'maxlength')">
+                      {{ 'ADMIN_USERS.VALIDATION.MAX_LENGTH_35' | translate }}
+                    </small>
                   </label>
                   <label>
                     {{ 'ADMIN_USERS.DNI' | translate }}
-                    <input type="text" formControlName="dni" />
+                    <input type="text" formControlName="dni" maxlength="9" />
+                    <small class="error-msg-standard" *ngIf="showFieldError(editForm, 'dni', 'dniFormato')">
+                      {{ 'ADMIN_USERS.VALIDATION.INVALID_DNI_FORMAT' | translate }}
+                    </small>
+                    <small class="error-msg-standard" *ngIf="showFieldError(editForm, 'dni', 'dniInvalido')">
+                      {{ 'ADMIN_USERS.VALIDATION.INVALID_DNI_FORMAT' | translate }}
+                    </small>
                   </label>
                   <label>
                     {{ 'ADMIN_USERS.ROLE' | translate }}

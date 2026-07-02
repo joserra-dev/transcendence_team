@@ -1,4 +1,5 @@
-from datetime import date, datetime
+from datetime import date, datetime, timedelta
+import calendar as calendar_module
 import secrets
 
 from flask import Blueprint, jsonify, request
@@ -11,6 +12,7 @@ from models.booking import Booking
 from models.chat_message import ChatMessage
 from models.company import Company
 from models.parking import Parking
+from models.parking_blocked_day import ParkingBlockedDay
 from models.space import Space
 from models.users import Profiles, UserRole, Users
 from services.email_services import EmailService
@@ -804,6 +806,213 @@ def cancel_booking_admin(_user, profile, booking_id):
     booking.status = '0'
     db.session.commit()
     return jsonify({"mensaje": _("Reserva cancelada correctamente")}), 200
+
+
+@admin_bp.route('/parking/<int:parking_id>/calendar', methods=['GET'])
+@require_admin
+def parking_calendar(_user, profile, parking_id):
+    """
+    Obtener el calendario de ocupación y días bloqueados de un parking
+    ---
+    tags:
+      - Admin Calendar
+    security:
+      - Bearer: []
+    parameters:
+      - name: parking_id
+        in: path
+        type: integer
+        required: true
+      - name: year
+        in: query
+        type: integer
+        required: false
+      - name: month
+        in: query
+        type: integer
+        required: false
+    responses:
+      200:
+        description: Reservas confirmadas y días bloqueados del mes solicitado
+      403:
+        description: No autorizado
+      404:
+        description: Parking no encontrado
+    """
+    parking = Parking.query.get(parking_id)
+    if not parking:
+        return jsonify({"error": _("Parking no encontrado")}), 404
+    if not _can_manage_parking(profile, parking):
+        return jsonify({"error": _("No autorizado")}), 403
+
+    today = date.today()
+    year = _parse_metric_int(request.args.get('year'), today.year)
+    month = _parse_metric_int(request.args.get('month'), today.month)
+    if month < 1 or month > 12:
+        month = today.month
+
+    month_start = date(year, month, 1)
+    last_day = calendar_module.monthrange(year, month)[1]
+    month_end = date(year, month, last_day)
+    day_after_month = month_end + timedelta(days=1)
+
+    booking_rows = (
+        Booking.query.join(Space).join(Parking)
+        .filter(
+            Parking.id == parking_id,
+            Booking.status == '1',
+            Booking.start_date.isnot(None),
+            Booking.end_date.isnot(None),
+            Booking.start_date < day_after_month,
+            Booking.end_date > month_start,
+        )
+        .order_by(Booking.start_date.asc())
+        .all()
+    )
+    bookings = [_booking_to_admin_dict(b) for b in booking_rows]
+
+    blocked_rows = (
+        ParkingBlockedDay.query
+        .filter(
+            ParkingBlockedDay.id_parking == parking_id,
+            ParkingBlockedDay.day >= month_start,
+            ParkingBlockedDay.day <= month_end,
+        )
+        .all()
+    )
+    blocked_days = [b.day.isoformat() for b in blocked_rows]
+
+    return jsonify({
+        "parkingId": parking_id,
+        "year": year,
+        "month": month,
+        "blockedDays": blocked_days,
+        "bookings": bookings,
+    }), 200
+
+
+@admin_bp.route('/parking/<int:parking_id>/blocked-days', methods=['POST'])
+@require_admin
+def block_parking_day(_user, profile, parking_id):
+    """
+    Bloquear manualmente un día para un parking
+    ---
+    tags:
+      - Admin Calendar
+    security:
+      - Bearer: []
+    parameters:
+      - name: parking_id
+        in: path
+        type: integer
+        required: true
+      - name: body
+        in: body
+        required: true
+        schema:
+          type: object
+          required:
+            - day
+          properties:
+            day:
+              type: string
+              format: date
+              example: "2026-07-10"
+    responses:
+      201:
+        description: Día bloqueado correctamente
+      400:
+        description: Fecha inválida o el día tiene reservas
+      403:
+        description: No autorizado
+      404:
+        description: Parking no encontrado
+    """
+    parking = Parking.query.get(parking_id)
+    if not parking:
+        return jsonify({"error": _("Parking no encontrado")}), 404
+    if not _can_manage_parking(profile, parking):
+        return jsonify({"error": _("No autorizado")}), 403
+
+    data = request.get_json() or {}
+    day_str = data.get("day")
+    if not day_str:
+        return jsonify({"error": _("La fecha es obligatoria")}), 400
+    try:
+        day = datetime.strptime(str(day_str)[:10], "%Y-%m-%d").date()
+    except ValueError:
+        return jsonify({"error": _("Formato de fecha inválido")}), 400
+
+    existing_booking = (
+        Booking.query.join(Space)
+        .filter(
+            Space.id_parking == parking_id,
+            Booking.status == '1',
+            Booking.start_date <= day,
+            Booking.end_date > day,
+        )
+        .first()
+    )
+    if existing_booking:
+        return jsonify({"error": _("No puedes bloquear un día con reservas")}), 400
+
+    already = ParkingBlockedDay.query.filter_by(id_parking=parking_id, day=day).first()
+    if already:
+        return jsonify(already.to_dict()), 200
+
+    blocked = ParkingBlockedDay(id_parking=parking_id, day=day)
+    db.session.add(blocked)
+    db.session.commit()
+    return jsonify(blocked.to_dict()), 201
+
+
+@admin_bp.route('/parking/<int:parking_id>/blocked-days/<day>', methods=['DELETE'])
+@require_admin
+def unblock_parking_day(_user, profile, parking_id, day):
+    """
+    Desbloquear un día previamente bloqueado
+    ---
+    tags:
+      - Admin Calendar
+    security:
+      - Bearer: []
+    parameters:
+      - name: parking_id
+        in: path
+        type: integer
+        required: true
+      - name: day
+        in: path
+        type: string
+        required: true
+    responses:
+      200:
+        description: Día desbloqueado correctamente
+      400:
+        description: Formato de fecha inválido
+      403:
+        description: No autorizado
+      404:
+        description: Parking no encontrado o día no bloqueado
+    """
+    parking = Parking.query.get(parking_id)
+    if not parking:
+        return jsonify({"error": _("Parking no encontrado")}), 404
+    if not _can_manage_parking(profile, parking):
+        return jsonify({"error": _("No autorizado")}), 403
+
+    try:
+        day_date = datetime.strptime(str(day)[:10], "%Y-%m-%d").date()
+    except ValueError:
+        return jsonify({"error": _("Formato de fecha inválido")}), 400
+
+    blocked = ParkingBlockedDay.query.filter_by(id_parking=parking_id, day=day_date).first()
+    if not blocked:
+        return jsonify({"error": _("Día no bloqueado")}), 404
+
+    db.session.delete(blocked)
+    db.session.commit()
+    return jsonify({"mensaje": _("Día desbloqueado correctamente")}), 200
 
 
 @admin_bp.route('/companies', methods=['GET'])

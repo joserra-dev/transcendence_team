@@ -6,3 +6,4 @@ from .parking import Parking
 from .space import Space
 from .booking import Booking
 from .chat_message import ChatMessage
+from .parking_blocked_day import ParkingBlockedDay

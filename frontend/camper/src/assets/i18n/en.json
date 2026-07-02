@@ -33,6 +33,7 @@
     "COMPANY_METRICS": "Company metrics",
     "METRICS": "Metrics",
     "MANAGE_BOOKINGS": "Manage bookings",
+    "CALENDAR": "Calendars",
     "ADMIN_CHAT": "Incident chat"
   },
 
@@ -334,6 +335,55 @@
     }
   },
 
+  "ADMIN_CALENDAR": {
+    "BUTTON": "Calendars",
+    "TITLE": "Occupancy calendar",
+    "SUBTITLE": "Check occupancy and manually block days per parking.",
+    "BACK": "Back to dashboard",
+    "SELECT_PARKING": "Parking",
+    "SELECT_PARKING_PLACEHOLDER": "Select a parking",
+    "CHOOSE_PARKING": "Select a parking to view its calendar.",
+    "LOADING": "Loading calendar...",
+    "LEGEND_OCCUPIED": "Occupied",
+    "LEGEND_BLOCKED": "Blocked",
+    "LEGEND_FREE": "Free",
+    "HINT": "Click an occupied day to see its bookings. Click a free day to block it, or a blocked day to unblock it.",
+    "DAY_DETAIL": "Bookings for",
+    "CLOSE": "Close",
+    "NO_BOOKINGS": "No bookings on this day.",
+    "SPACE": "Spot",
+    "PLATE": "License plate",
+    "MONTHS": {
+      "1": "January",
+      "2": "February",
+      "3": "March",
+      "4": "April",
+      "5": "May",
+      "6": "June",
+      "7": "July",
+      "8": "August",
+      "9": "September",
+      "10": "October",
+      "11": "November",
+      "12": "December"
+    },
+    "WEEKDAYS": {
+      "1": "Mon",
+      "2": "Tue",
+      "3": "Wed",
+      "4": "Thu",
+      "5": "Fri",
+      "6": "Sat",
+      "7": "Sun"
+    },
+    "ERRORS": {
+      "LOAD_PARKINGS": "Could not load parkings.",
+      "LOAD_CALENDAR": "Could not load the calendar.",
+      "BLOCK": "Could not block the day.",
+      "UNBLOCK": "Could not unblock the day."
+    }
+  },
+
   "ADMIN_USERS": {
     "TITLE": "Users and permissions",
     "SUBTITLE": "Create end users and grant administrator permissions.",
@@ -382,6 +432,11 @@
     "CONFIRM_REVOKE_TEXT": "Are you sure you want to revoke admin permissions from {{name}}? This action cannot be undone.",
     "CONFIRM_DELETE_TITLE": "Confirm deletion",
     "CONFIRM_DELETE_TEXT": "Are you sure you want to delete user {{name}}? This action cannot be undone.",
+    "VALIDATION": {
+      "INVALID_EMAIL": "Invalid format.",
+      "INVALID_DNI_FORMAT": "Invalid format.",
+      "MAX_LENGTH_35": "Maximum 35 characters."
+    },
     "ERRORS": {
       "LOAD": "Could not load users.",
       "CREATE_USER": "Could not create the user.",
@@ -468,7 +523,10 @@
       "INVALID_EMAIL": "Please enter a valid email address.",
       "REQUIRED_PASSWORD": "Administrator password is required.",
       "MIN_PASSWORD": "Password must be at least 6 characters.",
-      "REQUIRED_ADMIN_NAME": "Administrator first name is required."
+      "REQUIRED_ADMIN_NAME": "Administrator first name is required.",
+      "INVALID_CIF": "Invalid format.",
+      "INVALID_DNI_FORMAT": "Invalid format.",
+      "MAX_LENGTH_35": "Maximum 35 characters."
     }
   },
 
