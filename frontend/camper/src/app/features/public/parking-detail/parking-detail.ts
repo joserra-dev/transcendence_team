@@ -161,14 +161,14 @@ export class ParkingDetail implements OnInit, OnDestroy {
     }
 
     const user = this.authService.getUser();
-    const hasIban = (user?.metodoPago === 'iban' || !user?.metodoPago) && user?.ibanPersona;
-    const hasCard = user?.metodoPago === 'tarjeta' && user?.tarjeta;
-    const hasCash = user?.metodoPago === 'efectivo';
+    //const hasIban = (user?.metodoPago === 'iban' || !user?.metodoPago) && user?.ibanPersona;
+    //const hasCard = user?.metodoPago === 'tarjeta' && user?.tarjeta;
+    //const hasCash = user?.metodoPago === 'efectivo';
 
-    if (!hasIban && !hasCard && !hasCash) {
+    /*if (!hasIban && !hasCard && !hasCash) {
       this.router.navigate(['/client/profile']);
       return;
-    }
+    }*/
     this.showConfirmModal = true;
   }
 
@@ -279,7 +279,7 @@ export class ParkingDetail implements OnInit, OnDestroy {
     this.currentImage = (this.currentImage - 1 + this.galleryImages.length) % this.galleryImages.length;
   }
 
-  getPaymentMethodLabel(): string {
+  /*getPaymentMethodLabel(): string {
     const user = this.authService.getUser();
     if (!user) return '';
     const metodo = user.metodoPago || 'iban';
@@ -293,7 +293,7 @@ export class ParkingDetail implements OnInit, OnDestroy {
       return 'Pago en Efectivo (Se abonará al llegar)';
     }
     return '';
-  }
+  }*/
 
   isLicensePlateValid(): boolean {
     if (!this.licensePlate) return false;
