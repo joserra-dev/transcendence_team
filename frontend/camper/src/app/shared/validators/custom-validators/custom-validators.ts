@@ -94,12 +94,12 @@ export class CustomValidators {
   }
 
   // 4. Validar IBAN (Formato ES + 22 dígitos)
-  static ibanValido(control: AbstractControl): ValidationErrors | null {
+  /*static ibanValido(control: AbstractControl): ValidationErrors | null {
     const iban = control.value;
     const regex = /^ES\d{22}$/;
     if (iban && !regex.test(iban)) {
       return { ibanInvalido: true };
     }
     return null;
-  }
+  }*/
 }

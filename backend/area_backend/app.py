@@ -117,7 +117,7 @@ with app.app_context():
 
     db.create_all()
     try:
-        db.session.execute(db.text("ALTER TABLE public.profiles ADD COLUMN IF NOT EXISTS iban VARCHAR(34);"))
+        #db.session.execute(db.text("ALTER TABLE public.profiles ADD COLUMN IF NOT EXISTS iban VARCHAR(34);"))
         db.session.execute(db.text("ALTER TABLE public.profiles ADD COLUMN IF NOT EXISTS metodo_pago VARCHAR(50);"))
         db.session.execute(db.text("ALTER TABLE public.profiles ADD COLUMN IF NOT EXISTS tarjeta VARCHAR(50);"))
         db.session.execute(db.text("ALTER TABLE public.users ADD COLUMN IF NOT EXISTS password_reset_verified BOOLEAN NOT NULL DEFAULT FALSE;"))
