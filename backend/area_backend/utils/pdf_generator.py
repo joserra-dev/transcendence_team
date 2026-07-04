@@ -1,86 +1,97 @@
-from fpdf import FPDF
+
+from weasyprint import HTML
+from datetime import datetime
 
 class PdfGenerator:
 
     @classmethod
-    def pdf_generator(cls, titulo, texto)-> bytes:
-        pdf = FPDF()
-        pdf.add_page()
-
-        # ===== Encabezado =====
-        pdf.set_font("Helvetica", "B", 18)
-        pdf.cell(0, 10, "FACTURA", ln=True, align="C")
-
-        pdf.ln(5)
-
-        pdf.set_font("Helvetica", "", 11)
-        pdf.cell(100, 6, "Empresa:", ln=0)
-        pdf.cell(0, 6, "Factura: F-2026-001", ln=1)
-        pdf.cell(0, 6, titulo, ln=1)
-        pdf.cell(0, 6, texto, ln=1)
-
-        pdf.cell(100, 6, "NIF: B12345678", ln=0)
-        pdf.cell(0, 6, "Fecha: 02/07/2026", ln=1)
-
-        pdf.ln(8)
-
-        # ===== Cliente =====
-        pdf.set_font("Helvetica", "B", 12)
-        pdf.cell(0, 8, "Cliente", ln=True)
-
-        pdf.set_font("Helvetica", "", 11)
-        pdf.cell(0, 6, "Nombre: Juan Perez", ln=True)
-        pdf.cell(0, 6, "Direccion: Calle Mayor 10", ln=True)
-        pdf.cell(0, 6, "Ciudad: Madrid", ln=True)
-
-        pdf.ln(10)
-
-        # ===== Cabecera de la tabla =====
-        pdf.set_font("Helvetica", "B", 11)
-
-        pdf.cell(90, 8, "Concepto", border=1)
-        pdf.cell(25, 8, "Cantidad", border=1, align="C")
-        pdf.cell(35, 8, "Precio", border=1, align="R")
-        pdf.cell(40, 8, "Total", border=1, align="R", ln=True)
-
-        pdf.set_font("Helvetica", "", 11)
-
-        productos = [
-            ("Desarrollo web", 1, 500.00),
-            ("Mantenimiento", 2, 75.00),
-            ("Hosting", 1, 60.00),
-        ]
-
-        subtotal = 0
-
-        for concepto, cantidad, precio in productos:
-            total = cantidad * precio
-            subtotal += total
-
-            pdf.cell(90, 8, concepto, border=1)
-            pdf.cell(25, 8, str(cantidad), border=1, align="C")
-            pdf.cell(35, 8, f"{precio:.2f} EUROS", border=1, align="R")
-            pdf.cell(40, 8, f"{total:.2f} EUROS", border=1, align="R", ln=True)
-
-        iva = subtotal * 0.21
-        total = subtotal + iva
-
-        pdf.ln(8)
-
-        # ===== Totales =====
-        pdf.set_font("Helvetica", "B", 11)
-
-        pdf.cell(150)
-        pdf.cell(40, 8, f"Subtotal: {subtotal:.2f} EUROS", ln=True, align="R")
-
-        pdf.cell(150)
-        pdf.cell(40, 8, f"IVA (21%): {iva:.2f} EUROS", ln=True, align="R")
-
-        pdf.cell(150)
-        pdf.cell(40, 8, f"TOTAL: {total:.2f} EUROS", ln=True, align="R")
-
+    def pdf_generator(cls, booking, parking)-> bytes:
         
+        now = datetime.now()
 
-        pdf_bytes = pdf.output(dest="S").encode("latin-1")
-        return bytes(pdf_bytes)
+        html = f"""
+            <!DOCTYPE html>
+            <html lang="es">
+            <head>
+                <meta charset="UTF-8">
+                <title>Factura</title>
+                <style>
+                    body {{
+                        font-family: Arial, sans-serif;
+                        margin: 40px;
+                        color: #333;
+                    }}
 
+                    h1 {{
+                        color: #2c3e50;
+                    }}
+
+                    .info {{
+                        margin-bottom: 20px;
+                    }}
+
+                    table {{
+                        width: 100%;
+                        border-collapse: collapse;
+                        margin-top: 20px;
+                    }}
+
+                    th, td {{
+                        border: 1px solid #ddd;
+                        padding: 8px;
+                    }}
+
+                    th {{
+                        background: #f4f4f4;
+                        text-align: left;
+                    }}
+
+                    .total {{
+                        text-align: right;
+                        margin-top: 20px;
+                        font-size: 18px;
+                        font-weight: bold;
+                    }}
+                </style>
+            </head>
+            <body>
+
+                <h1>FACTURA</h1>
+
+                <div class="info">
+                    <p><strong>Nº Factura:</strong> FAC-2026-001</p>
+                    <p><strong>Cliente:</strong> { booking.user } </p>
+                    <p><strong>Fechas:</strong> { booking.start_date } - { booking.end_date }</p>
+                    <p><strong>Ticket bai:</strong> { booking.tbai_id }</p>
+                    <p> { booking.tbai_qr_code } </p>
+                </div>
+
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Concepto</th>
+                            <th>Cantidad</th>
+                            <th>Precio</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td> { parking.name } </td>
+                            <td>2</td>
+                            <td>100.00 €</td>
+                        </tr>
+                    </tbody>
+                </table>
+
+                <div class="total">
+                    TOTAL: { booking.total_price } €
+                </div>
+
+            </body>
+            </html>
+            """
+
+        # Genera el PDF como bytes
+        pdf_bytes = HTML(string=html).write_pdf()
+        return (pdf_bytes)
+        

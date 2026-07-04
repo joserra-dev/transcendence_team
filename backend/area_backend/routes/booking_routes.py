@@ -313,7 +313,7 @@ def get_bill_by_id(id):
     #print (booking.space.id_parking) 
     parking = Parking.query.filter_by(id=booking.space.id_parking).first()
     user_email = Users.query.get(user_id).email
-    print (parking)   
+    #print (parking.name)   
     if not booking:
         return jsonify({"error": "Reserva no encontrada"}), 404
         
@@ -322,7 +322,7 @@ def get_bill_by_id(id):
 
     # TODO: llamar a la funcion PDF_GENERATOR()
 
-    bill = PdfGenerator.pdf_generator("nombre", "cuerpo del pdf")
+    bill = PdfGenerator.pdf_generator(booking, parking)
 
     
     #TODO: llamar a la funcion para mandar el email
