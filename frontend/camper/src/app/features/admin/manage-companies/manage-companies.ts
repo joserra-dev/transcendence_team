@@ -8,6 +8,7 @@ import { Auth } from '../../../core/services/auth';
 import { Parking } from '../../../core/models/parking';
 import { Company } from '../../../core/models/user';
 import { ConfirmDialog } from '../../../shared/components/confirm-dialog/confirm-dialog';
+import { CustomValidators } from '../../../shared/validators/custom-validators/custom-validators';
 import { Chat } from '../../../core/services/chat';
 import { interval, Subscription } from 'rxjs';
 
@@ -49,14 +50,16 @@ export class ManageCompanies implements OnInit, OnDestroy {
   private companyPendingDelete: Company | null = null;
   private unreadPollSub?: Subscription;
 
+  readonly maxFieldLength = 35;
+
   companyForm: FormGroup = this.fb.group({
-    name: ['', Validators.required],
-    cif: [''],
+    name: ['', [Validators.required, Validators.maxLength(this.maxFieldLength)]],
+    cif: ['', [CustomValidators.cifValido]],
     adminEmail: ['', [Validators.required, Validators.email]],
     adminPassword: ['', [Validators.required, Validators.minLength(6)]],
-    adminNombre: ['', Validators.required],
-    adminApellidos: [''],
-    adminDni: [''],
+    adminNombre: ['', [Validators.required, Validators.maxLength(this.maxFieldLength)]],
+    adminApellidos: ['', [Validators.maxLength(this.maxFieldLength)]],
+    adminDni: ['', [CustomValidators.dniValido]],
   });
 
   ngOnInit() {

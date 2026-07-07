@@ -1,0 +1,99 @@
+<main class="admin-calendar">
+  <header class="page-header">
+    <div>
+      <a routerLink="/admin/dashboard" class="back-link">← {{ 'ADMIN_CALENDAR.BACK' | translate }}</a>
+      <h1>{{ 'ADMIN_CALENDAR.TITLE' | translate }}</h1>
+      <p class="subtitle">{{ 'ADMIN_CALENDAR.SUBTITLE' | translate }}</p>
+    </div>
+  </header>
+
+  <div class="alert error" *ngIf="errorMessage">{{ errorMessage | translate }}</div>
+
+  <section class="calendar-controls">
+    <label class="parking-select">
+      {{ 'ADMIN_CALENDAR.SELECT_PARKING' | translate }}
+      <select [(ngModel)]="selectedParkingId" (ngModelChange)="onParkingChange()">
+        <option [ngValue]="null">{{ 'ADMIN_CALENDAR.SELECT_PARKING_PLACEHOLDER' | translate }}</option>
+        <option *ngFor="let parking of parkings" [ngValue]="parking.id">{{ parking.name }}</option>
+      </select>
+    </label>
+  </section>
+
+  <p *ngIf="selectedParkingId == null" class="empty-msg">
+    {{ 'ADMIN_CALENDAR.CHOOSE_PARKING' | translate }}
+  </p>
+
+  <section class="calendar-panel" *ngIf="selectedParkingId != null">
+    <div class="calendar-nav">
+      <button class="btn btn-primary" type="button" (click)="prevMonth()">‹</button>
+      <h2 class="month-title">
+        {{ ('ADMIN_CALENDAR.MONTHS.' + month) | translate }} {{ year }}
+      </h2>
+      <button class="btn btn-primary" type="button" (click)="nextMonth()">›</button>
+    </div>
+
+    <div class="legend">
+      <span class="legend-item"><span class="dot dot-occupied"></span>{{ 'ADMIN_CALENDAR.LEGEND_OCCUPIED' | translate }}</span>
+      <span class="legend-item"><span class="dot dot-blocked"></span>{{ 'ADMIN_CALENDAR.LEGEND_BLOCKED' | translate }}</span>
+      <span class="legend-item"><span class="dot dot-free"></span>{{ 'ADMIN_CALENDAR.LEGEND_FREE' | translate }}</span>
+    </div>
+
+    <p class="hint">{{ 'ADMIN_CALENDAR.HINT' | translate }}</p>
+
+    <div *ngIf="isLoading" class="loading-msg">{{ 'ADMIN_CALENDAR.LOADING' | translate }}</div>
+
+    <div class="calendar-grid" *ngIf="!isLoading">
+      <div class="weekday" *ngFor="let wd of weekdays">
+        {{ ('ADMIN_CALENDAR.WEEKDAYS.' + wd) | translate }}
+      </div>
+
+      <ng-container *ngFor="let week of weeks">
+        <ng-container *ngFor="let cell of week">
+          <div
+            class="day-cell"
+            [class.empty]="!cell"
+            [class.occupied]="cell?.status === 'occupied'"
+            [class.blocked]="cell?.status === 'blocked'"
+            [class.free]="cell?.status === 'free'"
+            [class.past]="cell?.isPast"
+            [attr.role]="cell ? 'button' : null"
+            [attr.tabindex]="cell ? 0 : null"
+            (click)="onDayClick(cell)"
+            (keydown.enter)="onDayClick(cell)">
+            <span class="day-num" *ngIf="cell">{{ cell.dayNum }}</span>
+          </div>
+        </ng-container>
+      </ng-container>
+    </div>
+  </section>
+
+  <section class="day-detail" *ngIf="selectedDay">
+    <div class="day-detail-header">
+      <h3>{{ 'ADMIN_CALENDAR.DAY_DETAIL' | translate }} {{ selectedDay }}</h3>
+      <button class="btn btn-primary" type="button" (click)="closeDetail()">
+        {{ 'ADMIN_CALENDAR.CLOSE' | translate }}
+      </button>
+    </div>
+
+    <p *ngIf="selectedDayBookings.length === 0" class="empty-msg">
+      {{ 'ADMIN_CALENDAR.NO_BOOKINGS' | translate }}
+    </p>
+
+    <div class="booking-list" *ngIf="selectedDayBookings.length > 0">
+      <article class="booking-card" *ngFor="let booking of selectedDayBookings">
+        <div class="booking-main">
+          <h4>{{ booking.spaceName || ('ADMIN_CALENDAR.SPACE' | translate) }}</h4>
+          <p class="meta">{{ booking.userName || booking.userEmail }}</p>
+          <p class="meta">{{ 'ADMIN_CALENDAR.PLATE' | translate }}: {{ booking.licensePlate }}</p>
+          <p class="meta">
+            {{ booking.startDate }} → {{ booking.endDate }}
+          </p>
+        </div>
+        <div class="booking-side">
+          <span class="badge">{{ statusLabel(booking.status) | translate }}</span>
+          <span class="price">{{ booking.totalPrice | number:'1.2-2' }} €</span>
+        </div>
+      </article>
+    </div>
+  </section>
+</main>

@@ -133,6 +133,15 @@
   }
 }
 
+.export-action {
+  display: flex;
+  align-items: flex-end;
+
+  .btn {
+    width: 100%;
+  }
+}
+
 .table-wrapper {
   width: 100%;
   overflow-x: auto;
@@ -271,7 +280,6 @@
   color: $color-grey-soft;
 }
 
-.actions,
 .form-actions {
   display: flex;
   gap: 0.5rem;

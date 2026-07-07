@@ -46,14 +46,20 @@
         <div class="form-grid">
           <label>
             {{ 'ADMIN_COMPANIES.NAME' | translate }} *
-            <input type="text" formControlName="name" [class.field-error]="isFieldInvalid('name')" />
-            <small class="field-error-msg" *ngIf="isFieldInvalid('name')">
+            <input type="text" formControlName="name" [attr.maxlength]="maxFieldLength" [class.field-error]="isFieldInvalid('name')" />
+            <small class="field-error-msg" *ngIf="isFieldInvalid('name') && companyForm.get('name')?.hasError('required')">
               {{ 'ADMIN_COMPANIES.VALIDATION.REQUIRED_NAME' | translate }}
+            </small>
+            <small class="field-error-msg" *ngIf="isFieldInvalid('name') && companyForm.get('name')?.hasError('maxlength')">
+              {{ 'ADMIN_COMPANIES.VALIDATION.MAX_LENGTH_35' | translate }}
             </small>
           </label>
           <label>
             {{ 'ADMIN_COMPANIES.CIF' | translate }}
-            <input type="text" formControlName="cif" />
+            <input type="text" formControlName="cif" maxlength="9" [class.field-error]="isFieldInvalid('cif')" />
+            <small class="field-error-msg" *ngIf="isFieldInvalid('cif') && companyForm.get('cif')?.hasError('cifInvalido')">
+              {{ 'ADMIN_COMPANIES.VALIDATION.INVALID_CIF' | translate }}
+            </small>
           </label>
         </div>
       </fieldset>
@@ -83,18 +89,30 @@
           </label>
           <label>
             {{ 'ADMIN_COMPANIES.ADMIN_NAME' | translate }} *
-            <input type="text" formControlName="adminNombre" [class.field-error]="isFieldInvalid('adminNombre')" />
-            <small class="field-error-msg" *ngIf="isFieldInvalid('adminNombre')">
+            <input type="text" formControlName="adminNombre" [attr.maxlength]="maxFieldLength" [class.field-error]="isFieldInvalid('adminNombre')" />
+            <small class="field-error-msg" *ngIf="isFieldInvalid('adminNombre') && companyForm.get('adminNombre')?.hasError('required')">
               {{ 'ADMIN_COMPANIES.VALIDATION.REQUIRED_ADMIN_NAME' | translate }}
+            </small>
+            <small class="field-error-msg" *ngIf="isFieldInvalid('adminNombre') && companyForm.get('adminNombre')?.hasError('maxlength')">
+              {{ 'ADMIN_COMPANIES.VALIDATION.MAX_LENGTH_35' | translate }}
             </small>
           </label>
           <label>
             {{ 'ADMIN_COMPANIES.ADMIN_LASTNAME' | translate }}
-            <input type="text" formControlName="adminApellidos" />
+            <input type="text" formControlName="adminApellidos" [attr.maxlength]="maxFieldLength" [class.field-error]="isFieldInvalid('adminApellidos')" />
+            <small class="field-error-msg" *ngIf="isFieldInvalid('adminApellidos') && companyForm.get('adminApellidos')?.hasError('maxlength')">
+              {{ 'ADMIN_COMPANIES.VALIDATION.MAX_LENGTH_35' | translate }}
+            </small>
           </label>
           <label>
             {{ 'ADMIN_COMPANIES.ADMIN_DNI' | translate }}
-            <input type="text" formControlName="adminDni" />
+            <input type="text" formControlName="adminDni" maxlength="9" [class.field-error]="isFieldInvalid('adminDni')" />
+            <small class="field-error-msg" *ngIf="isFieldInvalid('adminDni') && companyForm.get('adminDni')?.hasError('dniFormato')">
+              {{ 'ADMIN_COMPANIES.VALIDATION.INVALID_DNI_FORMAT' | translate }}
+            </small>
+            <small class="field-error-msg" *ngIf="isFieldInvalid('adminDni') && companyForm.get('adminDni')?.hasError('dniInvalido')">
+              {{ 'ADMIN_COMPANIES.VALIDATION.INVALID_DNI_FORMAT' | translate }}
+            </small>
           </label>
         </div>
       </fieldset>

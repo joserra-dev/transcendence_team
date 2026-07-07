@@ -36,7 +36,7 @@
       <div class="divider"></div>
 
       <!-- FECHA ENTRADA (Corregido y único) -->
-      <div class="search-field date">
+      <div class="search-field date" (click)="openDatePicker(startDateInput)">
         <label for="fake-fechadesde" class="visually-hidden">{{ 'BOOKING.ENTRY_DATE' | translate }}</label>
         <i class="fa-regular fa-calendar"></i>
         
@@ -61,7 +61,7 @@
       <div class="divider"></div>
 
       <!-- FECHA SALIDA -->
-      <div class="search-field date">
+      <div class="search-field date" (click)="openDatePicker(endDateInput)">
         <label for="fake-fechahasta" class="visually-hidden">{{ 'BOOKING.EXIT_DATE' | translate }}</label>
         <i class="fa-regular fa-calendar"></i>
         

@@ -33,6 +33,7 @@
     "COMPANY_METRICS": "Enpresaren metrikak",
     "METRICS": "Metrikak",
     "MANAGE_BOOKINGS": "Erreserbak kudeatu",
+    "CALENDAR": "Egutegiak",
     "ADMIN_CHAT": "Gorabeheren txata"
   },
 
@@ -329,6 +330,55 @@
     }
   },
 
+  "ADMIN_CALENDAR": {
+    "BUTTON": "Egutegiak",
+    "TITLE": "Okupazio egutegia",
+    "SUBTITLE": "Ikusi okupazioa eta blokeatu egunak eskuz parking bakoitzeko.",
+    "BACK": "Panelera itzuli",
+    "SELECT_PARKING": "Parkinga",
+    "SELECT_PARKING_PLACEHOLDER": "Hautatu parking bat",
+    "CHOOSE_PARKING": "Hautatu parking bat bere egutegia ikusteko.",
+    "LOADING": "Egutegia kargatzen...",
+    "LEGEND_OCCUPIED": "Beteta",
+    "LEGEND_BLOCKED": "Blokeatuta",
+    "LEGEND_FREE": "Libre",
+    "HINT": "Egin klik beteta dagoen egun batean erreserbak ikusteko. Egin klik egun libre batean blokeatzeko, edo blokeatutako batean desblokeatzeko.",
+    "DAY_DETAIL": "Egun honetako erreserbak:",
+    "CLOSE": "Itxi",
+    "NO_BOOKINGS": "Ez dago erreserbarik egun honetan.",
+    "SPACE": "Plaza",
+    "PLATE": "Matrikula",
+    "MONTHS": {
+      "1": "Urtarrila",
+      "2": "Otsaila",
+      "3": "Martxoa",
+      "4": "Apirila",
+      "5": "Maiatza",
+      "6": "Ekaina",
+      "7": "Uztaila",
+      "8": "Abuztua",
+      "9": "Iraila",
+      "10": "Urria",
+      "11": "Azaroa",
+      "12": "Abendua"
+    },
+    "WEEKDAYS": {
+      "1": "Al",
+      "2": "As",
+      "3": "Az",
+      "4": "Og",
+      "5": "Or",
+      "6": "Lr",
+      "7": "Ig"
+    },
+    "ERRORS": {
+      "LOAD_PARKINGS": "Ezin izan dira parkingak kargatu.",
+      "LOAD_CALENDAR": "Ezin izan da egutegia kargatu.",
+      "BLOCK": "Ezin izan da eguna blokeatu.",
+      "UNBLOCK": "Ezin izan da eguna desblokeatu."
+    }
+  },
+
   "ADMIN_USERS": {
     "TITLE": "Erabiltzaileak eta baimenak",
     "SUBTITLE": "Sortu erabiltzaileak eta eman admin baimenak.",
@@ -361,6 +411,7 @@
     "SORT": "Orden alfabetikoa",
     "SORT_ASC": "A → Z",
     "SORT_DESC": "Z → A",
+    "EXPORT_CSV": "Esportatu CSV",
     "TABLE_NAME": "Izena eta abizenak",
     "ACTIONS": "Ekintzak",
     "NO_COMPANY": "—",
@@ -376,6 +427,11 @@
     "CONFIRM_REVOKE_TEXT": "Ziur zaude {{name}} erabiltzaileari admin baimenak kendu nahi diozula? Ekintza hau ezin da desegin.",
     "CONFIRM_DELETE_TITLE": "Ezabatzea berretsi",
     "CONFIRM_DELETE_TEXT": "Ziur zaude {{name}} erabiltzailea ezabatu nahi duzula? Ekintza hau ezin da desegin.",
+    "VALIDATION": {
+      "INVALID_EMAIL": "Formatu baliogabea.",
+      "INVALID_DNI_FORMAT": "Formatu baliogabea.",
+      "MAX_LENGTH_35": "Gehienez 35 karaktere."
+    },
     "ERRORS": {
       "LOAD": "Ezin izan dira erabiltzaileak kargatu.",
       "CREATE_USER": "Ezin izan da erabiltzailea sortu.",
@@ -462,7 +518,10 @@
       "INVALID_EMAIL": "Sartu baliozko email bat.",
       "REQUIRED_PASSWORD": "Administratzailearen pasahitza derrigorrezkoa da.",
       "MIN_PASSWORD": "Pasahitzak gutxienez 6 karaktere izan behar ditu.",
-      "REQUIRED_ADMIN_NAME": "Administratzailearen izena derrigorrezkoa da."
+      "REQUIRED_ADMIN_NAME": "Administratzailearen izena derrigorrezkoa da.",
+      "INVALID_CIF": "Formatu baliogabea.",
+      "INVALID_DNI_FORMAT": "Formatu baliogabea.",
+      "MAX_LENGTH_35": "Gehienez 35 karaktere."
     }
   },
 
@@ -514,6 +573,7 @@
     "FILTER_STATUS": "Egoera",
     "FILTER_PLATE": "Matrikula",
     "PLATE_PLACEHOLDER": "Adib. 1234ABC",
+    "EXPORT_CSV": "Esportatu CSV",
     "PAGINATION_LABEL": "Erreserben orrialdekatzea",
     "CONFIRM_CANCEL": "Utzi #{{ref}} erreserba {{parking}} aparkalekuan?",
     "CONFIRM_CANCEL_TITLE": "Ezeztapena berretsi",

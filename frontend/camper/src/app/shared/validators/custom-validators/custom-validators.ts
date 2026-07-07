@@ -35,6 +35,49 @@ export class CustomValidators {
     return letraCalculada === letraEntrada ? null : { dniInvalido: true };
   }
 
+  // 2b. Validar CIF Español (misma lógica que el backend IdentityValidator)
+  static cifValido(control: AbstractControl): ValidationErrors | null {
+    const value = control.value;
+    if (!value) return null;
+
+    const cif = String(value).trim().toUpperCase();
+    const regex = /^[ABCDEFGHJNPQRSTUVWXY]\d{7}[A-J0-9]$/;
+    if (!regex.test(cif)) return { cifInvalido: true };
+
+    const organizationLetter = cif.charAt(0);
+    const digits = cif.substring(1, 8);
+    const controlDigit = cif.charAt(8);
+
+    let evenSum = 0;
+    let oddSum = 0;
+    for (let i = 0; i < digits.length; i++) {
+      const digit = parseInt(digits.charAt(i), 10);
+      if ((i + 1) % 2 === 0) {
+        evenSum += digit;
+      } else {
+        const multiplied = digit * 2;
+        oddSum += (multiplied % 10) + Math.floor(multiplied / 10);
+      }
+    }
+
+    const lastDigitOfSum = (evenSum + oddSum) % 10;
+    const expectedControlNum = (10 - lastDigitOfSum) % 10;
+    const controlLetters = 'JABCDEFGHI';
+    const expectedControlLetter = controlLetters.charAt(expectedControlNum);
+
+    let isValid: boolean;
+    if ('ABEH'.includes(organizationLetter)) {
+      isValid = controlDigit === String(expectedControlNum);
+    } else if ('KPQSVW'.includes(organizationLetter)) {
+      isValid = controlDigit === expectedControlLetter;
+    } else {
+      isValid =
+        controlDigit === String(expectedControlNum) || controlDigit === expectedControlLetter;
+    }
+
+    return isValid ? null : { cifInvalido: true };
+  }
+
   // 3. Comparar Contraseñas (Password y ConfirmPassword)
   // Solo valida si al menos uno de los campos tiene valor; si ambos están vacíos, es válido
   // (el usuario no quiere cambiar la contraseña)

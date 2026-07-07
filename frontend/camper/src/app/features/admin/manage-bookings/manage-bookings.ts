@@ -189,6 +189,58 @@ export class ManageBookings implements OnInit {
     return status === '1' ? 'HISTORY.CONFIRMED' : 'HISTORY.CANCELLED';
   }
 
+  exportCsv() {
+    if (this.filteredBookings.length === 0) {
+      return;
+    }
+
+    const headers = [
+      'ID',
+      'Parking',
+      'Cliente',
+      'Email',
+      'Matrícula',
+      'Plaza',
+      'Inicio',
+      'Fin',
+      'Total',
+      'Estado',
+    ];
+
+    const rows = this.filteredBookings.map((b) => [
+      b.id,
+      b.parkingName ?? '',
+      b.userName ?? '',
+      b.userEmail ?? '',
+      b.licensePlate ?? '',
+      b.spaceName ?? '',
+      b.startDate ?? '',
+      b.endDate ?? '',
+      b.totalPrice ?? '',
+      b.status === '1' ? 'Confirmada' : 'Cancelada',
+    ]);
+
+    const csv = [headers, ...rows]
+      .map((row) => row.map((cell) => this.escapeCsvCell(cell)).join(';'))
+      .join('\r\n');
+
+    const blob = new Blob(['\ufeff' + csv], { type: 'text/csv;charset=utf-8;' });
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement('a');
+    link.href = url;
+    link.download = `reservas_${new Date().toISOString().slice(0, 10)}.csv`;
+    link.click();
+    URL.revokeObjectURL(url);
+  }
+
+  private escapeCsvCell(value: string | number): string {
+    const text = String(value);
+    if (/[";\r\n]/.test(text)) {
+      return `"${text.replace(/"/g, '""')}"`;
+    }
+    return text;
+  }
+
   goToPage(page: number) {
     if (page < 1 || page > this.totalPages || page === this.currentPage) {
       return;

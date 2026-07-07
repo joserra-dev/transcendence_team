@@ -4,7 +4,7 @@ import { Observable } from 'rxjs';
 
 import { Parking, Space } from '../models/parking';
 import { AdminUser, Company } from '../models/user';
-import { AdminBooking, AdminBookingFilters } from '../models/booking';
+import { AdminBooking, AdminBookingFilters, ParkingCalendar } from '../models/booking';
 import { CompanyMetrics, MetricsFilters } from '../models/metrics';
 
 @Injectable({
@@ -95,6 +95,25 @@ export class Admin {
 
   cancelBooking(id: number): Observable<{ mensaje: string }> {
     return this.http.put<{ mensaje: string }>(`${this.apiUrl}/bookings/${id}/cancel`, {});
+  }
+
+  getParkingCalendar(parkingId: number, year: number, month: number): Observable<ParkingCalendar> {
+    return this.http.get<ParkingCalendar>(`${this.apiUrl}/parking/${parkingId}/calendar`, {
+      params: { year: String(year), month: String(month) },
+    });
+  }
+
+  blockDay(parkingId: number, day: string): Observable<{ id: number; parkingId: number; day: string }> {
+    return this.http.post<{ id: number; parkingId: number; day: string }>(
+      `${this.apiUrl}/parking/${parkingId}/blocked-days`,
+      { day }
+    );
+  }
+
+  unblockDay(parkingId: number, day: string): Observable<{ mensaje: string }> {
+    return this.http.delete<{ mensaje: string }>(
+      `${this.apiUrl}/parking/${parkingId}/blocked-days/${day}`
+    );
   }
 
   getUsers(): Observable<AdminUser[]> {

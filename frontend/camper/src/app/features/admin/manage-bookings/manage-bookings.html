@@ -53,6 +53,13 @@
         <button class="btn btn-primary" type="button" (click)="clearFilters()">
           {{ 'HISTORY.CLEAR' | translate }}
         </button>
+        <button
+          class="btn btn-primary"
+          type="button"
+          (click)="exportCsv()"
+          [disabled]="isLoading || filteredBookings.length === 0">
+          {{ 'ADMIN_BOOKINGS.EXPORT_CSV' | translate }}
+        </button>
       </div>
     </form>
   </section>

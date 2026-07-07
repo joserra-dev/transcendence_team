@@ -32,9 +32,14 @@
       <h2>{{ 'ADMIN_DASHBOARD.ADS_SECTION_TITLE' | translate }}</h2>
       <p class="section-desc">{{ 'ADMIN_DASHBOARD.ADS_SECTION_DESC' | translate }}</p>
     </div>
-    <a routerLink="/admin/parking/new" class="btn btn-primary">
-      + {{ 'ADMIN_PARKINGS.ADD' | translate }}
-    </a>
+    <div class="page-header-actions">
+      <a routerLink="/admin/calendar" class="btn btn-primary">
+        {{ 'ADMIN_CALENDAR.BUTTON' | translate }}
+      </a>
+      <a routerLink="/admin/parking/new" class="btn btn-primary">
+        + {{ 'ADMIN_PARKINGS.ADD' | translate }}
+      </a>
+    </div>
   </header>
 
   <section class="ads-panel">

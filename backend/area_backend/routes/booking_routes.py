@@ -11,6 +11,7 @@ from models.booking import Booking
 from models.users import Users
 from models.space import Space
 from models.parking import Parking
+from models.parking_blocked_day import ParkingBlockedDay
 from services.email_services import EmailService
 
 booking_bp = Blueprint('booking_bp', __name__)
@@ -291,9 +292,18 @@ def create_booking():
     
     if same_vehicle_overlap:
         return jsonify({"error": _("Ya existe una reserva para esta matrícula en las fechas seleccionadas. Usa otra matrícula o cambia las fechas.")}), 400
-        
+
+    space_for_block = Space.query.get(id_space)
+    if space_for_block:
+        blocked_day = ParkingBlockedDay.query.filter(
+            ParkingBlockedDay.id_parking == space_for_block.id_parking,
+            ParkingBlockedDay.day >= startDate,
+            ParkingBlockedDay.day < endDate,
+        ).first()
+        if blocked_day:
+            return jsonify({"error": _("Estas fechas no están disponibles para reservar.")}), 400
+
     try:
-        from models.space import Space
         space = Space.query.get(id_space)
         total_price = 0.0
         if space:
