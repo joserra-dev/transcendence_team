@@ -57,8 +57,7 @@ class EmailService:
         Mantiene limpia la lógica de tus vistas/rutas.
         """
         actual_locale = get_locale()
-        idioma = actual_locale.language 
-        
+        idioma = actual_locale.language if actual_locale else 'es'
         base_url = os.getenv('URL_BACK')
         verification_url = f"{base_url}/api/users/verify?token={token}"
         html_content = render_template(

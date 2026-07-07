@@ -12,7 +12,7 @@
     {{ 'ADMIN_CHAT.LOADING_THREADS' | translate }}
   </div>
 
-  <section class="chat-layout" *ngIf="!isLoadingThreads">
+  <section class="chat-layout" [class.single-column]="!isSuperAdmin" *ngIf="!isLoadingThreads">
     <aside class="thread-list" *ngIf="isSuperAdmin">
       <h2>{{ 'ADMIN_CHAT.THREADS_TITLE' | translate }}</h2>
 

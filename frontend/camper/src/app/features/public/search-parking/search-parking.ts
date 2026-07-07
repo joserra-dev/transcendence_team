@@ -184,6 +184,7 @@ export class SearchParking implements OnInit, OnDestroy {
     this.onSearch();
   }
 
+<<<<<<< HEAD
   private dateformatdefine(lang: string) {
     const idioma = lang.toLowerCase();
     if (idioma === 'eu' || idioma === 'en') {
@@ -201,8 +202,22 @@ export class SearchParking implements OnInit, OnDestroy {
     return this.searchForm.get('endDate')?.value || '';
   }
 
+=======
+  // Abre el selector nativo del input oculto subyacente (cross-browser)
+>>>>>>> 293f4872a4e91e4f197ba4034a0bc6579acf9de1
   openDatePicker(hiddenInput: HTMLInputElement) {
-    hiddenInput.showPicker?.();
+    if (!hiddenInput) return;
+    try {
+      if (typeof hiddenInput.showPicker === 'function') {
+        hiddenInput.showPicker();
+      } else {
+        hiddenInput.focus();
+        hiddenInput.click();
+      }
+    } catch {
+      // showPicker puede lanzar si el picker ya se está abriendo (p. ej. clic sobre el propio input nativo en Chrome).
+      // En ese caso el navegador ya lo gestiona, así que lo ignoramos.
+    }
   }
 
   onEntryDateChange() {

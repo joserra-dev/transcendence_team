@@ -52,6 +52,10 @@
   display: grid;
   grid-template-columns: 260px 1fr;
   gap: 0.75rem;
+
+  &.single-column {
+    grid-template-columns: 1fr;
+  }
 }
 
 .thread-list {

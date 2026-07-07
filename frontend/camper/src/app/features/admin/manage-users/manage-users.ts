@@ -6,6 +6,7 @@ import { TranslateModule } from '@ngx-translate/core';
 import { Admin } from '../../../core/services/admin';
 import { AdminUser, Company } from '../../../core/models/user';
 import { ConfirmDialog } from '../../../shared/components/confirm-dialog/confirm-dialog';
+import { CustomValidators } from '../../../shared/validators/custom-validators/custom-validators';
 
 @Component({
   selector: 'app-manage-users',
@@ -14,6 +15,8 @@ import { ConfirmDialog } from '../../../shared/components/confirm-dialog/confirm
   styleUrl: './manage-users.scss',
 })
 export class ManageUsers implements OnInit {
+  readonly maxFieldLength = 35;
+
   private fb = inject(FormBuilder);
   private adminService = inject(Admin);
 
@@ -39,21 +42,21 @@ export class ManageUsers implements OnInit {
   sortOrder: 'asc' | 'desc' = 'asc';
 
   userForm: FormGroup = this.fb.group({
-    email: ['', [Validators.required, Validators.email]],
-    password: ['', [Validators.required, Validators.minLength(6)]],
-    nombre: ['', Validators.required],
-    apellidos: [''],
-    dni: [''],
+    email: ['', [Validators.required, Validators.email, Validators.maxLength(this.maxFieldLength)]],
+    password: ['', [Validators.required, Validators.minLength(6), Validators.maxLength(this.maxFieldLength)]],
+    nombre: ['', [Validators.required, Validators.maxLength(this.maxFieldLength)]],
+    apellidos: ['', [Validators.maxLength(this.maxFieldLength)]],
+    dni: ['', [CustomValidators.dniValido]],
     role: ['user', Validators.required],
     companyId: [null],
   });
 
   editForm: FormGroup = this.fb.group({
-    email: ['', [Validators.required, Validators.email]],
-    password: [''],
-    nombre: ['', Validators.required],
-    apellidos: [''],
-    dni: [''],
+    email: ['', [Validators.required, Validators.email, Validators.maxLength(this.maxFieldLength)]],
+    password: ['', [Validators.maxLength(this.maxFieldLength)]],
+    nombre: ['', [Validators.required, Validators.maxLength(this.maxFieldLength)]],
+    apellidos: ['', [Validators.maxLength(this.maxFieldLength)]],
+    dni: ['', [CustomValidators.dniValido]],
     role: ['user', Validators.required],
     companyId: [null],
   });
@@ -319,5 +322,53 @@ export class ManageUsers implements OnInit {
 
   toggleSortOrder(): void {
     this.sortOrder = this.sortOrder === 'asc' ? 'desc' : 'asc';
+  }
+
+  exportCsv(): void {
+    const rows = this.filteredUsers;
+    if (rows.length === 0) {
+      return;
+    }
+
+    const headers = ['Nombre y apellidos', 'Empresa', 'Email', 'Rol', 'DNI'];
+
+    const roleText = (role: string): string => {
+      if (role === 'super_admin') return 'Superadmin';
+      if (role === 'admin') return 'Admin';
+      return 'Usuario';
+    };
+
+    const dataRows = rows.map((user) => [
+      this.fullName(user),
+      user.companyName ?? '',
+      user.email ?? '',
+      roleText(user.role),
+      user.dni ?? '',
+    ]);
+
+    const csv = [headers, ...dataRows]
+      .map((row) => row.map((cell) => this.escapeCsvCell(cell)).join(';'))
+      .join('\r\n');
+
+    const blob = new Blob(['\ufeff' + csv], { type: 'text/csv;charset=utf-8;' });
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement('a');
+    link.href = url;
+    link.download = `usuarios_${new Date().toISOString().slice(0, 10)}.csv`;
+    link.click();
+    URL.revokeObjectURL(url);
+  }
+
+  private escapeCsvCell(value: string): string {
+    const text = String(value);
+    if (/[";\r\n]/.test(text)) {
+      return `"${text.replace(/"/g, '""')}"`;
+    }
+    return text;
+  }
+
+  showFieldError(form: FormGroup, fieldName: string, errorKey: string): boolean {
+    const control = form.get(fieldName);
+    return !!control && control.touched && control.hasError(errorKey);
   }
 }
