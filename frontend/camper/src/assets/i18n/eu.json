@@ -192,6 +192,22 @@
       "SAVING": "Gordetzen..."
     }
   },
+  "FRIENDS": {
+    "TITLE": "Lagunak",
+    "EMAIL_PLACEHOLDER": "Lagunaren posta",
+    "ADD": "Gehitu",
+    "REMOVE": "Kendu",
+    "SUCCESS": {
+      "ADDED": "Laguna ondo gehituta.",
+      "REMOVED": "Laguna ondo kenduta."
+    },
+    "ERROR": {
+      "EMAIL_REQUIRED": "Sartu lagunaren posta helbidea.",
+      "NOT_FOUND": "Ezin izan da laguna gehitu. Egiaztatu posta helbidea.",
+      "REMOVE": "Ezin izan da laguna kendu."
+    },
+    "EMPTY": "Ez dituzu lagunik gehituta."
+  },
   "PAPID": {
     "LICENCE":"Sartu zure ibilgailuaren matrikula:"
   },
@@ -208,6 +224,19 @@
     "ALL": "Guztiak",
     "DETAILS": "Xehetasunak",
     "NIGHT": "gaua",
+    "SORT": {
+      "LABEL": "Ordenatu",
+      "NAME": "Izena",
+      "MUNICIPALITY": "Udalerria",
+      "PROVINCE": "Probintzia",
+      "LATITUDE": "Latitudea",
+      "DEFAULT": "Lehenetsia",
+      "ASC": "Goranzkoa",
+      "DESC": "Beherakorra"
+    },
+    "PAGE": {
+      "OF": "etik"
+    },
     "ERRORS": {
       "NO_RESULTS": "Ez da emaitzarik aurkitu.",
       "CONNECTION": "Konexio errorea aparkalekuak bilatzean."

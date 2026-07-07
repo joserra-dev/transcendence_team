@@ -10,7 +10,7 @@ import { User } from '../models/user';
 export class UserService {
   private http = inject(HttpClient);
 
-  private apiUrl = `${window.env.URL_BACK}/api/users`;
+  private apiUrl = `${(window.env?.URL_BACK || 'http://localhost:5000').replace(/\/$/, '')}/api/users`;
 
   getMe(): Observable<User> {
     return this.http.get<User>(`${this.apiUrl}/me`);

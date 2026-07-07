@@ -192,6 +192,22 @@
       "SAVING": "Saving..."
     }
   },
+  "FRIENDS": {
+    "TITLE": "Friends",
+    "EMAIL_PLACEHOLDER": "Friend's email",
+    "ADD": "Add",
+    "REMOVE": "Remove",
+    "SUCCESS": {
+      "ADDED": "Friend added successfully.",
+      "REMOVED": "Friend removed successfully."
+    },
+    "ERROR": {
+      "EMAIL_REQUIRED": "Enter your friend's email.",
+      "NOT_FOUND": "Could not add friend. Check the email.",
+      "REMOVE": "Could not remove friend."
+    },
+    "EMPTY": "You have no friends added."
+  },
   "PAPID": {
     "LICENCE":"Enter your vehicle's number plate:"
   },
@@ -209,6 +225,19 @@
     "ALL": "All",
     "DETAILS": "Details",
     "NIGHT": "night",
+    "SORT": {
+      "LABEL": "Sort by",
+      "NAME": "Name",
+      "MUNICIPALITY": "Municipality",
+      "PROVINCE": "Province",
+      "LATITUDE": "Latitude",
+      "DEFAULT": "Default",
+      "ASC": "Ascending",
+      "DESC": "Descending"
+    },
+    "PAGE": {
+      "OF": "of"
+    },
     "ERRORS": {
       "NO_RESULTS": "No results found.",
       "CONNECTION": "Connection error while looking for parkings."

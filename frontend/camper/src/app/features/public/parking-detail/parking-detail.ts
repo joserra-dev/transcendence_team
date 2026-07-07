@@ -9,7 +9,7 @@ import { Subscription } from 'rxjs';
 import { ParkingService } from '../../../core/services/parking';
 import { BookingService } from '../../../core/services/booking';
 import { Auth } from '../../../core/services/auth';
-import { Parking, Space, SearchFilters } from '../../../core/models/parking';
+import { Parking, Space, SearchFilters, ParkingPage } from '../../../core/models/parking';
 import { BookingRequest } from '../../../core/models/booking';
 
 @Component({
@@ -97,8 +97,8 @@ export class ParkingDetail implements OnInit, OnDestroy {
     };
     this.parkingService.searchParkings(filters).subscribe({
       next: (data) => {
-        if (data && data.length > 0) {
-          this.parking = data[0];
+        if (data && data.items && data.items.length > 0) {
+          this.parking = data.items[0];
         } else {
           this.errorMessage = 'PARKING.ERRORS.NOT_FOUND';
         }

@@ -103,7 +103,26 @@ def search_parkings():
     has_waste_disposal = request.args.get('residuales')
     has_vip_spots = request.args.get('vip')
 
-    # 4. Aplicamos los filtros dinámicamente si vienen en la petición
+    # 4. Capturamos parámetros de paginación y ordenación
+    page = request.args.get('page', 1, type=int)
+    limit = request.args.get('limit', 20, type=int)
+    sort = request.args.get('sort', 'name')
+    order = request.args.get('order', 'asc')
+
+    if page < 1:
+        page = 1
+    if limit < 1 or limit > 100:
+        limit = 20
+
+    allowed_sorts = {'name', 'municipality', 'province', 'latitude', 'longitude', 'created_at'}
+    sort_col = sort if sort in allowed_sorts else 'name'
+    order_col = getattr(Parking, sort_col)
+    if str(order).lower() == 'desc':
+        query = query.order_by(order_col.desc())
+    else:
+        query = query.order_by(order_col.asc())
+
+    # 5. Aplicamos el resto de filtros
     if id_parking:
         query = query.filter(Parking.id == id_parking)
 
@@ -127,14 +146,20 @@ def search_parkings():
     if has_vip_spots:
         query = query.filter(Parking.has_vip_spots == (has_vip_spots.lower() == 'true'))
 
-    # 5. Ejecutamos la consulta y formateamos la respuesta
-    filtered_parking = query.all()
-    
-    # Si se buscó por ID específico y no se encontró, devolver error 404
-    if id_parking and len(filtered_parking) == 0:
+    # 6. Ejecutamos la consulta y aplicamos paginación
+    pagination = query.paginate(page=page, per_page=limit, error_out=False)
+    items = [p.to_dict(from_date=from_date, to_date=to_date) for p in pagination.items]
+
+    if id_parking and len(items) == 0:
         return jsonify({"error": "Parking no encontrado"}), 404
-    
-    return jsonify([p.to_dict(from_date=from_date, to_date=to_date) for p in filtered_parking]), 200
+
+    return jsonify({
+        "items": items,
+        "total": pagination.total,
+        "page": page,
+        "limit": limit,
+        "pages": pagination.pages,
+    }), 200
 
 @parking_bp.route('/api/parking', methods=['GET'])
 def get_pakings():
@@ -162,11 +187,44 @@ def get_pakings():
     """
     id = request.args.get('id')
 
+    page = request.args.get('page', 1, type=int)
+    limit = request.args.get('limit', 20, type=int)
+    sort = request.args.get('sort', 'name')
+    order = request.args.get('order', 'asc')
+
+    if page < 1:
+        page = 1
+    if limit < 1 or limit > 100:
+        limit = 20
+
+    allowed_sorts = {'name', 'municipality', 'province', 'latitude', 'longitude', 'created_at'}
+    sort_col = sort if sort in allowed_sorts else 'name'
+    order_col = getattr(Parking, sort_col)
+
+    query = Parking.query
     if id:
-        parking = Parking.query.get(id)
-        if parking:
-            return jsonify(parking.to_dict()), 200
+        query = query.filter(Parking.id == id)
+        page = 1
+        limit = 1
+
+    if str(order).lower() == 'desc':
+        query = query.order_by(order_col.desc())
+    else:
+        query = query.order_by(order_col.asc())
+
+    pagination = query.paginate(page=page, per_page=limit, error_out=False)
+    items = [p.to_dict() for p in pagination.items]
+
+    if id and not items:
         return jsonify({"error": _("Parking no encontrado")}), 404
 
-    all = Parking.query.all()
-    return jsonify([u.to_dict() for u in all]), 200
+    if id:
+        return jsonify(items[0]), 200
+
+    return jsonify({
+        "items": items,
+        "total": pagination.total,
+        "page": page,
+        "limit": limit,
+        "pages": pagination.pages,
+    }), 200

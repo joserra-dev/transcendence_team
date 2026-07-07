@@ -10,7 +10,7 @@ import { ChatMessage, ChatThread } from '../models/chat';
 export class Chat {
   private http = inject(HttpClient);
 
-  private apiUrl = `${window.env.URL_BACK}/api/chat`;
+  private apiUrl = `${(window.env?.URL_BACK || 'http://localhost:5000').replace(/\/$/, '')}/api/chat`;
 
   getUnreadCount(): Observable<{ count: number }> {
     return this.http.get<{ count: number }>(`${this.apiUrl}/unread-count`);

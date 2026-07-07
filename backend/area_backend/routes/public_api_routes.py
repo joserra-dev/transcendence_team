@@ -73,23 +73,64 @@ def _space_payload(space):
 @public_api_bp.route('/parkings', methods=['GET'])
 @_require_public_api_key
 def list_parkings():
-    """Public API: list parkings with optional filters."""
+    """Public API: list parkings with optional filters and pagination."""
     query = Parking.query.filter(Parking.isactive.is_(True))
+    page = request.args.get('page', 1, type=int)
+    limit = request.args.get('limit', 20, type=int)
+    sort = request.args.get('sort', 'id')
+    order = request.args.get('order', 'asc')
+
+    if page < 1:
+        page = 1
+    if limit < 1 or limit > 100:
+        limit = 20
+
+    allowed_sorts = {'id', 'name', 'municipality', 'province', 'latitude', 'longitude'}
+    sort_col = sort if sort in allowed_sorts else 'id'
+    order_col = getattr(Parking, sort_col)
+
     province = request.args.get('province')
     municipality = request.args.get('municipality')
     if province:
         query = query.filter(Parking.province.ilike(f"%{province}%"))
     if municipality:
         query = query.filter(Parking.municipality.ilike(f"%{municipality}%"))
-    return jsonify([_parking_summary(parking) for parking in query.order_by(Parking.name).all()]), 200
+
+    if str(order).lower() == 'desc':
+        query = query.order_by(order_col.desc())
+    else:
+        query = query.order_by(order_col.asc())
+
+    pagination = query.paginate(page=page, per_page=limit, error_out=False)
+    return jsonify({
+        "items": [_parking_summary(parking) for parking in pagination.items],
+        "total": pagination.total,
+        "page": page,
+        "limit": limit,
+        "pages": pagination.pages,
+    }), 200
 
 
 @public_api_bp.route('/parkings/search', methods=['POST'])
 @_require_public_api_key
 def search_parkings():
-    """Public API: search parkings by dates and amenities."""
+    """Public API: search parkings by dates and amenities with pagination."""
     data = request.get_json() or {}
     query = Parking.query.filter(Parking.isactive.is_(True))
+
+    page = int(data.get('page') or 1)
+    limit = int(data.get('limit') or 20)
+    sort = data.get('sort', 'id')
+    order = data.get('order', 'asc')
+
+    if page < 1:
+        page = 1
+    if limit < 1 or limit > 100:
+        limit = 20
+
+    allowed_sorts = {'id', 'name', 'municipality', 'province', 'latitude', 'longitude'}
+    sort_col = sort if sort in allowed_sorts else 'id'
+    order_col = getattr(Parking, sort_col)
 
     if data.get('province'):
         query = query.filter(Parking.province.ilike(f"%{data['province']}%"))
@@ -101,6 +142,11 @@ def search_parkings():
         query = query.filter(Parking.has_waste_disposal.is_(bool(data['waste_disposal'])))
     if data.get('vip_spots') is not None:
         query = query.filter(Parking.has_vip_spots.is_(bool(data['vip_spots'])))
+
+    if str(order).lower() == 'desc':
+        query = query.order_by(order_col.desc())
+    else:
+        query = query.order_by(order_col.asc())
 
     from_date = data.get('startDate')
     to_date = data.get('endDate')
@@ -117,7 +163,7 @@ def search_parkings():
         except ValueError:
             return jsonify({"error": "Formato de fecha inválido. Usa YYYY-MM-DD."}), 400
     parkings = []
-    for parking in query.order_by(Parking.name).all():
+    for parking in query.all():
         parking_data = _parking_summary(parking)
         if from_date_obj and to_date_obj:
             parking_data['available_spots'] = [
@@ -133,7 +179,17 @@ def search_parkings():
             parking_data['available_spots'] = [_space_payload(space) for space in (parking.spaces or [])]
         parkings.append(parking_data)
 
-    return jsonify(parkings), 200
+    start_idx = (page - 1) * limit
+    end_idx = start_idx + limit
+    paged_items = parkings[start_idx:end_idx]
+
+    return jsonify({
+        "items": paged_items,
+        "total": len(parkings),
+        "page": page,
+        "limit": limit,
+        "pages": (len(parkings) + limit - 1) // limit,
+    }), 200
 
 
 @public_api_bp.route('/parkings/<int:parking_id>', methods=['GET'])

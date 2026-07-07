@@ -116,9 +116,24 @@
     {{ errorMessage | translate }}
   </p>
 
+  <div class="controls-row" *ngIf="pageData && pageData.total > 0">
+    <div class="sort-controls">
+      <label for="sort-field">{{ 'SORT.LABEL' | translate }}</label>
+      <select id="sort-field" class="form-select form-select-sm" (change)="changeSort($any($event.target).value)">
+        <option value="name">{{ 'SORT.NAME' | translate }}</option>
+        <option value="municipality">{{ 'SORT.MUNICIPALITY' | translate }}</option>
+        <option value="province">{{ 'SORT.PROVINCE' | translate }}</option>
+        <option value="latitude">{{ 'SORT.LATITUDE' | translate }}</option>
+      </select>
+    </div>
+    <div class="pagination-info">
+      {{ endIndex }} {{ 'PAGE.OF' | translate }} {{ pageData.total }}
+    </div>
+  </div>
+
   <h2 class="results-title" *ngIf="parkings.length > 0">
     {{ searchForm.value.localidad || ('SEARCH.ALL' | translate) }}:
-    <span>{{ parkings.length }} {{ 'SEARCH.RESULTS' | translate }}</span>
+    <span>{{ pageData?.total || 0 }} {{ 'SEARCH.RESULTS' | translate }}</span>
   </h2>
 
   <div *ngIf="isLoading" class="loading-msg">
@@ -180,4 +195,14 @@
       </div>
     </article>
   </section>
+
+  <nav class="pagination-bar" *ngIf="pageData && pageData.pages > 1">
+    <button class="btn btn-outline-secondary btn-sm" (click)="previousPage()" [disabled]="currentPage === 1">
+      {{ 'PAGE.PREV' | translate }}
+    </button>
+    <span class="page-indicator">{{ 'PAGE.OF' | translate }} {{ pageData.pages }}</span>
+    <button class="btn btn-outline-secondary btn-sm" (click)="nextPage()" [disabled]="currentPage === pageData.pages">
+      {{ 'PAGE.NEXT' | translate }}
+    </button>
+  </nav>
 </div>

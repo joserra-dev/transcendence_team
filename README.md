@@ -1,4 +1,4 @@
-*This project has been created as part of the 42 curriculum by the transcendence_team.*
+*This project has been created as part of the 42 curriculum by elarrea-, joscastr, luisanch, mikegonz.*
 
 # Hemen-Go Camper Booking Platform
 
@@ -68,8 +68,11 @@ AI tools were used to review requirements, identify compliance gaps, refactor re
 | Member | Roles | Responsibilities |
 | --- | --- | --- |
 | joserra-dev | Product Owner, Technical Lead, Developer | Product scope, architecture decisions, backend routes, booking logic, subject compliance review |
-| luis | Developer, QA | Frontend features, styling, component validation, testing support |
-| Additional teammates | Developers | Backend/frontend contributions, reviews, and validation |
+| elarrea- | Developer | Backend/frontend contributions, reviews, and validation |
+| joscastr | Developer | Backend/frontend contributions, reviews, and validation |
+| luisanch | Developer | Backend/frontend contributions, reviews, and validation |
+| luis | Developer, QA | Angular components, styling, booking UI, history/profile/admin flows, translations, frontend validation |
+| mikegonz | Developer | Backend/frontend contributions, reviews, and validation |
 
 If the team composition changed during the project, each member must update this table honestly before submission.
 
@@ -115,15 +118,17 @@ Main relationships:
 
 | Feature | Team member(s) | Description |
 | --- | --- | --- |
-| Parking search | Backend/frontend team | Filters parkings by location, dates, and amenities. |
+| Parking search | Backend/frontend team | Filters parkings by location, dates, and amenities with pagination and sorting. |
 | Booking creation | Backend/frontend team | Creates reservations and prevents overlapping bookings. |
 | User authentication | Backend/frontend team | Registration, login, email verification, password reset. |
-| User profile | Backend/frontend team | Profile update, password change, payment method configuration. |
+| User profile | Backend/frontend team | Profile update, avatar upload via URL, password change, payment method configuration. |
+| Friends system | Backend/frontend team | Add/remove/list friends with backend routes and profile UI. |
 | Booking history | Backend/frontend team | List, filter, cancel, rate, and view booking details. |
-| Admin panel | Backend/frontend team | Manage parkings and spaces for authorized administrators. |
+| Admin panel | Backend/frontend team | Manage parkings, spaces, companies, users, bookings, and chat threads. |
 | Access control | Backend team | OCR license plate verification against active bookings. |
-| Public API | Backend team | API-key protected and rate-limited public endpoints. |
+| Public API | Backend team | API-key protected and rate-limited public endpoints with pagination. |
 | Status endpoint | Backend team | `/api/status` health check for DevOps validation. |
+| Organization system | Backend team | CRUD for companies, user-company assignment, and company metrics. |
 | Multilingual UI | Frontend team | Spanish, English, and Basque translations. |
 
 ## Modules
@@ -132,32 +137,40 @@ Main relationships:
 | --- | --- | --- | --- |
 | Web: frontend and backend frameworks | Major | 2 | Angular frontend and Flask backend. |
 | Web: ORM | Minor | 1 | Flask-SQLAlchemy models and relationships. |
-| User Management: standard user management | Major | 2 | Registration, login, profile update, avatar-ready profile model, password reset, email verification. |
+| User Management: standard user management | Major | 2 | Registration, login, profile update, avatar upload, password reset, email verification, and friends system (add/remove/list). |
 | User Management: advanced permissions | Major | 2 | User, admin, and super-admin roles with guarded routes and backend checks. |
+| User Management: organization system | Major | 2 | Companies CRUD, user-company assignment, role management, and company metrics. |
 | Accessibility and Internationalization: multiple languages | Minor | 1 | ES, EN, EU translations with language switching. |
-| Web: advanced search | Minor | 1 | Search by location, dates, electricity, waste disposal, and VIP spots. |
-| Web: notification system | Minor | 1 | Email verification, password recovery, and booking email templates. |
-| DevOps: health check/status | Minor | 1 | `/api/status` endpoint and Docker Compose database health check. |
+| Web: advanced search | Minor | 1 | Search by location, dates, electricity, waste disposal, VIP spots, pagination, and sorting. |
 | Modules of choice: booking/access system | Major | 2 | Custom reservation system with QR endpoint, booking history, cancellation, rating, and OCR access verification. |
-| Modules of choice: public API | Minor | 1 | Secured public API with API key, rate limiting, and documented CRUD-style endpoints. |
+| Modules of choice: public API | Minor | 1 | API-key protected and rate-limited public endpoints with pagination. |
 
 Total: 14 points.
 
 ## Individual Contributions
 
 ### joserra-dev
-- Backend architecture, Flask routes, models, booking validation, admin API, public API, status endpoint, access-control OCR route.
-- Docker/backend configuration and subject compliance review.
+- Backend architecture, Flask routes, models, booking validation, admin API, public API, status endpoint, access-control OCR route, Docker/backend configuration, and subject compliance review.
+
+### elarrea-
+- Backend/frontend contributions, reviews, and validation.
+
+### joscastr
+- Backend/frontend contributions, reviews, and validation.
+
+### luisanch
+- Backend/frontend contributions, reviews, and validation.
 
 ### luis
-- Angular components, styling, booking UI, history/profile/admin flows, translations, frontend validation.
+- Angular components, styling, booking UI, history/profile/admin flows, translations, frontend validation, friends system UI, and pagination/sorting UI.
 
-### Additional teammates
-- Contributions, reviews, and validation should be documented here before submission.
+### mikegonz
+- Backend/frontend contributions, reviews, and validation.
 
 ## Known Limitations
 
-- Local Docker Compose uses HTTP for development. Production must be deployed behind HTTPS with valid certificates.
+- Local Docker Compose uses HTTPS with self-signed certificates for the backend API. The frontend dev server remains on HTTP; the browser may warn about the backend certificate.
+- Production must be deployed behind HTTPS with valid certificates.
 - The public API key is stored in `.env` and must be rotated before any real deployment.
 - Email credentials are local development secrets and must not be committed.
 - Some UI labels and tests still need final peer review before submission.
