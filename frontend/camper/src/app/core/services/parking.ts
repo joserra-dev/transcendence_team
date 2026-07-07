@@ -3,7 +3,7 @@ import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
 import { environment } from '../../../environments/environment';
-import { Parking, SearchFilters } from '../models/parking';
+import { Parking, SearchFilters, ParkingPage } from '../models/parking';
 
 @Injectable({
   providedIn: 'root'
@@ -13,7 +13,7 @@ export class ParkingService {
 
   private apiUrl = environment.urlBack;
 
-  searchParkings(filters: SearchFilters): Observable<any[]> {
+  searchParkings(filters: SearchFilters): Observable<ParkingPage> {
     let params: any = {};
     if (filters.id) {
       params.id = filters.id.toString();
@@ -39,7 +39,19 @@ export class ParkingService {
     if (filters.plazasVip !== undefined) {
       params.vip = filters.plazasVip.toString();
     }
-    return this.http.get<any[]>(`${this.apiUrl}/api/parking/search`, { params });
+    if (filters.page) {
+      params.page = filters.page.toString();
+    }
+    if (filters.limit) {
+      params.limit = filters.limit.toString();
+    }
+    if (filters.sort) {
+      params.sort = filters.sort;
+    }
+    if (filters.order) {
+      params.order = filters.order;
+    }
+    return this.http.get<ParkingPage>(`${this.apiUrl}/api/parking/search`, { params });
   }
 
   getParkingById(id: string | number): Observable<Parking> {

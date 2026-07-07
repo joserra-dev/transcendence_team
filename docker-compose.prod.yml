@@ -1,9 +1,4 @@
 services:
-  backend:
-    volumes: []
-    ports: []
-    command: gunicorn app:app --bind 0.0.0.0:8000
-
   frontend:
     build:
       context: ./frontend
@@ -13,6 +8,7 @@ services:
       - "${FRONT_PORT}:443"
     environment:
       - URL_BACK=/
+    entrypoint: ["/docker-entrypoint.sh"]
     command: []
 
 # NOTE: For production deployment ensure URL_FRONT in .env uses https://

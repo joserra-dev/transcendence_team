@@ -20,8 +20,6 @@ services:
   backend:
     build: 
       context: ./backend/area_backend
-    # ── CORRECCIÓN: Eliminamos el pip install. Solo ejecutamos Flask directamente ──
-    command: python -m flask run --host=0.0.0.0 --port=8000 --debug
     volumes:
       - ./backend/area_backend:/app
     ports:
@@ -42,8 +40,8 @@ services:
       test: ["CMD", "python", "-c", "import socket; s = socket.socket(); s.connect(('127.0.0.1', 8000))"]
       interval: 5s
       timeout: 5s
-      retries: 5        # Ya podemos bajar los reintentos
-      start_period: 5s  # Flask arrancará en un par de segundos ahora
+      retries: 5
+      start_period: 5s
 
   frontend:
     build:
@@ -60,7 +58,7 @@ services:
       - ./frontend/camper:/app
       - /app/node_modules
     ports:
-      - "${FRONT_PORT}:4200"
+      - "${FRONT_PORT}:${FRONT_TARGET_PORT:-4200}"
     env_file:
       - .env
     stdin_open: true 

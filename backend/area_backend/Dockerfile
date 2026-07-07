@@ -23,6 +23,7 @@ WORKDIR /app
 RUN apt-get update && apt-get install -y --no-install-recommends \
     libgl1 \
     libglib2.0-0 \
+    openssl \
     && rm -rf /var/lib/apt/lists/*
 
 # EL TRUCO CLAVE: Copiamos TODO el entorno de paquetes globales de Python y sus ejecutables
@@ -32,4 +33,4 @@ COPY --from=builder /usr/local/bin /usr/local/bin
 # Copiamos el código de la app
 COPY . .
 
-CMD ["python", "app.py"]
+CMD ["sh", "-c", "mkdir -p /app/certs && openssl req -x509 -nodes -days 365 -newkey rsa:2048 -keyout /app/certs/key.pem -out /app/certs/cert.pem -subj '/C=ES/ST=State/L=City/O=Organization/CN=localhost' && python -m flask run --host=0.0.0.0 --port=8000 --cert=/app/certs/cert.pem --key=/app/certs/key.pem --debug"]

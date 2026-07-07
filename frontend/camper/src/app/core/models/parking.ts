@@ -50,11 +50,24 @@ export interface Parking {
 export interface SearchFilters {
   id?: number;
 
-  startDate?: string; 
-  endDate?: string; 
+  startDate?: string;
+  endDate?: string;
   localidad?: string;
   provincia?: string;
   tomaElectricidad?: boolean;
   limpiezaAguasResiduales?: boolean;
   plazasVip?: boolean;
+
+  page?: number;
+  limit?: number;
+  sort?: string;
+  order?: 'asc' | 'desc';
+}
+
+export interface ParkingPage {
+  items: Parking[];
+  total: number;
+  page: number;
+  limit: number;
+  pages: number;
 }

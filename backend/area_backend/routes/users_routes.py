@@ -264,11 +264,11 @@ def update_profile():
         current_user_id = get_jwt_identity()
         user = Users.query.get(current_user_id)
         if not user:
-            return _("Usuario no encontrado"), 404
+            return jsonify({"error": _("Usuario no encontrado")}), 404
             
         data = request.get_json()
         if not data:
-            return _("Petición inválida"), 400
+            return jsonify({"error": _("Petición inválida")}), 400
             
         profile = user.profile
         if not profile:
@@ -305,11 +305,11 @@ def update_profile():
             user.pass_user = generate_password_hash(new_password)
             
         db.session.commit()
-        return _("Perfil actualizado correctamente"), 200
+        return jsonify({"mensaje": _("Perfil actualizado correctamente")}), 200
         
     except Exception as e:
         db.session.rollback()
-        return f"Error interno: {str(e)}", 500
+        return jsonify({"error": _("Error interno al actualizar el perfil"), "details": str(e)}), 500
 
     
 @users_bp.route('/login', methods=['POST'])

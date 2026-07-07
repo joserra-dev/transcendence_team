@@ -14,7 +14,7 @@ export class Admin {
 
   private http = inject(HttpClient);
 
-  private apiUrl = `${window.env.URL_BACK}/api/admin`;
+  private apiUrl = `${(window.env?.URL_BACK || 'http://localhost:5000').replace(/\/$/, '')}/api/admin`;
 
   getParkings(companyId?: number): Observable<Parking[]> {
     const params = companyId != null ? { companyId: String(companyId) } : undefined;

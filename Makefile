@@ -90,10 +90,10 @@ env:
 		echo "FLASK_DEBUG=1" >> .env; \
 		read -p "Introduce el puerto para el Front-end (ej. 4200): " port; \
 		echo "FRONT_PORT=$$port" >> .env; \
-		echo "URL_FRONT=http://$(HOST):$$port" >> .env; \
+		echo "URL_FRONT=https://$(HOST):$$port" >> .env; \
 		read -p "Introduce el puerto para el Back-end (ej. 8000): " portback; \
 		echo "BACK_PORT=$$portback" >> .env; \
-		echo "URL_BACK=http://$(HOST):$$portback" >> .env; \
+		echo "URL_BACK=https://$(HOST):$$portback" >> .env; \
 		\
 		echo ""; \
 		echo -e "$(COLOR_BLUE)🐘 Configuración de conexión a PostgreSQL:$(COLOR_RESET)"; \
