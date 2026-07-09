@@ -10,3 +10,4 @@ dist/
 db.sqlite3
 frontend/css/*.min.css
 frontend/css/*.min.css.map
+*.pem
