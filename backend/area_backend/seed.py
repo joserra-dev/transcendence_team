@@ -17,7 +17,7 @@ SEED_USERS = [
         "profile": {
             "name": "Super",
             "last_name": "Admin",
-            "dni": "00000000S",
+            "dni": "33445825F",
             "birth_day": date(1980, 1, 1),
             "role": UserRole.SUPER_ADMIN,
             "company_id": None,
@@ -28,7 +28,7 @@ SEED_USERS = [
         "profile": {
             "name": "Admin",
             "last_name": "Hemen-go",
-            "dni": "11111111H",
+            "dni": "49688627W",
             "birth_day": date(1981, 6, 1),
             "role": UserRole.ADMIN,
             "company_name": "Hemen-go",
@@ -43,7 +43,7 @@ SEED_USERS = [
         "profile": {
             "name": "Jon",
             "last_name": "Doe",
-            "dni": "12345678A",
+            "dni": "27217336X",
             "birth_day": date(1990, 5, 12),
             "role": UserRole.USER,
             "company_id": None,
@@ -54,7 +54,7 @@ SEED_USERS = [
         "profile": {
             "name": "María",
             "last_name": "García",
-            "dni": "87654321B",
+            "dni": "94730422T",
             "birth_day": date(1995, 3, 20),
             "role": UserRole.USER,
             "company_id": None,
@@ -237,7 +237,7 @@ def _ensure_seed_users_verified() -> None:
 def seed_database() -> None:
     """Inserta datos de desarrollo si las tablas están vacías (SOLO USUARIOS Y PERFILES)."""
     # 1. Cargamos únicamente los usuarios y sus perfiles
-    users_created = _seed_users()
+    num_users = users_created = _seed_users()
     
     # 2. Nos aseguramos de que queden verificados
     _ensure_seed_users_verified()
@@ -249,4 +249,4 @@ def seed_database() -> None:
         db.session.commit()
 
     if users_created:
-        print(f" * {users_created} usuarios creados (contraseña: {DEFAULT_PASSWORD!r})")
+        print(f" * {num_users} usuarios creados")

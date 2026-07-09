@@ -87,69 +87,70 @@
     <p *ngIf="filteredBookings.length === 0" class="empty-msg">
       {{ 'HISTORY.EMPTY' | translate }}
     </p>
+    <div class="booking-list-container">
+      <article
+        *ngFor="let booking of filteredBookings"
+        class="history-card"
+        [class.cancelled]="booking.status === '0'"
+      >
+        <div class="card-header">
+          <div>
+            <h3>{{ booking.parkingName || ('HISTORY.PARKING_GENERIC' | translate) }}</h3>
+            <small>
+              {{ 'HISTORY.REQUEST_DATE' | translate }}:
+              {{ booking.createDate | date:'dd/MM/yyyy' }}
+            </small>
+          </div>
 
-    <article
-      *ngFor="let booking of filteredBookings"
-      class="history-card"
-      [class.cancelled]="booking.status === '0'"
-    >
-      <div class="card-header">
-        <div>
-          <h3>{{ booking.parkingName || ('HISTORY.PARKING_GENERIC' | translate) }}</h3>
-          <small>
-            {{ 'HISTORY.REQUEST_DATE' | translate }}:
-            {{ booking.createDate | date:'dd/MM/yyyy' }}
-          </small>
+          <span
+            class="status"
+            [class.confirmed]="booking.status === '1'"
+            [class.cancelled]="booking.status === '0'"
+          >
+            {{ getStatusLabel(booking.status) | translate }}
+          </span>
         </div>
 
-        <span
-          class="status"
-          [class.confirmed]="booking.status === '1'"
-          [class.cancelled]="booking.status === '0'"
-        >
-          {{ getStatusLabel(booking.status) | translate }}
-        </span>
-      </div>
+        <div class="card-body">
+          <p>
+            <strong>{{ 'HISTORY.REFERENCE' | translate }}:</strong>
+            #{{ booking.id }}
+          </p>
 
-      <div class="card-body">
-        <p>
-          <strong>{{ 'HISTORY.REFERENCE' | translate }}:</strong>
-          #{{ booking.id }}
-        </p>
+          <p *ngIf="booking.startDate && booking.endDate">
+            <strong>{{ 'HISTORY.DATES' | translate }}:</strong>
+            {{ booking.startDate | date:'dd/MM/yyyy' }}
+            –
+            {{ booking.endDate | date:'dd/MM/yyyy' }}
+          </p>
 
-        <p *ngIf="booking.startDate && booking.endDate">
-          <strong>{{ 'HISTORY.DATES' | translate }}:</strong>
-          {{ booking.startDate | date:'dd/MM/yyyy' }}
-          –
-          {{ booking.endDate | date:'dd/MM/yyyy' }}
-        </p>
+          <p>
+            <strong>{{ 'HISTORY.TOTAL' | translate }}:</strong>
+            {{ (booking.totalPrice > 0 ? booking.totalPrice : booking.price) | currency:'EUR' }}
+          </p>
 
-        <p>
-          <strong>{{ 'HISTORY.TOTAL' | translate }}:</strong>
-          {{ (booking.totalPrice > 0 ? booking.totalPrice : booking.price) | currency:'EUR' }}
-        </p>
+          <p *ngIf="booking.licensePlate">
+            <strong>{{ 'HISTORY.LICENSE_PLATE' | translate }}:</strong>
+            {{ booking.licensePlate }}
+          </p>
 
-        <p *ngIf="booking.licensePlate">
-          <strong>{{ 'HISTORY.LICENSE_PLATE' | translate }}:</strong>
-          {{ booking.licensePlate }}
-        </p>
+          <p *ngIf="booking.range">
+            <strong>{{ 'HISTORY.RATING' | translate }}:</strong>
+            {{ booking.range }}/10
+          </p>
+        </div>
 
-        <p *ngIf="booking.range">
-          <strong>{{ 'HISTORY.RATING' | translate }}:</strong>
-          {{ booking.range }}/10
-        </p>
-      </div>
+        <div class="card-actions">
+          <a
+            class="btn btn-primary"
+            [routerLink]="['/client/booking', booking.id]"
+          >
+            {{ 'HISTORY.DETAILS' | translate }}
+          </a>
+        </div>
 
-      <div class="card-actions">
-        <a
-          class="btn btn-primary"
-          [routerLink]="['/client/booking', booking.id]"
-        >
-          {{ 'HISTORY.DETAILS' | translate }}
-        </a>
-      </div>
-
-    </article>
+      </article>
+    </div>
   </div>
 
 </div>

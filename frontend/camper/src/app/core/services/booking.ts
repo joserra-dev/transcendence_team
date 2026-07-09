@@ -44,11 +44,10 @@ export class BookingService {
   /**
    * Realizar reserva
    */
-  createBooking(bookingData: BookingRequest): Observable<any> {
-    return this.http.post(
+createBooking(bookingData: BookingRequest): Observable<any> {
+    return this.http.post<any>(
       `${this.apiUrl}/booking`,
-      bookingData,
-      { responseType: 'text' }
+      bookingData
     );
   }
 

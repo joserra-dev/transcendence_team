@@ -13,6 +13,8 @@ SET client_min_messages = warning;
 SET row_security = off;
 
 -- Eliminar restricciones existentes si las hay (Limpieza limpia)
+ALTER TABLE IF EXISTS ONLY public.chat_messages DROP CONSTRAINT IF EXISTS chat_messages_sender_id_fkey;
+ALTER TABLE IF EXISTS ONLY public.chat_messages DROP CONSTRAINT IF EXISTS chat_messages_company_id_fkey;
 ALTER TABLE IF EXISTS ONLY public.space DROP CONSTRAINT IF EXISTS space_id_parking_fkey;
 ALTER TABLE IF EXISTS ONLY public.profiles DROP CONSTRAINT IF EXISTS profiles_user_id_fkey;
 ALTER TABLE IF EXISTS ONLY public.profiles DROP CONSTRAINT IF EXISTS profiles_company_id_fkey;
@@ -21,6 +23,7 @@ ALTER TABLE IF EXISTS ONLY public.invoice_sequences DROP CONSTRAINT IF EXISTS in
 ALTER TABLE IF EXISTS ONLY public.booking DROP CONSTRAINT IF EXISTS booking_id_user_fkey;
 ALTER TABLE IF EXISTS ONLY public.booking DROP CONSTRAINT IF EXISTS booking_id_space_fkey;
 
+DROP TABLE IF EXISTS public.chat_messages;
 DROP TABLE IF EXISTS public.booking;
 DROP TABLE IF EXISTS public.space;
 DROP TABLE IF EXISTS public.parking;
@@ -84,7 +87,7 @@ ALTER TABLE ONLY public.company ALTER COLUMN id SET DEFAULT nextval('public.comp
 -- Tabla: parking
 --
 CREATE TABLE public.parking (
-    id bigint NOT NULL PRIMARY KEY, -- Corregido: Clave primaria directa
+    id bigint NOT NULL PRIMARY KEY,
     id_company integer NOT NULL,
     name character varying(100) NOT NULL,
     province character varying(255),
@@ -157,10 +160,10 @@ CREATE TABLE public.profiles (
     last_name character varying(255),
     birth_day date NOT NULL,
     avatar character varying(500),
-    role public.userrole NOT NULL,
-    iban character varying(34),
-    metodo_pago character varying(50),
-    tarjeta character varying(50)
+    role public.userrole NOT NULL
+    --iban character varying(34),
+    --metodo_pago character varying(50),
+    --tarjeta character varying(50)
 );
 ALTER TABLE public.profiles OWNER TO defaultdb_user;
 
@@ -197,13 +200,29 @@ ALTER SEQUENCE public.booking_id_seq OWNED BY public.booking.id;
 ALTER TABLE ONLY public.booking ALTER COLUMN id SET DEFAULT nextval('public.booking_id_seq'::regclass);
 
 
+CREATE TABLE public.chat_messages (
+    id bigint NOT NULL PRIMARY KEY,
+    company_id integer NOT NULL,
+    sender_id bigint NOT NULL,
+    content text NOT NULL,
+    is_read boolean DEFAULT false NOT NULL,
+    created_at timestamp without time zone DEFAULT CURRENT_TIMESTAMP NOT NULL
+);
+ALTER TABLE public.chat_messages OWNER TO defaultdb_user;
+
+CREATE SEQUENCE public.chat_messages_id_seq START WITH 1 INCREMENT BY 1 NO MINVALUE NO MAXVALUE CACHE 1;
+ALTER SEQUENCE public.chat_messages_id_seq OWNER TO defaultdb_user;
+ALTER SEQUENCE public.chat_messages_id_seq OWNED BY public.chat_messages.id;
+ALTER TABLE ONLY public.chat_messages ALTER COLUMN id SET DEFAULT nextval('public.chat_messages_id_seq'::regclass);
+
+
 --
 -- DATA INSERTION (Sección de datos)
 --
 
 COPY public.company (id, name, cif, tbai_enabled, tbai_software_license) FROM stdin;
-1	Hemen-go	B12345678	t	TBAI-HEMENGO-99882
-2	hemen-go	B12345678	f	\N
+1	Hemen-go	B68064831	t	TBAI-HEMENGO-99882
+2	hemen-go	B21520622	f	\N
 \.
 
 COPY public.parking (id, id_company, name, province, municipality, isactive, web_parking, telephone, email, contact_person, has_electricity, has_waste_disposal, has_vip_spots, tbai_serie_facturacion, latitude, longitude, description) FROM stdin;
@@ -229,6 +248,7 @@ SELECT pg_catalog.setval('public.parking_id_seq', 3, true);
 SELECT pg_catalog.setval('public.profiles_id_seq', 4, true);
 SELECT pg_catalog.setval('public.space_id_seq', 6, true);
 SELECT pg_catalog.setval('public.users_id_seq', 4, true);
+SELECT pg_catalog.setval('public.chat_messages_id_seq', 1, false); -- Inicializada
 
 --
 -- RELACIONES / CLAVES FORÁNEAS (Foreign Keys)
@@ -254,3 +274,10 @@ ALTER TABLE ONLY public.profiles
 
 ALTER TABLE ONLY public.space
     ADD CONSTRAINT space_id_parking_fkey FOREIGN KEY (id_parking) REFERENCES public.parking(id) ON DELETE CASCADE;
+
+-- Claves foráneas de chat_messages
+ALTER TABLE ONLY public.chat_messages
+    ADD CONSTRAINT chat_messages_company_id_fkey FOREIGN KEY (company_id) REFERENCES public.company(id);
+
+ALTER TABLE ONLY public.chat_messages
+    ADD CONSTRAINT chat_messages_sender_id_fkey FOREIGN KEY (sender_id) REFERENCES public.users(id) ON DELETE CASCADE;

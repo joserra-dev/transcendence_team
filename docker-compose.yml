@@ -33,6 +33,7 @@ services:
       - JWT_SECRET_KEY=${JWT_SECRET_KEY:-local_dev_secret_change_me}
       - PUBLIC_API_KEY=${PUBLIC_API_KEY:-local_public_api_key_change_me}
       - PUBLIC_API_RATE_LIMIT=${PUBLIC_API_RATE_LIMIT:-60}
+      - STRIPE_KEY=${STRIPE_KEY}
     env_file:
       - .env
     depends_on:
