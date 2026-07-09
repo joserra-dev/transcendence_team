@@ -38,7 +38,7 @@ help:
 # MAIN RULES
 # ==============================================================================
 
-all: dev ## Default: Inicializa el entorno e inicia en MODO DESARROLLO (Hot-Reload)
+all: prod ## Default: Inicializa el entorno e inicia en MODO PRODUCCIÓN (HTTPS / Nginx)
 
 dev: env up ## Inicializa y arranca en MODO DESARROLLO (Para Debuggear Front/Back)
 

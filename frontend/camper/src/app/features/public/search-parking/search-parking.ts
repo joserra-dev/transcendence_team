@@ -184,7 +184,6 @@ export class SearchParking implements OnInit, OnDestroy {
     this.onSearch();
   }
 
-<<<<<<< HEAD
   private dateformatdefine(lang: string) {
     const idioma = lang.toLowerCase();
     if (idioma === 'eu' || idioma === 'en') {
@@ -202,9 +201,7 @@ export class SearchParking implements OnInit, OnDestroy {
     return this.searchForm.get('endDate')?.value || '';
   }
 
-=======
   // Abre el selector nativo del input oculto subyacente (cross-browser)
->>>>>>> 293f4872a4e91e4f197ba4034a0bc6579acf9de1
   openDatePicker(hiddenInput: HTMLInputElement) {
     if (!hiddenInput) return;
     try {

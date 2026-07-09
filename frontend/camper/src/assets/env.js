@@ -1,1 +1,1 @@
-window.env = { URL_FRONT: 'http://jrc-GF65-Thin-10SDR:4200', URL_BACK: '/' };
+window.env = { URL_FRONT: 'https://jrc-GF65-Thin-10SDR:443', URL_BACK: 'https://jrc-GF65-Thin-10SDR:5000' };

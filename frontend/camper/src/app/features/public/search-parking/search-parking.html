@@ -118,16 +118,16 @@
 
   <div class="controls-row" *ngIf="pageData && pageData.total > 0">
     <div class="sort-controls">
-      <label for="sort-field">{{ 'SORT.LABEL' | translate }}</label>
+      <label for="sort-field">{{ 'ORDENAR POR:' | translate }}</label>
       <select id="sort-field" class="form-select form-select-sm" (change)="changeSort($any($event.target).value)">
-        <option value="name">{{ 'SORT.NAME' | translate }}</option>
-        <option value="municipality">{{ 'SORT.MUNICIPALITY' | translate }}</option>
-        <option value="province">{{ 'SORT.PROVINCE' | translate }}</option>
-        <option value="latitude">{{ 'SORT.LATITUDE' | translate }}</option>
+        <option value="name">{{ 'NOMBRE' | translate }}</option>
+        <option value="municipality">{{ 'MUNICIPIO' | translate }}</option>
+        <option value="province">{{ 'PROVINCIA' | translate }}</option>
+        <option value="latitude">{{ 'LATITUD' | translate }}</option>
       </select>
     </div>
     <div class="pagination-info">
-      {{ endIndex }} {{ 'PAGE.OF' | translate }} {{ pageData.total }}
+      {{ endIndex }} {{ 'PAGINA DE' | translate }} {{ pageData.total }}
     </div>
   </div>
 
