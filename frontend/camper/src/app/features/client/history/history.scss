@@ -162,6 +162,35 @@ input[type="date"]::-webkit-calendar-picker-indicator {
   color: $color-grey-soft;
 }
 
+.booking-list-container {
+  max-height: 450px;       /* Altura máxima antes de que aparezca el scroll */
+  overflow-y: auto;        /* Activa el scroll vertical solo si es necesario */
+  padding-right: 0.5rem;   /* Evita que el scroll tape las tarjetas */
+  margin-top: 1rem;
+
+  // Estilizado moderno para la barra de scroll (Navegadores basados en WebKit como Chrome, Safari, Edge)
+  &::-webkit-scrollbar {
+    width: 6px;
+  }
+
+  &::-webkit-scrollbar-track {
+    background: transparent; 
+  }
+
+  &::-webkit-scrollbar-thumb {
+    background: lighten($color-border, 10%); /* Usa tu variable de borde ligeramente aclarada */
+    border-radius: $radius-sm;
+    
+    &:hover {
+      background: $color-grey-soft; /* Cambia al gris cuando pasas el ratón por encima */
+    }
+  }
+
+  // Soporte para Firefox
+  scrollbar-width: thin;
+  scrollbar-color: lighten($color-border, 10%) transparent;
+}
+
 // TABLET
 @media (max-width: $bp-md) {
 

@@ -88,6 +88,7 @@ def _find_user_by_reset_token(token: str):
     usuario = Users.query.filter_by(reset_password_token=token).first()
     if not usuario or not usuario.reset_password_expires:
         return None
+
     if usuario.reset_password_expires < datetime.utcnow():
         return None
     return usuario
