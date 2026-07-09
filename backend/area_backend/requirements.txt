@@ -11,3 +11,4 @@ pytest-mock
 opencv-python-headless
 easyocr
 datetime
+weasyprint
