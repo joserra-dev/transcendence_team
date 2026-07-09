@@ -1,14 +1,16 @@
 services:
-  frontend:
+  frontend: !override
     build:
       context: ./frontend
       target: production
-    volumes: []
     ports:
       - "${FRONT_PORT}:443"
     environment:
       - URL_BACK=/
     entrypoint: ["/docker-entrypoint.sh"]
     command: []
+    depends_on:
+      backend:
+        condition: service_healthy
 
 # NOTE: For production deployment ensure URL_FRONT in .env uses https://

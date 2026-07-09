@@ -10,3 +10,5 @@ opencv-python-headless
 easyocr
 markupsafe
 Flask-Babel==4.0.0
+flask-socketio==5.4.1
+python-socketio==5.12.1

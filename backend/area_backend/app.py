@@ -18,6 +18,7 @@ from routes.public_api_routes import public_api_bp
 from routes.status_routes import status_bp
 from routes.friend_routes import friends_bp
 from routes.chat_routes import chat_bp
+from utils.realtime import init_realtime, socketio
 
 
 app = Flask(__name__)
@@ -110,6 +111,8 @@ app.register_blueprint(status_bp)
 app.register_blueprint(chat_bp)
 app.register_blueprint(friends_bp)
 
+init_realtime(app)
+
 # 4. INICIALIZADOR DE BASE DE DATOS
 with app.app_context():
     import models
@@ -133,5 +136,5 @@ if __name__ == '__main__':
     modo_debug = debug_env in ['true', '1']
 
     print(f" * Arrancando el servidor con debug={modo_debug}")
-    app.run(host='0.0.0.0', port=5000, debug=modo_debug)
+    socketio.run(app, host='0.0.0.0', port=5000, debug=modo_debug)
     

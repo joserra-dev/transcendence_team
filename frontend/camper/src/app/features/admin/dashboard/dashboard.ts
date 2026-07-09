@@ -7,7 +7,8 @@ import { Admin } from '../../../core/services/admin';
 import { Auth } from '../../../core/services/auth';
 import { Parking } from '../../../core/models/parking';
 import { Chat } from '../../../core/services/chat';
-import { interval, Subscription } from 'rxjs';
+import { ChatSocket } from '../../../core/services/chat-socket';
+import { Subscription } from 'rxjs';
 
 @Component({
   selector: 'app-dashboard',
@@ -21,6 +22,7 @@ export class Dashboard implements OnInit, OnDestroy {
   private adminService = inject(Admin);
   private authService = inject(Auth);
   private chatService = inject(Chat);
+  private chatSocket = inject(ChatSocket);
   private router = inject(Router);
 
   readonly adsPageSize = 8;
@@ -34,18 +36,21 @@ export class Dashboard implements OnInit, OnDestroy {
   filterStatus: 'all' | 'active' | 'inactive' = 'all';
   filterMunicipality: string | 'all' = 'all';
   sortOrder: 'asc' | 'desc' = 'asc';
-  private unreadPollSub?: Subscription;
+  private unreadSub?: Subscription;
 
   ngOnInit() {
     const user = this.authService.getUser();
     this.userName = user?.nombrePersona || user?.emailPersona || '';
     this.loadParkings();
     this.loadUnreadCount();
-    this.unreadPollSub = interval(30000).subscribe(() => this.loadUnreadCount());
+    this.chatSocket.connect();
+    this.unreadSub = this.chatSocket.onUnreadCount().subscribe((count) => {
+      this.unreadCount = count;
+    });
   }
 
   ngOnDestroy() {
-    this.unreadPollSub?.unsubscribe();
+    this.unreadSub?.unsubscribe();
   }
 
   loadUnreadCount() {
