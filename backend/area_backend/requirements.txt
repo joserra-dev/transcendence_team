@@ -10,3 +10,5 @@ opencv-python-headless
 easyocr
 markupsafe
 Flask-Babel==4.0.0
+debugpy
+stripe

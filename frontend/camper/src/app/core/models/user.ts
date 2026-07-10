@@ -4,7 +4,7 @@ export interface User {
   apellidosPersona: string;
   fecNacimientoPersona: string;
   dniPersona: string;
-  ibanPersona: string;
+  //ibanPersona: string;
   metodoPago?: string;
   tarjeta?: string;
   emailPersona: string | null;

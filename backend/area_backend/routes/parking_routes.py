@@ -1,12 +1,11 @@
 from flask import Blueprint, jsonify, request
-from werkzeug.security import generate_password_hash, check_password_hash 
-from flask_jwt_extended import create_access_token, jwt_required, get_jwt_identity
 from sqlalchemy import func
-from flask_babel import gettext as _, refresh
+from flask_babel import gettext as _
 from datetime import datetime
 
 from database import db
 from models.parking import Parking
+from models.space import Space
 
 parking_bp = Blueprint('parking_bp', __name__)
 
@@ -124,7 +123,7 @@ def search_parkings():
 
     # 5. Aplicamos el resto de filtros
     if id_parking:
-        query = query.filter(Parking.id == id_parking)
+        query = query.filter(Parking.id == id_parking, Space.status == '0')
 
     if province:
         # ilike hace que no importen las mayúsculas/minúsculas
