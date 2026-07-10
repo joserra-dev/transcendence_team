@@ -670,3 +670,15 @@ curl -k https://localhost:5000/api/status
 ```
 
 Si desde el navegador te avisa del certificado autofirmado, en desarrollo podés aceptar la excepción. Para una demo de evaluación, lo ideal es usar producción detrás de un dominio con TLS real, pero con esto ya cumplís con HTTPS en ambos lados.
+
+### 9/07/2026 Corregí la cancelación de reservas para que solo sea posible antes de que empiece la estancia.
+
+Cambios en el backend (corrección autoritativa):
+
+routes/booking_routes.py:402 (ruta de usuario): si start_date <= hoy, devuelve 400 "No se puede cancelar una reserva cuya estancia ya ha comenzado o finalizado".
+routes/admin_routes.py:804 (ruta de admin): misma validación.
+Cambios en el frontend (UX coherente):
+
+booking-detail.html:77 usaba booking.startDate > date con date indefinido (bug). Añadí today al componente y lo comparo correctamente, ocultando el botón de cancelar una vez iniciada la estancia.
+manage-bookings (panel admin): añadí canCancel() y deshabilité el botón de cancelar cuando la estancia ya empezó.
+El stack de producción compila y https://localhost responde 200. Aunque el frontend se olvide de alguna guarda, el backend bloquea cualquier cancelación de estancias ya iniciadas o terminadas.

@@ -21,6 +21,7 @@ export class BookingDetail implements OnInit {
 
   booking: any | null = null;
   isLoading = true;
+  today = new Date().toISOString().slice(0, 10);
 
   errorMessage = '';
   successMessage = '';

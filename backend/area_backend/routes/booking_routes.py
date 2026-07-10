@@ -3,7 +3,7 @@ from flask import Blueprint, jsonify, request
 # pyrefly: ignore [missing-import]
 from flask_jwt_extended import jwt_required, get_jwt_identity
 from flask_babel import gettext as _ 
-from datetime import datetime
+from datetime import datetime, date
 import os
 
 from database import db
@@ -398,8 +398,11 @@ def cancel_booking():
     user_id = get_jwt_identity()
     if str(booking.id_user) != str(user_id):
         return jsonify({"error": _("No tienes permiso para cancelar esta reserva")}), 403
-        
-    booking.status = "0" 
+
+    if booking.start_date and booking.start_date <= date.today():
+        return jsonify({"error": _("No se puede cancelar una reserva cuya estancia ya ha comenzado o finalizado")}), 400
+
+    booking.status = "0"
     db.session.commit()
     
     return jsonify({"message": _("Reserva cancelada correctamente")}), 200

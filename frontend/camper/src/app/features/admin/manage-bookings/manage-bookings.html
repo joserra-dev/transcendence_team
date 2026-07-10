@@ -123,7 +123,7 @@
             <button
               class="btn btn-panel-danger"
               type="button"
-              [disabled]="cancellingId === booking.id"
+              [disabled]="cancellingId === booking.id || !canCancel(booking)"
               (click)="cancelBooking($event, booking)">
               {{ 'ADMIN_BOOKINGS.CANCEL' | translate }}
             </button>

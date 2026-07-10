@@ -802,6 +802,8 @@ def cancel_booking_admin(_user, profile, booking_id):
         return jsonify({"error": _("No autorizado")}), 403
     if booking.status == '0':
         return jsonify({"error": _("La reserva ya está cancelada")}), 400
+    if booking.start_date and booking.start_date <= date.today():
+        return jsonify({"error": _("No se puede cancelar una reserva cuya estancia ya ha comenzado o finalizado")}), 400
 
     booking.status = '0'
     db.session.commit()

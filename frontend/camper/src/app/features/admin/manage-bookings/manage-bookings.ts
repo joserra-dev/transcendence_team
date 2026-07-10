@@ -24,6 +24,13 @@ export class ManageBookings implements OnInit {
 
   readonly pageSize = 8;
 
+  today = new Date().toISOString().slice(0, 10);
+
+  canCancel(booking: AdminBooking): boolean {
+    if (!booking.startDate) return true;
+    return booking.startDate > this.today;
+  }
+
   allBookings: AdminBooking[] = [];
   filteredBookings: AdminBooking[] = [];
   parkings: Parking[] = [];
