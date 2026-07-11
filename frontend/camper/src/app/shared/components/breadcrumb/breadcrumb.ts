@@ -4,6 +4,7 @@ import { ActivatedRoute, NavigationEnd, Router, RouterLink } from '@angular/rout
 import { TranslateModule } from '@ngx-translate/core';
 import { filter, map, merge, of, startWith } from 'rxjs';
 import { toSignal } from '@angular/core/rxjs-interop';
+import { Auth } from '../../../core/services/auth';
 
 export interface BreadcrumbItem {
   labelKey: string;
@@ -19,6 +20,7 @@ export interface BreadcrumbItem {
 export class Breadcrumb {
   private router = inject(Router);
   private route = inject(ActivatedRoute);
+  private auth = inject(Auth);
 
   items = toSignal(
     merge(
@@ -31,11 +33,21 @@ export class Breadcrumb {
     { initialValue: [] as BreadcrumbItem[] }
   );
 
+  onCrumbClick(event: MouseEvent, url: string): void {
+    const path = this.currentPath();
+    const target = url.replace(/\/+$/, '') || '/';
+
+    if (path.startsWith('/admin') && target === '/') {
+      event.preventDefault();
+      void this.router.navigateByUrl(this.getHomeUrl(path));
+    }
+  }
+
   private buildBreadcrumbs(): BreadcrumbItem[] {
     const leaf = this.getLeafRoute();
     const override = leaf.snapshot.data['breadcrumbs'] as BreadcrumbItem[] | undefined;
     if (override?.length) {
-      return this.normalizeItems(override);
+      return this.normalizeItems(this.applySectionHome(override));
     }
 
     const collected: BreadcrumbItem[] = [];
@@ -46,11 +58,14 @@ export class Breadcrumb {
     }
 
     const path = this.currentPath();
-    if (path !== '/' && (collected.length === 0 || collected[0].url !== '/')) {
-      collected.unshift({ labelKey: 'BREADCRUMB.HOME', url: '/' });
+    const homeUrl = this.getHomeUrl(path);
+    const hasHomeCrumb = collected.some((item) => item.labelKey === 'BREADCRUMB.HOME');
+
+    if (!hasHomeCrumb && (homeUrl !== '/' || path !== '/')) {
+      collected.unshift({ labelKey: 'BREADCRUMB.HOME', url: homeUrl });
     }
 
-    return this.normalizeItems(collected);
+    return this.normalizeItems(this.applySectionHome(collected));
   }
 
   private getLeafRoute(): ActivatedRoute {
@@ -95,8 +110,35 @@ export class Breadcrumb {
     });
   }
 
+  private applySectionHome(items: BreadcrumbItem[]): BreadcrumbItem[] {
+    const path = this.currentPath();
+    const homeUrl = this.getHomeUrl(path);
+
+    if (homeUrl === '/') {
+      return items;
+    }
+
+    return items.map((item) =>
+      item.labelKey === 'BREADCRUMB.HOME'
+        ? { ...item, url: homeUrl }
+        : item
+    );
+  }
+
   private currentPath(): string {
     const path = this.router.url.split('?')[0].split('#')[0] || '/';
     return path.replace(/\/+$/, '') || '/';
+  }
+
+  private getHomeUrl(path: string): string {
+    if (this.isAdminSection(path)) {
+      return this.auth.isSuperAdmin() ? '/admin/companies' : '/admin/dashboard';
+    }
+
+    return '/';
+  }
+
+  private isAdminSection(path: string): boolean {
+    return path.startsWith('/admin');
   }
 }

@@ -5,7 +5,7 @@
         @for (item of items(); track item.labelKey + $index; let last = $last) {
           <li class="breadcrumb-item" [class.active]="last">
             @if (!last && item.url) {
-              <a [routerLink]="item.url">{{ item.labelKey | translate }}</a>
+              <a [routerLink]="item.url" (click)="onCrumbClick($event, item.url)">{{ item.labelKey | translate }}</a>
             } @else {
               <span>{{ item.labelKey | translate }}</span>
             }

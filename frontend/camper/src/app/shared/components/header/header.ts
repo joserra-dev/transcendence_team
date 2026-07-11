@@ -35,6 +35,17 @@ export class Header {
     })
   );
 
+  homeLink$ = merge(
+    of(this.router.url),
+    this.router.events.pipe(
+      filter((event): event is NavigationEnd => event instanceof NavigationEnd),
+      map((event) => event.urlAfterRedirects)
+    )
+  ).pipe(
+    startWith(this.router.url),
+    map((url) => this.resolveHomeLink(url))
+  );
+
   goBack(): void {
     this.location.back();
   }
@@ -61,6 +72,16 @@ export class Header {
 
   get adminPanelLink(): string {
     return this.authService.isSuperAdmin() ? '/admin/companies' : '/admin/dashboard';
+  }
+
+  private resolveHomeLink(url: string): string {
+    const path = (url.split('?')[0].split('#')[0] || '/').replace(/\/+$/, '') || '/';
+
+    if (path.startsWith('/admin')) {
+      return this.adminPanelLink;
+    }
+
+    return '/';
   }
 
   toggleMenu(event: Event) {

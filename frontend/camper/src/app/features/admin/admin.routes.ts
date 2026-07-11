@@ -94,7 +94,7 @@ export const ADMIN_ROUTES: Routes = [
     canActivate: [adminGuard],
     data: {
       breadcrumbs: [
-        { labelKey: 'BREADCRUMB.HOME', url: '/' },
+        { labelKey: 'BREADCRUMB.HOME', url: '/admin/dashboard' },
         { labelKey: 'BREADCRUMB.DASHBOARD', url: '/admin/dashboard' },
         { labelKey: 'BREADCRUMB.NEW_PARKING' },
       ],
@@ -107,7 +107,7 @@ export const ADMIN_ROUTES: Routes = [
     canActivate: [adminGuard],
     data: {
       breadcrumbs: [
-        { labelKey: 'BREADCRUMB.HOME', url: '/' },
+        { labelKey: 'BREADCRUMB.HOME', url: '/admin/dashboard' },
         { labelKey: 'BREADCRUMB.DASHBOARD', url: '/admin/dashboard' },
         { labelKey: 'BREADCRUMB.MANAGE_PARKING' },
       ],
