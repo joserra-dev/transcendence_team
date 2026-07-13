@@ -1,6 +1,14 @@
 from database import db
 from datetime import datetime
 
+
+class BookingStatus:
+    """Constantes para los estados de reserva."""
+    PENDING = '0'      # Pendiente de pago
+    CONFIRMED = '1'    # Pagada/Confirmada
+    PROCESSING = '2'   # En proceso de pago (Stripe)
+
+
 class Booking(db.Model):
     __tablename__ = 'booking'
     __table_args__ = {'schema': 'public'}

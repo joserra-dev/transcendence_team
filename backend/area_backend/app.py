@@ -13,7 +13,6 @@ from routes.space_routes import space_bp
 from routes.booking_routes import booking_bp
 from routes.admin_routes import admin_bp
 from routes.access_routes import access_bp
-from routes.admin_routes import admin_bp
 from routes.public_api_routes import public_api_bp
 from routes.status_routes import status_bp
 from routes.friend_routes import friends_bp
@@ -22,7 +21,10 @@ from routes.chat_routes import chat_bp
 
 app = Flask(__name__)
 
-CORS(app)
+# Configurar CORS con orígenes específicos en lugar de permitir todos.
+# Soporta varios orígenes separados por comas (p. ej. dev y prod).
+frontend_origins = os.getenv('URL_FRONT', 'http://localhost:4200').split(',')
+CORS(app, resources={r"/api/*": {"origins": frontend_origins}})
 # ==========================================
 # 1. PASO CRUCIAL: CONFIGURACIÓN PRIMERO
 # ==========================================
@@ -111,21 +113,14 @@ app.register_blueprint(chat_bp)
 app.register_blueprint(friends_bp)
 
 # 4. INICIALIZADOR DE BASE DE DATOS
-with app.app_context():
-    from seed import seed_database
-
-#    db.create_all()
-#    try:
-        #db.session.execute(db.text("ALTER TABLE public.profiles ADD COLUMN IF NOT EXISTS iban VARCHAR(34);"))
-        #db.session.execute(db.text("ALTER TABLE public.profiles ADD COLUMN IF NOT EXISTS metodo_pago VARCHAR(50);"))
-        #db.session.execute(db.text("ALTER TABLE public.profiles ADD COLUMN IF NOT EXISTS tarjeta VARCHAR(50);"))
-        #db.session.execute(db.text("ALTER TABLE public.users ADD COLUMN IF NOT EXISTS password_reset_verified BOOLEAN NOT NULL DEFAULT FALSE;"))
-#        db.session.commit()
-#    except Exception as e:
-##        db.session.rollback()
-#        print(f" * Error al alterar la tabla profiles: {e}")
-        
-    seed_database()
+# Solo ejecutar seed en desarrollo. En producción usar migraciones (Flask-Migrate/Alembic)
+if os.getenv('FLASK_ENV') == 'development':
+    with app.app_context():
+        from seed import seed_database
+        try:
+            seed_database()
+        except Exception as e:
+            app.logger.error(f" * Error en seed_database: {e}")
 
 if __name__ == '__main__':
     debug_env = os.getenv('FLASK_DEBUG', 'False').strip().lower()

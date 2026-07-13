@@ -1,14 +1,33 @@
 services:
-  frontend:
+
+  backend:
+
+    ports:
+      - "${BACK_PORT}:8000"
+
+    environment:
+      FLASK_DEBUG: "0"
+      FLASK_ENV: production
+
+
+  frontend:   
     build:
       context: ./frontend
       target: production
-    volumes: []
-    ports:
-      - "${FRONT_PORT}:443"
-    environment:
-      - URL_BACK=/
-    entrypoint: ["/docker-entrypoint.sh"]
-    command: []
 
-# NOTE: For production deployment ensure URL_FRONT in .env uses https://
+    depends_on:
+          backend:
+            condition: service_healthy
+
+    volumes: []
+
+    ports:
+      - "443:443"
+
+    environment:
+      URL_BACK: /
+
+    entrypoint:
+      - /docker-entrypoint.sh
+
+    command: []

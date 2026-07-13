@@ -1,4 +1,5 @@
 services:
+
   db:
     build:
       context: ./ddbb
@@ -11,63 +12,46 @@ services:
       POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
     ports:
       - "${POSTGRES_PORT}:5432"
+
     healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER} -d ${POSTGRES_DB}"]
+      test:
+        [
+          "CMD-SHELL",
+          "pg_isready -U ${POSTGRES_USER} -d ${POSTGRES_DB}"
+        ]
       interval: 5s
       timeout: 5s
       retries: 5
 
+
   backend:
-    build: 
+    build:
       context: ./backend/area_backend
-    volumes:
-      - ./backend/area_backend:/app
-    ports:
-      - "${BACK_PORT}:8000"
+
     environment:
-      - FLASK_APP=app.py
-      - FLASK_DEBUG=1
-      - PYTHONPATH=.
-      - JWT_SECRET_KEY=${JWT_SECRET_KEY:-local_dev_secret_change_me}
-      - PUBLIC_API_KEY=${PUBLIC_API_KEY:-local_public_api_key_change_me}
-      - PUBLIC_API_RATE_LIMIT=${PUBLIC_API_RATE_LIMIT:-60}
-      - STRIPE_KEY=${STRIPE_KEY}
+      FLASK_APP: app.py
+      PYTHONPATH: .
+
+      JWT_SECRET_KEY: ${JWT_SECRET_KEY:-local_dev_secret_change_me}
+      PUBLIC_API_KEY: ${PUBLIC_API_KEY:-local_public_api_key_change_me}
+      PUBLIC_API_RATE_LIMIT: ${PUBLIC_API_RATE_LIMIT:-60}
+
+      STRIPE_KEY: ${STRIPE_KEY}
+
     env_file:
       - .env
+
     depends_on:
       db:
         condition: service_healthy
+
     healthcheck:
-      test: ["CMD", "python", "-c", "import socket; s = socket.socket(); s.connect(('127.0.0.1', 8000))"]
+      test: ["CMD-SHELL", "curl -fk https://localhost:8000/api/status || exit 1"]
       interval: 5s
       timeout: 5s
       retries: 5
       start_period: 5s
 
-  frontend:
-    build:
-      context: ./frontend
-      target: development
-    # Usamos $$ para decirle a Docker Compose: "No toques esto, déjaselo a Bash"
-    entrypoint: >
-      sh -c "
-      mkdir -p /app/src/assets &&
-      echo \"window.env = { URL_FRONT: '$$URL_FRONT', URL_BACK: '$$URL_BACK' };\" > /app/src/assets/env.js &&
-      exec npx ng serve camper --host 0.0.0.0 --port 4200 --allowed-hosts=all
-      "
-    volumes:
-      - ./frontend/camper:/app
-      - /app/node_modules
-    ports:
-      - "${FRONT_PORT}:${FRONT_TARGET_PORT:-4200}"
-    env_file:
-      - .env
-    stdin_open: true 
-    tty: true
 
-    depends_on:
-      backend:
-        condition: service_healthy
-    
 volumes:
   postgres_data:
