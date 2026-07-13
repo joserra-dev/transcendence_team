@@ -12,7 +12,7 @@ SHELL := /bin/bash
 
 .DEFAULT_GOAL := help
 
-.PHONY: all dev prod up up-prod clean fclean env doctor help
+.PHONY: all dev prod up up-prod clean fclean env doctor help status logs
 
 
 # ==============================================================================
@@ -51,10 +51,10 @@ endif
 status:
 	@docker ps
 
-logs:
-	@docker compose \
+logs: ## Ver logs del entorno de desarrollo
+	@$(COMPOSE) \
 	-f docker-compose.yml \
-	-f docker-compose.prod.yml \
+	-f docker-compose.dev.yml \
 	logs -f
 
 
@@ -93,7 +93,10 @@ up: ## Levantar desarrollo
 
 	@echo -e "$(COLOR_BLUE)🐳 Arrancando desarrollo...$(COLOR_RESET)"
 
-	$(COMPOSE) up -d --build --remove-orphans
+	$(COMPOSE) \
+		-f docker-compose.yml \
+		-f docker-compose.dev.yml \
+		up -d --build --remove-orphans
 
 	@echo -e "$(COLOR_GREEN)✔ Desarrollo levantado$(COLOR_RESET)"
 
@@ -174,7 +177,10 @@ clean: ## Parar contenedores
 
 	@echo -e "$(COLOR_YELLOW)🛑 Parando contenedores...$(COLOR_RESET)"
 
-	$(COMPOSE) down
+	$(COMPOSE) \
+		-f docker-compose.yml \
+		-f docker-compose.dev.yml \
+		down
 
 	@echo -e "$(COLOR_GREEN)✔ Limpieza realizada$(COLOR_RESET)"
 
@@ -188,6 +194,7 @@ fclean: ## Limpieza total Docker
 
 	$(COMPOSE) \
 		-f docker-compose.yml \
+		-f docker-compose.dev.yml \
 		-f docker-compose.prod.yml \
 		down \
 		--rmi all \

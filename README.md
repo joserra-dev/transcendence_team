@@ -28,27 +28,48 @@ Key features:
 ### Local development
 
 1. Clone the repository.
-2. Copy `.env.example` to `.env` and fill in real local values.
-3. Start the stack:
+2. Create the environment file (choose one):
+   - Interactive: run `make env` to generate `.env` with sensible defaults.
+   - Manual: copy `.env.example` to `.env` and fill in real local values.
+3. Start the stack with the provided Makefile (recommended):
 
 ```bash
-docker compose up --build
+make dev
 ```
 
-4. Open the frontend at the `URL_FRONT` value defined in `.env`, usually `http://localhost:4200`.
+   This runs `docker compose -f docker-compose.yml -f docker-compose.dev.yml up --build`, starting the database, the Flask backend (HTTPS on `BACK_PORT`, default 8000) and the Angular dev frontend (HTTP on `FRONT_PORT`, default 4200). Without Make, use: `docker compose -f docker-compose.yml -f docker-compose.dev.yml up --build`.
+4. Open the frontend dev server at `http://localhost:4200` (HTTP). The `URL_FRONT`/`URL_BACK` values in `.env` (e.g. `https://localhost:4200`) are used by the backend for redirects, emails and Stripe callbacks, not for accessing the dev server.
 
 ### Environment variables
 
-The application reads configuration from `.env`. Secrets must stay local and must never be committed.
+The application reads configuration from `.env`. Secrets must stay local and must never be committed. Generate it with `make env` or copy `.env.example` and edit it.
 
 Important variables:
-- `DATABASE_URL`: PostgreSQL connection string.
+- `DATABASE_URL`: PostgreSQL connection string (internal Docker host `db:5432`).
 - `JWT_SECRET_KEY`: secret used to sign JWT tokens.
 - `MAIL_USERNAME`, `MAIL_PASSWORD`, `MAIL_DEFAULT_SENDER`: email service credentials.
 - `PUBLIC_API_KEY`: API key for the documented public API.
 - `PUBLIC_API_RATE_LIMIT`: requests per minute per IP for the public API.
+- `STRIPE_KEY`: Stripe secret key required for the payment flow.
+- `URL_FRONT`, `URL_BACK`: public URLs used by the backend for redirects, emails and Stripe callbacks.
 
 Use `.env.example` as the template.
+
+### Production deployment
+
+For a production-like HTTPS setup with Nginx, use the provided Makefile target:
+
+```bash
+make prod
+```
+
+This runs `docker compose -f docker-compose.yml -f docker-compose.prod.yml up -d --build`, starting the database, the Flask backend (HTTPS on `BACK_PORT`) and the Nginx frontend serving the built Angular app over HTTPS on port 443 (self-signed certificate by default).
+
+Before deploying to a real environment:
+- Replace the self-signed certificates with valid TLS certificates.
+- `FLASK_ENV=production` and `FLASK_DEBUG=0` are already set in `docker-compose.prod.yml`.
+- Rotate `JWT_SECRET_KEY` and `PUBLIC_API_KEY`.
+- Configure real SMTP and Stripe credentials.
 
 ## Resources
 
