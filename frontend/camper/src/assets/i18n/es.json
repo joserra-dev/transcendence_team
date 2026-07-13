@@ -178,9 +178,14 @@
       "REQUIRED": "Campo obligatorio.",
       "UNDER_AGE": "Debes ser mayor de edad.",
       "INVALID_IBAN": "IBAN inválido.",
+      "INVALID_DOCUMENT": "Documento de identidad inválido.",
       "PASSWORDS_MISMATCH": "Las contraseñas no coinciden.",
       "DATA": "No se pudieron cargar los datos del usuario.",
       "CHANGES": "No se pudieron guardar los cambios. Revisa los datos."
+    },
+
+    "SUCCESS": {
+      "UPDATED": "Perfil actualizado correctamente."
     },
 
     "CHANGE_PASSWORD": "Cambiar contraseña",

@@ -7,11 +7,11 @@
     {{ 'PROFILE.LOADING' | translate }}
   </div>
 
-  <div class="success-msg mb-3" *ngIf="successMessage">
+  <div class="alert success mb-3" *ngIf="successMessage && !successMessage.startsWith('FRIENDS')">
     {{ successMessage | translate }}
   </div>
 
-  <div class="error-msg-standard mb-3" *ngIf="errorMessage">
+  <div class="alert error mb-3" *ngIf="errorMessage && !errorMessage.startsWith('FRIENDS')">
     {{ errorMessage | translate }}
   </div>
 
@@ -43,9 +43,29 @@
 
     <div class="mb-3 form-group-standard form-group--dni">
       <label for="identcard" class="form-label-custom">
-        {{ 'PROFILE.FIELDS.DNI' | translate }} <span class="label-tag">{{ 'PROFILE.NOT_EDITABLE' | translate }}</span>
+        {{ 'PROFILE.FIELDS.DNI' | translate }}
+        <span class="label-tag" *ngIf="!isDniEditable">{{ 'PROFILE.NOT_EDITABLE' | translate }}</span>
+        <span class="label-tag label-tag--required" *ngIf="isDniEditable && isEditing">*</span>
       </label>
-      <input id="identcard" type="text" formControlName="dniPersona" readonly>
+      <input
+        id="identcard"
+        type="text"
+        formControlName="dniPersona"
+        [readonly]="!isEditing || !isDniEditable"
+        maxlength="15"
+        placeholder="12345678Z">
+      <small class="error-msg-standard" *ngIf="isInvalid('dniPersona') && profileForm.get('dniPersona')?.hasError('required')">
+        {{ 'PROFILE.ERROR.REQUIRED' | translate }}
+      </small>
+      <small class="error-msg-standard" *ngIf="isInvalid('dniPersona') && profileForm.get('dniPersona')?.hasError('dniFormato')">
+        {{ 'REGISTER.ERROR.INVALID_DNI_FORMAT' | translate }}
+      </small>
+      <small class="error-msg-standard" *ngIf="isInvalid('dniPersona') && profileForm.get('dniPersona')?.hasError('dniInvalido')">
+        {{ 'REGISTER.ERROR.INVALID_DNI_LETTER' | translate }}
+      </small>
+      <small class="error-msg-standard" *ngIf="isInvalid('dniPersona') && profileForm.get('dniPersona')?.hasError('documentoInvalido')">
+        {{ 'PROFILE.ERROR.INVALID_DOCUMENT' | translate }}
+      </small>
     </div>
 
     <div class="mb-3 form-group-standard">
@@ -168,11 +188,11 @@
       </button>
     </div>
 
-    <div class="error-msg-standard mb-2" *ngIf="errorMessage && errorMessage.startsWith('FRIENDS')">
-      {{ errorMessage | translate }}
-    </div>
-    <div class="success-msg mb-2" *ngIf="successMessage && successMessage.startsWith('FRIENDS')">
+    <div class="alert success mb-2" *ngIf="successMessage && successMessage.startsWith('FRIENDS')">
       {{ successMessage | translate }}
+    </div>
+    <div class="alert error mb-2" *ngIf="errorMessage && errorMessage.startsWith('FRIENDS')">
+      {{ errorMessage | translate }}
     </div>
 
     <div class="friends-list" *ngIf="friends.length > 0">

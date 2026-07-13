@@ -55,6 +55,10 @@ export class Profile implements OnInit {
     ]
   });
 
+  get isDniEditable(): boolean {
+    return !this.currentUser?.dniPersona?.trim();
+  }
+
   ngOnInit() {
     this.loadUserProfile();
     this.loadFriends();
@@ -65,7 +69,10 @@ export class Profile implements OnInit {
     this.userService.getMe().subscribe({
       next: (user: User) => {
         this.currentUser = user;
-        this.profileForm.patchValue(user);
+        this.profileForm.patchValue({
+          ...user,
+          avatarPersona: user.avatar || '',
+        });
         this.isLoading = false;
       },
       error: (err) => {
@@ -132,6 +139,13 @@ export class Profile implements OnInit {
       'nombrePersona', 'apellidosPersona', 'fecNacimientoPersona',
       'metodoPago', 'avatarPersona', 'ibanPersona', 'tarjeta', 'passPersona', 'confirmPassPersona'
     ].forEach(field => this.profileForm.get(field)?.enable());
+
+    if (this.isDniEditable) {
+      const dniControl = this.profileForm.get('dniPersona');
+      dniControl?.setValidators([CustomValidators.documentoIdentidad]);
+      dniControl?.enable();
+      dniControl?.updateValueAndValidity();
+    }
   }
 
   cancelEdit() {
@@ -160,6 +174,11 @@ export class Profile implements OnInit {
       'nombrePersona', 'apellidosPersona', 'fecNacimientoPersona',
       'metodoPago', 'avatarPersona', 'ibanPersona', 'tarjeta', 'passPersona', 'confirmPassPersona'
     ].forEach(field => this.profileForm.get(field)?.disable());
+
+    const dniControl = this.profileForm.get('dniPersona');
+    dniControl?.clearValidators();
+    dniControl?.disable();
+    dniControl?.updateValueAndValidity();
   }
 
   saveChanges() {
@@ -176,22 +195,32 @@ export class Profile implements OnInit {
     };
 
     this.userService.updateProfile(updateData).subscribe({
-      next: (responseMessage: string) => {
-        this.successMessage = responseMessage;
+      next: () => {
+        this.successMessage = 'PROFILE.SUCCESS.UPDATED';
         const updatedUser = {
           ...this.currentUser!,
           ...formData,
-          avatar: formData.avatarPersona
+          avatar: formData.avatarPersona,
+          dniPersona: formData.dniPersona || this.currentUser?.dniPersona,
         };
         this.currentUser = updatedUser;
         sessionStorage.setItem('user', JSON.stringify(updatedUser));
         this.isEditing = false;
         this.isLoading = false;
         this.profileForm.patchValue({ passPersona: '', confirmPassPersona: '' });
+        this.profileForm.get('dniPersona')?.clearValidators();
+        this.profileForm.get('dniPersona')?.disable();
       },
       error: (err) => {
         console.error(err);
-        this.errorMessage = 'PROFILE.ERROR.CHANGES';
+        const backendError = err?.error;
+        if (typeof backendError === 'object' && backendError?.error) {
+          this.errorMessage = backendError.error;
+        } else if (typeof backendError === 'string') {
+          this.errorMessage = backendError;
+        } else {
+          this.errorMessage = 'PROFILE.ERROR.CHANGES';
+        }
         this.isLoading = false;
       }
     });

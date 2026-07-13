@@ -1,6 +1,6 @@
 import { Injectable, inject } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import { Observable } from 'rxjs';
+import { Observable, map } from 'rxjs';
 
 import { User } from '../models/user';
 
@@ -16,11 +16,10 @@ export class UserService {
     return this.http.get<User>(`${this.apiUrl}/me`);
   }
 
-  updateProfile(userData: any): Observable<string> {
-    return this.http.put(
+  updateProfile(userData: any): Observable<void> {
+    return this.http.put<{ mensaje?: string }>(
       `${this.apiUrl}/update`,
-      userData,
-      { responseType: 'text' }
-    );
+      userData
+    ).pipe(map(() => undefined));
   }
 }
