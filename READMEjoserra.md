@@ -816,3 +816,26 @@ Lo introdujo el cambio bajo revisión (antes era un `print`). Como `logging` ya 
 - Tu dev stack (`transcendence_team-*`) sigue operativo en sus puertos originales.
 
 **Conclusión**: los cambios bajo revisión son correctos y seguros para producción tras corregir el bug de `current_app` a nivel de módulo. Recomiendo commitear tras esta validación.
+
+### ACTUALIZACION README.MD
+
+## README.md revisado y corregido
+
+Se aplicaron las correcciones acordadas, alineando el README con la estructura real de compose/Makefile.
+
+### Cambios aplicados
+
+1. **CRÍTICO (comando roto)** — [`README.md:34`](README.md:34): `docker compose up --build` (que solo usa el base sin `frontend`) → **`make dev`**, documentando explícitamente que equivale a `docker compose -f docker-compose.yml -f docker-compose.dev.yml up --build` (arranca db + backend HTTPS + frontend Angular dev). Un dev ya no se quedará sin frontend.
+
+2. **Inconsistencia `URL_FRONT`** — [`README.md:41`](README.md:41): aclarado que el servidor Angular dev es **HTTP en 4200** (`http://localhost:4200`), y que `URL_FRONT`/`URL_BACK` (`https://...`) los usa el backend para redirecciones/emails/Stripe, no para abrir el dev server.
+
+3. **Variables de entorno** — [`README.md:45-54`](README.md:45): añadidas `STRIPE_KEY` (necesaria para pagos), `URL_FRONT`/`URL_BACK`, y mención a `make env` como generador de `.env` (además de copiar `.env.example`). `DATABASE_URL` ahora indica el host interno `db:5432`.
+
+4. **Flujo `make`** — referenciado como entrypoint recomendado en desarrollo (`make dev`, `make env`) y producción (`make prod`).
+
+5. **Nueva sección "Production deployment"** — [`README.md:58`](README.md:58): explica `make prod` (`docker-compose.prod.yml` + Nginx HTTPS/443), y la checklist pre-despliegue (certificados válidos, `FLASK_ENV=production`/`FLASK_DEBUG=0` ya en el compose, rotar `JWT_SECRET_KEY`/`PUBLIC_API_KEY`, SMTP/Stripe reales).
+
+### Estado
+El README ahora es preciso y reproducible: `make env` → `make dev` para desarrollo, `make prod` para producción, ambos coherentes con los docker-compose y el Makefile corregido previamente.
+
+(Nota: el stack de prueba de producción `transcendence_prod` sigue corriendo en 8001/5433/8443 desde antes; para pararlo: `docker compose -p transcendence_prod -f docker-compose.yml -f docker-compose.prod.yml -f /tmp/override-prod.yml down -v`.
