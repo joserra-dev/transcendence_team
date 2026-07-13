@@ -69,7 +69,7 @@ class Parking(db.Model):
                             Booking.end_date > fd,
                             Booking.status == '1'
                         ).first()
-                        if overlap:
+                        if overlap or space_data["status"] == "1":
                             space_data["status"] = "1"
                         else:
                             space_data["status"] = "0"

@@ -94,34 +94,12 @@ export class CustomValidators {
   }
 
   // 4. Validar IBAN (Formato ES + 22 dígitos)
-  static ibanValido(control: AbstractControl): ValidationErrors | null {
+  /*static ibanValido(control: AbstractControl): ValidationErrors | null {
     const iban = control.value;
     const regex = /^ES\d{22}$/;
     if (iban && !regex.test(iban)) {
       return { ibanInvalido: true };
     }
     return null;
-  }
-
-  static documentoIdentidad(control: AbstractControl): ValidationErrors | null {
-    const doc = (control.value || '').trim().toUpperCase();
-    if (!doc) return { required: true };
-
-    if (/^\d{8}[A-Z]$/.test(doc)) {
-      return CustomValidators.dniValido({ ...control, value: doc } as AbstractControl);
-    }
-
-    if (/^[XYZ]\d{7}[A-Z]$/.test(doc)) {
-      const mapping: Record<string, string> = { X: '0', Y: '1', Z: '2' };
-      const letters = 'TRWAGMYFPDXBNJZSQVHLCKE';
-      const numbers = mapping[doc[0]] + doc.slice(1, -1);
-      return letters[parseInt(numbers, 10) % 23] === doc.slice(-1) ? null : { documentoInvalido: true };
-    }
-
-    if (/^[A-Z0-9]{5,15}$/.test(doc)) {
-      return null;
-    }
-
-    return { documentoInvalido: true };
-  }
+  }*/
 }

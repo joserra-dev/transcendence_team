@@ -201,25 +201,6 @@ def _company_confirmed_bookings(company_id: int):
     )
 
 
-def _available_metric_years(company_id: int) -> list[int]:
-    rows = (
-        db.session.query(db.func.extract('year', Booking.created_at).label('year'))
-        .join(Space)
-        .join(Parking)
-        .filter(
-            Parking.id_company == company_id,
-            Booking.status == '1',
-            Booking.created_at.isnot(None),
-        )
-        .distinct()
-        .all()
-    )
-    years = sorted({int(row.year) for row in rows if row.year}, reverse=True)
-    if not years:
-        return [date.today().year]
-    return years
-
-
 def _parking_name(booking: Booking) -> str:
     if booking.space and booking.space.parking and booking.space.parking.name:
         return booking.space.parking.name
@@ -821,6 +802,8 @@ def cancel_booking_admin(_user, profile, booking_id):
         return jsonify({"error": _("No autorizado")}), 403
     if booking.status == '0':
         return jsonify({"error": _("La reserva ya está cancelada")}), 400
+    if booking.start_date and booking.start_date <= date.today():
+        return jsonify({"error": _("No se puede cancelar una reserva cuya estancia ya ha comenzado o finalizado")}), 400
 
     booking.status = '0'
     db.session.commit()
@@ -1317,18 +1300,9 @@ def get_company_metrics(_user, _profile, company_id):
 
 
 def _metrics_response(company: Company) -> dict:
-    available_years = _available_metric_years(company.id)
-    requested_year = request.args.get('year')
-    if requested_year is None:
-        year = available_years[0]
-    else:
-        year = _parse_metric_int(requested_year, available_years[0])
-        if year not in available_years:
-            year = available_years[0]
-
-    result = _build_company_metrics(company, year)
-    result['availableYears'] = available_years
-    return result
+    today = date.today()
+    year = _parse_metric_int(request.args.get('year'), today.year)
+    return _build_company_metrics(company, year)
 
 
 @admin_bp.route('/users', methods=['GET'])

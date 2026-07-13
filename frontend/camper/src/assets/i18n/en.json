@@ -178,14 +178,9 @@
       "REQUIRED": "Required field.",
       "UNDER_AGE": "You must be at least 18.",
       "INVALID_IBAN": "Invalid IBAN.",
-      "INVALID_DOCUMENT": "Invalid identity document.",
       "PASSWORDS_MISMATCH": "Passwords do not match.",
       "DATA": "User data could not be loaded.",
       "CHANGES": "Changes could not be saved. Check your data."
-    },
-
-    "SUCCESS": {
-      "UPDATED": "Profile updated successfully."
     },
 
     "CHANGE_PASSWORD": "Change Password",

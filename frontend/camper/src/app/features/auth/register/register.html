@@ -15,46 +15,6 @@
   </div>
 
   <form [formGroup]="registerForm" (ngSubmit)="onSubmit()" class="form-standard">
-
-    <!--<div class="row g-4 mb-3 form-2-group">
-      <div class="col-md-6 form-group-standard">
-        <label class="form-label-custom">{{ 'REGISTER.FIELDS.NAME' | translate }}</label>
-        <input type="text" formControlName="nombre" [class.error-input]="isInvalid('nombre')">
-        <small class="error-msg-standard" *ngIf="isInvalid('nombre')">{{ 'REGISTER.ERROR.REQUIRED' | translate }}</small>
-      </div>
-      <div class="col-md-6 form-group-standard">
-        <label class="form-label-custom">{{ 'REGISTER.FIELDS.LASTNAME' | translate }}</label>
-        <input type="text" formControlName="apellidos" [class.error-input]="isInvalid('apellidos')">
-        <small class="error-msg-standard" *ngIf="isInvalid('apellidos')">{{ 'REGISTER.ERROR.REQUIRED' | translate }}</small>
-      </div>
-    </div>
-
-    <div class="row g-4 mb-3 form-2-group">
-      <div class="col-md-6 form-group-standard">
-        <label class="form-label-custom">{{ 'REGISTER.FIELDS.DNI' | translate }}</label>
-        <input type="text" formControlName="dni" placeholder="{{ 'REGISTER.PLACEHOLDERS.DNI' | translate }}" [class.error-input]="isInvalid('dni')">
-        <div *ngIf="isInvalid('dni')">
-          <small class="error-msg-standard" *ngIf="registerForm.get('dni')?.hasError('required')">{{ 'REGISTER.ERROR.REQUIRED' | translate }}</small>
-          <small class="error-msg-standard" *ngIf="registerForm.get('dni')?.hasError('dniFormato')">{{ 'REGISTER.ERROR.INVALID_DNI_FORMAT' | translate }}</small>
-          <small class="error-msg-standard" *ngIf="registerForm.get('dni')?.hasError('dniInvalido')">{{ 'REGISTER.ERROR.INVALID_DNI_LETTER' | translate }}</small>
-        </div>
-      </div>
-      <div class="col-md-6 form-group-standard">
-        <label class="form-label-custom">{{ 'REGISTER.FIELDS.BIRTHDATE' | translate }}</label>
-        <input type="date" formControlName="fechaNacimiento" [class.error-input]="isInvalid('fechaNacimiento')">
-        <div *ngIf="isInvalid('fechaNacimiento')">
-          <small class="error-msg-standard" *ngIf="registerForm.get('fechaNacimiento')?.hasError('required')">{{ 'REGISTER.ERROR.REQUIRED' | translate }}</small>
-          <small class="error-msg-standard" *ngIf="registerForm.get('fechaNacimiento')?.hasError('menorDeEdad')">{{ 'REGISTER.ERROR.UNDER_AGE' | translate }}</small>
-        </div>
-      </div>
-    </div>-->
-
-    <!--<div class="mb-3 form-group-standard">
-      <label class="form-label-custom">{{ 'REGISTER.FIELDS.IBAN' | translate }}</label>
-      <input type="text" formControlName="iban" placeholder="{{ 'REGISTER.PLACEHOLDERS.IBAN' | translate }}" [class.error-input]="isInvalid('iban')">
-      <small class="error-msg-standard" *ngIf="registerForm.get('iban')?.hasError('ibanInvalido')">{{ 'REGISTER.ERROR.INVALID_IBAN' | translate }}</small>
-    </div>-->
-
     <div class="mb-3 form-group-standard">
       <label for="email" class="form-label-custom">{{ 'REGISTER.FIELDS.EMAIL' | translate }}</label>
       <input id="email" maxlength="254" type="email" formControlName="email" placeholder="{{ 'REGISTER.PLACEHOLDERS.EMAIL' | translate }}" [class.error-input]="isInvalid('email')">

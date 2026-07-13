@@ -21,6 +21,7 @@ export class BookingDetail implements OnInit {
 
   booking: any | null = null;
   isLoading = true;
+  today = new Date().toISOString().slice(0, 10);
 
   errorMessage = '';
   successMessage = '';
@@ -161,12 +162,5 @@ export class BookingDetail implements OnInit {
 
   getStatusLabel(status: string): string {
     return status === '1' ? 'HISTORY_DETAIL.CONFIRMED' : 'HISTORY_DETAIL.CANCELLED';
-  }
-
-  canCancelBooking(): boolean {
-    if (!this.booking?.startDate) {
-      return false;
-    }
-    return new Date(this.booking.startDate) > new Date();
   }
 }

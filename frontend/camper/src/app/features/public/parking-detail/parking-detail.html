@@ -169,7 +169,6 @@
       <div style="background: #f8f9fa; padding: 1rem; border-radius: 6px; font-size: 0.95rem; margin-bottom: 1.5rem;">
         <p class="mb-1"><strong>{{ 'PARKING.AUX.THIRD' | translate }}</strong> {{ entryDate | date: dateFormat }} {{ 'PARKING.AUX.FOURTH' | translate }} {{ exitDate | date: dateFormat }}</p>
         <p class="mb-1"><strong>{{ 'PARKING.AUX.SECOND' | translate }}</strong> <span style="color: #2c3e50; font-size: 1.2rem; font-weight: bold;">{{ totalPrice }}€</span></p>
-        <p class="mb-1"><strong>Método de pago:</strong> {{ getPaymentMethodLabel() }}</p>
         <p *ngIf="selectedSpot?.status !== '0'" style="color: #856404; background: #fff3cd; padding: 0.75rem; border-radius: 6px; margin-top: 0.75rem;">
           {{ 'PARKING.PLATE_WARNING' | translate }}
         </p>

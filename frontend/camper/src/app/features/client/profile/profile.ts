@@ -42,22 +42,18 @@ export class Profile implements OnInit {
     nombrePersona: [{ value: '', disabled: true }, Validators.required],
     apellidosPersona: [{ value: '', disabled: true }, Validators.required],
     fecNacimientoPersona: [{ value: '', disabled: true }, [Validators.required, CustomValidators.mayorDeEdad]],
-    metodoPago: [{ value: 'iban', disabled: true }, Validators.required],
+    //metodoPago: [{ value: 'iban', disabled: true }, Validators.required],
     avatarPersona: [{ value: '', disabled: true }],
-    ibanPersona: [{ value: '', disabled: true }],
+    //ibanPersona: [{ value: '', disabled: true }],
     tarjeta: [{ value: '', disabled: true }],
     passPersona: [{ value: '', disabled: true }],
     confirmPassPersona: [{ value: '', disabled: true }]
   }, {
     validators: [
       CustomValidators.matchPasswords('passPersona', 'confirmPassPersona'),
-      this.paymentMethodValidator()
+      //this.paymentMethodValidator()
     ]
   });
-
-  get isDniEditable(): boolean {
-    return !this.currentUser?.dniPersona?.trim();
-  }
 
   ngOnInit() {
     this.loadUserProfile();
@@ -69,10 +65,7 @@ export class Profile implements OnInit {
     this.userService.getMe().subscribe({
       next: (user: User) => {
         this.currentUser = user;
-        this.profileForm.patchValue({
-          ...user,
-          avatarPersona: user.avatar || '',
-        });
+        this.profileForm.patchValue(user);
         this.isLoading = false;
       },
       error: (err) => {
@@ -94,7 +87,7 @@ export class Profile implements OnInit {
     });
   }
 
-  paymentMethodValidator() {
+ /* paymentMethodValidator() {
     return (form: AbstractControl): ValidationErrors | null => {
       const metodo = form.get('metodoPago')?.value;
       const iban = form.get('ibanPersona')?.value;
@@ -128,7 +121,7 @@ export class Profile implements OnInit {
       }
       return null;
     };
-  }
+  }*/
 
   enableEdit() {
     this.isEditing = true;
@@ -137,15 +130,8 @@ export class Profile implements OnInit {
     // Habilitamos todos los campos editables
     [
       'nombrePersona', 'apellidosPersona', 'fecNacimientoPersona',
-      'metodoPago', 'avatarPersona', 'ibanPersona', 'tarjeta', 'passPersona', 'confirmPassPersona'
+      'avatarPersona',  'passPersona', 'confirmPassPersona'
     ].forEach(field => this.profileForm.get(field)?.enable());
-
-    if (this.isDniEditable) {
-      const dniControl = this.profileForm.get('dniPersona');
-      dniControl?.setValidators([CustomValidators.documentoIdentidad]);
-      dniControl?.enable();
-      dniControl?.updateValueAndValidity();
-    }
   }
 
   cancelEdit() {
@@ -160,10 +146,10 @@ export class Profile implements OnInit {
         nombrePersona: this.currentUser.nombrePersona,
         apellidosPersona: this.currentUser.apellidosPersona,
         fecNacimientoPersona: this.currentUser.fecNacimientoPersona,
-        metodoPago: this.currentUser.metodoPago || 'iban',
+       // metodoPago: this.currentUser.metodoPago || 'iban',
         avatarPersona: this.currentUser.avatar,
-        ibanPersona: this.currentUser.ibanPersona,
-        tarjeta: this.currentUser.tarjeta,
+       // ibanPersona: this.currentUser.ibanPersona,
+       // tarjeta: this.currentUser.tarjeta,
         passPersona: '',
         confirmPassPersona: ''
       });
@@ -172,13 +158,8 @@ export class Profile implements OnInit {
     // Deshabilitamos todos los campos editables al cancelar
     [
       'nombrePersona', 'apellidosPersona', 'fecNacimientoPersona',
-      'metodoPago', 'avatarPersona', 'ibanPersona', 'tarjeta', 'passPersona', 'confirmPassPersona'
+       'avatarPersona',  'passPersona', 'confirmPassPersona'
     ].forEach(field => this.profileForm.get(field)?.disable());
-
-    const dniControl = this.profileForm.get('dniPersona');
-    dniControl?.clearValidators();
-    dniControl?.disable();
-    dniControl?.updateValueAndValidity();
   }
 
   saveChanges() {
@@ -195,32 +176,22 @@ export class Profile implements OnInit {
     };
 
     this.userService.updateProfile(updateData).subscribe({
-      next: () => {
-        this.successMessage = 'PROFILE.SUCCESS.UPDATED';
+      next: (responseMessage: string) => {
+        this.successMessage = responseMessage;
         const updatedUser = {
           ...this.currentUser!,
           ...formData,
-          avatar: formData.avatarPersona,
-          dniPersona: formData.dniPersona || this.currentUser?.dniPersona,
+          avatar: formData.avatarPersona
         };
         this.currentUser = updatedUser;
         sessionStorage.setItem('user', JSON.stringify(updatedUser));
         this.isEditing = false;
         this.isLoading = false;
         this.profileForm.patchValue({ passPersona: '', confirmPassPersona: '' });
-        this.profileForm.get('dniPersona')?.clearValidators();
-        this.profileForm.get('dniPersona')?.disable();
       },
       error: (err) => {
         console.error(err);
-        const backendError = err?.error;
-        if (typeof backendError === 'object' && backendError?.error) {
-          this.errorMessage = backendError.error;
-        } else if (typeof backendError === 'string') {
-          this.errorMessage = backendError;
-        } else {
-          this.errorMessage = 'PROFILE.ERROR.CHANGES';
-        }
+        this.errorMessage = 'PROFILE.ERROR.CHANGES';
         this.isLoading = false;
       }
     });

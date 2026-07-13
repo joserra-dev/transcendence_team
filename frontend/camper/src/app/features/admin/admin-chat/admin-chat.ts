@@ -3,10 +3,9 @@ import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { RouterLink } from '@angular/router';
 import { TranslateModule } from '@ngx-translate/core';
-import { Subscription } from 'rxjs';
+import { interval, Subscription } from 'rxjs';
 
 import { Chat } from '../../../core/services/chat';
-import { ChatSocket } from '../../../core/services/chat-socket';
 import { Auth } from '../../../core/services/auth';
 import { ChatMessage, ChatThread } from '../../../core/models/chat';
 
@@ -20,7 +19,6 @@ export class AdminChat implements OnInit, OnDestroy {
   @ViewChild('messagesContainer') messagesContainer?: ElementRef<HTMLElement>;
 
   private chatService = inject(Chat);
-  private chatSocket = inject(ChatSocket);
   private authService = inject(Auth);
 
   threads: ChatThread[] = [];
@@ -33,26 +31,19 @@ export class AdminChat implements OnInit, OnDestroy {
   errorMessage = '';
   isSuperAdmin = false;
   backLink = '/admin/dashboard';
-  private socketSubs: Subscription[] = [];
+  private pollSub?: Subscription;
   private currentUserId: number | null = null;
 
   ngOnInit() {
     this.isSuperAdmin = this.authService.isSuperAdmin();
     this.backLink = this.isSuperAdmin ? '/admin/companies' : '/admin/dashboard';
     this.currentUserId = this.authService.getUser()?.id ?? null;
-
-    this.chatSocket.connect();
-    this.socketSubs.push(
-      this.chatSocket.onNewMessage().subscribe((message) => this.handleIncomingMessage(message)),
-      this.chatSocket.onThreadUpdated().subscribe((thread) => this.handleThreadUpdated(thread)),
-      this.chatSocket.onMessagesRead().subscribe((data) => this.handleMessagesRead(data)),
-    );
-
     this.loadThreads();
+    this.pollSub = interval(10000).subscribe(() => this.refreshCurrentThread());
   }
 
   ngOnDestroy() {
-    this.socketSubs.forEach((sub) => sub.unsubscribe());
+    this.pollSub?.unsubscribe();
   }
 
   get selectedThread(): ChatThread | undefined {
@@ -87,7 +78,6 @@ export class AdminChat implements OnInit, OnDestroy {
       return;
     }
     this.selectedCompanyId = companyId;
-    this.chatSocket.joinThread(companyId);
     this.loadMessages(companyId);
   }
 
@@ -125,7 +115,7 @@ export class AdminChat implements OnInit, OnDestroy {
     this.isSending = true;
     this.chatService.sendMessage(this.selectedCompanyId, content).subscribe({
       next: (message) => {
-        this.appendMessageIfNew(message);
+        this.messages = [...this.messages, message];
         this.newMessage = '';
         this.isSending = false;
         this.updateThreadPreview(message);
@@ -162,59 +152,38 @@ export class AdminChat implements OnInit, OnDestroy {
     });
   }
 
-  private handleIncomingMessage(message: ChatMessage) {
-    if (message.companyId !== this.selectedCompanyId) {
+  private refreshCurrentThread() {
+    if (!this.selectedCompanyId) {
+      this.chatService.getThreads().subscribe({
+        next: (threads) => {
+          this.threads = threads;
+        },
+      });
       return;
     }
 
-    const isNew = this.appendMessageIfNew(message);
-    if (!isNew) {
-      return;
-    }
-
-    if (message.senderId !== this.currentUserId) {
-      this.chatService.markAsRead(message.companyId).subscribe({
-        next: () => {
-          const thread = this.threads.find((t) => t.companyId === message.companyId);
+    const companyId = this.selectedCompanyId;
+    this.chatService.getMessages(companyId).subscribe({
+      next: (messages) => {
+        const hadNew = messages.length > this.messages.length;
+        this.messages = messages;
+        if (hadNew) {
+          this.chatService.markAsRead(companyId).subscribe();
+          const thread = this.threads.find((t) => t.companyId === companyId);
           if (thread) {
             thread.unreadCount = 0;
           }
-        },
-      });
-    }
-
-    this.scrollToBottom();
-  }
-
-  private handleThreadUpdated(thread: ChatThread) {
-    const index = this.threads.findIndex((t) => t.companyId === thread.companyId);
-    if (index >= 0) {
-      this.threads[index] = thread;
-    } else {
-      this.threads.push(thread);
-    }
-
-    this.threads.sort((a, b) => (b.lastMessageAt || '').localeCompare(a.lastMessageAt || ''));
-  }
-
-  private handleMessagesRead(data: { companyId: number; readerId: number }) {
-    if (data.readerId === this.currentUserId) {
-      return;
-    }
-
-    if (data.companyId === this.selectedCompanyId) {
-      this.messages = this.messages.map((message) =>
-        message.senderId === this.currentUserId ? { ...message, isRead: true } : message,
-      );
-    }
-  }
-
-  private appendMessageIfNew(message: ChatMessage): boolean {
-    if (this.messages.some((existing) => existing.id === message.id)) {
-      return false;
-    }
-    this.messages = [...this.messages, message];
-    return true;
+        }
+        this.chatService.getThreads().subscribe({
+          next: (threads) => {
+            this.threads = threads;
+          },
+        });
+        if (hadNew) {
+          this.scrollToBottom();
+        }
+      },
+    });
   }
 
   private updateThreadPreview(message: ChatMessage) {

@@ -178,14 +178,9 @@
       "REQUIRED": "Derrigorrezko eremua.",
       "UNDER_AGE": "Adinez nagusia izan behar zara.",
       "INVALID_IBAN": "IBAN baliogabea.",
-      "INVALID_DOCUMENT": "Nortasun agiri baliogabea.",
       "PASSWORDS_MISMATCH": "Pasahitzak ez datoz bat.",
       "DATA": "Ezin izan dira erabiltzailearen datuak kargatu.",
       "CHANGES": "Ezin izan dira aldaketak gorde. Egiaztatu datuak."
-    },
-
-    "SUCCESS": {
-      "UPDATED": "Profila ondo eguneratu da."
     },
 
     "CHANGE_PASSWORD": "Aldatu pasahitza",

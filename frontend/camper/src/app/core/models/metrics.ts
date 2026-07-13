@@ -7,7 +7,6 @@ export interface CompanyMetrics {
   companyId: number;
   companyName: string;
   year: number;
-  availableYears: number[];
   totals: {
     sales: number;
     bookings: number;

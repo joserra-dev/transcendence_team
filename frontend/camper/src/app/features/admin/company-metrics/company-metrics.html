@@ -13,7 +13,7 @@
     <label>
       {{ 'ADMIN_METRICS.FILTER_YEAR' | translate }}
       <select [(ngModel)]="year" [ngModelOptions]="{standalone: true}">
-        <option *ngFor="let yearOption of availableYears" [ngValue]="yearOption">{{ yearOption }}</option>
+        <option *ngFor="let yearOption of yearOptions" [ngValue]="yearOption">{{ yearOption }}</option>
       </select>
     </label>
     <button class="btn btn-primary" type="button" (click)="applyFilters()" [disabled]="isLoading">

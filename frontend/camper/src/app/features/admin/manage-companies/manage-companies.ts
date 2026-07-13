@@ -10,8 +10,7 @@ import { Company } from '../../../core/models/user';
 import { ConfirmDialog } from '../../../shared/components/confirm-dialog/confirm-dialog';
 import { CustomValidators } from '../../../shared/validators/custom-validators/custom-validators';
 import { Chat } from '../../../core/services/chat';
-import { ChatSocket } from '../../../core/services/chat-socket';
-import { Subscription } from 'rxjs';
+import { interval, Subscription } from 'rxjs';
 
 @Component({
   selector: 'app-manage-companies',
@@ -27,7 +26,6 @@ export class ManageCompanies implements OnInit, OnDestroy {
   private adminService = inject(Admin);
   private authService = inject(Auth);
   private chatService = inject(Chat);
-  private chatSocket = inject(ChatSocket);
   private router = inject(Router);
 
   readonly pageSize = 8;
@@ -50,7 +48,7 @@ export class ManageCompanies implements OnInit, OnDestroy {
   showDeleteConfirm = false;
   deleteConfirmParams: Record<string, string> = {};
   private companyPendingDelete: Company | null = null;
-  private unreadSub?: Subscription;
+  private unreadPollSub?: Subscription;
 
   readonly maxFieldLength = 35;
 
@@ -69,14 +67,11 @@ export class ManageCompanies implements OnInit, OnDestroy {
     this.userName = user?.nombrePersona || user?.emailPersona || '';
     this.loadCompanies();
     this.loadUnreadCount();
-    this.chatSocket.connect();
-    this.unreadSub = this.chatSocket.onUnreadCount().subscribe((count) => {
-      this.unreadCount = count;
-    });
+    this.unreadPollSub = interval(30000).subscribe(() => this.loadUnreadCount());
   }
 
   ngOnDestroy() {
-    this.unreadSub?.unsubscribe();
+    this.unreadPollSub?.unsubscribe();
   }
 
   loadUnreadCount() {

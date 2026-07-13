@@ -30,7 +30,6 @@ export class CompanyMetricsPage implements OnInit {
   isLoading = true;
   errorMessage = '';
   year = new Date().getFullYear();
-  availableYears: number[] = [new Date().getFullYear()];
 
   readonly chartColors = ['#4F46E5', '#059669', '#F59E0B', '#EC4899', '#8B5CF6', '#006299', '#8A9C3B', '#6B7280'];
 
@@ -39,6 +38,11 @@ export class CompanyMetricsPage implements OnInit {
     this.isSuperAdminView = !!idParam;
     this.companyId = idParam ? Number(idParam) : null;
     this.loadMetrics();
+  }
+
+  get yearOptions(): number[] {
+    const current = new Date().getFullYear();
+    return Array.from({ length: 5 }, (_, index) => current - index);
   }
 
   get backLink(): string[] {
@@ -95,8 +99,6 @@ export class CompanyMetricsPage implements OnInit {
     request.subscribe({
       next: (metrics) => {
         this.metrics = metrics;
-        this.availableYears = metrics.availableYears ?? [metrics.year];
-        this.year = metrics.year;
         this.isLoading = false;
         this.refreshView();
       },

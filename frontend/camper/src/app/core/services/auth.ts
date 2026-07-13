@@ -4,7 +4,6 @@ import { Router } from '@angular/router';
 import { Observable, tap } from 'rxjs';
 
 import { User, AdminUser, Company } from '../models/user';
-import { ChatSocket } from './chat-socket';
 
 export interface LoginRequest {
   email: string;
@@ -39,7 +38,6 @@ export interface RegisterResponse {
 export class Auth {
   private http = inject(HttpClient);
   private router = inject(Router);
-  private chatSocket = inject(ChatSocket);
 
   private apiUrl = `${(window.env?.URL_BACK || 'http://localhost:5000').replace(/\/$/, '')}/api/users`;
 
@@ -82,7 +80,6 @@ export class Auth {
   }
 
   logout(): void {
-    this.chatSocket.disconnect();
     sessionStorage.removeItem('token');
     sessionStorage.removeItem('user');
     this.router.navigate(['/auth/login-client']);
@@ -127,7 +124,6 @@ export class Auth {
   }
 
   logoutAdmin(): void {
-    this.chatSocket.disconnect();
     sessionStorage.removeItem('token');
     sessionStorage.removeItem('user');
     this.router.navigate(['/auth/login-admin']);

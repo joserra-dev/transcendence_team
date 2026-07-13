@@ -10,9 +10,8 @@
 
         <!-- LOGO + NAVEGACIÓN ATRÁS / ADELANTE -->
         @let showNavHistory = showNavHistory$ | async;
-        @let homeLink = homeLink$ | async;
         <div class="col-auto logo-nav-group" [class.logo-nav-group--home]="!showNavHistory">
-          <a [routerLink]="homeLink || '/'" class="logo-wrapper">
+          <a routerLink="/" class="logo-wrapper">
             <img src="/images/logos/logo-horizontal.png" class="logo" alt="Logo Hemen-Go!">
           </a>
 

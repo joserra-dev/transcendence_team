@@ -160,22 +160,16 @@ export class ParkingDetail implements OnInit, OnDestroy {
       return;
     }
 
-    const user = this.authService.getUser();
-    const hasIban = (user?.metodoPago === 'iban' || !user?.metodoPago) && user?.ibanPersona;
-    const hasCard = user?.metodoPago === 'tarjeta' && user?.tarjeta;
-    const hasCash = user?.metodoPago === 'efectivo';
-
-    if (!hasIban && !hasCard && !hasCash) {
-      this.router.navigate(['/client/profile']);
-      return;
-    }
     this.showConfirmModal = true;
   }
 
+  /**
+   * Envía la reserva al backend (Flask /api/booking) e inicia la redirección a Stripe
+   */
   confirmBooking() {
     if (!this.selectedSpot || !this.parking) return;
 
-    if (!this.isDateRangeValid()) {
+    if (!this.isDateRangeValid() || !this.isLicensePlateValid()) {
       this.errorMessage = 'PARKING.ERRORS.INVALID_DATES';
       this.successMessage = '';
       this.isLoading = false;
@@ -185,44 +179,30 @@ export class ParkingDetail implements OnInit, OnDestroy {
 
     this.showConfirmModal = false;
     this.isLoading = true;
-    const bookingData: BookingRequest = {
+
+      const bookingPayload = {
       idSpace: this.selectedSpot.id,
-      idParking: this.parking!.id,
+      idParking: this.parking.id,
       startDate: this.entryDate,
       endDate: this.exitDate,
-      licensePlate: this.licensePlate
+      licensePlate: this.licensePlate.replace(/[\s\-_.]/g, '').toUpperCase()
     };
 
-    this.bookingService.createBooking(bookingData).subscribe({
-      next: (res) => {
-        this.successMessage = 'PARKING.SUCCESS';
-        this.router.navigate(['/client/history']);
+    // Llamamos a tu servicio mapeado correctamente a /api/booking
+    this.bookingService.createBooking(bookingPayload).subscribe({
+      next: (res: any) => {
+        // Al quitar responseType: 'text', 'res' ya es un objeto JSON parsed por Angular
+        if (res && res.url) {
+          //Redirección a la pasarela segura de Stripe Checkout
+          window.location.href = res.url;
+        } else {
+          this.errorMessage = 'No se recibió la URL de pago desde el servidor.';
+          this.isLoading = false;
+        }
       },
       error: (err) => {
-        console.error("Booking Error Objeto Completo:", err);
-        let errorMsg = 'PARKING.ERRORS.BOOKING';
-        
-        if (err.error) {
-            if (typeof err.error === 'string') {
-                try {
-                    const parsed = JSON.parse(err.error);
-                    errorMsg = parsed.error || parsed.message || err.error;
-                } catch(e) {
-                    errorMsg = err.error;
-                }
-            } else if (err.error.error) {
-                errorMsg = err.error.error;
-            } else if (err.error.message) {
-                errorMsg = err.error.message;
-            } else {
-                try { errorMsg = JSON.stringify(err.error); } catch(e) {}
-            }
-        } else if (err.message) {
-            errorMsg = err.message;
-        }
-
-        this.spamMessage = "🚨 AVISO 🚨\n\n" + errorMsg;
-        this.errorMessage = errorMsg;
+        console.error("Error al procesar la reserva en Flask:", err);
+        this.errorMessage = 'PARKING.ERRORS.BOOKING';
         this.isLoading = false;
       }
     });
@@ -233,7 +213,6 @@ export class ParkingDetail implements OnInit, OnDestroy {
     const lat = this.parking.latitude;
     const lon = this.parking.longitude;
     
-    // 💡 URL configurada para Google Maps con marcador centrado (Zoom z=15)
     const rawUrl = `https://maps.google.com/maps?q=${lat},${lon}&z=15&output=embed&t=m`;
     this.mapUrl = this.sanitizer.bypassSecurityTrustResourceUrl(rawUrl);
     this.showMapModal = true;
@@ -277,22 +256,6 @@ export class ParkingDetail implements OnInit, OnDestroy {
   prevImage(event: Event) {
     event.stopPropagation();
     this.currentImage = (this.currentImage - 1 + this.galleryImages.length) % this.galleryImages.length;
-  }
-
-  getPaymentMethodLabel(): string {
-    const user = this.authService.getUser();
-    if (!user) return '';
-    const metodo = user.metodoPago || 'iban';
-    if (metodo === 'iban' && user.ibanPersona) {
-      const lastDigits = user.ibanPersona.slice(-4);
-      return `Cuenta Bancaria (ES...${lastDigits})`;
-    } else if (metodo === 'tarjeta' && user.tarjeta) {
-      const lastDigits = user.tarjeta.slice(-4);
-      return `Tarjeta de Crédito (**** **** **** ${lastDigits})`;
-    } else if (metodo === 'efectivo') {
-      return 'Pago en Efectivo (Se abonará al llegar)';
-    }
-    return '';
   }
 
   isLicensePlateValid(): boolean {

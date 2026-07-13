@@ -7,11 +7,11 @@
     {{ 'PROFILE.LOADING' | translate }}
   </div>
 
-  <div class="alert success mb-3" *ngIf="successMessage && !successMessage.startsWith('FRIENDS')">
+  <div class="success-msg mb-3" *ngIf="successMessage">
     {{ successMessage | translate }}
   </div>
 
-  <div class="alert error mb-3" *ngIf="errorMessage && !errorMessage.startsWith('FRIENDS')">
+  <div class="error-msg-standard mb-3" *ngIf="errorMessage">
     {{ errorMessage | translate }}
   </div>
 
@@ -43,29 +43,9 @@
 
     <div class="mb-3 form-group-standard form-group--dni">
       <label for="identcard" class="form-label-custom">
-        {{ 'PROFILE.FIELDS.DNI' | translate }}
-        <span class="label-tag" *ngIf="!isDniEditable">{{ 'PROFILE.NOT_EDITABLE' | translate }}</span>
-        <span class="label-tag label-tag--required" *ngIf="isDniEditable && isEditing">*</span>
+        {{ 'PROFILE.FIELDS.DNI' | translate }} <span class="label-tag">{{ 'PROFILE.NOT_EDITABLE' | translate }}</span>
       </label>
-      <input
-        id="identcard"
-        type="text"
-        formControlName="dniPersona"
-        [readonly]="!isEditing || !isDniEditable"
-        maxlength="15"
-        placeholder="12345678Z">
-      <small class="error-msg-standard" *ngIf="isInvalid('dniPersona') && profileForm.get('dniPersona')?.hasError('required')">
-        {{ 'PROFILE.ERROR.REQUIRED' | translate }}
-      </small>
-      <small class="error-msg-standard" *ngIf="isInvalid('dniPersona') && profileForm.get('dniPersona')?.hasError('dniFormato')">
-        {{ 'REGISTER.ERROR.INVALID_DNI_FORMAT' | translate }}
-      </small>
-      <small class="error-msg-standard" *ngIf="isInvalid('dniPersona') && profileForm.get('dniPersona')?.hasError('dniInvalido')">
-        {{ 'REGISTER.ERROR.INVALID_DNI_LETTER' | translate }}
-      </small>
-      <small class="error-msg-standard" *ngIf="isInvalid('dniPersona') && profileForm.get('dniPersona')?.hasError('documentoInvalido')">
-        {{ 'PROFILE.ERROR.INVALID_DOCUMENT' | translate }}
-      </small>
+      <input id="identcard" type="text" formControlName="dniPersona" readonly>
     </div>
 
     <div class="mb-3 form-group-standard">
@@ -95,7 +75,7 @@
 
     </div>
 
-    <div class="row g-4 mb-3 form-2-group">
+    <!--<div class="row g-4 mb-3 form-2-group">
       <div class="col-md-6 form-group-standard">
         <label for="paidmethod" class="form-label-custom">Método de Pago</label>
         <select id="paidmethod"  formControlName="metodoPago" style="width: 100%; padding: 0.75rem; border-radius: 4px; border: 1px solid #ccc; font-size: 1rem; background-color: #fff; color: #333;">
@@ -127,7 +107,7 @@
           Has seleccionado pago en efectivo. Abonarás el precio total directamente en el establecimiento/camping al llegar.
         </div>
       </div>
-    </div>
+    </div>-->
 
     <h3 class="section-title">{{ 'PROFILE.CHANGE_PASSWORD' | translate }}</h3>
     <p class="subtitle-small">{{ 'PROFILE.PASSWORD_NOTE' | translate }}</p>
@@ -188,11 +168,11 @@
       </button>
     </div>
 
-    <div class="alert success mb-2" *ngIf="successMessage && successMessage.startsWith('FRIENDS')">
-      {{ successMessage | translate }}
-    </div>
-    <div class="alert error mb-2" *ngIf="errorMessage && errorMessage.startsWith('FRIENDS')">
+    <div class="error-msg-standard mb-2" *ngIf="errorMessage && errorMessage.startsWith('FRIENDS')">
       {{ errorMessage | translate }}
+    </div>
+    <div class="success-msg mb-2" *ngIf="successMessage && successMessage.startsWith('FRIENDS')">
+      {{ successMessage | translate }}
     </div>
 
     <div class="friends-list" *ngIf="friends.length > 0">
