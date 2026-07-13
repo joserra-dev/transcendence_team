@@ -1,15 +1,31 @@
 import base64
+import os
 import re
 from datetime import date, datetime, timezone
 import cv2
 import numpy as np
 # Importante añadir 'render_template'
-from flask import Blueprint, request, jsonify, render_template 
+from flask import Blueprint, request, jsonify, render_template
 from models.booking import Booking
 
 
 access_bp = Blueprint('access_bp', __name__)
 _reader = None
+
+
+def _require_access_api_key(fn):
+    """Decorador simple para proteger el endpoint de acceso con API key."""
+    from functools import wraps
+    @wraps(fn)
+    def wrapper(*args, **kwargs):
+        configured_key = os.getenv('PUBLIC_API_KEY')
+        if not configured_key:
+            return jsonify({"error": "Access API is disabled"}), 503
+        api_key = request.headers.get('X-API-Key') or request.args.get('api_key')
+        if not api_key or api_key != configured_key:
+            return jsonify({"error": "Invalid API key"}), 401
+        return fn(*args, **kwargs)
+    return wrapper
 
 
 def _get_reader():
@@ -36,6 +52,7 @@ def access_control_page():
 # 🧠 API: Procesa la foto enviada por la Web
 # ==========================================
 @access_bp.route('/api/access/verify-plate', methods=['POST'])
+@_require_access_api_key
 def verify_plate():
     data = request.get_json()
     if not data or 'image' not in data:

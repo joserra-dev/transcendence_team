@@ -18,6 +18,13 @@ public_api_bp = Blueprint('public_api_bp', __name__, url_prefix='/api/public')
 RATE_LIMIT_PER_MINUTE = int(os.getenv('PUBLIC_API_RATE_LIMIT', '60'))
 _request_windows = defaultdict(deque)
 
+# NOTA: Este rate limiting en memoria NO funciona en producción con múltiples workers.
+# Cada worker tiene su propio diccionario. Para producción, usar Flask-Limiter con Redis:
+#   pip install Flask-Limiter redis
+#   from flask_limiter import Limiter
+#   from flask_limiter.util import get_remote_address
+#   limiter = Limiter(key_func=get_remote_address, storage_uri="redis://localhost:6379")
+
 
 def _require_public_api_key(fn):
     @wraps(fn)

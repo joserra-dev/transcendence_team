@@ -1,15 +1,19 @@
-.env
-.env copy
-transcendence_en.subject.pdf
+# Python
 __pycache__/
 *.py[cod]
-.pytest_cache/
+*.egg-info/
+.env
+
+# Node
 node_modules/
-dist/
+frontend/camper/node_modules/
+
+# Junk / accidental artifacts
+00Tree.html
 *.log
-db.sqlite3
-frontend/css/*.min.css
-frontend/css/*.min.css.map
-*.pem
-.gitignore
-.kilo
+
+# Generated TLS certs (private keys) — created at runtime by the Dockerfile
+backend/area_backend/certs/
+
+# OS
+.DS_Store
