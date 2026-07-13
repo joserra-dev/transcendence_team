@@ -1,14 +1,15 @@
 # pyrefly: ignore [missing-import]
-from flask import Blueprint, jsonify, request, redirect
+import logging
+from flask import Blueprint, jsonify, request, redirect, current_app
 # pyrefly: ignore [missing-import]
 from flask_jwt_extended import jwt_required, get_jwt_identity
-from flask_babel import gettext as _ 
+from flask_babel import gettext as _
 from datetime import datetime, date
 import os
 import stripe
 
 from database import db
-from models.booking import Booking
+from models.booking import Booking, BookingStatus
 from models.users import Users
 from models.space import Space
 from models.parking import Parking
@@ -18,7 +19,7 @@ from services.email_services import EmailService
 booking_bp = Blueprint('booking_bp', __name__)
 
 stripe.api_key = os.getenv('STRIPE_KEY')
-print("key:"+stripe.api_key)
+logging.info("Stripe API key configurada")
 
 
 def clean_license_plate(license_plate):
@@ -290,16 +291,16 @@ def create_booking():
         Booking.license_plate == licensePlate,
         Booking.start_date < endDate,
         Booking.end_date > startDate,
-        Booking.status.in_(["1", "2"])
+        Booking.status.in_([BookingStatus.CONFIRMED, BookingStatus.PROCESSING])
     ).first()
     
     if same_vehicle_overlap:
         return jsonify({"error": _("Ya existe una reserva para esta matrícula en las fechas seleccionadas. Usa otra matrícula o cambia las fechas.")}), 400
     spot_overlap = Booking.query.filter(
-    Booking.id_space == id_space, 
+    Booking.id_space == id_space,
     Booking.start_date < endDate,
     Booking.end_date > startDate,
-    Booking.status.in_(["1", "2"])).first()   
+    Booking.status.in_([BookingStatus.CONFIRMED, BookingStatus.PROCESSING])).first()
     
     if spot_overlap:
         return jsonify({"error": _("Existe una reserva en para esta plaza")}), 400
@@ -310,7 +311,8 @@ def create_booking():
         parking = space.parking if space else None
         total_price = 0.0
         if space:
-            days = max((endDate - startDate).days, 0)
+            # Facturación por noche: la salida es el día siguiente a la entrada.
+            days = (endDate - startDate).days
             total_price = days * float(space.price or 0)
     except Exception:
         total_price = 0.0
@@ -321,7 +323,7 @@ def create_booking():
         id_space=id_space,
         start_date=startDate,
         end_date=endDate,
-        status="2",
+        status=BookingStatus.PROCESSING,
         license_plate=licensePlate.upper() if licensePlate else "",
         total_price=total_price
     )
@@ -350,9 +352,9 @@ def create_booking():
             ],
             mode='payment',
             # Si el pago tiene éxito, Stripe redirigirá primero a Flask para confirmar
-            success_url=f'http://localhost:5000/api/booking/confirm/{new_booking.id}',
+            success_url=f"{os.getenv('URL_BACK', 'https://localhost:8000')}/api/booking/confirm/{new_booking.id}",
             # Si cancela el checkout en Stripe, lo mandamos de vuelta al historial de Angular
-            cancel_url=f'http://localhost:5000/api/booking/stripe-cancel/{new_booking.id}',
+            cancel_url=f"{os.getenv('URL_BACK', 'https://localhost:8000')}/api/booking/stripe-cancel/{new_booking.id}",
         )
 
         # Devolvemos un objeto JSON con la URL para que Angular gestione la redirección
@@ -360,7 +362,7 @@ def create_booking():
 
     except Exception as stripe_exc:
         db.session.rollback()
-        print(f"Error generando pasarela Stripe: {stripe_exc}")
+        current_app.logger.error(f"Error generando pasarela Stripe: {stripe_exc}")
         return jsonify({"error": "Error interno al inicializar la pasarela de pago "}), 500
 
 
@@ -374,9 +376,9 @@ def confirm_booking_payment(booking_id):
     if not booking:
         return "Reserva no encontrada", 404
         
-    if booking.status == "2":
+    if booking.status == BookingStatus.PROCESSING:
         # 1. Confirmamos el estado de la reserva en base de datos
-        booking.status = "1"
+        booking.status = BookingStatus.CONFIRMED
         db.session.commit()
         
         # 2. Despachamos el correo electrónico de confirmación de manera segura ahora que está pagado
@@ -396,7 +398,7 @@ def confirm_booking_payment(booking_id):
                     management_url=management_url
                 )
         except Exception as exc:
-            print(f"Error enviando correo de confirmación de reserva pagada: {exc}")
+            current_app.logger.error(f"Error enviando correo de confirmación de reserva pagada: {exc}")
 
     # Redireccionamos el navegador del usuario al frontend de Angular
     front_url = os.getenv('URL_FRONT', 'http://localhost:4200').rstrip('/')
@@ -409,19 +411,21 @@ def stripe_cancel_redirect(booking_id):
     """
     try:
         booking = Booking.query.get(booking_id)
-        if booking and booking.status == "2":
+        if booking and booking.status == BookingStatus.PROCESSING:
             # Aquí ejecutas tu lógica de cancelación o borrado
             # Ej: db.session.delete(booking) o cambiar estado a 'Cancelado'
-            booking.status = '0' 
+            booking.status = BookingStatus.PENDING
             db.session.commit()
             
         # Finalmente rediriges al navegador del usuario a tu historial de Angular
         from flask import redirect
-        return redirect('http://localhost:4200/client/history')
+        front_url = os.getenv('URL_FRONT', 'http://localhost:4200').rstrip('/')
+        return redirect(f"{front_url}/client/history")
         
     except Exception as e:
-        print(f"Error en callback de cancelación: {e}")
-        return redirect('http://localhost:4200/historial?error=true')
+        current_app.logger.error(f"Error en callback de cancelación: {e}")
+        front_url = os.getenv('URL_FRONT', 'http://localhost:4200').rstrip('/')
+        return redirect(f"{front_url}/historial?error=true")
     
     
 @booking_bp.route('/api/booking/cancel', methods=['PUT'])
@@ -476,19 +480,11 @@ def cancel_booking():
     user_id = get_jwt_identity()
     if str(booking.id_user) != str(user_id):
         return jsonify({"error": _("No tienes permiso para cancelar esta reserva")}), 403
-<<<<<<< HEAD
 
     if booking.start_date and booking.start_date <= date.today():
         return jsonify({"error": _("No se puede cancelar una reserva cuya estancia ya ha comenzado o finalizado")}), 400
 
-    booking.status = "0"
-=======
-    
-    if booking.start_date < datetime.now().date():
-        return jsonify({"error": _("No se puede cancelar por estar fuera de plazo")}), 404
-        
-    booking.status = "0" 
->>>>>>> b22d65cb20a6642ef4a40b5751075443346b6a42
+    booking.status = BookingStatus.PENDING
     db.session.commit()
     
     return jsonify({"message": _("Reserva cancelada correctamente")}), 200

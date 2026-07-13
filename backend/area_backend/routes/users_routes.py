@@ -78,7 +78,7 @@ def _build_frontend_url(path: str) -> str:
 
 
 def _build_backend_url(path: str) -> str:
-    backend_url = os.getenv('URL_FRONT', 'https://localhost:8001').rstrip('/')
+    backend_url = os.getenv('URL_BACK', 'https://localhost:8000').rstrip('/')
     return f"{backend_url}/{path.lstrip('/')}"
 
 

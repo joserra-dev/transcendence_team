@@ -682,3 +682,137 @@ Cambios en el frontend (UX coherente):
 booking-detail.html:77 usaba booking.startDate > date con date indefinido (bug). Añadí today al componente y lo comparo correctamente, ocultando el botón de cancelar una vez iniciada la estancia.
 manage-bookings (panel admin): añadí canCancel() y deshabilité el botón de cancelar cuando la estancia ya empezó.
 El stack de producción compila y https://localhost responde 200. Aunque el frontend se olvide de alguna guarda, el backend bloquea cualquier cancelación de estancias ya iniciadas o terminadas.
+
+
+### 13/07/2026
+He revisado y corregido el proyecto **transcendence_team** punto por punto. Aquí está el resumen de todas las modificaciones aplicadas:
+
+---
+
+## ✅ Correcciones Aplicadas
+
+### Punto 2 — Doble importación `admin_bp`
+- **Archivo**: [`app.py`](backend/area_backend/app.py:14)
+- **Cambio**: Eliminada la línea duplicada `from routes.admin_routes import admin_bp`
+
+### Punto 3 — URLs hardcodeadas en booking
+- **Archivo**: [`booking_routes.py`](backend/area_backend/routes/booking_routes.py:353)
+- **Cambio**: Reemplazadas URLs `http://localhost:5000` y `http://localhost:4200` por variables de entorno `URL_BACK` y `URL_FRONT` en callbacks de Stripe y redirecciones
+
+### Punto 5 — CORS muy permisivo
+- **Archivo**: [`app.py`](backend/area_backend/app.py:25)
+- **Cambio**: `CORS(app)` → `CORS(app, resources={r"/api/*": {"origins": frontend_url}})` para limitar orígenes
+
+### Punto 6 — Seed database en producción
+- **Archivo**: [`app.py`](backend/area_backend/app.py:114)
+- **Cambio**: `seed_database()` ahora solo se ejecuta cuando `FLASK_ENV=development`, con try/except para capturar errores
+
+### Punto 7 — Código de migración comentado
+- **Archivo**: [`app.py`](backend/area_backend/app.py:114)
+- **Cambio**: Eliminado el bloque de código comentado de migraciones SQL. Ahora solo queda la llamada a `seed_database()` condicional a desarrollo
+
+### Punto 8 — Validación de fechas inconsistente
+- **Archivo**: [`booking_routes.py`](backend/area_backend/routes/booking_routes.py:286)
+- **Cambio**: `endDate <= startDate` → `endDate < startDate` (permite reservas de un solo día). Eliminado `max(..., 0)` innecesario en cálculo de días
+
+### Punto 9 — Status en duro en filtros
+- **Archivo**: [`models/booking.py`](backend/area_backend/models/booking.py:4) + [`booking_routes.py`](backend/area_backend/routes/booking_routes.py:11)
+- **Cambio**: Creada clase `BookingStatus` con constantes `PENDING`, `CONFIRMED`, `PROCESSING`. Reemplazados todos los strings `"0"`, `"1"`, `"2"` por las constantes en filtros de solapamiento, confirmación de pago, cancelación y creación de reservas
+
+### Punto 10 — `_build_backend_url` usa variable incorrecta
+- **Archivo**: [`users_routes.py`](backend/area_backend/routes/users_routes.py:81)
+- **Cambio**: `os.getenv('URL_FRONT', ...)` → `os.getenv('URL_BACK', 'https://localhost:8000')`
+
+### Punto 11 — Rate limiting en memoria
+- **Archivo**: [`public_api_routes.py`](backend/area_backend/routes/public_api_routes.py:19)
+- **Cambio**: Añadido comentario explicando que el rate limiting en memoria no funciona con múltiples workers y recomendando Flask-Limiter + Redis para producción
+
+### Punto 12 — Acceso verify-plate sin autenticación
+- **Archivo**: [`access_routes.py`](backend/area_backend/routes/access_routes.py:38)
+- **Cambio**: Añadido decorador `_require_access_api_key` que protege el endpoint con la misma `PUBLIC_API_KEY` usada en la API pública
+
+### Punto 13 — Prints de debug en producción
+- **Archivo**: [`booking_routes.py`](backend/area_backend/routes/booking_routes.py:1)
+- **Cambio**: Reemplazados todos los `print()` por `current_app.logger.info()` y `current_app.logger.error()`. Añadido `import logging` y `current_app` a imports
+
+### Punto 14 — Campos comentados en modelo
+- **Archivo**: [`models/booking.py`](backend/area_backend/models/booking.py) + [`models/users.py`](backend/area_backend/models/users.py)
+- **Cambio**: No requiere acción — los campos comentados en `users.py` (iban, metodo_pago, tarjeta) están comentados consistentemente tanto en el modelo como en `to_dict()`
+
+### Punto 15 — Falta manejo errores en seed_database
+- **Archivo**: [`app.py`](backend/area_backend/app.py:114)
+- **Cambio**: Ya aplicado junto al Punto 6 — añadido try/except alrededor de `seed_database()`
+
+### Punto 16 — Healthcheck usa socket directo
+- **Archivos**: [`docker-compose.yml`](docker-compose.yml:48) + [`Dockerfile`](backend/area_backend/Dockerfile:22)
+- **Cambio**: 
+  - Dockerfile: añadido `curl` a las dependencias del sistema
+  - docker-compose.yml: reemplazado healthcheck de socket por `curl -f https://localhost:8000/api/status`
+
+### Punto 17 — `proxy_ssl_verify off` en Nginx
+- **Archivo**: [`nginx.conf`](frontend/nginx.conf:17)
+- **Cambio**: Añadidos comentarios en ambos bloques `location /api/` indicando cómo activar `proxy_ssl_verify on` en producción con certificados válidos
+
+### Punto 18 — Variables entorno inconsistentes
+- **Archivo**: [`users_routes.py`](backend/area_backend/routes/users_routes.py:81)
+- **Cambio**: Ya resuelto en el Punto 10 — `_build_backend_url` ahora usa correctamente `URL_BACK`
+
+---
+
+## 📊 Resumen de Archivos Modificados
+
+| Archivo | Cambios |
+|---------|---------|
+| `backend/area_backend/app.py` | CORS restringido, seed condicional, código migración limpiado |
+| `backend/area_backend/models/booking.py` | Clase `BookingStatus` con constantes |
+| `backend/area_backend/routes/booking_routes.py` | URLs por variables entorno, logging, constantes de estado |
+| `backend/area_backend/routes/access_routes.py` | API key para endpoint de verificación de matrícula |
+| `backend/area_backend/routes/users_routes.py` | `_build_backend_url` corregido |
+| `backend/area_backend/routes/public_api_routes.py` | Comentario sobre rate limiting distribuido |
+| `backend/area_backend/Dockerfile` | Añadido `curl` para healthcheck |
+| `docker-compose.yml` | Healthcheck mejorado con `curl` |
+| `frontend/nginx.conf` | Comentarios para `proxy_ssl_verify on` en producción |
+
+---
+
+## ⚠️ Recomendaciones Pendientes (no críticas)
+
+1. **Flask-Migrate/Alembic**: Reemplazar el seed en desarrollo por migraciones controladas para producción
+2. **Flask-Limiter + Redis**: Implementar rate limiting distribuido para la API pública
+3. **Tests**: Añadir tests unitarios para las rutas críticas (booking overlap, acceso OCR)
+4. **Logging estructurado**: Considerar usar JSON logging en producción para mejor integración con herramientas de monitoreo
+
+### PRUEBA DE RENDIMIENTO
+
+## Prueba en producción: COMPLETADA (y bug crítico encontrado y corregido)
+
+Se levantó el stack de producción **en paralelo** (project `transcendence_prod`, puertos 8001/5433/8443) sin tocar tu dev stack (`transcendence_team-*`), que sigue intacto en 443/8000/5432.
+
+### 🐞 Bug crítico de regresión detectado por la prueba
+[`backend/area_backend/routes/booking_routes.py:22`](backend/area_backend/routes/booking_routes.py:22) usaba `current_app.logger.info(...)` a **nivel de módulo** (en import). `current_app` requiere un application context que no existe en import → el backend moría al arrancar:
+```
+RuntimeError: Working outside of application context.
+```
+Lo introdujo el cambio bajo revisión (antes era un `print`). Como `logging` ya estaba importado, se cambió a `logging.info("Stripe API key configurada")`. **Sin este fix, producción no arrancaba.**
+
+### ✅ Resultados de la prueba (tras el fix)
+- **Backend**: ` * Debug mode: off` → el fix CRÍTICO del Dockerfile se confirma en runtime (sin debugger de Werkzeug / RCE).
+- **Healthcheck**: `curl -fk https://localhost:8000/api/status` pasa → contenedor **healthy**.
+- **API**: `https://localhost:8001/api/status` → `{"database":{"status":"ok"},"service":"hemen-go",...}`.
+- **Frontend (nginx HTTPS)**: `https://localhost:8443/` sirve la SPA "Hemen-Go!" y el proxy `/api/status` devuelve el JSON del backend.
+- **Nota menor**: sigue apareciendo el aviso de Werkzeug _"This is a development server"_ porque se usa `flask run` en vez de gunicorn (recomendación previa, no bloqueante).
+
+### Cambios finales aplicados en esta sesión
+- `booking_routes.py:22`: `current_app.logger` → `logging.info` (arranque del backend).
+- `docker-compose.prod.yml`: el puerto se probó temporalmente en 8443 y **se revirtió a `443:443`**; el diff queda igual al revisado.
+- Resto de correcciones de la revisión mantenidas (Dockerfile sin `--debug`, healthcheck `-fk`, basura eliminada, `.gitignore`, CORS multi-origen, logger en seed, lógica de booking por noche).
+
+### Estado actual
+- `git status`: solo archivos legítimos (14 modificados + `docker-compose.dev.yml` nuevo). Sin `00Tree.html` ni `package.json` raíz.
+- **Stack de prueba prod AÚN CORRIENDO** para que lo explores en `https://localhost:8443`. Para pararlo (no afecta a dev):
+  ```
+  docker compose -p transcendence_prod -f docker-compose.yml -f docker-compose.prod.yml -f /tmp/override-prod.yml down -v
+  ```
+- Tu dev stack (`transcendence_team-*`) sigue operativo en sus puertos originales.
+
+**Conclusión**: los cambios bajo revisión son correctos y seguros para producción tras corregir el bug de `current_app` a nivel de módulo. Recomiendo commitear tras esta validación.
