@@ -34,7 +34,7 @@ RUN apk add --no-cache openssl gettext && \
     openssl req -x509 -nodes -days 365 -newkey rsa:2048 \
       -keyout /etc/nginx/ssl/nginx-selfsigned.key \
       -out /etc/nginx/ssl/nginx-selfsigned.crt \
-      -subj "/C=ES/ST=State/L=City/O=Organization/CN=localhost"
+      -subj "/C=ES/ST=BasqueCountry/L=Urduliz/O=42Urduliz/CN=*.42urduliz.com"
 
 COPY docker-entrypoint.sh /docker-entrypoint.sh
 RUN chmod +x /docker-entrypoint.sh
