@@ -129,7 +129,7 @@ export class Profile implements OnInit {
     this.errorMessage = '';
     // Habilitamos todos los campos editables
     [
-      'nombrePersona', 'apellidosPersona', 'fecNacimientoPersona',
+      'nombrePersona', 'apellidosPersona','dniPersona' ,'fecNacimientoPersona',
       'avatarPersona',  'passPersona', 'confirmPassPersona'
     ].forEach(field => this.profileForm.get(field)?.enable());
   }
