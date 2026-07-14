@@ -22,9 +22,9 @@ SHELL := /bin/bash
 OS := $(shell uname -s)
 
 ifeq ($(OS),Darwin)
-	HOST := localhost
+    HOST := localhost
 else
-	HOST := $(shell hostname)
+    HOST := $(shell hostname)
 endif
 
 
@@ -34,15 +34,15 @@ endif
 
 ifeq ($(shell command -v docker >/dev/null 2>&1 && docker compose version >/dev/null 2>&1 && echo yes),yes)
 
-	COMPOSE=docker compose
+    COMPOSE=docker compose
 
 else ifeq ($(shell command -v docker-compose >/dev/null 2>&1 && echo yes),yes)
 
-	COMPOSE=docker-compose
+    COMPOSE=docker-compose
 
 else
 
-	$(error Docker Compose no encontrado)
+    $(error Docker Compose no encontrado)
 
 endif
 # ==============================================================================
@@ -90,14 +90,11 @@ prod: env up-prod ## Entorno producción HTTPS/Nginx
 # ==============================================================================
 
 up: ## Levantar desarrollo
-
 	@echo -e "$(COLOR_BLUE)🐳 Arrancando desarrollo...$(COLOR_RESET)"
-
 	$(COMPOSE) \
 		-f docker-compose.yml \
 		-f docker-compose.dev.yml \
 		up -d --build --remove-orphans
-
 	@echo -e "$(COLOR_GREEN)✔ Desarrollo levantado$(COLOR_RESET)"
 
 
@@ -107,14 +104,11 @@ up: ## Levantar desarrollo
 # ==============================================================================
 
 up-prod: ## Levantar producción
-
 	@echo -e "$(COLOR_BLUE)🐳 Arrancando producción...$(COLOR_RESET)"
-
 	$(COMPOSE) \
 		-f docker-compose.yml \
 		-f docker-compose.prod.yml \
 		up -d --build --remove-orphans
-
 	@echo -e "$(COLOR_GREEN)✔ Producción levantada$(COLOR_RESET)"
 
 
@@ -124,39 +118,30 @@ up-prod: ## Levantar producción
 # ==============================================================================
 
 doctor: ## Diagnóstico del entorno
-
 	@echo -e "$(COLOR_BLUE)"
 	@echo "🩺 Docker Doctor"
 	@echo "==============="
 	@echo -e "$(COLOR_RESET)"
-
 	@echo "Sistema: $(OS)"
 	@echo "Host: $(HOST)"
 	@echo ""
-
 	@echo "Docker:"
 	@if command -v docker >/dev/null 2>&1; then \
 		echo -e "$(COLOR_GREEN)✔ Docker encontrado$(COLOR_RESET)"; \
 	else \
 		echo -e "$(COLOR_RED)✘ Docker no encontrado$(COLOR_RESET)"; \
 	fi
-
 	@echo ""
-
 	@echo "Daemon:"
 	@if docker info >/dev/null 2>&1; then \
 		echo -e "$(COLOR_GREEN)✔ Docker funcionando$(COLOR_RESET)"; \
 	else \
 		echo -e "$(COLOR_RED)✘ Docker daemon parado$(COLOR_RESET)"; \
 	fi
-
 	@echo ""
-
 	@echo "Compose:"
 	@$(COMPOSE) version
-
 	@echo ""
-
 	@echo "Puertos:"
 	@for port in 4200 443 5432 8000; do \
 		if lsof -i :$$port >/dev/null 2>&1; then \
@@ -174,24 +159,19 @@ doctor: ## Diagnóstico del entorno
 # ==============================================================================
 
 clean: ## Parar contenedores
-
 	@echo -e "$(COLOR_YELLOW)🛑 Parando contenedores...$(COLOR_RESET)"
-
 	$(COMPOSE) \
 		-f docker-compose.yml \
 		-f docker-compose.dev.yml \
 		down
-
 	@echo -e "$(COLOR_GREEN)✔ Limpieza realizada$(COLOR_RESET)"
 
 
 
 fclean: ## Limpieza total Docker
-
 	@echo -e "$(COLOR_RED)"
 	@echo "🚨 LIMPIEZA COMPLETA"
 	@echo -e "$(COLOR_RESET)"
-
 	$(COMPOSE) \
 		-f docker-compose.yml \
 		-f docker-compose.dev.yml \
@@ -200,11 +180,8 @@ fclean: ## Limpieza total Docker
 		--rmi all \
 		--volumes \
 		--remove-orphans || true
-
 	docker system prune -af --volumes || true
-
 	docker builder prune -af || true
-
 	@if [ -f .env ]; then \
 		rm .env; \
 		echo "✔ .env eliminado"; \
@@ -219,16 +196,27 @@ fclean: ## Limpieza total Docker
 env:
 	@if [ ! -f .env ]; then \
 		echo -e "$(COLOR_YELLOW)Creando .env$(COLOR_RESET)"; \
-		echo "FLASK_ENV=development" > .env; \
-		echo "FLASK_DEBUG=1" >> .env; \
+		read -p "Modo de entorno (dev/prod) [dev]: " mode; \
+		mode=$${mode:-dev}; \
+		if [ "$$mode" = "prod" ]; then \
+			echo "FLASK_ENV=production" > .env; \
+			echo "FLASK_DEBUG=0" >> .env; \
+			echo "BACK_SCHEME=https" >> .env; \
+			proto="https"; \
+		else \
+			echo "FLASK_ENV=development" > .env; \
+			echo "FLASK_DEBUG=1" >> .env; \
+			echo "BACK_SCHEME=http" >> .env; \
+			proto="http"; \
+		fi; \
 		read -p "Puerto Front [4200]: " front; \
 		front=$${front:-4200}; \
 		echo "FRONT_PORT=$$front" >> .env; \
-		echo "URL_FRONT=https://$(HOST):$$front" >> .env; \
+		echo "URL_FRONT=$$proto://$(HOST):$$front" >> .env; \
 		read -p "Puerto Back [8000]: " back; \
 		back=$${back:-8000}; \
 		echo "BACK_PORT=$$back" >> .env; \
-		echo "URL_BACK=https://$(HOST):$$back" >> .env; \
+		echo "URL_BACK=$$proto://$(HOST):$$back" >> .env; \
 		read -p "Puerto PostgreSQL [5432]: " db; \
 		db=$${db:-5432}; \
 		read -p "Password PostgreSQL: " pass; \
@@ -238,7 +226,9 @@ env:
 		echo "POSTGRES_USER=defaultdb_user" >> .env; \
 		echo "POSTGRES_PASSWORD=$$pass" >> .env; \
 		echo "POSTGRES_PORT=$$db" >> .env; \
-		echo "DATABASE_URL=postgresql://defaultdb_user:$$pass@db:5432/$$name" >> .env; \
+		echo "DATABASE_URL=postgresql://defaultdb_user:$$pass@db:$$db/$$name" >> .env; \
+		read -p "Stripe Key [sk_test_...]: " stripe; \
+		echo "STRIPE_KEY=$$stripe" >> .env; \
 		echo "MAIL_SERVER=smtp.gmail.com" >> .env; \
 		echo "MAIL_PORT=587" >> .env; \
 		echo "MAIL_USE_TLS=True" >> .env; \
@@ -248,7 +238,7 @@ env:
 		echo "MAIL_USERNAME=$$user" >> .env; \
 		echo "MAIL_PASSWORD=$$mailpass" >> .env; \
 		echo "MAIL_DEFAULT_SENDER=$$sender" >> .env; \
-		echo -e "$(COLOR_GREEN)✔ .env creado$(COLOR_RESET)"; \
+		echo -e "$(COLOR_GREEN)✔ .env creado con éxito ($$proto)$(COLOR_RESET)"; \
 	else \
 		echo -e "$(COLOR_GREEN)✔ .env ya existe$(COLOR_RESET)"; \
 	fi
