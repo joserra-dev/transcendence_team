@@ -18,9 +18,6 @@ from services.email_services import EmailService
 
 booking_bp = Blueprint('booking_bp', __name__)
 
-stripe.api_key = os.getenv('STRIPE_KEY')
-logging.info("Stripe API key configurada")
-
 
 def clean_license_plate(license_plate):
     if not license_plate:
@@ -332,6 +329,7 @@ def create_booking():
 
     try:
         # 2. Creamos la pasarela de Stripe Checkout mandándole el id único de esta reserva recién creada
+        stripe.api_key = os.getenv('STRIPE_KEY')
         parking_name = parking.name if parking else "Parking"
         space_name = space.name if space else ""
         
@@ -361,7 +359,14 @@ def create_booking():
         return jsonify({'url': checkout_session.url}), 200
 
     except Exception as stripe_exc:
-        db.session.rollback()
+        # 1. Eliminamos el registro de la reserva que acabamos de crear
+        try:
+            db.session.delete(new_booking)
+            db.session.commit()
+        except Exception as db_exc:
+            current_app.logger.error(f"Error eliminando la reserva tras fallo de Stripe: {db_exc}")
+            db.session.rollback()
+
         current_app.logger.error(f"Error generando pasarela Stripe: {stripe_exc}")
         return jsonify({"error": "Error interno al inicializar la pasarela de pago "}), 500
 
