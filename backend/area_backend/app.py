@@ -113,9 +113,16 @@ app.register_blueprint(chat_bp)
 app.register_blueprint(friends_bp)
 
 # 4. INICIALIZADOR DE BASE DE DATOS
-# Solo ejecutar seed en desarrollo. En producción usar migraciones (Flask-Migrate/Alembic)
-if os.getenv('FLASK_ENV') == 'development':
-    with app.app_context():
+# En desarrollo se fuerza el seed. En producción solo si la base de datos está vacía.
+with app.app_context():
+    def _should_seed_database() -> bool:
+        if os.getenv('FLASK_ENV') == 'development':
+            return True
+
+        from models.users import Users
+        return Users.query.first() is None
+
+    if _should_seed_database():
         from seed import seed_database
         try:
             seed_database()
