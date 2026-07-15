@@ -14,25 +14,6 @@
           <a routerLink="/" class="logo-wrapper">
             <img src="/images/logos/logo-horizontal.png" class="logo" alt="Logo Hemen-Go!">
           </a>
-
-          @if (showNavHistory) {
-            <div class="nav-history">
-              <button
-                type="button"
-                class="nav-history-btn"
-                (click)="goBack()"
-                [attr.aria-label]="'HEADER.BACK' | translate">
-                <i class="fa-solid fa-chevron-left"></i>
-              </button>
-              <button
-                type="button"
-                class="nav-history-btn"
-                (click)="goForward()"
-                [attr.aria-label]="'HEADER.FORWARD' | translate">
-                <i class="fa-solid fa-chevron-right"></i>
-              </button>
-            </div>
-          }
         </div>
 
         <!-- ESPACIADOR CENTRAL -->
