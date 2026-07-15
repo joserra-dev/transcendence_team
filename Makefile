@@ -205,6 +205,7 @@ env:
 			proto="https"; \
 			front_base=8443; \
 			back_base=8000; \
+			host_env="$(HOST)"; \
 		else \
 			echo "FLASK_ENV=development" > .env; \
 			echo "FLASK_DEBUG=1" >> .env; \
@@ -212,6 +213,7 @@ env:
 			proto="http"; \
 			front_base=4200; \
 			back_base=8000; \
+			host_env="localhost"; \
 		fi; \
 		find_free_port() { \
 			p=$$1; \
@@ -220,11 +222,11 @@ env:
 		}; \
 		front=$$(find_free_port $$front_base); \
 		echo "FRONT_PORT=$$front" >> .env; \
-		echo "URL_FRONT=$$proto://$(HOST):$$front" >> .env; \
+		echo "URL_FRONT=$$proto://$$host_env:$$front" >> .env; \
 		echo -e "$(COLOR_GREEN)✔ Puerto Front asignado: $$front (libre desde $$front_base)$(COLOR_RESET)"; \
 		back=$$(find_free_port $$back_base); \
 		echo "BACK_PORT=$$back" >> .env; \
-		echo "URL_BACK=$$proto://$(HOST):$$back" >> .env; \
+		echo "URL_BACK=$$proto://$$host_env:$$back" >> .env; \
 		echo -e "$(COLOR_GREEN)✔ Puerto Back asignado: $$back (libre desde $$back_base)$(COLOR_RESET)"; \
 		db=$$(find_free_port 5432); \
 		read -p "Password PostgreSQL: " pass; \
@@ -242,8 +244,8 @@ env:
 		echo "MAIL_PORT=587" >> .env; \
 		echo "MAIL_USE_TLS=True" >> .env; \
 		read -p "MAIL_USERNAME: " user; \
-		read -p "MAIL_PASSWORD: " mailpass; \
 		read -p "MAIL_DEFAULT_SENDER: " sender; \
+		read -p "MAIL_PASSWORD: " mailpass; \
 		echo "MAIL_USERNAME=$$user" >> .env; \
 		echo "MAIL_PASSWORD=$$mailpass" >> .env; \
 		echo "MAIL_DEFAULT_SENDER=$$sender" >> .env; \
