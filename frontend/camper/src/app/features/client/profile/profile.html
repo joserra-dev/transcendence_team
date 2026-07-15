@@ -26,7 +26,7 @@
 
       <div class="col-md-6 form-group-standard">
         <label for="usernamee" class="form-label-custom">{{ 'PROFILE.FIELDS.NAME' | translate }}</label>
-        <input id="usernamee" type="text" formControlName="nombrePersona">
+        <input id="usernamee" type="text" formControlName="nombrePersona" maxlength="254">
         <small class="error-msg-standard" *ngIf="isInvalid('nombrePersona')">
           {{ 'PROFILE.ERROR.REQUIRED' | translate }}
         </small>
@@ -34,7 +34,7 @@
 
       <div class="col-md-6 form-group-standard">
         <label for ="lastname" class="form-label-custom">{{ 'PROFILE.FIELDS.LASTNAME' | translate }}</label>
-        <input id="lastname" type="text" formControlName="apellidosPersona">
+        <input id="lastname" type="text" formControlName="apellidosPersona" maxlength="254">
         <small class="error-msg-standard" *ngIf="isInvalid('apellidosPersona')">
           {{ 'PROFILE.ERROR.REQUIRED' | translate }}
         </small>
@@ -45,14 +45,14 @@
       <label for="identcard" class="form-label-custom">
         {{ 'PROFILE.FIELDS.DNI' | translate }} 
       </label>
-      <input id="identcard" type="text" formControlName="dniPersona">
+      <input id="identcard" type="text" formControlName="dniPersona" maxlength="9">
     </div>
 
     <div class="mb-3 form-group-standard">
       <label for="email" class="form-label-custom">
         {{ 'PROFILE.FIELDS.EMAIL' | translate }} <span class="label-tag">{{ 'PROFILE.NOT_EDITABLE' | translate }}</span>
       </label>
-      <input id="email" type="email" formControlName="emailPersona" readonly>
+      <input id="email" type="email" formControlName="emailPersona" readonly maxlength="254">
     </div>
 
     <div class="mb-3 form-group-standard">
@@ -72,42 +72,7 @@
           {{ 'PROFILE.ERROR.UNDER_AGE' | translate }}
         </small>
       </div>
-
     </div>
-
-    <!--<div class="row g-4 mb-3 form-2-group">
-      <div class="col-md-6 form-group-standard">
-        <label for="paidmethod" class="form-label-custom">Método de Pago</label>
-        <select id="paidmethod"  formControlName="metodoPago" style="width: 100%; padding: 0.75rem; border-radius: 4px; border: 1px solid #ccc; font-size: 1rem; background-color: #fff; color: #333;">
-          <option value="iban">Cuenta Bancaria (IBAN)</option>
-          <option value="tarjeta">Tarjeta de Crédito</option>
-          <option value="efectivo">Efectivo</option>
-        </select>
-      </div>
-
-      <div class="col-md-6 form-group-standard" *ngIf="profileForm.get('metodoPago')?.value === 'iban'">
-        <label for="iban" class="form-label-custom">{{ 'PROFILE.FIELDS.IBAN' | translate }}</label>
-        <input id="iban" type="text" formControlName="ibanPersona" placeholder="ES0000000000000000000000">
-        <small *ngIf="isInvalid('ibanPersona')" class="error-msg-standard">
-          {{ 'PROFILE.ERROR.INVALID_IBAN' | translate }}
-        </small>
-      </div>
-
-      <div class="col-md-6 form-group-standard" *ngIf="profileForm.get('metodoPago')?.value === 'tarjeta'">
-        <label for="card" class="form-label-custom">Número de Tarjeta</label>
-        <input id="card" type="text" formControlName="tarjeta" placeholder="1234567812345678">
-        <small *ngIf="isInvalid('tarjeta')" class="error-msg-standard">
-          Número de tarjeta inválido (debe tener 16 dígitos).
-        </small>
-      </div>
-
-      <div class="col-md-6 form-group-standard" *ngIf="profileForm.get('metodoPago')?.value === 'efectivo'">
-        <label class="form-label-custom">Información de Pago</label>
-        <div style="padding: 0.75rem; border-radius: 4px; border: 1px solid #ffeeba; background-color: #fff3cd; color: #856404; font-size: 0.95rem; line-height: 1.4;">
-          Has seleccionado pago en efectivo. Abonarás el precio total directamente en el establecimiento/camping al llegar.
-        </div>
-      </div>
-    </div>-->
 
     <h3 class="section-title">{{ 'PROFILE.CHANGE_PASSWORD' | translate }}</h3>
     <p class="subtitle-small">{{ 'PROFILE.PASSWORD_NOTE' | translate }}</p>
@@ -115,12 +80,12 @@
     <div class="row g-4 mb-4 form-2-group">
       <div class="col-md-6 form-group-standard">
         <label for="pass" class="form-label-custom">{{ 'PROFILE.FIELDS.NEW_PASSWORD' | translate }}</label>
-        <input id="pass" type="password" formControlName="passPersona">
+        <input id="pass" type="password" formControlName="passPersona" maxlength="254">
       </div>
 
       <div class="col-md-6 form-group-standard">
         <label for="confpass" class="form-label-custom">{{ 'PROFILE.FIELDS.CONFIRM_PASSWORD' | translate }}</label>
-        <input id="confpass" type="password" formControlName="confirmPassPersona">
+        <input id="confpass" type="password" formControlName="confirmPassPersona" maxlength="254">
         <small *ngIf="profileForm.hasError('passwordsMismatch')" class="error-msg-standard">
           {{ 'PROFILE.ERROR.PASSWORDS_MISMATCH' | translate }}
         </small>

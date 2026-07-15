@@ -42,16 +42,13 @@ export class Profile implements OnInit {
     nombrePersona: [{ value: '', disabled: true }, Validators.required],
     apellidosPersona: [{ value: '', disabled: true }, Validators.required],
     fecNacimientoPersona: [{ value: '', disabled: true }, [Validators.required, CustomValidators.mayorDeEdad]],
-    //metodoPago: [{ value: 'iban', disabled: true }, Validators.required],
     avatarPersona: [{ value: '', disabled: true }],
-    //ibanPersona: [{ value: '', disabled: true }],
     tarjeta: [{ value: '', disabled: true }],
     passPersona: [{ value: '', disabled: true }],
     confirmPassPersona: [{ value: '', disabled: true }]
   }, {
     validators: [
       CustomValidators.matchPasswords('passPersona', 'confirmPassPersona'),
-      //this.paymentMethodValidator()
     ]
   });
 
@@ -87,42 +84,6 @@ export class Profile implements OnInit {
     });
   }
 
- /* paymentMethodValidator() {
-    return (form: AbstractControl): ValidationErrors | null => {
-      const metodo = form.get('metodoPago')?.value;
-      const iban = form.get('ibanPersona')?.value;
-      const tarjeta = form.get('tarjeta')?.value;
-
-      if (metodo === 'iban') {
-        if (!iban || iban.trim() === '') {
-          form.get('ibanPersona')?.setErrors({ required: true });
-          return { paymentRequired: true };
-        }
-        const regex = /^ES\d{22}$/i;
-        if (!regex.test(iban)) {
-          form.get('ibanPersona')?.setErrors({ ibanInvalido: true });
-          return { ibanInvalido: true };
-        }
-        form.get('ibanPersona')?.setErrors(null);
-      } else if (metodo === 'tarjeta') {
-        if (!tarjeta || tarjeta.trim() === '') {
-          form.get('tarjeta')?.setErrors({ required: true });
-          return { paymentRequired: true };
-        }
-        const regex = /^\d{16}$/;
-        if (!regex.test(tarjeta)) {
-          form.get('tarjeta')?.setErrors({ tarjetaInvalida: true });
-          return { tarjetaInvalida: true };
-        }
-        form.get('tarjeta')?.setErrors(null);
-      } else {
-        form.get('ibanPersona')?.setErrors(null);
-        form.get('tarjeta')?.setErrors(null);
-      }
-      return null;
-    };
-  }*/
-
   enableEdit() {
     this.isEditing = true;
     this.successMessage = '';
@@ -146,10 +107,7 @@ export class Profile implements OnInit {
         nombrePersona: this.currentUser.nombrePersona,
         apellidosPersona: this.currentUser.apellidosPersona,
         fecNacimientoPersona: this.currentUser.fecNacimientoPersona,
-       // metodoPago: this.currentUser.metodoPago || 'iban',
         avatarPersona: this.currentUser.avatar,
-       // ibanPersona: this.currentUser.ibanPersona,
-       // tarjeta: this.currentUser.tarjeta,
         passPersona: '',
         confirmPassPersona: ''
       });
@@ -157,7 +115,7 @@ export class Profile implements OnInit {
 
     // Deshabilitamos todos los campos editables al cancelar
     [
-      'nombrePersona', 'apellidosPersona', 'fecNacimientoPersona',
+      'nombrePersona', 'apellidosPersona', 'dniPersona' ,'fecNacimientoPersona',
        'avatarPersona',  'passPersona', 'confirmPassPersona'
     ].forEach(field => this.profileForm.get(field)?.disable());
   }
