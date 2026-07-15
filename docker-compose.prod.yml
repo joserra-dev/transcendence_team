@@ -22,7 +22,7 @@ services:
     volumes: []
 
     ports:
-      - "8443:443"
+      - "${FRONT_PORT}:443"
 
     environment:
       URL_BACK: /
