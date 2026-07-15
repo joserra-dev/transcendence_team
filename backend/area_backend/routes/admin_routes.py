@@ -6,7 +6,7 @@ from flask import Blueprint, jsonify, request
 from sqlalchemy.exc import SQLAlchemyError
 from werkzeug.security import generate_password_hash
 from flask_babel import gettext as _
-
+from utils.coordinate_validator import CoordinateValidator
 from database import db
 from models.booking import Booking
 from models.chat_message import ChatMessage
@@ -449,6 +449,14 @@ def create_parking(_user, profile):
             companyId:
               type: integer
               example: 1
+            latitude:
+              type: number
+              format: float
+              example: 40.416775
+            longitude:
+              type: number
+              format: float
+              example: -3.703790
     responses:
       201:
         description: Parking creado con éxito
@@ -460,7 +468,11 @@ def create_parking(_user, profile):
 
     if not fields.get("name") or not fields.get("municipality") or not fields.get("email"):
         return jsonify({"error": _("Nombre, municipio y email son obligatorios")}), 400
-
+      
+    if(CoordinateValidator.is_informed(fields.get("latitude")) and CoordinateValidator.is_informed(fields.get("logitude"))):  
+      if not CoordinateValidator.validate_coordinates(fields.get("latitude"), fields.get("logitude")):
+          return jsonify({"error": _("La longitud y/o latitud no correctas")}), 400
+      
     if profile.role == UserRole.ADMIN:
         company_id = profile.company_id
     else:
@@ -487,7 +499,7 @@ def update_parking(_user, profile):
     tags:
       - Admin Parking
     security:
-      - Bearer: []
+      - BearerAuth: []
     parameters:
       - name: lang
         in: query
@@ -507,20 +519,52 @@ def update_parking(_user, profile):
             nombreParking:
               type: string
               example: "Parking Centro Actualizado"
+            provinciaParking:
+              type: string
+              example: "Bizkaia"
+            municipioParking:
+              type: string
+              example: "Urduliz"
+            emailParking:
+              type: string
+              example: "centro@parking.com"
+            latitude:
+              type: number
+              format: float
+              example: 43.3692107
+            longitude:
+              type: number
+              format: float
+              example: -2.9416203
     responses:
       200:
         description: Parking modificado con éxito
       400:
-        description: ID del parking obligatorio
+        description: ID del parking obligatorio o coordenadas inválidas
       403:
         description: No autorizado
       404:
         description: Parking no encontrado
     """
+    
     data = request.get_json() or {}
     parking_id = data.get("idParking")
     if not parking_id:
         return jsonify({"error": _("idParking es obligatorio")}), 400
+
+    # ---- INICIO DE VALIDACIÓN DE COORDENADAS ----
+    latitude = data.get("latitude")
+    longitude = data.get("longitude")
+
+    # Helper para verificar si un campo viene informado
+    def esta_informado(val):
+        return val is not None and str(val).strip() != ""
+
+    # Si el usuario envía latitud o longitud, validamos ambos
+    if esta_informado(latitude) or esta_informado(longitude):
+        if not CoordinateValidator.validate_coordinates(latitude, longitude):
+            return jsonify({"error": _("La longitud y/o latitud no son correctas")}), 400
+    # ---- FIN DE VALIDACIÓN DE COORDENADAS ----
 
     parking = Parking.query.get(parking_id)
     if not parking:
@@ -544,7 +588,7 @@ def delete_parking(_user, profile, parking_id):
     tags:
       - Admin Parking
     security:
-      - Bearer: []
+      - BearerAuth: []
     parameters:
       - name: parking_id
         in: path
@@ -580,7 +624,7 @@ def create_spot(_user, profile, parking_id):
     tags:
       - Admin Parking
     security:
-      - Bearer: []
+      - BearerAuth: []
     parameters:
       - name: parking_id
         in: path
@@ -636,7 +680,7 @@ def update_spot(_user, profile, parking_id, spot_id):
     tags:
       - Admin Parking
     security:
-      - Bearer: []
+      - BearerAuth: []
     parameters:
       - name: parking_id
         in: path
@@ -748,7 +792,7 @@ def get_booking(_user, profile, booking_id):
     tags:
       - Admin Bookings
     security:
-      - Bearer: []
+      - BearerAuth: []
     parameters:
       - name: booking_id
         in: path
@@ -779,7 +823,7 @@ def cancel_booking_admin(_user, profile, booking_id):
     tags:
       - Admin Bookings
     security:
-      - Bearer: []
+      - BearerAuth: []
     parameters:
       - name: booking_id
         in: path
@@ -789,7 +833,7 @@ def cancel_booking_admin(_user, profile, booking_id):
       200:
         description: Reserva cancelada correctamente
       400:
-        description: La reserva ya se encuentra cancelada previamente
+        description: La reserva no se puede cancelar
       403:
         description: No autorizado
       404:
@@ -819,7 +863,7 @@ def parking_calendar(_user, profile, parking_id):
     tags:
       - Admin Calendar
     security:
-      - Bearer: []
+      - BearerAuth: []
     parameters:
       - name: parking_id
         in: path
@@ -977,7 +1021,7 @@ def unblock_parking_day(_user, profile, parking_id, day):
     tags:
       - Admin Calendar
     security:
-      - Bearer: []
+      - BearerAuth: []
     parameters:
       - name: parking_id
         in: path
@@ -1026,7 +1070,7 @@ def list_companies(_user, _profile):
     tags:
       - Admin Companies
     security:
-      - Bearer: []
+      - BearerAuth: []
     responses:
       200:
         description: Listado de empresas registradas en el sistema
@@ -1044,7 +1088,7 @@ def create_company(_user, _profile):
     tags:
       - Admin Companies
     security:
-      - Bearer: []
+      - BearerAuth: []
     parameters:
       - name: body
         in: body
@@ -1138,7 +1182,7 @@ def get_company(_user, _profile, company_id):
     tags:
       - Admin Companies
     security:
-      - Bearer: []
+      - BearerAuth: []
     parameters:
       - name: company_id
         in: path
@@ -1165,7 +1209,7 @@ def update_company(_user, _profile, company_id):
     tags:
       - Admin Companies
     security:
-      - Bearer: []
+      - BearerAuth: []
     parameters:
       - name: company_id
         in: path
@@ -1215,7 +1259,7 @@ def delete_company(_user, _profile, company_id):
     tags:
       - Admin Companies
     security:
-      - Bearer: []
+      - BearerAuth: []
     parameters:
       - name: company_id
         in: path
@@ -1255,7 +1299,7 @@ def list_company_users(_user, _profile, company_id):
     tags:
       - Admin Companies
     security:
-      - Bearer: []
+      - BearerAuth: []
     parameters:
       - name: company_id
         in: path
@@ -1314,7 +1358,7 @@ def list_users(_user, _profile):
     tags:
       - Admin Users
     security:
-      - Bearer: []
+      - BearerAuth: []
     responses:
       200:
         description: Base total de usuarios
@@ -1332,7 +1376,7 @@ def create_user(_user, _profile):
     tags:
       - Admin Users
     security:
-      - Bearer: []
+      - BearerAuth: []
     parameters:
       - name: body
         in: body
@@ -1434,7 +1478,7 @@ def update_user(_user, _profile, user_id):
     tags:
       - Admin Users
     security:
-      - Bearer: []
+      - BearerAuth: []
     parameters:
       - name: user_id
         in: path
@@ -1503,7 +1547,7 @@ def update_user_role(_user, _profile, user_id):
     tags:
       - Admin Users
     security:
-      - Bearer: []
+      - BearerAuth: []
     parameters:
       - name: user_id
         in: path

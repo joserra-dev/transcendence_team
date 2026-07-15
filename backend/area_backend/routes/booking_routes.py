@@ -66,7 +66,7 @@ def get_booking():
     tags:
       - Booking
     security:
-      - Bearer: []
+      - BearerAuth: []
     parameters:
       - name: id
         in: query
@@ -111,7 +111,7 @@ def get_reserva_by_id(id):
     tags:
       - Booking
     security:
-      - Bearer: []
+      - BearerAuth: []
     parameters:
       - name: id
         in: path
@@ -130,6 +130,8 @@ def get_reserva_by_id(id):
         description: No tienes permiso para ver esta reserva
       404:
         description: Reserva no encontrada
+      500:
+        description: Pasarela no configurada
     """
     user_id = get_jwt_identity()
     booking = Booking.query.get(id)
@@ -150,7 +152,7 @@ def get_history():
     tags:
       - Booking
     security:
-      - Bearer: []
+      - BearerAuth: []
     parameters:
       - name: lang
         in: query
@@ -216,7 +218,7 @@ def create_booking():
     tags:
       - Booking
     security:
-      - Bearer: []
+      - BearerAuth: []
     parameters:
       - name: lang
         in: query
@@ -442,7 +444,7 @@ def cancel_booking():
     tags:
       - Booking
     security:
-      - Bearer: []
+      - BearerAuth: []
     parameters:
       - name: lang
         in: query
@@ -503,7 +505,7 @@ def rate_booking():
     tags:
       - Booking
     security:
-      - Bearer: []
+      - BearerAuth: []
     parameters:
       - name: lang
         in: query
