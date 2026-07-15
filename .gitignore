@@ -17,3 +17,5 @@ backend/area_backend/certs/
 
 # OS
 .DS_Store
+
+Makefile copy
