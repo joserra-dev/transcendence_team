@@ -203,22 +203,30 @@ env:
 			echo "FLASK_DEBUG=0" >> .env; \
 			echo "BACK_SCHEME=https" >> .env; \
 			proto="https"; \
+			front_base=8443; \
+			back_base=8000; \
 		else \
 			echo "FLASK_ENV=development" > .env; \
 			echo "FLASK_DEBUG=1" >> .env; \
 			echo "BACK_SCHEME=http" >> .env; \
 			proto="http"; \
+			front_base=4200; \
+			back_base=8000; \
 		fi; \
-		read -p "Puerto Front [4200]: " front; \
-		front=$${front:-4200}; \
+		find_free_port() { \
+			p=$$1; \
+			while lsof -i :$$p >/dev/null 2>&1; do p=$$((p+1)); done; \
+			echo $$p; \
+		}; \
+		front=$$(find_free_port $$front_base); \
 		echo "FRONT_PORT=$$front" >> .env; \
 		echo "URL_FRONT=$$proto://$(HOST):$$front" >> .env; \
-		read -p "Puerto Back [8000]: " back; \
-		back=$${back:-8000}; \
+		echo -e "$(COLOR_GREEN)✔ Puerto Front asignado: $$front (libre desde $$front_base)$(COLOR_RESET)"; \
+		back=$$(find_free_port $$back_base); \
 		echo "BACK_PORT=$$back" >> .env; \
 		echo "URL_BACK=$$proto://$(HOST):$$back" >> .env; \
-		read -p "Puerto PostgreSQL [5432]: " db; \
-		db=$${db:-5432}; \
+		echo -e "$(COLOR_GREEN)✔ Puerto Back asignado: $$back (libre desde $$back_base)$(COLOR_RESET)"; \
+		db=$$(find_free_port 5432); \
 		read -p "Password PostgreSQL: " pass; \
 		read -p "Nombre DB [defaultdb]: " name; \
 		name=$${name:-defaultdb}; \
@@ -227,6 +235,7 @@ env:
 		echo "POSTGRES_PASSWORD=$$pass" >> .env; \
 		echo "POSTGRES_PORT=$$db" >> .env; \
 		echo "DATABASE_URL=postgresql://defaultdb_user:$$pass@db:$$db/$$name" >> .env; \
+		echo -e "$(COLOR_GREEN)✔ Puerto PostgreSQL asignado: $$db (libre desde 5432)$(COLOR_RESET)"; \
 		read -p "Stripe Key [sk_test_...]: " stripe; \
 		echo "STRIPE_KEY=$$stripe" >> .env; \
 		echo "MAIL_SERVER=smtp.gmail.com" >> .env; \
