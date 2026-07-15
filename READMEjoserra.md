@@ -839,3 +839,190 @@ Se aplicaron las correcciones acordadas, alineando el README con la estructura r
 El README ahora es preciso y reproducible: `make env` → `make dev` para desarrollo, `make prod` para producción, ambos coherentes con los docker-compose y el Makefile corregido previamente.
 
 (Nota: el stack de prueba de producción `transcendence_prod` sigue corriendo en 8001/5433/8443 desde antes; para pararlo: `docker compose -p transcendence_prod -f docker-compose.yml -f docker-compose.prod.yml -f /tmp/override-prod.yml down -v`.
+
+
+
+### 14/7/2026 pasarela de pagos
+
+Encontré problemas concretos en la configuración que pueden causar fallos en la pasarela de pagos en producción:
+
+## Problemas identificados
+
+**1. Falta `STRIPE_KEY` en `.env`**
+- En `.env` no está definida `STRIPE_KEY`
+- En `docker-compose.yml` se inyecta `STRIPE_KEY: ${STRIPE_KEY}` al contenedor del backend
+- En `booking_routes.py:21` se lee `stripe.api_key = os.getenv('STRIPE_KEY')` — si es `None`, la creación de la sesión de Stripe falla y hace rollback de la reserva
+
+**2. Configuración de desarrollo mezclada con producción**
+- `.env` tiene `FLASK_ENV=development` y `FLASK_DEBUG=1`, lo cual indica que no tienes un `.env` separado para producción
+
+**3. URLs de redirección**
+- `URL_BACK=https://jrc-GF65-Thin-10SDR:5000` (nombre de máquina local, no dominio público)
+- `URL_FRONT=https://jrc-GF65-Thin-10SDR:443`
+- Stripe requiere URLs públicas y accesibles para `success_url` y `cancel_url`
+
+## Pasos para solucionarlo
+
+**Paso 1 — Añadir `STRIPE_KEY` al `.env` (producción)**
+```bash
+STRIPE_KEY=sk_live_tu_clave_de_stripe_produccion
+```
+Si usas entorno Docker, asegúrate de que la variable esté en el `.env` que carga `docker-compose`.
+
+**Paso 2 — Crear un `.env` de producción limpio**
+```bash
+FLASK_ENV=production
+FLASK_DEBUG=0
+URL_BACK=https://tu-dominio-backend.com
+URL_FRONT=https://tu-dominio-frontend.com
+STRIPE_KEY=sk_live_...
+JWT_SECRET_KEY=una_clave_segura_larga
+PUBLIC_API_KEY=otra_clave_segura
+MAIL_* (tus credenciales reales de correo)
+```
+
+**Paso 3 — Reiniciar el backend**
+```bash
+docker-compose down
+docker-compose up -d --build
+```
+
+**Paso 4 — Verificar que Stripe carga correctamente**
+```bash
+docker logs transcendence_team-backend-1 2>&1 | grep -i stripe
+```
+Debe mostrar `Stripe API key configurada` sin errores.
+
+**Paso 5 — Probar una reserva de prueba en producción**
+- Verifica que al crear la reserva, el frontend reciba una URL de Stripe válida
+- Completa el pago y confirma que la reserva pasa a `CONFIRMED`
+
+revisar también el `.gitignore` y la configuración de CORS para confirmar que no hay más problemas de producción.?
+
+(SEGUIMOS CON EL PROBLEMA)
+
+Claro, sigue esta checklist de depuración en orden. En cada paso te digo qué comprobar y qué deberías ver.
+
+## Paso 1 — Verifica que el backend tenga `STRIPE_KEY` cargada
+
+```bash
+docker exec transcendence_team-backend-1 env | grep STRIPE_KEY
+```
+
+**Esperado:** `STRIPE_KEY=sk_live_...`  
+**Si sale vacío:** el `.env` no tiene la clave o `docker-compose` no la está inyectando. Añádela al `.env` y reinicia:
+
+```bash
+docker-compose down
+docker-compose up -d --build
+```
+
+---
+
+## Paso 2 — Comprueba que Stripe se inicializa sin errores
+
+```bash
+docker logs transcendence_team-backend-1 2>&1 | grep -i stripe
+```
+
+**Esperado:** `Stripe API key configurada`  
+**Si hay un error** (`Invalid API Key`, `No such token`, etc.): la clave es incorrecta o está en modo test con URL de prod. Verifica que usas `sk_live_...` y no `sk_test_...` en producción.
+
+---
+
+## Paso 3 — Verifica las URLs de redirección que Stripe está usando
+
+Stripe necesita que `success_url` y `cancel_url` sean URLs públicas alcanzables. Mira en el backend:
+
+```bash
+docker exec transcendence_team-backend-1 env | grep URL_
+```
+
+Debes ver algo como:
+```
+URL_BACK=https://tu-dominio-real.com
+URL_FRONT=https://tu-dominio-real.com
+```
+
+**Si ves `localhost` o el nombre de tu máquina (`jrc-GF65-Thin-10SDR`):** Stripe no podrá redirigir al usuario tras el pago porque esas URLs no son públicas. Cambia `URL_BACK` y `URL_FRONT` en el `.env` a tu dominio real (ej: `https://parking.tudominio.com` y `https://api.tudominio.com`) y reinicia.
+
+---
+
+## Paso 4 — Comprueba el `env.js` del frontend en el navegador
+
+Abre la consola del navegador en tu app en producción y ejecuta:
+
+```javascript
+console.log(window.env);
+```
+
+**Esperado:**
+```javascript
+{ URL_FRONT: 'https://tu-dominio-real.com', URL_BACK: 'https://tu-dominio-real.com' }
+```
+
+**Si ves `localhost:4200` o `localhost:8000`:** el `docker-entrypoint.sh` no sustituyó correctamente el template, o el build se hizo con valores locales. Asegúrate de que:
+- `env.template.js` usa `${URL_FRONT}` y `${URL_BACK}` (ya está correcto en tu repo)
+- El `.env` tiene las URLs correctas
+- Reconstruyes el frontend: `docker-compose build frontend && docker-compose up -d frontend`
+
+---
+
+## Paso 5 — Prueba el flujo completo y revisa la consola del navegador
+
+1. Abre las DevTools (F12) → pestaña **Network**
+2. Intenta hacer una reserva
+3. Busca la petición a `POST /api/booking`
+
+**Posibles resultados:**
+
+| Estado | Significado | Acción |
+|--------|------------|--------|
+| `200` con `{url: "https://checkout.stripe.com/..."}` | Todo correcto, Stripe responde | El problema está en el paso siguiente (redirección) |
+| `500` | Error interno en backend | Revisa `docker logs backend` |
+| `401/403` | Token JWT inválido o expirado | Cierra sesión y vuelve a loguear |
+| `400` con mensaje de error | Validación fallida (fechas, matrícula, solapamiento) | Corrige los datos del formulario |
+
+---
+
+## Paso 6 — Si el POST /api/booking devuelve 200 pero no redirige
+
+Comprueba en la consola del navegador si `res.url` existe:
+
+```javascript
+// En parking-detail.ts, dentro del subscribe next:
+console.log('Stripe URL recibida:', res.url);
+```
+
+Si `res.url` es `undefined` o `null`, el backend devolvió `200` pero sin URL — eso significa que Stripe falló al crear la sesión. Revisa los logs del backend en ese momento:
+
+```bash
+docker logs --tail 50 transcendence_team-backend-1
+```
+
+Busca líneas con `Error generando pasarela Stripe` o trazas de Python.
+
+---
+
+## Paso 7 — Verifica conectividad desde el backend a Stripe
+
+Stripe es un servicio externo. Asegúrate de que el contenedor del backend tiene salida a internet:
+
+```bash
+docker exec transcendence_team-backend-1 curl -s -o /dev/null -w "%{http_code}" https://api.stripe.com/v1/charges
+```
+
+**Esperado:** `401` (Stripe responde, la clave es necesaria para operar, pero la conexión funciona)  
+**Si es `000` o timeout:** el contenedor no tiene salida a internet (problema de red Docker).
+
+---
+
+## Resumen rápido de lo más común
+
+| Síntoma | Causa probable |
+|---------|---------------|
+| Reserva se crea pero no abre Stripe | `URL_BACK` no es pública |
+| Error 500 al crear reserva | `STRIPE_KEY` no definida o incorrecta |
+| Redirección de Stripe da error | `URL_BACK`/`URL_FRONT` apuntan a localhost |
+| Todo falla en prod pero funciona en local | CORS no incluye el dominio de producción |
+| No se ve la URL de Stripe en consola | Backend no puede conectar con Stripe API |
