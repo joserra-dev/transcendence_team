@@ -4,6 +4,7 @@ import { ActivatedRoute, NavigationEnd, Router, RouterLink } from '@angular/rout
 import { TranslateModule } from '@ngx-translate/core';
 import { filter, map, merge, of, startWith } from 'rxjs';
 import { toSignal } from '@angular/core/rxjs-interop';
+import { Auth } from '../../../core/services/auth';
 
 export interface BreadcrumbItem {
   labelKey: string;
@@ -19,6 +20,7 @@ export interface BreadcrumbItem {
 export class Breadcrumb {
   private router = inject(Router);
   private route = inject(ActivatedRoute);
+  private auth = inject(Auth);
 
   items = toSignal(
     merge(
@@ -84,8 +86,10 @@ export class Breadcrumb {
 
     return items.map((item, index) => {
       const isLast = index === items.length - 1;
-      const url = item.url?.replace(/\/+$/, '') || '/';
-      const isCurrent = url === path || (url === '/' && path === '/');
+      const resolvedUrl = this.resolveItemUrl(item);
+      const url = resolvedUrl?.replace(/\/+$/, '') || '/';
+      const isHomeItem = item.labelKey === 'BREADCRUMB.HOME';
+      const isCurrent = !isHomeItem && (url === path || (url === '/' && path === '/'));
 
       if (isLast || isCurrent) {
         return { labelKey: item.labelKey };
@@ -93,6 +97,44 @@ export class Breadcrumb {
 
       return { labelKey: item.labelKey, url };
     });
+  }
+
+  navigateHome(event: Event, item: BreadcrumbItem): void {
+    event.preventDefault();
+
+    const target = (this.resolveItemUrl(item) || '/').replace(/\/+$/, '') || '/';
+    const path = this.currentPath();
+
+    if (target === path) {
+      this.router.navigate([target], {
+        queryParams: { home: '1' },
+        queryParamsHandling: 'merge',
+      });
+      return;
+    }
+
+    this.router.navigateByUrl(target);
+  }
+
+  private resolveItemUrl(item: BreadcrumbItem): string | undefined {
+    if (item.labelKey !== 'BREADCRUMB.HOME') {
+      return item.url;
+    }
+
+    const path = this.currentPath();
+    if (!path.startsWith('/admin')) {
+      return item.url || '/';
+    }
+
+    if (this.auth.isSuperAdmin()) {
+      return '/admin/companies';
+    }
+
+    if (this.auth.isAdmin()) {
+      return '/admin/dashboard';
+    }
+
+    return item.url || '/';
   }
 
   private currentPath(): string {
