@@ -13,7 +13,7 @@ from models.booking import Booking, BookingStatus
 from models.users import Users
 from models.space import Space
 from models.parking import Parking
-from models.parking_blocked_day import ParkingBlockedDay
+from models.space_blocked_day import SpaceBlockedDay
 from services.email_services import EmailService
 
 booking_bp = Blueprint('booking_bp', __name__)
@@ -303,6 +303,9 @@ def create_booking():
     
     if spot_overlap:
         return jsonify({"error": _("Existe una reserva en para esta plaza")}), 400
+
+    if SpaceBlockedDay.is_blocked_in_range(int(id_space), startDate, endDate):
+        return jsonify({"error": _("La plaza no está disponible en las fechas seleccionadas")}), 400
      
     try:
         from models.space import Space

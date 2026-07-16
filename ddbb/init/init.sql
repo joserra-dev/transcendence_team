@@ -22,7 +22,11 @@ ALTER TABLE IF EXISTS ONLY public.parking DROP CONSTRAINT IF EXISTS parking_id_c
 ALTER TABLE IF EXISTS ONLY public.invoice_sequences DROP CONSTRAINT IF EXISTS invoice_sequences_id_company_fkey;
 ALTER TABLE IF EXISTS ONLY public.booking DROP CONSTRAINT IF EXISTS booking_id_user_fkey;
 ALTER TABLE IF EXISTS ONLY public.booking DROP CONSTRAINT IF EXISTS booking_id_space_fkey;
+ALTER TABLE IF EXISTS ONLY public.parking_blocked_day DROP CONSTRAINT IF EXISTS parking_blocked_day_id_parking_fkey;
+ALTER TABLE IF EXISTS ONLY public.space_blocked_day DROP CONSTRAINT IF EXISTS space_blocked_day_id_space_fkey;
 
+DROP TABLE IF EXISTS public.space_blocked_day;
+DROP TABLE IF EXISTS public.parking_blocked_day;
 DROP TABLE IF EXISTS public.chat_messages;
 DROP TABLE IF EXISTS public.booking;
 DROP TABLE IF EXISTS public.space;
@@ -199,6 +203,23 @@ ALTER SEQUENCE public.booking_id_seq OWNER TO defaultdb_user;
 ALTER SEQUENCE public.booking_id_seq OWNED BY public.booking.id;
 ALTER TABLE ONLY public.booking ALTER COLUMN id SET DEFAULT nextval('public.booking_id_seq'::regclass);
 
+--
+-- Tabla: space_blocked_day
+--
+CREATE TABLE public.space_blocked_day (
+    id bigint NOT NULL PRIMARY KEY,
+    id_space bigint NOT NULL,
+    day date NOT NULL,
+    created_at timestamp without time zone DEFAULT CURRENT_TIMESTAMP,
+    CONSTRAINT uq_space_blocked_day UNIQUE (id_space, day)
+);
+ALTER TABLE public.space_blocked_day OWNER TO defaultdb_user;
+
+CREATE SEQUENCE public.space_blocked_day_id_seq START WITH 1 INCREMENT BY 1 NO MINVALUE NO MAXVALUE CACHE 1;
+ALTER SEQUENCE public.space_blocked_day_id_seq OWNER TO defaultdb_user;
+ALTER SEQUENCE public.space_blocked_day_id_seq OWNED BY public.space_blocked_day.id;
+ALTER TABLE ONLY public.space_blocked_day ALTER COLUMN id SET DEFAULT nextval('public.space_blocked_day_id_seq'::regclass);
+
 
 CREATE TABLE public.chat_messages (
     id bigint NOT NULL PRIMARY KEY,
@@ -249,6 +270,7 @@ SELECT pg_catalog.setval('public.profiles_id_seq', 4, true);
 SELECT pg_catalog.setval('public.space_id_seq', 6, true);
 SELECT pg_catalog.setval('public.users_id_seq', 4, true);
 SELECT pg_catalog.setval('public.chat_messages_id_seq', 1, false); -- Inicializada
+SELECT pg_catalog.setval('public.space_blocked_day_id_seq', 1, false);
 
 --
 -- RELACIONES / CLAVES FORÁNEAS (Foreign Keys)
@@ -274,6 +296,9 @@ ALTER TABLE ONLY public.profiles
 
 ALTER TABLE ONLY public.space
     ADD CONSTRAINT space_id_parking_fkey FOREIGN KEY (id_parking) REFERENCES public.parking(id) ON DELETE CASCADE;
+
+ALTER TABLE ONLY public.space_blocked_day
+    ADD CONSTRAINT space_blocked_day_id_space_fkey FOREIGN KEY (id_space) REFERENCES public.space(id) ON DELETE CASCADE;
 
 -- Claves foráneas de chat_messages
 ALTER TABLE ONLY public.chat_messages

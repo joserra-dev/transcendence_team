@@ -97,22 +97,32 @@ export class Admin {
     return this.http.put<{ mensaje: string }>(`${this.apiUrl}/bookings/${id}/cancel`, {});
   }
 
-  getParkingCalendar(parkingId: number, year: number, month: number): Observable<ParkingCalendar> {
+  getParkingCalendar(
+    parkingId: number,
+    spaceId: number,
+    year: number,
+    month: number
+  ): Observable<ParkingCalendar> {
     return this.http.get<ParkingCalendar>(`${this.apiUrl}/parking/${parkingId}/calendar`, {
-      params: { year: String(year), month: String(month) },
+      params: { spaceId: String(spaceId), year: String(year), month: String(month) },
     });
   }
 
-  blockDay(parkingId: number, day: string): Observable<{ id: number; parkingId: number; day: string }> {
-    return this.http.post<{ id: number; parkingId: number; day: string }>(
+  blockDay(
+    parkingId: number,
+    spaceId: number,
+    day: string
+  ): Observable<{ id: number; spaceId: number; day: string }> {
+    return this.http.post<{ id: number; spaceId: number; day: string }>(
       `${this.apiUrl}/parking/${parkingId}/blocked-days`,
-      { day }
+      { day, spaceId }
     );
   }
 
-  unblockDay(parkingId: number, day: string): Observable<{ mensaje: string }> {
+  unblockDay(parkingId: number, spaceId: number, day: string): Observable<{ mensaje: string }> {
     return this.http.delete<{ mensaje: string }>(
-      `${this.apiUrl}/parking/${parkingId}/blocked-days/${day}`
+      `${this.apiUrl}/parking/${parkingId}/blocked-days/${day}`,
+      { params: { spaceId: String(spaceId) } }
     );
   }
 

@@ -63,13 +63,15 @@ class Parking(db.Model):
                             fh = to_date
                         
                         from models.booking import Booking
+                        from models.space_blocked_day import SpaceBlockedDay
                         overlap = Booking.query.filter(
                             Booking.id_space == space.id,
                             Booking.start_date < fh,
                             Booking.end_date > fd,
                             Booking.status == '1'
                         ).first()
-                        if overlap or space_data["status"] == "1":
+                        blocked = SpaceBlockedDay.is_blocked_in_range(space.id, fd, fh)
+                        if overlap or blocked or space_data["status"] == "1":
                             space_data["status"] = "1"
                         else:
                             space_data["status"] = "0"
