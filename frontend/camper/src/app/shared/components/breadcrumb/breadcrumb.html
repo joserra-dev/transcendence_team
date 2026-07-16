@@ -5,7 +5,11 @@
         @for (item of items(); track item.labelKey + $index; let last = $last) {
           <li class="breadcrumb-item" [class.active]="last">
             @if (!last && item.url) {
-              <a [routerLink]="item.url">{{ item.labelKey | translate }}</a>
+              @if (item.labelKey === 'BREADCRUMB.HOME') {
+                <a href="#" (click)="navigateHome($event, item)">{{ item.labelKey | translate }}</a>
+              } @else {
+                <a [routerLink]="item.url">{{ item.labelKey | translate }}</a>
+              }
             } @else {
               <span>{{ item.labelKey | translate }}</span>
             }

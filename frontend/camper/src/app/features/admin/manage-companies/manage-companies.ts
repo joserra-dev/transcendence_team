@@ -1,7 +1,7 @@
 import { Component, ElementRef, OnDestroy, OnInit, ViewChild, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
-import { Router, RouterLink } from '@angular/router';
+import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { TranslateModule } from '@ngx-translate/core';
 import { Admin } from '../../../core/services/admin';
 import { Auth } from '../../../core/services/auth';
@@ -27,6 +27,7 @@ export class ManageCompanies implements OnInit, OnDestroy {
   private authService = inject(Auth);
   private chatService = inject(Chat);
   private router = inject(Router);
+  private route = inject(ActivatedRoute);
 
   readonly pageSize = 8;
   readonly adsPageSize = 8;
@@ -49,6 +50,7 @@ export class ManageCompanies implements OnInit, OnDestroy {
   deleteConfirmParams: Record<string, string> = {};
   private companyPendingDelete: Company | null = null;
   private unreadPollSub?: Subscription;
+  private homeNavSub?: Subscription;
 
   readonly maxFieldLength = 35;
 
@@ -68,10 +70,24 @@ export class ManageCompanies implements OnInit, OnDestroy {
     this.loadCompanies();
     this.loadUnreadCount();
     this.unreadPollSub = interval(30000).subscribe(() => this.loadUnreadCount());
+    this.homeNavSub = this.route.queryParamMap.subscribe((params) => {
+      if (params.get('home') !== '1') {
+        return;
+      }
+
+      this.resetHomeView();
+      this.router.navigate([], {
+        relativeTo: this.route,
+        queryParams: { home: null },
+        queryParamsHandling: 'merge',
+        replaceUrl: true,
+      });
+    });
   }
 
   ngOnDestroy() {
     this.unreadPollSub?.unsubscribe();
+    this.homeNavSub?.unsubscribe();
   }
 
   loadUnreadCount() {
@@ -322,6 +338,18 @@ export class ManageCompanies implements OnInit, OnDestroy {
     this.adsCurrentPage = 1;
     this.adsLoading = false;
     this.adsErrorMessage = '';
+  }
+
+  private resetHomeView() {
+    this.showForm = false;
+    this.showAdsPanel = false;
+    this.companyForm.reset();
+    this.resetAdsState();
+    this.errorMessage = '';
+    this.formErrorMessage = '';
+    this.successMessage = '';
+    this.showDeleteConfirm = false;
+    this.companyPendingDelete = null;
   }
 
   private scrollListToTop() {
