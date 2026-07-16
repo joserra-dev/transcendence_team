@@ -17,14 +17,29 @@ from routes.public_api_routes import public_api_bp
 from routes.status_routes import status_bp
 from routes.friend_routes import friends_bp
 from routes.chat_routes import chat_bp
+from socketio_ext import socketio
+from websocket_handlers import register_websocket_handlers
 
 
 app = Flask(__name__)
 
 # Configurar CORS con orígenes específicos en lugar de permitir todos.
 # Soporta varios orígenes separados por comas (p. ej. dev y prod).
-frontend_origins = os.getenv('URL_FRONT', 'http://localhost:4200').split(',')
+# Normalizamos a minúsculas: el navegador envía el host en minúsculas en Origin,
+# pero URL_FRONT puede tener mayúsculas (p. ej. hostname de máquina).
+frontend_origins = [
+    origin.strip().rstrip('/').lower()
+    for origin in os.getenv('URL_FRONT', 'http://localhost:4200').split(',')
+    if origin.strip()
+]
 CORS(app, resources={r"/api/*": {"origins": frontend_origins}})
+socketio.init_app(
+    app,
+    cors_allowed_origins=frontend_origins,
+    async_mode='eventlet',
+    logger=False,
+    engineio_logger=False,
+)
 # ==========================================
 # 1. PASO CRUCIAL: CONFIGURACIÓN PRIMERO
 # ==========================================
@@ -111,6 +126,7 @@ app.register_blueprint(public_api_bp)
 app.register_blueprint(status_bp)
 app.register_blueprint(chat_bp)
 app.register_blueprint(friends_bp)
+register_websocket_handlers()
 
 # 4. INICIALIZADOR DE BASE DE DATOS
 # En desarrollo se fuerza el seed. En producción solo si la base de datos está vacía.
