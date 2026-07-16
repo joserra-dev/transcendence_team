@@ -41,6 +41,18 @@
   border: 1px solid $color-border;
   box-shadow: $shadow-strong;
   overflow: hidden;
+  width: 100%;
+  box-sizing: border-box;
+
+  img {
+    max-width: 100%;
+    height: auto;
+  }
+
+  @media (max-width: $bp-sm) {
+    flex-direction: column;
+    padding: 0.9rem;
+  }
 }
 .legal-card {
   gap: 1rem;

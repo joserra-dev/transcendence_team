@@ -1,9 +1,8 @@
 @use "../../../../styles/abstracts/variables" as *;
+@use "../../../../styles/abstracts/mixins" as *;
 
 .booking-detail-page {
-  max-width: 900px;
-  margin: 0 auto;
-  padding: 2rem 1rem;
+  @include page-container(900px);
 }
 
 .back-row {
