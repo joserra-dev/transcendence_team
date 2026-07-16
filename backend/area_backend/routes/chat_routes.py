@@ -6,6 +6,7 @@ from database import db
 from models.chat_message import ChatMessage
 from models.company import Company
 from models.users import Profiles, UserRole, Users
+from chat_events import emit_messages_read, emit_new_message
 from utils.admin_auth import require_admin
 
 chat_bp = Blueprint('chat_bp', __name__, url_prefix='/api/chat')
@@ -139,6 +140,7 @@ def send_message(user, profile, company_id):
     )
     db.session.add(message)
     db.session.commit()
+    emit_new_message(message)
     return jsonify(message.to_dict()), 201
 
 
@@ -158,4 +160,5 @@ def mark_thread_read(user, profile, company_id):
         .update({'is_read': True}, synchronize_session=False)
     )
     db.session.commit()
+    emit_messages_read(company_id, user.id)
     return jsonify({'mensaje': 'Mensajes marcados como leídos'}), 200
