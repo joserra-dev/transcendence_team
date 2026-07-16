@@ -11,7 +11,7 @@
         <!-- LOGO + NAVEGACIÓN ATRÁS / ADELANTE -->
         @let showNavHistory = showNavHistory$ | async;
         <div class="col-auto logo-nav-group" [class.logo-nav-group--home]="!showNavHistory">
-          <a routerLink="/" class="logo-wrapper">
+          <a href="#" class="logo-wrapper" (click)="navigateLogo($event)">
             <img src="/images/logos/logo-horizontal.png" class="logo" alt="Logo Hemen-Go!">
           </a>
         </div>

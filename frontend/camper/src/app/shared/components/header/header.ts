@@ -63,6 +63,45 @@ export class Header {
     return this.authService.isSuperAdmin() ? '/admin/companies' : '/admin/dashboard';
   }
 
+  get logoLink(): string {
+    const path = this.currentPath();
+    if (!path.startsWith('/admin')) {
+      return '/';
+    }
+
+    if (this.authService.isSuperAdmin()) {
+      return '/admin/companies';
+    }
+
+    if (this.authService.isAdmin()) {
+      return '/admin/dashboard';
+    }
+
+    return '/';
+  }
+
+  navigateLogo(event: Event): void {
+    event.preventDefault();
+
+    const target = this.logoLink.replace(/\/+$/, '') || '/';
+    const path = this.currentPath();
+
+    if (target === path) {
+      this.router.navigate([target], {
+        queryParams: { home: '1' },
+        queryParamsHandling: 'merge',
+      });
+      return;
+    }
+
+    this.router.navigateByUrl(target);
+  }
+
+  private currentPath(): string {
+    const path = this.router.url.split('?')[0].split('#')[0] || '/';
+    return path.replace(/\/+$/, '') || '/';
+  }
+
   toggleMenu(event: Event) {
     event.stopPropagation();
     this.menuOpen = !this.menuOpen;
