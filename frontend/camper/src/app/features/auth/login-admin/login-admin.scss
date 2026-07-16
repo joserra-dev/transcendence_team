@@ -2,7 +2,7 @@
 
 // FORMULARIO
 .form-standard {
-  max-width: 420px;
+  max-width: min(420px, 100%);
 }
 
 .btn-link-recovery {

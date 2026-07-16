@@ -1,5 +1,11 @@
 @use "../../../../styles/abstracts/variables" as *;
 
+@media (max-width: $bp-sm) {
+  .form-standard {
+    max-width: 100%;
+  }
+}
+
 // ERRORES DEL BACKEND
 .error-backend-top {
   background-color: rgba($color-error, 0.08);

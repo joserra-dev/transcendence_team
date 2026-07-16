@@ -1,23 +1,87 @@
-@mixin responsive-padding {
-  padding-left: 2rem;
-  padding-right: 2rem;
+@use "variables" as *;
 
-  @media (min-width: 768px) {
-    padding-left: 8rem;
-    padding-right: 8rem;
+// Padding lateral fluido: crece/encoge según el ancho de pantalla
+@mixin responsive-padding {
+  padding-left: clamp(1rem, 4vw, 2rem);
+  padding-right: clamp(1rem, 4vw, 2rem);
+
+  @media (min-width: $bp-md) {
+    padding-left: clamp(2rem, 6vw, 8rem);
+    padding-right: clamp(2rem, 6vw, 8rem);
+
     .justify-content-md-end {
       justify-content: flex-end !important;
       padding-top: 1.5%;
     }
   }
 
-  @media (min-width: 1200px) {
-    padding-left: 18rem;
-    padding-right: 18rem;
+  @media (min-width: $bp-xl) {
+    padding-left: clamp(4rem, 10vw, 18rem);
+    padding-right: clamp(4rem, 10vw, 18rem);
   }
 
   @media (min-width: 1500px) {
-    padding-left: 25rem;
-    padding-right: 25rem;
+    padding-left: clamp(6rem, 12vw, 25rem);
+    padding-right: clamp(6rem, 12vw, 25rem);
+  }
+}
+
+// Contenedor de página centrado y fluido
+@mixin page-container($max: $page-max-width) {
+  width: 100%;
+  max-width: $max;
+  margin: 0 auto;
+  padding: clamp(1rem, 3vw, 2rem) clamp(0.75rem, 3vw, 1rem);
+  box-sizing: border-box;
+}
+
+// Imagen que escala manteniendo proporción
+@mixin fluid-image {
+  width: 100%;
+  height: auto;
+  max-width: 100%;
+  object-fit: cover;
+}
+
+// Botones de acción admin: en móvil se apilan a ancho completo
+@mixin admin-toolbar-mobile {
+  @media (max-width: $bp-sm) {
+    flex-direction: column;
+    flex-wrap: wrap;
+    align-items: stretch;
+    width: 100%;
+    overflow: visible;
+    gap: 0.5rem;
+
+    .btn,
+    a.btn {
+      width: 100%;
+      white-space: normal;
+      text-align: center;
+    }
+  }
+}
+
+// Hero admin: botones apilados a ancho completo en móvil
+@mixin admin-hero-actions-mobile {
+  @media (max-width: $bp-sm) {
+    display: flex;
+    flex-direction: column;
+    align-items: stretch;
+    width: 100%;
+    gap: 0.5rem;
+
+    .btn,
+    a.btn {
+      width: 100%;
+      min-width: 0;
+      text-align: center;
+      white-space: normal;
+    }
+
+    .btn-chat {
+      padding-left: 1rem;
+      padding-right: 1rem;
+    }
   }
 }
