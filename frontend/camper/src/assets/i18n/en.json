@@ -367,11 +367,15 @@
   "ADMIN_CALENDAR": {
     "BUTTON": "Calendars",
     "TITLE": "Occupancy calendar",
-    "SUBTITLE": "Check occupancy and manually block days per parking.",
+    "SUBTITLE": "Check occupancy and manually block days per spot.",
     "BACK": "Back to dashboard",
     "SELECT_PARKING": "Parking",
     "SELECT_PARKING_PLACEHOLDER": "Select a parking",
+    "SELECT_SPACE": "Spot",
+    "SELECT_SPACE_PLACEHOLDER": "Select a spot",
     "CHOOSE_PARKING": "Select a parking to view its calendar.",
+    "CHOOSE_SPACE": "Select a spot to view its calendar.",
+    "NO_SPACES": "This parking has no registered spots.",
     "LOADING": "Loading calendar...",
     "LEGEND_OCCUPIED": "Occupied",
     "LEGEND_BLOCKED": "Blocked",
@@ -407,6 +411,7 @@
     },
     "ERRORS": {
       "LOAD_PARKINGS": "Could not load parkings.",
+      "LOAD_SPACES": "Could not load spots.",
       "LOAD_CALENDAR": "Could not load the calendar.",
       "BLOCK": "Could not block the day.",
       "UNBLOCK": "Could not unblock the day."

@@ -38,13 +38,18 @@
 }
 
 .calendar-controls {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1rem 1.5rem;
   margin-bottom: 1.5rem;
 
-  .parking-select {
+  .control-select {
     display: flex;
     flex-direction: column;
     gap: 0.35rem;
+    min-width: 220px;
     max-width: 360px;
+    flex: 1 1 220px;
     font-weight: 600;
 
     select {

@@ -7,4 +7,4 @@ from .space import Space
 from .booking import Booking
 from .chat_message import ChatMessage
 from .friend import Friend
-from .parking_blocked_day import ParkingBlockedDay
+from .space_blocked_day import SpaceBlockedDay

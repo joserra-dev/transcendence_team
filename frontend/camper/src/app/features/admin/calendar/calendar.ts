@@ -4,7 +4,7 @@ import { FormsModule } from '@angular/forms';
 import { RouterLink } from '@angular/router';
 import { TranslateModule } from '@ngx-translate/core';
 import { Admin } from '../../../core/services/admin';
-import { Parking } from '../../../core/models/parking';
+import { Parking, Space } from '../../../core/models/parking';
 import { AdminBooking } from '../../../core/models/booking';
 
 interface CalendarCell {
@@ -26,7 +26,9 @@ export class Calendar implements OnInit {
   readonly weekdays = [1, 2, 3, 4, 5, 6, 7];
 
   parkings: Parking[] = [];
+  spaces: Space[] = [];
   selectedParkingId: number | null = null;
+  selectedSpaceId: number | null = null;
 
   year!: number;
   month!: number;
@@ -36,6 +38,7 @@ export class Calendar implements OnInit {
   private occupiedMap = new Map<string, AdminBooking[]>();
 
   isLoading = false;
+  isLoadingSpaces = false;
   errorMessage = '';
 
   selectedDay: string | null = null;
@@ -60,8 +63,36 @@ export class Calendar implements OnInit {
   }
 
   onParkingChange() {
-    this.selectedDay = null;
-    this.selectedDayBookings = [];
+    this.selectedSpaceId = null;
+    this.spaces = [];
+    this.weeks = [];
+    this.closeDetail();
+    this.errorMessage = '';
+
+    if (this.selectedParkingId == null) {
+      return;
+    }
+
+    this.isLoadingSpaces = true;
+    this.adminService.getParkingById(this.selectedParkingId).subscribe({
+      next: (parking) => {
+        this.spaces = parking.plazasResponse || parking.spaces || [];
+        this.isLoadingSpaces = false;
+
+        if (this.spaces.length === 1) {
+          this.selectedSpaceId = this.spaces[0].id;
+          this.loadCalendar();
+        }
+      },
+      error: () => {
+        this.isLoadingSpaces = false;
+        this.errorMessage = 'ADMIN_CALENDAR.ERRORS.LOAD_SPACES';
+      },
+    });
+  }
+
+  onSpaceChange() {
+    this.closeDetail();
     this.loadCalendar();
   }
 
@@ -69,8 +100,12 @@ export class Calendar implements OnInit {
     return this.parkings.find((p) => p.id === this.selectedParkingId)?.name || '';
   }
 
+  get selectedSpaceName(): string {
+    return this.spaces.find((s) => s.id === this.selectedSpaceId)?.name || '';
+  }
+
   loadCalendar() {
-    if (this.selectedParkingId == null) {
+    if (this.selectedParkingId == null || this.selectedSpaceId == null) {
       this.weeks = [];
       return;
     }
@@ -78,18 +113,20 @@ export class Calendar implements OnInit {
     this.isLoading = true;
     this.errorMessage = '';
 
-    this.adminService.getParkingCalendar(this.selectedParkingId, this.year, this.month).subscribe({
-      next: (data) => {
-        this.blockedDays = new Set(data.blockedDays || []);
-        this.occupiedMap = this.buildOccupancy(data.bookings || []);
-        this.buildGrid();
-        this.isLoading = false;
-      },
-      error: () => {
-        this.errorMessage = 'ADMIN_CALENDAR.ERRORS.LOAD_CALENDAR';
-        this.isLoading = false;
-      },
-    });
+    this.adminService
+      .getParkingCalendar(this.selectedParkingId, this.selectedSpaceId, this.year, this.month)
+      .subscribe({
+        next: (data) => {
+          this.blockedDays = new Set(data.blockedDays || []);
+          this.occupiedMap = this.buildOccupancy(data.bookings || []);
+          this.buildGrid();
+          this.isLoading = false;
+        },
+        error: () => {
+          this.errorMessage = 'ADMIN_CALENDAR.ERRORS.LOAD_CALENDAR';
+          this.isLoading = false;
+        },
+      });
   }
 
   private buildOccupancy(bookings: AdminBooking[]): Map<string, AdminBooking[]> {
@@ -100,7 +137,6 @@ export class Calendar implements OnInit {
       }
       const start = this.parseDate(booking.startDate);
       const end = this.parseDate(booking.endDate);
-      // Ocupa las noches [start, end)
       for (let d = new Date(start); d < end; d.setDate(d.getDate() + 1)) {
         const key = this.formatDate(d);
         const list = map.get(key) || [];
@@ -114,7 +150,7 @@ export class Calendar implements OnInit {
   private buildGrid() {
     const firstOfMonth = new Date(this.year, this.month - 1, 1);
     const daysInMonth = new Date(this.year, this.month, 0).getDate();
-    const leadingBlanks = (firstOfMonth.getDay() + 6) % 7; // Lunes primero
+    const leadingBlanks = (firstOfMonth.getDay() + 6) % 7;
 
     const today = this.formatDate(new Date());
     const cells: (CalendarCell | null)[] = [];
@@ -151,7 +187,7 @@ export class Calendar implements OnInit {
   }
 
   onDayClick(cell: CalendarCell | null) {
-    if (!cell || this.selectedParkingId == null) {
+    if (!cell || this.selectedParkingId == null || this.selectedSpaceId == null) {
       return;
     }
 
@@ -170,14 +206,13 @@ export class Calendar implements OnInit {
   }
 
   private blockDay(date: string) {
-    if (this.selectedParkingId == null) {
+    if (this.selectedParkingId == null || this.selectedSpaceId == null) {
       return;
     }
     this.errorMessage = '';
-    // Actualización optimista: se pinta al instante y se revierte si falla.
     this.blockedDays.add(date);
     this.buildGrid();
-    this.adminService.blockDay(this.selectedParkingId, date).subscribe({
+    this.adminService.blockDay(this.selectedParkingId, this.selectedSpaceId, date).subscribe({
       error: (err) => {
         this.blockedDays.delete(date);
         this.buildGrid();
@@ -187,13 +222,13 @@ export class Calendar implements OnInit {
   }
 
   private unblockDay(date: string) {
-    if (this.selectedParkingId == null) {
+    if (this.selectedParkingId == null || this.selectedSpaceId == null) {
       return;
     }
     this.errorMessage = '';
     this.blockedDays.delete(date);
     this.buildGrid();
-    this.adminService.unblockDay(this.selectedParkingId, date).subscribe({
+    this.adminService.unblockDay(this.selectedParkingId, this.selectedSpaceId, date).subscribe({
       error: (err) => {
         this.blockedDays.add(date);
         this.buildGrid();
