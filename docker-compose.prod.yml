@@ -28,6 +28,7 @@ services:
     build:
       context: ./frontend
       target: production
+    image: transcendence_team-frontend:prod
 
     depends_on:
           backend:
