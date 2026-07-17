@@ -222,13 +222,22 @@ env:
 		}; \
 		front=$$(find_free_port $$front_base); \
 		echo "FRONT_PORT=$$front" >> .env; \
-		echo "URL_FRONT=$$proto://$$host_env:$$front" >> .env; \
+		echo "URL_FRONT=$$proto://$(HOST):$$front" >> .env; \
 		echo -e "$(COLOR_GREEN)✔ Puerto Front asignado: $$front (libre desde $$front_base)$(COLOR_RESET)"; \
 		back=$$(find_free_port $$back_base); \
 		echo "BACK_PORT=$$back" >> .env; \
-		echo "URL_BACK=$$proto://$$host_env:$$back" >> .env; \
+		echo "URL_BACK=$$proto://$(HOST):$$back" >> .env; \
 		echo -e "$(COLOR_GREEN)✔ Puerto Back asignado: $$back (libre desde $$back_base)$(COLOR_RESET)"; \
 		db=$$(find_free_port 5432); \
+		jwt_secret=$$(python3 -c 'import secrets; print(secrets.token_hex(32))'); \
+		echo "JWT_SECRET_KEY=$$jwt_secret" >> .env; \
+		echo -e "$(COLOR_GREEN)✔ JWT_SECRET_KEY generada automáticamente$(COLOR_RESET)"; \
+		echo "JWT_ACCESS_TOKEN_EXPIRES=120" >> .env; \
+		public_api_key=$$(python3 -c 'import secrets; print(secrets.token_hex(32))'); \
+		echo "PUBLIC_API_KEY=$$public_api_key" >> .env; \
+		echo "PUBLIC_API_RATE_LIMIT=60" >> .env; \
+		echo "RATELIMIT_STORAGE_URI=redis://redis:6379/0" >> .env; \
+		echo -e "$(COLOR_GREEN)✔ PUBLIC_API_KEY generada automáticamente$(COLOR_RESET)"; \
 		read -p "Password PostgreSQL: " pass; \
 		read -p "Nombre DB [defaultdb]: " name; \
 		name=$${name:-defaultdb}; \

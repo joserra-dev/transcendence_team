@@ -29,12 +29,17 @@ RUN rm -rf /usr/share/nginx/html/*
 COPY --from=build-stage /app/dist/camper/browser /usr/share/nginx/html
 COPY nginx.conf /etc/nginx/conf.d/default.conf
 
+# IMPORTANTE (seguridad, CWE-295):
+# No se embebe ningún certificado autofirmado en la imagen de producción.
+# Los certificados TLS REALES (firmados por una CA de confianza) deben montarse
+# en /etc/nginx/ssl/ como un volumen desde el host, p. ej.:
+#   services.frontend.volumes:
+#     - ./frontend/ssl:/etc/nginx/ssl:ro
+# con los archivos nginx-selfsigned.crt / nginx-selfsigned.key (o los nombres que
+# indique tu CA). Sin ellos, nginx NO arrancará en producción: eso es lo deseado
+# para no exponer tráfico "HTTPS" con un certificado autofirmado inválido.
 RUN apk add --no-cache openssl gettext && \
-    mkdir -p /etc/nginx/ssl && \
-    openssl req -x509 -nodes -days 365 -newkey rsa:2048 \
-      -keyout /etc/nginx/ssl/nginx-selfsigned.key \
-      -out /etc/nginx/ssl/nginx-selfsigned.crt \
-      -subj "/C=ES/ST=BasqueCountry/L=Urduliz/O=42Urduliz/CN=*.42urduliz.com"
+    mkdir -p /etc/nginx/ssl
 
 COPY docker-entrypoint.sh /docker-entrypoint.sh
 RUN chmod +x /docker-entrypoint.sh

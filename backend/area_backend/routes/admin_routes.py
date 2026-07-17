@@ -5,9 +5,11 @@ import secrets
 from flask import Blueprint, jsonify, request
 from sqlalchemy.exc import SQLAlchemyError
 from werkzeug.security import generate_password_hash
+from utils.password_hash import hash_password
 from flask_babel import gettext as _
 from utils.coordinate_validator import CoordinateValidator
 from database import db
+from database import limiter
 from models.booking import Booking
 from models.chat_message import ChatMessage
 from models.company import Company
@@ -275,9 +277,10 @@ def _create_pending_user(email: str, password: str) -> tuple[Users, str]:
     verification_token = secrets.token_urlsafe(32)
     user = Users(
         email=email,
-        pass_user=generate_password_hash(password),
+        pass_user=hash_password(password),
         is_verified=False,
         verification_token=verification_token,
+        verification_expires=datetime.utcnow() + timedelta(hours=24)
     )
     return user, verification_token
 
@@ -1369,6 +1372,7 @@ def list_users(_user, _profile):
 
 @admin_bp.route('/users', methods=['POST'])
 @require_super_admin
+@limiter.limit("50 per hour")
 def create_user(_user, _profile):
     """
     Crear un usuario nuevo con asignación de roles (Solo Super Admin)
@@ -1512,7 +1516,7 @@ def update_user(_user, _profile, user_id):
 
     password = data.get("password")
     if password:
-        user.pass_user = generate_password_hash(password)
+        user.pass_user = hash_password(password)
 
     profile = user.profile
     if "nombre" in data:

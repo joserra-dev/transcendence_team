@@ -44,7 +44,21 @@ socketio.init_app(
 # 1. PASO CRUCIAL: CONFIGURACIÓN PRIMERO
 # ==========================================
 # Definimos las claves directamente en la app básica
-app.config['JWT_SECRET_KEY'] = os.getenv('JWT_SECRET_KEY', 'mi_super_clave_secreta_123')
+jwt_secret_key = os.getenv('JWT_SECRET_KEY')
+if not jwt_secret_key:
+    raise RuntimeError(
+        "JWT_SECRET_KEY no está definida. Define JWT_SECRET_KEY en el archivo .env "
+        "(p. ej. con 'python -c \"import secrets; print(secrets.token_hex(32))\"'). "
+        "El arranque se aborta por seguridad."
+    )
+app.config['JWT_SECRET_KEY'] = jwt_secret_key
+
+# Expiración del token de acceso (CWE-613): los tokens dejan de ser válidos
+# tras este tiempo, limitando el impacto de un token filtrado. Se configura en
+# minutos vía JWT_ACCESS_TOKEN_EXPIRES (por defecto 120 = 2 horas).
+from datetime import timedelta
+_jwt_expires_minutes = int(os.getenv('JWT_ACCESS_TOKEN_EXPIRES', '120'))
+app.config['JWT_ACCESS_TOKEN_EXPIRES'] = timedelta(minutes=_jwt_expires_minutes)
 app.config['SQLALCHEMY_DATABASE_URI'] = os.getenv('DATABASE_URL', 'postgresql://defaultdb_uk1q_user:password@db:5432/defaultdb')
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 app.config['MAIL_SERVER'] = os.environ.get('MAIL_SERVER')
@@ -58,12 +72,22 @@ app.config['MAIL_DEFAULT_SENDER'] = os.environ.get(
 )
 app.config['FRONTEND_URL'] = os.environ.get('URL_FRONT', 'https://localhost:8001')
 
+# Rate limiting (CWE-307): protege login/registro/recuperación contra fuerza bruta.
+# En producción usa Redis compartido; si no está configurado, cae a memoria (por-worker).
+app.config['RATELIMIT_STORAGE_URI'] = os.getenv('RATELIMIT_STORAGE_URI', 'memory://')
+app.config['RATELIMIT_DEFAULT'] = "200 per hour"
+app.config['RATELIMIT_HEADERS'] = True
+
 # Configuración de Flask-Babel
 app.config['BABEL_DEFAULT_LOCALE'] = 'es'
 app.config['BABEL_SUPPORTED_LOCALES'] = ['es', 'eu', 'en']
 
 # Inicializamos Mail
 mail = Mail(app)
+
+# Inicializamos Limiter (rate limiting / fuerza bruta)
+from database import limiter
+limiter.init_app(app)
 
 # ==========================================
 # 2. INICIALIZACIÓN DE EXTENSIONES DESPUÉS

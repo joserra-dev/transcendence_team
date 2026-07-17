@@ -3,6 +3,20 @@ __pycache__/
 *.py[cod]
 *.egg-info/
 .env
+*.env.local
+
+# Secrets / TLS private keys (never commit)
+*.pem
+*.key
+*.crt
+*.csr
+*.p12
+*.pfx
+privkey.pem
+backend/area_backend/certs/
+frontend/ssl/
+ssl/
+certs/
 
 # Node
 node_modules/
@@ -19,3 +33,5 @@ backend/area_backend/certs/
 .DS_Store
 
 Makefile copy
+.kilo
+*.pem

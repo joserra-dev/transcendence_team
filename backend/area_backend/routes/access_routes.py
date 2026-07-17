@@ -5,7 +5,7 @@ from datetime import date, datetime, timezone
 import cv2
 import numpy as np
 # Importante añadir 'render_template'
-from flask import Blueprint, request, jsonify, render_template
+from flask import Blueprint, request, jsonify, render_template, current_app
 from models.booking import Booking
 
 
@@ -54,16 +54,39 @@ def access_control_page():
 @access_bp.route('/api/access/verify-plate', methods=['POST'])
 @_require_access_api_key
 def verify_plate():
-    data = request.get_json()
+    data = request.get_json(silent=True)
     if not data or 'image' not in data:
         return jsonify({"error": "No image data"}), 400
 
+    raw = data['image']
+    # El frontend envía data URI "data:image/...;base64,....". Aceptamos también
+    # el base64 puro. Validamos el separador para no romper con IndexError.
+    if ',' in raw:
+        header, _, image_data = raw.partition(',')
+        if not header.lower().startswith('data:image'):
+            return jsonify({"error": "Formato de imagen no soportado"}), 400
+    else:
+        image_data = raw
+
+    # Límite de tamaño para evitar DoS por imágenes enormes (CWE-400).
+    MAX_IMAGE_BYTES = 10 * 1024 * 1024  # 10 MiB
+    if len(image_data) > MAX_IMAGE_BYTES:
+        return jsonify({"error": "Imagen demasiado grande"}), 413
+
     try:
-        # Decodificar Base64
-        image_data = data['image'].split(',')[1]
-        image_bytes = base64.b64decode(image_data)
+        image_bytes = base64.b64decode(image_data, validate=True)
+    except Exception:
+        return jsonify({"error": "Datos de imagen inválidos (no es base64)"}), 400
+
+    if len(image_bytes) > MAX_IMAGE_BYTES:
+        return jsonify({"error": "Imagen demasiado grande"}), 413
+
+    try:
         nparr = np.frombuffer(image_bytes, np.uint8)
         img = cv2.imdecode(nparr, cv2.IMREAD_COLOR)
+        # cv2.imdecode devuelve None si los datos no son una imagen válida.
+        if img is None:
+            return jsonify({"error": "No se pudo decodificar la imagen"}), 400
 
         # OpenCV optimización básica
         gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
@@ -96,5 +119,5 @@ def verify_plate():
             return jsonify({"access": False, "plate": detected_plate, "message": "Sin reserva activa hoy"}), 200
 
     except Exception as e:
-        print(f"Error LPR: {str(e)}")
-        return jsonify({"error": "Error interno"}), 500
+        current_app.logger.error(f"Error LPR: {str(e)}")
+        return jsonify({"error": "Error interno procesando la imagen"}), 500

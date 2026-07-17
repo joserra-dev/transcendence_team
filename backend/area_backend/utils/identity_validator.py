@@ -77,27 +77,42 @@ class IdentityValidator:
 
     @classmethod
     def validate_foreign_document(cls, doc: str) -> bool:
-        """Validates foreign passports and identity cards (5-15 alphanumeric characters)."""
+        """Validates foreign passports and identity cards.
+
+        CWE-20: el formato NO puede ser "cualquier alfanumérico de 5-15", ya que
+        eso permitiría eludir la validación de identidad con texto arbitrario.
+        Se exige un patrón creíble de documento de viaje: 6-9 caracteres
+        alfanuméricos, empezando por una letra (como pasaportes reales), sin
+        secuencias triviales. No es una verificación de identidad real, pero sí
+        impide que cualquier cadena alfanumérica corta sea aceptada como DNI.
+        """
         doc = doc.strip().upper()
-        if re.match(r"^[A-Z0-9]{5,15}$", doc):
-            return True
-        return False
+        if not re.match(r"^[A-Z][A-Z0-9]{5,8}$", doc):
+            return False
+        # Rechaza secuencias triviales (p. ej. "AAAAA1", "ABCDE1").
+        if len(set(doc)) < 3:
+            return False
+        return True
 
     @classmethod
     def validate_document(cls, doc: str) -> bool:
         """Main method that automatically detects the format and validates the document."""
         if not doc:
             return False
-            
+
         clean_doc = doc.strip().upper()
-        
+
         # 1. Matches DNI pattern?
         if re.match(r"^\d{8}[A-Z]$", clean_doc):
             return cls.validate_dni(clean_doc)
-            
+
         # 2. Matches NIE pattern?
-        if re.match(r"^[XYZ]", clean_doc):
+        if re.match(r"^[XYZ]\d{7}[A-Z]$", clean_doc):
             return cls.validate_nie(clean_doc)
-            
-        # 4. Otherwise, treat it as a foreign passport/ID
+
+        # 3. Matches CIF pattern (company tax id)?
+        if re.match(r"^[ABCDEFGHJNPQRSTUVWXY]\d{7}[A-J0-9]$", clean_doc):
+            return cls.validate_cif(clean_doc)
+
+        # 4. Otherwise, treat it as a foreign passport/ID with strict format.
         return cls.validate_foreign_document(clean_doc)
