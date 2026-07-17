@@ -31,20 +31,18 @@ endif
 # ==============================================================================
 # DOCKER COMPOSE DETECTION
 # ==============================================================================
-
-ifeq ($(shell command -v docker >/dev/null 2>&1 && docker compose version >/dev/null 2>&1 && echo yes),yes)
-
+# Preferimos SIEMPRE el plugin v2 ("docker compose") porque es el único que
+# interpreta correctamente el "target:" de las etapas multi-stage del frontend
+# (development vs production). El binario v1 (docker-compose) ignora el target
+# y construye la imagen de producción (nginx) incluso en dev.
+ifeq ($(shell command -v docker >/dev/null 2>&1 && docker compose >/dev/null 2>&1 && echo yes),yes)
     COMPOSE=docker compose
-
 else ifeq ($(shell command -v docker-compose >/dev/null 2>&1 && echo yes),yes)
-
     COMPOSE=docker-compose
-
 else
-
     $(error Docker Compose no encontrado)
-
 endif
+
 # ==============================================================================
 # STATUS AND LOGS
 # ==============================================================================
@@ -64,7 +62,7 @@ logs: ## Ver logs del entorno de desarrollo
 
 help:
 	@echo -e "$(COLOR_BLUE)"
-	@echo "🐳 TRANSCENDENCE DOCKER COMMANDS"
+	@echo "TRANSCENDENCE DOCKER COMMANDS"
 	@echo "================================"
 	@echo -e "$(COLOR_RESET)"
 	@grep -E '^[a-zA-Z_-]+:.*?## .*$$' $(MAKEFILE_LIST) | \
@@ -90,12 +88,12 @@ prod: env up-prod ## Entorno producción HTTPS/Nginx
 # ==============================================================================
 
 up: ## Levantar desarrollo
-	@echo -e "$(COLOR_BLUE)🐳 Arrancando desarrollo...$(COLOR_RESET)"
+	@echo -e "$(COLOR_BLUE)Arrancando desarrollo...$(COLOR_RESET)"
 	$(COMPOSE) \
 		-f docker-compose.yml \
 		-f docker-compose.dev.yml \
 		up -d --build --remove-orphans
-	@echo -e "$(COLOR_GREEN)✔ Desarrollo levantado$(COLOR_RESET)"
+	@echo -e "$(COLOR_GREEN)Desarrollo levantado$(COLOR_RESET)"
 
 
 
@@ -104,12 +102,12 @@ up: ## Levantar desarrollo
 # ==============================================================================
 
 up-prod: ## Levantar producción
-	@echo -e "$(COLOR_BLUE)🐳 Arrancando producción...$(COLOR_RESET)"
+	@echo -e "$(COLOR_BLUE)Arrancando producción...$(COLOR_RESET)"
 	$(COMPOSE) \
 		-f docker-compose.yml \
 		-f docker-compose.prod.yml \
 		up -d --build --remove-orphans
-	@echo -e "$(COLOR_GREEN)✔ Producción levantada$(COLOR_RESET)"
+	@echo -e "$(COLOR_GREEN)Producción levantada$(COLOR_RESET)"
 
 
 
@@ -119,7 +117,7 @@ up-prod: ## Levantar producción
 
 doctor: ## Diagnóstico del entorno
 	@echo -e "$(COLOR_BLUE)"
-	@echo "🩺 Docker Doctor"
+	@echo "Docker Doctor"
 	@echo "==============="
 	@echo -e "$(COLOR_RESET)"
 	@echo "Sistema: $(OS)"
@@ -127,16 +125,16 @@ doctor: ## Diagnóstico del entorno
 	@echo ""
 	@echo "Docker:"
 	@if command -v docker >/dev/null 2>&1; then \
-		echo -e "$(COLOR_GREEN)✔ Docker encontrado$(COLOR_RESET)"; \
+		echo -e "$(COLOR_GREEN)Docker encontrado$(COLOR_RESET)"; \
 	else \
-		echo -e "$(COLOR_RED)✘ Docker no encontrado$(COLOR_RESET)"; \
+		echo -e "$(COLOR_RED)Docker no encontrado$(COLOR_RESET)"; \
 	fi
 	@echo ""
 	@echo "Daemon:"
 	@if docker info >/dev/null 2>&1; then \
-		echo -e "$(COLOR_GREEN)✔ Docker funcionando$(COLOR_RESET)"; \
+		echo -e "$(COLOR_GREEN)Docker funcionando$(COLOR_RESET)"; \
 	else \
-		echo -e "$(COLOR_RED)✘ Docker daemon parado$(COLOR_RESET)"; \
+		echo -e "$(COLOR_RED)Docker daemon parado$(COLOR_RESET)"; \
 	fi
 	@echo ""
 	@echo "Compose:"
@@ -145,10 +143,10 @@ doctor: ## Diagnóstico del entorno
 	@echo "Puertos:"
 	@for port in 4200 443 5432 8000; do \
 		if lsof -i :$$port >/dev/null 2>&1; then \
-			echo -e "$(COLOR_YELLOW)⚠ Puerto $$port ocupado$(COLOR_RESET)"; \
+			echo -e "$(COLOR_YELLOW)Puerto $$port ocupado$(COLOR_RESET)"; \
 			lsof -i :$$port | tail -1; \
 		else \
-			echo -e "$(COLOR_GREEN)✔ Puerto $$port libre$(COLOR_RESET)"; \
+			echo -e "$(COLOR_GREEN)Puerto $$port libre$(COLOR_RESET)"; \
 		fi; \
 	done
 
@@ -159,18 +157,18 @@ doctor: ## Diagnóstico del entorno
 # ==============================================================================
 
 clean: ## Parar contenedores
-	@echo -e "$(COLOR_YELLOW)🛑 Parando contenedores...$(COLOR_RESET)"
+	@echo -e "$(COLOR_YELLOW)Parando contenedores...$(COLOR_RESET)"
 	$(COMPOSE) \
 		-f docker-compose.yml \
 		-f docker-compose.dev.yml \
 		down
-	@echo -e "$(COLOR_GREEN)✔ Limpieza realizada$(COLOR_RESET)"
+	@echo -e "$(COLOR_GREEN)Limpieza realizada$(COLOR_RESET)"
 
 
 
 fclean: ## Limpieza total Docker
 	@echo -e "$(COLOR_RED)"
-	@echo "🚨 LIMPIEZA COMPLETA"
+	@echo "LIMPIEZA COMPLETA"
 	@echo -e "$(COLOR_RESET)"
 	$(COMPOSE) \
 		-f docker-compose.yml \
@@ -184,7 +182,7 @@ fclean: ## Limpieza total Docker
 	docker builder prune -af || true
 	@if [ -f .env ]; then \
 		rm .env; \
-		echo "✔ .env eliminado"; \
+		echo ".env eliminado"; \
 	fi
 
 
@@ -222,31 +220,29 @@ env:
 		}; \
 		front=$$(find_free_port $$front_base); \
 		echo "FRONT_PORT=$$front" >> .env; \
-		echo "URL_FRONT=$$proto://$(HOST):$$front" >> .env; \
-		echo -e "$(COLOR_GREEN)✔ Puerto Front asignado: $$front (libre desde $$front_base)$(COLOR_RESET)"; \
+		echo "URL_FRONT=$$proto://$$host_env:$$front" >> .env; \
+		echo -e "$(COLOR_GREEN)Puerto Front asignado: $$front (libre desde $$front_base)$(COLOR_RESET)"; \
 		back=$$(find_free_port $$back_base); \
 		echo "BACK_PORT=$$back" >> .env; \
-		echo "URL_BACK=$$proto://$(HOST):$$back" >> .env; \
-		echo -e "$(COLOR_GREEN)✔ Puerto Back asignado: $$back (libre desde $$back_base)$(COLOR_RESET)"; \
+		echo "URL_BACK=$$proto://$$host_env:$$back" >> .env; \
+		echo -e "$(COLOR_GREEN)Puerto Back asignado: $$back (libre desde $$back_base)$(COLOR_RESET)"; \
 		db=$$(find_free_port 5432); \
+		read -p "Password PostgreSQL: " pass; \
+		echo "POSTGRES_DB=defaultdb" >> .env; \
+		echo "POSTGRES_USER=defaultdb_user" >> .env; \
+		echo "POSTGRES_PASSWORD=$$pass" >> .env; \
+		echo "POSTGRES_PORT=$$db" >> .env; \
+		echo "DATABASE_URL=postgresql://defaultdb_user:$$pass@db:$$db/defaultdb" >> .env; \
+		echo -e "$(COLOR_GREEN)Puerto PostgreSQL asignado: $$db (libre desde 5432)$(COLOR_RESET)"; \
 		jwt_secret=$$(python3 -c 'import secrets; print(secrets.token_hex(32))'); \
 		echo "JWT_SECRET_KEY=$$jwt_secret" >> .env; \
-		echo -e "$(COLOR_GREEN)✔ JWT_SECRET_KEY generada automáticamente$(COLOR_RESET)"; \
+		echo -e "$(COLOR_GREEN)JWT_SECRET_KEY generada automáticamente$(COLOR_RESET)"; \
 		echo "JWT_ACCESS_TOKEN_EXPIRES=120" >> .env; \
 		public_api_key=$$(python3 -c 'import secrets; print(secrets.token_hex(32))'); \
 		echo "PUBLIC_API_KEY=$$public_api_key" >> .env; \
 		echo "PUBLIC_API_RATE_LIMIT=60" >> .env; \
 		echo "RATELIMIT_STORAGE_URI=redis://redis:6379/0" >> .env; \
-		echo -e "$(COLOR_GREEN)✔ PUBLIC_API_KEY generada automáticamente$(COLOR_RESET)"; \
-		read -p "Password PostgreSQL: " pass; \
-		read -p "Nombre DB [defaultdb]: " name; \
-		name=$${name:-defaultdb}; \
-		echo "POSTGRES_DB=$$name" >> .env; \
-		echo "POSTGRES_USER=defaultdb_user" >> .env; \
-		echo "POSTGRES_PASSWORD=$$pass" >> .env; \
-		echo "POSTGRES_PORT=$$db" >> .env; \
-		echo "DATABASE_URL=postgresql://defaultdb_user:$$pass@db:$$db/$$name" >> .env; \
-		echo -e "$(COLOR_GREEN)✔ Puerto PostgreSQL asignado: $$db (libre desde 5432)$(COLOR_RESET)"; \
+		echo -e "$(COLOR_GREEN)PUBLIC_API_KEY generada automáticamente$(COLOR_RESET)"; \
 		read -p "Stripe Key [sk_test_...]: " stripe; \
 		echo "STRIPE_KEY=$$stripe" >> .env; \
 		echo "MAIL_SERVER=smtp.gmail.com" >> .env; \
@@ -258,13 +254,13 @@ env:
 		echo "MAIL_USERNAME=$$user" >> .env; \
 		echo "MAIL_PASSWORD=$$mailpass" >> .env; \
 		echo "MAIL_DEFAULT_SENDER=$$sender" >> .env; \
-		echo -e "$(COLOR_GREEN)✔ .env creado con éxito ($$proto)$(COLOR_RESET)"; \
+		echo -e "$(COLOR_GREEN).env creado con éxito ($$proto)$(COLOR_RESET)"; \
 	else \
-		echo -e "$(COLOR_GREEN)✔ .env ya existe$(COLOR_RESET)"; \
+		echo -e "$(COLOR_GREEN).env ya existe$(COLOR_RESET)"; \
 	fi; \
-	echo -e "$(COLOR_BLUE)🔐 Generando certificado TLS local para el frontend...$(COLOR_RESET)"; \
+	echo -e "$(COLOR_BLUE)Generando certificado TLS local para el frontend...$(COLOR_RESET)"; \
 	if [ -x frontend/ssl/generate-local.sh ]; then \
-		sh frontend/ssl/generate-local.sh $(HOST) || echo -e "$(COLOR_YELLOW)⚠ No se pudo generar el certificado local (¿openssl instalado?)$(COLOR_RESET)"; \
+		sh frontend/ssl/generate-local.sh $(HOST) || echo -e "$(COLOR_YELLOW)No se pudo generar el certificado local (openssl instalado?)$(COLOR_RESET)"; \
 	else \
-		echo -e "$(COLOR_YELLOW)⚠ No se encontró frontend/ssl/generate-local.sh$(COLOR_RESET)"; \
+		echo -e "$(COLOR_YELLOW)No se encontró frontend/ssl/generate-local.sh$(COLOR_RESET)"; \
 	fi

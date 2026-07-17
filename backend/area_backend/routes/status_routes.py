@@ -3,12 +3,13 @@ from datetime import datetime, timezone
 from flask import Blueprint, jsonify
 from sqlalchemy import text
 
-from database import db
+from database import db, limiter
 
 status_bp = Blueprint('status_bp', __name__, url_prefix='/api')
 
 
 @status_bp.route('/status', methods=['GET'])
+@limiter.exempt
 def get_status():
     try:
         db.session.execute(text('SELECT 1'))

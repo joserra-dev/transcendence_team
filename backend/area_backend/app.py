@@ -23,15 +23,21 @@ from websocket_handlers import register_websocket_handlers
 
 app = Flask(__name__)
 
-# Configurar CORS con orígenes específicos en lugar de permitir todos.
-# Soporta varios orígenes separados por comas (p. ej. dev y prod).
-# Normalizamos a minúsculas: el navegador envía el host en minúsculas en Origin,
-# pero URL_FRONT puede tener mayúsculas (p. ej. hostname de máquina).
-frontend_origins = [
-    origin.strip().rstrip('/').lower()
-    for origin in os.getenv('URL_FRONT', 'http://localhost:4200').split(',')
-    if origin.strip()
-]
+# Configurar CORS.
+# - Desarrollo (FLASK_ENV=development): se permite cualquier origen, ya que es
+#   normal acceder desde localhost/127.0.0.1/el hostname de la máquina y simplifica
+#   el trabajo local sin tener que alinear URL_FRONT con el Origin del navegador.
+# - Producción: orígenes restringidos a URL_FRONT (separados por comas), para no
+#   exponer la API a cualquier sitio (CWE-942).
+is_development = os.getenv('FLASK_ENV') == 'development'
+if is_development:
+    frontend_origins = "*"
+else:
+    frontend_origins = [
+        origin.strip().rstrip('/').lower()
+        for origin in os.getenv('URL_FRONT', 'http://localhost:4200').split(',')
+        if origin.strip()
+    ]
 CORS(app, resources={r"/api/*": {"origins": frontend_origins}})
 socketio.init_app(
     app,
@@ -73,8 +79,17 @@ app.config['MAIL_DEFAULT_SENDER'] = os.environ.get(
 app.config['FRONTEND_URL'] = os.environ.get('URL_FRONT', 'https://localhost:8001')
 
 # Rate limiting (CWE-307): protege login/registro/recuperación contra fuerza bruta.
-# En producción usa Redis compartido; si no está configurado, cae a memoria (por-worker).
-app.config['RATELIMIT_STORAGE_URI'] = os.getenv('RATELIMIT_STORAGE_URI', 'memory://')
+# En producción usa Redis compartido; si no está disponible, cae a memoria (por-worker).
+_ratelimit_uri = os.getenv('RATELIMIT_STORAGE_URI', 'memory://')
+if _ratelimit_uri.startswith('redis'):
+    try:
+        import redis as _redis
+        _client = _redis.from_url(_ratelimit_uri)
+        _client.ping()
+    except Exception as _e:
+        print(f"ADVERTENCIA: Redis no disponible ({_e}). Usando rate limiting en memoria (no compartido).")
+        _ratelimit_uri = 'memory://'
+app.config['RATELIMIT_STORAGE_URI'] = _ratelimit_uri
 app.config['RATELIMIT_DEFAULT'] = "200 per hour"
 app.config['RATELIMIT_HEADERS'] = True
 
