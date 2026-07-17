@@ -4,12 +4,16 @@
   display: flex;
   flex-direction: column;
   align-items: center;
-  padding: 4rem 0;
+  padding: clamp(2rem, 6vw, 4rem) clamp(1rem, 4vw, 2rem);
+  width: 100%;
+  box-sizing: border-box;
 }
 
 .form-standard {
   width: 100%;
-  max-width: 600px;
+  max-width: min(600px, 100%);
+  padding: 0 clamp(0.5rem, 2vw, 1rem);
+  box-sizing: border-box;
 }
 
 .form-group-standard {
@@ -38,6 +42,15 @@
 }
 
 @media (max-width: $bp-sm) {
+  .form-page-wrapper {
+    padding: 1.5rem 1rem;
+  }
+
+  .form-standard {
+    max-width: 100%;
+    padding: 0;
+  }
+
   .form-2-group {
     margin-bottom: $space-lg !important;
   }
@@ -48,6 +61,26 @@
 
   .btn {
     margin-top: $space-xxl;
+  }
+
+  .recovery-modal-backdrop {
+    padding: $space-md;
+  }
+
+  .recovery-modal {
+    width: 100%;
+    max-width: 100%;
+    padding: $space-lg;
+  }
+
+  .recovery-modal__actions {
+    flex-direction: column;
+
+    .btn {
+      width: 100%;
+      min-width: 0;
+      margin-top: 0;
+    }
   }
 }
 

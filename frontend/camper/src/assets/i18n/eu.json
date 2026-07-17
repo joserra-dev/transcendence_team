@@ -362,11 +362,15 @@
   "ADMIN_CALENDAR": {
     "BUTTON": "Egutegiak",
     "TITLE": "Okupazio egutegia",
-    "SUBTITLE": "Ikusi okupazioa eta blokeatu egunak eskuz parking bakoitzeko.",
+    "SUBTITLE": "Ikusi okupazioa eta blokeatu egunak eskuz plaza bakoitzeko.",
     "BACK": "Panelera itzuli",
     "SELECT_PARKING": "Parkinga",
     "SELECT_PARKING_PLACEHOLDER": "Hautatu parking bat",
+    "SELECT_SPACE": "Plaza",
+    "SELECT_SPACE_PLACEHOLDER": "Hautatu plaza bat",
     "CHOOSE_PARKING": "Hautatu parking bat bere egutegia ikusteko.",
+    "CHOOSE_SPACE": "Hautatu plaza bat bere egutegia ikusteko.",
+    "NO_SPACES": "Parking honek ez du plazarik erregistratuta.",
     "LOADING": "Egutegia kargatzen...",
     "LEGEND_OCCUPIED": "Beteta",
     "LEGEND_BLOCKED": "Blokeatuta",
@@ -402,6 +406,7 @@
     },
     "ERRORS": {
       "LOAD_PARKINGS": "Ezin izan dira parkingak kargatu.",
+      "LOAD_SPACES": "Ezin izan dira plazak kargatu.",
       "LOAD_CALENDAR": "Ezin izan da egutegia kargatu.",
       "BLOCK": "Ezin izan da eguna blokeatu.",
       "UNBLOCK": "Ezin izan da eguna desblokeatu."

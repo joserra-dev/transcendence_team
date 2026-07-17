@@ -1,9 +1,8 @@
 @use "../../../../styles/abstracts/variables" as *;
+@use "../../../../styles/abstracts/mixins" as *;
 
 .admin-bookings {
-  max-width: 1100px;
-  margin: 0 auto;
-  padding: 2rem 1rem;
+  @include page-container;
 }
 
 .page-hero {
@@ -237,11 +236,7 @@
   }
 
   .filter-actions {
-    flex-direction: column;
-  }
-
-  .filter-actions .btn {
-    width: 100%;
+    @include admin-toolbar-mobile;
   }
 
   .booking-card {
@@ -258,7 +253,8 @@
   }
 
   .bookings-list-scroll {
-    max-height: min(45vh, calc(100dvh - 28rem));
+    max-height: none;
+    overflow: visible;
   }
 
   .pagination {
@@ -267,6 +263,10 @@
   }
 
   .pagination-controls {
-    justify-content: space-between;
+    flex-direction: column;
+
+    .btn {
+      width: 100%;
+    }
   }
 }

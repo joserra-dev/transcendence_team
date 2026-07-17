@@ -69,6 +69,7 @@ export interface AdminBookingFilters {
 
 export interface ParkingCalendar {
   parkingId: number;
+  spaceId: number;
   year: number;
   month: number;
   blockedDays: string[];

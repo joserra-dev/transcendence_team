@@ -1,9 +1,8 @@
 @use "../../../../styles/abstracts/variables" as *;
+@use "../../../../styles/abstracts/mixins" as *;
 
 .admin-calendar {
-  max-width: 1000px;
-  margin: 0 auto;
-  padding: 2rem 1rem;
+  @include page-container(1000px);
 }
 
 .page-header {
@@ -38,13 +37,18 @@
 }
 
 .calendar-controls {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1rem 1.5rem;
   margin-bottom: 1.5rem;
 
-  .parking-select {
+  .control-select {
     display: flex;
     flex-direction: column;
     gap: 0.35rem;
+    min-width: 220px;
     max-width: 360px;
+    flex: 1 1 220px;
     font-weight: 600;
 
     select {
@@ -248,5 +252,90 @@
     .price {
       font-weight: 700;
     }
+  }
+}
+
+// TABLET
+@media (max-width: $bp-md) {
+  .calendar-grid {
+    gap: 4px;
+
+    .weekday {
+      font-size: 0.7rem;
+    }
+
+    .day-cell .day-num {
+      font-size: 0.8rem;
+    }
+  }
+
+  .calendar-nav .month-title {
+    min-width: auto;
+    font-size: 1.1rem;
+  }
+}
+
+// MOVIL
+@media (max-width: $bp-sm) {
+  .calendar-controls {
+    flex-direction: column;
+    gap: 0.75rem;
+  }
+
+  .control-select {
+    min-width: 0;
+    max-width: 100%;
+    width: 100%;
+  }
+
+  .calendar-nav {
+    gap: 0.5rem;
+
+    .month-title {
+      font-size: 1rem;
+      min-width: 0;
+      flex: 1;
+    }
+
+    .btn {
+      padding: 0.35rem 0.65rem;
+    }
+  }
+
+  .legend {
+    gap: 0.75rem;
+    font-size: 0.8rem;
+  }
+
+  .calendar-grid {
+    gap: 3px;
+
+    .weekday {
+      font-size: 0.6rem;
+      padding: 0.2rem 0;
+    }
+
+    .day-cell {
+      padding: 0.2rem 0.25rem;
+
+      .day-num {
+        font-size: 0.7rem;
+      }
+    }
+  }
+
+  .day-detail-header {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0.75rem;
+  }
+
+  .booking-card {
+    flex-direction: column;
+  }
+
+  .booking-side {
+    align-items: flex-start;
+    width: 100%;
   }
 }

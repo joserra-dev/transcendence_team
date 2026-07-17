@@ -1,9 +1,8 @@
 @use "../../../../styles/abstracts/variables" as *;
+@use "../../../../styles/abstracts/mixins" as *;
 
 .company-detail {
-  max-width: 1100px;
-  margin: 0 auto;
-  padding: 2rem 1rem;
+  @include page-container;
 }
 
 .page-header {
@@ -131,5 +130,9 @@
   .page-header {
     flex-direction: column;
     align-items: stretch;
+  }
+
+  .header-actions {
+    @include admin-toolbar-mobile;
   }
 }

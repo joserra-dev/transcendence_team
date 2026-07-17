@@ -10,11 +10,22 @@
   <div class="alert error" *ngIf="errorMessage">{{ errorMessage | translate }}</div>
 
   <section class="calendar-controls">
-    <label class="parking-select">
+    <label class="control-select">
       {{ 'ADMIN_CALENDAR.SELECT_PARKING' | translate }}
       <select [(ngModel)]="selectedParkingId" (ngModelChange)="onParkingChange()">
         <option [ngValue]="null">{{ 'ADMIN_CALENDAR.SELECT_PARKING_PLACEHOLDER' | translate }}</option>
         <option *ngFor="let parking of parkings" [ngValue]="parking.id">{{ parking.name }}</option>
+      </select>
+    </label>
+
+    <label class="control-select" *ngIf="selectedParkingId != null">
+      {{ 'ADMIN_CALENDAR.SELECT_SPACE' | translate }}
+      <select
+        [(ngModel)]="selectedSpaceId"
+        (ngModelChange)="onSpaceChange()"
+        [disabled]="isLoadingSpaces || spaces.length === 0">
+        <option [ngValue]="null">{{ 'ADMIN_CALENDAR.SELECT_SPACE_PLACEHOLDER' | translate }}</option>
+        <option *ngFor="let space of spaces" [ngValue]="space.id">{{ space.name }}</option>
       </select>
     </label>
   </section>
@@ -23,7 +34,15 @@
     {{ 'ADMIN_CALENDAR.CHOOSE_PARKING' | translate }}
   </p>
 
-  <section class="calendar-panel" *ngIf="selectedParkingId != null">
+  <p *ngIf="selectedParkingId != null && !isLoadingSpaces && spaces.length === 0" class="empty-msg">
+    {{ 'ADMIN_CALENDAR.NO_SPACES' | translate }}
+  </p>
+
+  <p *ngIf="selectedParkingId != null && selectedSpaceId == null && spaces.length > 0" class="empty-msg">
+    {{ 'ADMIN_CALENDAR.CHOOSE_SPACE' | translate }}
+  </p>
+
+  <section class="calendar-panel" *ngIf="selectedSpaceId != null">
     <div class="calendar-nav">
       <button class="btn btn-primary" type="button" (click)="prevMonth()">‹</button>
       <h2 class="month-title">

@@ -1,9 +1,8 @@
 @use "../../../../styles/abstracts/variables" as *;
+@use "../../../../styles/abstracts/mixins" as *;
 
 .parking-detail-page {
-  max-width: 1100px;
-  margin: 0 auto;
-  padding: 2rem 1rem;
+  @include page-container;
   background-color: white;
 }
 
@@ -11,6 +10,8 @@
   display: flex;
   justify-content: space-between;
   align-items: flex-start;
+  gap: 1rem;
+  flex-wrap: wrap;
 
   .page-title {
     margin-bottom: 1rem;
@@ -39,22 +40,24 @@
 }
 .parking-layout {
   display: grid;
-  grid-template-columns: 1.5fr 1.5fr;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
   grid-template-rows: auto 1fr;
-  gap: 1rem;
+  gap: clamp(0.75rem, 2vw, 1rem);
   align-items: start;
 }
 
 .main-image {
   grid-column: 1;
   grid-row: 1;
-  height: 421px;
+  width: 100%;
+  height: auto;
+  aspect-ratio: 16 / 10;
+  max-height: min(50vh, 421px);
   margin-bottom: 1.5rem;
 
   img {
-    width: 100%;
+    @include fluid-image;
     height: 100%;
-    object-fit: cover;
     border-radius: 12px;
   }
 }
@@ -62,7 +65,8 @@
 .gallery {
   grid-column: 2;
   grid-row: 1;
-  max-height: 421px;
+  width: 100%;
+  max-height: min(50vh, 421px);
   overflow: hidden;
 
   display: grid;
@@ -71,10 +75,11 @@
   gap: 0.75rem;
 
   img {
+    @include fluid-image;
     width: 100%;
-    height: 204px;
+    height: auto;
     aspect-ratio: 1 / 1;
-    object-fit: cover;
+    max-height: 204px;
     border-radius: 10px;
   }
 }
@@ -273,6 +278,11 @@
 // MOVIL y TABLET
 @media (max-width: $bp-md) {
 
+  .parking-header {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
   .main-image,
   .gallery {
     display: none;
@@ -336,7 +346,9 @@
   }
 
   .carousel img {
-    height: 280px;
+    width: 100%;
+    height: auto;
+    max-height: min(45vh, 280px);
     object-fit: cover;
     border-radius: 12px;
   }

@@ -14,7 +14,7 @@ from models.booking import Booking
 from models.chat_message import ChatMessage
 from models.company import Company
 from models.parking import Parking
-from models.parking_blocked_day import ParkingBlockedDay
+from models.space_blocked_day import SpaceBlockedDay
 from models.space import Space
 from models.users import Profiles, UserRole, Users
 from services.email_services import EmailService
@@ -203,6 +203,19 @@ def _company_confirmed_bookings(company_id: int):
     )
 
 
+def _company_booking_years(company_id: int) -> list[int]:
+    today = date.today()
+    bookings = _company_confirmed_bookings(company_id).all()
+    years = {
+        booking.created_at.year
+        for booking in bookings
+        if booking.created_at
+    }
+    if not years:
+        return [today.year]
+    return sorted(years, reverse=True)
+
+
 def _parking_name(booking: Booking) -> str:
     if booking.space and booking.space.parking and booking.space.parking.name:
         return booking.space.parking.name
@@ -245,6 +258,7 @@ def _build_company_metrics(company: Company, year: int) -> dict:
         'companyId': company.id,
         'companyName': company.name,
         'year': year,
+        'availableYears': _company_booking_years(company.id),
         'totals': {
             'sales': round(total_sales, 2),
             'bookings': len(bookings),
@@ -894,6 +908,11 @@ def parking_calendar(_user, profile, parking_id):
     if not _can_manage_parking(profile, parking):
         return jsonify({"error": _("No autorizado")}), 403
 
+    space_id = _parse_metric_int(request.args.get('spaceId'), 0)
+    space = Space.query.filter_by(id=space_id, id_parking=parking_id).first()
+    if not space:
+        return jsonify({"error": _("Plaza no encontrada")}), 404
+
     today = date.today()
     year = _parse_metric_int(request.args.get('year'), today.year)
     month = _parse_metric_int(request.args.get('month'), today.month)
@@ -908,6 +927,7 @@ def parking_calendar(_user, profile, parking_id):
     booking_rows = (
         Booking.query.join(Space).join(Parking)
         .filter(
+            Booking.id_space == space_id,
             Parking.id == parking_id,
             Booking.status == '1',
             Booking.start_date.isnot(None),
@@ -921,11 +941,11 @@ def parking_calendar(_user, profile, parking_id):
     bookings = [_booking_to_admin_dict(b) for b in booking_rows]
 
     blocked_rows = (
-        ParkingBlockedDay.query
+        SpaceBlockedDay.query
         .filter(
-            ParkingBlockedDay.id_parking == parking_id,
-            ParkingBlockedDay.day >= month_start,
-            ParkingBlockedDay.day <= month_end,
+            SpaceBlockedDay.id_space == space_id,
+            SpaceBlockedDay.day >= month_start,
+            SpaceBlockedDay.day <= month_end,
         )
         .all()
     )
@@ -933,6 +953,7 @@ def parking_calendar(_user, profile, parking_id):
 
     return jsonify({
         "parkingId": parking_id,
+        "spaceId": space_id,
         "year": year,
         "month": month,
         "blockedDays": blocked_days,
@@ -985,6 +1006,10 @@ def block_parking_day(_user, profile, parking_id):
 
     data = request.get_json() or {}
     day_str = data.get("day")
+    space_id = _parse_metric_int(data.get("spaceId"), 0)
+    space = Space.query.filter_by(id=space_id, id_parking=parking_id).first()
+    if not space:
+        return jsonify({"error": _("Plaza no encontrada")}), 404
     if not day_str:
         return jsonify({"error": _("La fecha es obligatoria")}), 400
     try:
@@ -993,9 +1018,8 @@ def block_parking_day(_user, profile, parking_id):
         return jsonify({"error": _("Formato de fecha inválido")}), 400
 
     existing_booking = (
-        Booking.query.join(Space)
-        .filter(
-            Space.id_parking == parking_id,
+        Booking.query.filter(
+            Booking.id_space == space_id,
             Booking.status == '1',
             Booking.start_date <= day,
             Booking.end_date > day,
@@ -1005,11 +1029,11 @@ def block_parking_day(_user, profile, parking_id):
     if existing_booking:
         return jsonify({"error": _("No puedes bloquear un día con reservas")}), 400
 
-    already = ParkingBlockedDay.query.filter_by(id_parking=parking_id, day=day).first()
+    already = SpaceBlockedDay.query.filter_by(id_space=space_id, day=day).first()
     if already:
         return jsonify(already.to_dict()), 200
 
-    blocked = ParkingBlockedDay(id_parking=parking_id, day=day)
+    blocked = SpaceBlockedDay(id_space=space_id, day=day)
     db.session.add(blocked)
     db.session.commit()
     return jsonify(blocked.to_dict()), 201
@@ -1055,7 +1079,12 @@ def unblock_parking_day(_user, profile, parking_id, day):
     except ValueError:
         return jsonify({"error": _("Formato de fecha inválido")}), 400
 
-    blocked = ParkingBlockedDay.query.filter_by(id_parking=parking_id, day=day_date).first()
+    space_id = _parse_metric_int(request.args.get('spaceId'), 0)
+    space = Space.query.filter_by(id=space_id, id_parking=parking_id).first()
+    if not space:
+        return jsonify({"error": _("Plaza no encontrada")}), 404
+
+    blocked = SpaceBlockedDay.query.filter_by(id_space=space_id, day=day_date).first()
     if not blocked:
         return jsonify({"error": _("Día no bloqueado")}), 404
 

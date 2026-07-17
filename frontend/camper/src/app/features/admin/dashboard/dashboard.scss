@@ -1,9 +1,8 @@
 @use "../../../../styles/abstracts/variables" as *;
+@use "../../../../styles/abstracts/mixins" as *;
 
 .admin-dashboard {
-  max-width: 1100px;
-  margin: 0 auto;
-  padding: 2rem 1rem;
+  @include page-container;
 }
 
 .dashboard-hero {
@@ -296,26 +295,20 @@
   .page-header {
     flex-direction: column;
     align-items: stretch;
+    padding: 1rem;
+  }
+
+  .dashboard-hero h1 {
+    font-size: 1.35rem;
   }
 
   .hero-actions {
-    width: 100%;
-    flex-direction: column;
-  }
-
-  .hero-actions .btn {
-    width: 100%;
-    text-align: center;
+    @include admin-hero-actions-mobile;
+    margin-top: 0.5rem;
   }
 
   .page-header-actions {
-    width: 100%;
-    flex-direction: column;
-  }
-
-  .page-header .btn {
-    width: 100%;
-    text-align: center;
+    @include admin-toolbar-mobile;
   }
 
   .table-filters {
@@ -323,7 +316,8 @@
   }
 
   .ads-list-scroll {
-    max-height: min(45vh, calc(100dvh - 26rem));
+    max-height: none;
+    overflow: visible;
   }
 
   .ads-card {
@@ -341,6 +335,10 @@
   }
 
   .pagination-controls {
-    justify-content: space-between;
+    flex-direction: column;
+
+    .btn {
+      width: 100%;
+    }
   }
 }

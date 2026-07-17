@@ -366,11 +366,15 @@
   "ADMIN_CALENDAR": {
     "BUTTON": "Calendarios",
     "TITLE": "Calendario de ocupación",
-    "SUBTITLE": "Consulta la ocupación y bloquea días manualmente por parking.",
+    "SUBTITLE": "Consulta la ocupación y bloquea días manualmente por plaza.",
     "BACK": "Volver al panel",
     "SELECT_PARKING": "Parking",
     "SELECT_PARKING_PLACEHOLDER": "Selecciona un parking",
+    "SELECT_SPACE": "Plaza",
+    "SELECT_SPACE_PLACEHOLDER": "Selecciona una plaza",
     "CHOOSE_PARKING": "Selecciona un parking para ver su calendario.",
+    "CHOOSE_SPACE": "Selecciona una plaza para ver su calendario.",
+    "NO_SPACES": "Este parking no tiene plazas registradas.",
     "LOADING": "Cargando calendario...",
     "LEGEND_OCCUPIED": "Ocupado",
     "LEGEND_BLOCKED": "Bloqueado",
@@ -406,6 +410,7 @@
     },
     "ERRORS": {
       "LOAD_PARKINGS": "No se pudieron cargar los parkings.",
+      "LOAD_SPACES": "No se pudieron cargar las plazas.",
       "LOAD_CALENDAR": "No se pudo cargar el calendario.",
       "BLOCK": "No se pudo bloquear el día.",
       "UNBLOCK": "No se pudo desbloquear el día."
