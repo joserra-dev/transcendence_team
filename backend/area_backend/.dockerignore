@@ -1,0 +1,13 @@
+# No copiar secretos/certs locales ni entorno de desarrollo a la imagen.
+# El backend genera sus certs TLS en runtime (entrypoint.sh) o los montas tú.
+certs/
+*.pem
+*.key
+*.crt
+.env
+.venv/
+venv/
+__pycache__/
+*.pyc
+.pytest_cache/
+.git/
