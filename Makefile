@@ -261,4 +261,10 @@ env:
 		echo -e "$(COLOR_GREEN)✔ .env creado con éxito ($$proto)$(COLOR_RESET)"; \
 	else \
 		echo -e "$(COLOR_GREEN)✔ .env ya existe$(COLOR_RESET)"; \
+	fi; \
+	echo -e "$(COLOR_BLUE)🔐 Generando certificado TLS local para el frontend...$(COLOR_RESET)"; \
+	if [ -x frontend/ssl/generate-local.sh ]; then \
+		sh frontend/ssl/generate-local.sh $(HOST) || echo -e "$(COLOR_YELLOW)⚠ No se pudo generar el certificado local (¿openssl instalado?)$(COLOR_RESET)"; \
+	else \
+		echo -e "$(COLOR_YELLOW)⚠ No se encontró frontend/ssl/generate-local.sh$(COLOR_RESET)"; \
 	fi

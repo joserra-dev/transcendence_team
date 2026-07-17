@@ -33,11 +33,11 @@ services:
           backend:
             condition: service_healthy
 
-    #volumes:
-      # Certificados TLS REALES firmados por una CA (no autofirmados).
-      # Crea ./frontend/ssl/ con nginx-selfsigned.crt y nginx-selfsigned.key
-      # (o ajusta los nombres en nginx.conf) y descomenta la línea:
-      # - ./frontend/ssl:/etc/nginx/ssl:ro
+    # Certificados TLS montados desde ./frontend/ssl (generados por
+    # frontend/ssl/generate-local.sh durante `make env`). Para producción real
+    # con una CA, reemplaza esos archivos por los de tu CA.
+    volumes:
+      - ./frontend/ssl:/etc/nginx/ssl:ro
 
     ports:
       - "${FRONT_PORT}:443"
