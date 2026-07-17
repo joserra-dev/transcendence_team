@@ -1,5 +1,10 @@
 services:
 
+  services:
+  db:
+    ports:
+      - "${POSTGRES_PORT}:5432"
+
   backend:
     volumes:
       - ./backend/area_backend:/app
