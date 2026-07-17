@@ -1,13 +1,11 @@
 import os
-import time
-from collections import defaultdict, deque
 from functools import wraps
 from datetime import datetime, date
 
 from flask import Blueprint, jsonify, request
 from sqlalchemy import func
 
-from database import db
+from database import db, limiter
 from models.booking import Booking
 from models.parking import Parking
 from models.space import Space
@@ -16,18 +14,14 @@ from models.users import Users
 public_api_bp = Blueprint('public_api_bp', __name__, url_prefix='/api/public')
 
 RATE_LIMIT_PER_MINUTE = int(os.getenv('PUBLIC_API_RATE_LIMIT', '60'))
-_request_windows = defaultdict(deque)
 
-# NOTA: Este rate limiting en memoria NO funciona en producción con múltiples workers.
-# Cada worker tiene su propio diccionario. Para producción, usar Flask-Limiter con Redis:
-#   pip install Flask-Limiter redis
-#   from flask_limiter import Limiter
-#   from flask_limiter.util import get_remote_address
-#   limiter = Limiter(key_func=get_remote_address, storage_uri="redis://localhost:6379")
+# NOTA: Con Flask-Limiter + Redis (RATELIMIT_STORAGE_URI) este límite es
+# compartido entre todos los workers/contenedores y sí protege en producción.
 
 
 def _require_public_api_key(fn):
     @wraps(fn)
+    @limiter.limit(f"{RATE_LIMIT_PER_MINUTE} per minute")
     def wrapper(*args, **kwargs):
         configured_key = os.getenv('PUBLIC_API_KEY')
         if not configured_key:
@@ -36,15 +30,6 @@ def _require_public_api_key(fn):
         api_key = request.headers.get('X-API-Key') or request.args.get('api_key')
         if not api_key or api_key != configured_key:
             return jsonify({"error": "Invalid API key"}), 401
-
-        ip = request.headers.get('X-Forwarded-For', request.remote_addr or 'unknown').split(',')[0].strip()
-        now = time.time()
-        window = _request_windows[ip]
-        while window and now - window[0] > 60:
-            window.popleft()
-        if len(window) >= RATE_LIMIT_PER_MINUTE:
-            return jsonify({"error": "Rate limit exceeded"}), 429
-        window.append(now)
 
         return fn(*args, **kwargs)
     return wrapper

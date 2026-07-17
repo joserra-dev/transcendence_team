@@ -59,6 +59,7 @@ CREATE TABLE public.users (
     pass_user character varying(255),
     is_verified boolean NOT NULL,
     verification_token character varying(255) UNIQUE,
+    verification_expires timestamp without time zone,
     reset_password_token character varying(255) UNIQUE,
     reset_password_expires timestamp without time zone,
     password_reset_verified boolean NOT NULL

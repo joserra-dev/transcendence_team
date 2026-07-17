@@ -4,6 +4,7 @@ from werkzeug.security import generate_password_hash
 
 from database import db
 from models.company import Company
+from utils.password_hash import hash_password
 from models.parking import Parking
 from models.space import Space
 from models.users import Profiles, UserRole, Users
@@ -153,7 +154,7 @@ def _get_or_create_company(name: str, cif: str | None = None, tbai_enabled: bool
 
 
 def _seed_users() -> int:
-    password_hash = generate_password_hash(DEFAULT_PASSWORD)
+    password_hash = hash_password(DEFAULT_PASSWORD)
     created = 0
 
     for user_data in SEED_USERS:

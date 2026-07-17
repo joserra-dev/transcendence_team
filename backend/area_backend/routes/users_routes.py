@@ -2,7 +2,8 @@ from datetime import timedelta, datetime
 import os
 from flask import Blueprint, jsonify, request, current_app, redirect
 from sqlalchemy import func
-from werkzeug.security import generate_password_hash, check_password_hash 
+from werkzeug.security import check_password_hash 
+from utils.password_hash import hash_password
 from flask_jwt_extended import create_access_token, decode_token, jwt_required, get_jwt_identity
 from flask_mailman import EmailMessage
 
@@ -17,7 +18,12 @@ from flask_babel import gettext as _, get_locale
 import secrets
 
 from database import db
+from database import limiter
 from models.users import Users, Profiles
+
+# Expiración del token de verificación de cuenta (CWE-613): límite de vida del
+# enlace de activación enviado por correo, para reducir el impacto de un token filtrado.
+VERIFICATION_TOKEN_EXPIRES_HOURS = 24
 
 # Creamos el Blueprint
 users_bp = Blueprint('users_bp', __name__, url_prefix='/api/users')
@@ -94,6 +100,18 @@ def _find_user_by_reset_token(token: str):
     return usuario
 
 
+def _find_user_by_verification_token(token: str):
+    if not token:
+        return None
+    usuario = Users.query.filter_by(verification_token=token).first()
+    if not usuario or not usuario.verification_expires:
+        return None
+
+    if usuario.verification_expires < datetime.utcnow():
+        return None
+    return usuario
+
+
 def _clear_reset_token(usuario: Users) -> None:
     usuario.reset_password_token = None
     usuario.reset_password_expires = None
@@ -139,6 +157,7 @@ def obtener_usuarios():
 
 
 @users_bp.route('/register', methods=['POST'])
+@limiter.limit("20 per hour")
 def registrar_usuario():
     """
     Registra un nuevo usuario en el sistema verificando la contraseña.
@@ -196,13 +215,14 @@ def registrar_usuario():
     if usuario_existente:
         return jsonify({"error": _("Este email ya está registrado")}), 400
 
-    password_encriptada = generate_password_hash(password)
+    password_encriptada = hash_password(password)
     verification_token = secrets.token_urlsafe(32)
     nuevo_usuario = Users(
         email=email,
         pass_user=password_encriptada,
         is_verified=False,
-        verification_token=verification_token
+        verification_token=verification_token,
+        verification_expires=datetime.utcnow() + timedelta(hours=VERIFICATION_TOKEN_EXPIRES_HOURS)
     )
     try:
         db.session.add(nuevo_usuario)
@@ -227,7 +247,7 @@ def verificar_cuenta():
     if not token:
         return redirect(_build_frontend_url('auth/login-client?verified=0'))
 
-    usuario = Users.query.filter_by(verification_token=token).first()
+    usuario = _find_user_by_verification_token(token)
     if not usuario:
         return redirect(_build_frontend_url('auth/login-client?verified=0'))
 
@@ -303,7 +323,7 @@ def update_profile():
             is_valid, mensagge = PasswordValidator.validar(new_password)
             if not is_valid:
                 return jsonify({"error": mensagge}), 400
-            user.pass_user = generate_password_hash(new_password)
+            user.pass_user = hash_password(new_password)
             
         db.session.commit()
         return jsonify({"mensaje": _("Perfil actualizado correctamente")}), 200
@@ -314,6 +334,7 @@ def update_profile():
 
     
 @users_bp.route('/login', methods=['POST'])
+@limiter.limit("10 per minute")
 def autenticar_usuario():
     """
     Autentica un usuario en el sistema comprobando correo y contraseña.
@@ -387,6 +408,7 @@ def autenticar_usuario():
 
 
 @users_bp.route('/admin-login', methods=['POST'])
+@limiter.limit("10 per minute")
 def autenticar_admin():
     datos = request.get_json() or {}
     email = datos.get('email')
@@ -451,6 +473,7 @@ def obtener_perfil():
 
 
 @users_bp.route('/forgot-password', methods=['POST'])
+@limiter.limit("5 per hour")
 def solicitar_recuperacion():
     """
     Solicita la recuperación de contraseña enviando un correo con un enlace seguro.
@@ -568,7 +591,7 @@ def restablecer_password():
     if not usuario or not usuario.password_reset_verified:
         return jsonify({"error": _("El enlace de recuperación no es válido o ha caducado")}), 400
 
-    usuario.pass_user = generate_password_hash(new_password)
+    usuario.pass_user = hash_password(new_password)
     _clear_reset_token(usuario)
 
     try:
@@ -610,12 +633,12 @@ def verify_account():
             "message": _("Falta el token de verificación.")
         }), 400
 
-    user = Users.query.filter_by(verification_token=token).first()
+    user = _find_user_by_verification_token(token)
 
     if not user:
         return jsonify({
             "status": "error",
-            "message": _("El token no es válido o ya ha sido utilizado.")
+            "message": _("El token no es válido o ha caducado.")
         }), 400
 
     try:

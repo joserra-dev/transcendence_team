@@ -16,6 +16,7 @@ class Users(db.Model):
     
     is_verified = db.Column(db.Boolean, default=False, nullable=False)
     verification_token = db.Column(db.String(255), unique=True, nullable=True)
+    verification_expires = db.Column(db.DateTime, nullable=True)
 
     reset_password_token = db.Column(db.String(255), unique=True, nullable=True)
     reset_password_expires = db.Column(db.DateTime, nullable=True)
