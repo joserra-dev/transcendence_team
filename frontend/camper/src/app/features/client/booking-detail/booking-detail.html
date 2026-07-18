@@ -74,7 +74,7 @@
         {{ 'HISTORY_DETAIL.RATE' | translate }}
       </button>
 
-      <button *ngIf="booking.startDate > today" class="btn btn-danger" (click)="cancelBooking()">
+      <button *ngIf="booking.startDate?.slice(0, 10) >= today" class="btn btn-danger" (click)="cancelBooking()">
         {{ 'HISTORY_DETAIL.CANCEL' | translate }}
       </button>
     </div>

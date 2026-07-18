@@ -605,6 +605,7 @@
     "CUSTOMER": "Cliente",
     "PLATE": "Matrícula",
     "CANCEL": "Cancelar reserva",
+    "CANCEL_NOT_ALLOWED": "No se puede cancelar: la estancia ya ha comenzado.",
     "FILTER_FROM": "Desde",
     "FILTER_TO": "Hasta",
     "FILTER_PARKING": "Parking",

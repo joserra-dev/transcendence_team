@@ -19,6 +19,11 @@ from models.space import Space
 from models.users import Profiles, UserRole, Users
 from services.email_services import EmailService
 from utils.admin_auth import require_admin, require_super_admin
+from utils.booking_customer import (
+    booking_customer_email,
+    booking_customer_name,
+    detach_user_bookings,
+)
 
 admin_bp = Blueprint('admin_bp', __name__, url_prefix='/api/admin')
 
@@ -129,6 +134,22 @@ def _can_manage_booking(profile: Profiles, booking: Booking) -> bool:
     return _can_manage_parking(profile, space.parking)
 
 
+def _has_ongoing_bookings(user_id: int) -> bool:
+    """Reserva en curso: confirmada o en pago y con fecha de fin hoy o futura."""
+    today = date.today()
+    return (
+        Booking.query
+        .filter(
+            Booking.id_user == user_id,
+            Booking.status.in_(('1', '2')),
+            Booking.end_date.isnot(None),
+            Booking.end_date >= today,
+        )
+        .first()
+        is not None
+    )
+
+
 def _booking_to_admin_dict(booking: Booking) -> dict:
     days = 0
     if booking.start_date and booking.end_date:
@@ -148,11 +169,8 @@ def _booking_to_admin_dict(booking: Booking) -> dict:
             parking_id = parking.id
 
     total_price = float(booking.total_price) if booking.total_price else days * price
-    user = booking.user
-    user_email = user.email if user else ""
-    user_name = ""
-    if user and user.profile:
-        user_name = f"{user.profile.name or ''} {user.profile.last_name or ''}".strip()
+    user_email = booking_customer_email(booking)
+    user_name = booking_customer_name(booking)
 
     return {
         "id": booking.id,
@@ -863,7 +881,7 @@ def cancel_booking_admin(_user, profile, booking_id):
         return jsonify({"error": _("No autorizado")}), 403
     if booking.status == '0':
         return jsonify({"error": _("La reserva ya está cancelada")}), 400
-    if booking.start_date and booking.start_date <= date.today():
+    if booking.start_date and booking.start_date < date.today():
         return jsonify({"error": _("No se puede cancelar una reserva cuya estancia ya ha comenzado o finalizado")}), 400
 
     booking.status = '0'
@@ -1637,21 +1655,25 @@ def update_user_role(_user, _profile, user_id):
 @require_super_admin
 def delete_user(user, _profile, user_id):
     if user.id == user_id:
-        return jsonify({"error": "No puedes eliminar tu propia cuenta"}), 403
+        return jsonify({"error": _("No puedes eliminar tu propia cuenta")}), 403
 
     target = Users.query.get(user_id)
-    if not target or not target.profile:
-        return jsonify({"error": "Usuario no encontrado"}), 404
-    if target.profile.role == UserRole.SUPER_ADMIN:
-        return jsonify({"error": "No se puede eliminar un superadministrador"}), 403
+    if not target:
+        return jsonify({"error": _("Usuario no encontrado")}), 404
+    if target.profile and target.profile.role == UserRole.SUPER_ADMIN:
+        return jsonify({"error": _("No se puede eliminar un superadministrador")}), 403
+
+    if _has_ongoing_bookings(target.id):
+        return jsonify({"error": _("No se puede eliminar el usuario porque tiene reservas en curso")}), 409
 
     try:
         ChatMessage.query.filter_by(sender_id=target.id).delete(synchronize_session=False)
-        Booking.query.filter_by(id_user=target.id).delete(synchronize_session=False)
-        db.session.delete(target)
+        detach_user_bookings(target)
+        Profiles.query.filter_by(user_id=target.id).delete(synchronize_session=False)
+        Users.query.filter_by(id=target.id).delete(synchronize_session=False)
         db.session.commit()
     except SQLAlchemyError:
         db.session.rollback()
-        return jsonify({"error": "No se puede eliminar el usuario por datos asociados"}), 409
+        return jsonify({"error": _("No se puede eliminar el usuario por datos asociados")}), 409
 
-    return jsonify({"mensaje": "Usuario eliminado correctamente"}), 200
+    return jsonify({"mensaje": _("Usuario eliminado correctamente")}), 200

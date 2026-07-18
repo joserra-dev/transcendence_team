@@ -601,6 +601,7 @@
     "CUSTOMER": "Bezeroa",
     "PLATE": "Matrikula",
     "CANCEL": "Erreserba utzi",
+    "CANCEL_NOT_ALLOWED": "Ezin da utzi: egonaldia hasi da jada.",
     "FILTER_FROM": "Noiztik",
     "FILTER_TO": "Noiz arte",
     "FILTER_PARKING": "Aparkalekua",

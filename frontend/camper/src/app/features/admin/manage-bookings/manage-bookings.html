@@ -127,6 +127,9 @@
               (click)="cancelBooking($event, booking)">
               {{ 'ADMIN_BOOKINGS.CANCEL' | translate }}
             </button>
+            <p class="cancel-hint" *ngIf="!canCancel(booking)">
+              {{ 'ADMIN_BOOKINGS.CANCEL_NOT_ALLOWED' | translate }}
+            </p>
           </div>
         </article>
       </div>

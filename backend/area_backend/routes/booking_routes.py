@@ -15,6 +15,7 @@ from models.space import Space
 from models.parking import Parking
 from models.space_blocked_day import SpaceBlockedDay
 from services.email_services import EmailService
+from utils.booking_customer import apply_customer_snapshot
 
 booking_bp = Blueprint('booking_bp', __name__)
 
@@ -320,6 +321,7 @@ def create_booking():
         total_price = 0.0
 
     # 1. Creamos la reserva guardándola en BBDD en estado transitorio ('pendiente')
+    booking_user = Users.query.get(user_id)
     new_booking = Booking(
         id_user=int(user_id),
         id_space=id_space,
@@ -329,6 +331,7 @@ def create_booking():
         license_plate=licensePlate.upper() if licensePlate else "",
         total_price=total_price
     )
+    apply_customer_snapshot(new_booking, booking_user)
     db.session.add(new_booking)
     db.session.commit()
 
@@ -491,7 +494,7 @@ def cancel_booking():
     if str(booking.id_user) != str(user_id):
         return jsonify({"error": _("No tienes permiso para cancelar esta reserva")}), 403
 
-    if booking.start_date and booking.start_date <= date.today():
+    if booking.start_date and booking.start_date < date.today():
         return jsonify({"error": _("No se puede cancelar una reserva cuya estancia ya ha comenzado o finalizado")}), 400
 
     booking.status = BookingStatus.PENDING
