@@ -1,7 +1,7 @@
     const fs = require('fs');
 const path = require('path');
 
-// 1. CONFIGURACIÓN: Cambia esto por la ruta real a tu carpeta de servicios
+// Cambia esto por la ruta real a tu carpeta de servicios
 const CARPETA_SERVICIOS = path.join(__dirname, 'src/app', 'core/services'); 
 
 // Expresiones regulares para capturar URLs completas o rutas relativas comunes (ej: '/users/login')
