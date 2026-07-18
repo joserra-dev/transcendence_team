@@ -23,7 +23,7 @@ class Users(db.Model):
     password_reset_verified = db.Column(db.Boolean, default=False, nullable=False)
     
     profile = db.relationship('Profiles', back_populates='user', uselist=False, cascade="all, delete-orphan")
-    bookings = db.relationship('Booking', back_populates='user', cascade="all, delete-orphan", lazy=True)
+    bookings = db.relationship('Booking', back_populates='user', lazy=True)
     
     def to_dict(self):
         return {

@@ -167,6 +167,14 @@
   align-self: center;
 }
 
+.cancel-hint {
+  margin: 0.35rem 0 0;
+  max-width: 12rem;
+  font-size: 0.78rem;
+  color: $color-grey-soft;
+  text-align: right;
+}
+
 .btn-panel-danger {
   white-space: nowrap;
   background-color: $color-error;

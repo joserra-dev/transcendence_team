@@ -14,7 +14,7 @@ class Booking(db.Model):
     __table_args__ = {'schema': 'public'}
 
     id = db.Column(db.BigInteger, primary_key=True)
-    id_user = db.Column(db.BigInteger, db.ForeignKey('public.users.id', ondelete='CASCADE'), nullable=False)
+    id_user = db.Column(db.BigInteger, db.ForeignKey('public.users.id', ondelete='SET NULL'), nullable=True)
     id_space = db.Column(db.BigInteger, db.ForeignKey('public.space.id', ondelete='CASCADE'), nullable=False)
     
     start_date = db.Column(db.Date, nullable=True)
@@ -23,6 +23,8 @@ class Booking(db.Model):
     status = db.Column(db.String(1), nullable=True) # Ej: '0'=Pendiente, '1'=Pagado/Confirmado
     rating = db.Column(db.Numeric(2, 0), nullable=True)
     license_plate = db.Column(db.String(15), nullable=False)
+    customer_email = db.Column(db.String(255), nullable=True)
+    customer_name = db.Column(db.String(255), nullable=True)
     
     # NUEVO CAMPO MONETARIO: El coste total calculado de la estancia
     total_price = db.Column(db.Float, nullable=False, default=0.0)

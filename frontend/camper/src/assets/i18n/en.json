@@ -606,6 +606,7 @@
     "CUSTOMER": "Customer",
     "PLATE": "License plate",
     "CANCEL": "Cancel booking",
+    "CANCEL_NOT_ALLOWED": "Cannot cancel: the stay has already started.",
     "FILTER_FROM": "From",
     "FILTER_TO": "To",
     "FILTER_PARKING": "Parking",

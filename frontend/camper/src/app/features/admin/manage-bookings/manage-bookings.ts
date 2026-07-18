@@ -28,7 +28,7 @@ export class ManageBookings implements OnInit {
 
   canCancel(booking: AdminBooking): boolean {
     if (!booking.startDate) return true;
-    return booking.startDate > this.today;
+    return this.extractDate(booking.startDate) >= this.today;
   }
 
   allBookings: AdminBooking[] = [];

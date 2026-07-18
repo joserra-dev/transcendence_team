@@ -182,7 +182,7 @@ ALTER TABLE ONLY public.profiles ALTER COLUMN id SET DEFAULT nextval('public.pro
 --
 CREATE TABLE public.booking (
     id bigint NOT NULL PRIMARY KEY,
-    id_user bigint NOT NULL,
+    id_user bigint,
     id_space bigint NOT NULL,
     start_date date,
     end_date date,
@@ -191,6 +191,8 @@ CREATE TABLE public.booking (
     rating numeric(2,0),
     license_plate character varying(15) NOT NULL,
     total_price double precision NOT NULL,
+    customer_email character varying(255),
+    customer_name character varying(255),
     invoice_serie character varying(20),
     invoice_number character varying(20),
     invoice_date date,
@@ -281,7 +283,7 @@ ALTER TABLE ONLY public.booking
     ADD CONSTRAINT booking_id_space_fkey FOREIGN KEY (id_space) REFERENCES public.space(id) ON DELETE CASCADE;
 
 ALTER TABLE ONLY public.booking
-    ADD CONSTRAINT booking_id_user_fkey FOREIGN KEY (id_user) REFERENCES public.users(id) ON DELETE CASCADE;
+    ADD CONSTRAINT booking_id_user_fkey FOREIGN KEY (id_user) REFERENCES public.users(id) ON DELETE SET NULL;
 
 ALTER TABLE ONLY public.invoice_sequences
     ADD CONSTRAINT invoice_sequences_id_company_fkey FOREIGN KEY (id_company) REFERENCES public.company(id) ON DELETE CASCADE;
