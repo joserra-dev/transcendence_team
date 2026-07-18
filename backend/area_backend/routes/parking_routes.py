@@ -74,10 +74,10 @@ def search_parkings():
       200:
         description: Lista de parkings filtrados correctamente.
     """
-    # 1. Iniciamos la query base sobre el modelo Parking
+    # Iniciamos la query base sobre el modelo Parking
     query = Parking.query
 
-    # 2. Capturamos los parámetros de texto de la URL
+    # Capturamos los parámetros de texto de la URL
     province = request.args.get('provincia')
     municipality = request.args.get('municipio')
     id_parking = request.args.get('id')
@@ -96,13 +96,13 @@ def search_parkings():
         except ValueError:
             return jsonify({"error": _("Formato de fecha inválido para endDate. Usa YYYY-MM-DD.")}), 400
     
-    # 3. Capturamos los booleanos (Flask los recibe como string, hay que convertirlos)
+    # Capturamos los booleanos (Flask los recibe como string, hay que convertirlos)
     isactive = request.args.get('isactive', default='true') # Por defecto 'true' para no mostrar parkings caídos
     has_electricity = request.args.get('electricidad')
     has_waste_disposal = request.args.get('residuales')
     has_vip_spots = request.args.get('vip')
 
-    # 4. Capturamos parámetros de paginación y ordenación
+    # Capturamos parámetros de paginación y ordenación
     page = request.args.get('page', 1, type=int)
     limit = request.args.get('limit', 20, type=int)
     sort = request.args.get('sort', 'name')
@@ -121,7 +121,7 @@ def search_parkings():
     else:
         query = query.order_by(order_col.asc())
 
-    # 5. Aplicamos el resto de filtros
+    # Aplicamos el resto de filtros
     if id_parking:
         query = query.filter(Parking.id == id_parking, Space.status == '0')
 
@@ -145,7 +145,7 @@ def search_parkings():
     if has_vip_spots:
         query = query.filter(Parking.has_vip_spots == (has_vip_spots.lower() == 'true'))
 
-    # 6. Ejecutamos la consulta y aplicamos paginación
+    # Ejecutamos la consulta y aplicamos paginación
     pagination = query.paginate(page=page, per_page=limit, error_out=False)
     items = [p.to_dict(from_date=from_date, to_date=to_date) for p in pagination.items]
 
