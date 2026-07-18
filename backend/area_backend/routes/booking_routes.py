@@ -15,7 +15,11 @@ from models.space import Space
 from models.parking import Parking
 from models.space_blocked_day import SpaceBlockedDay
 from services.email_services import EmailService
-from utils.booking_customer import apply_customer_snapshot
+from utils.booking_customer import (
+    apply_customer_snapshot,
+    bookings_owned_by_user,
+    user_owns_booking,
+)
 
 booking_bp = Blueprint('booking_bp', __name__)
 
@@ -95,12 +99,12 @@ def get_booking():
         if not booking:
             return jsonify({"error": _("Reserva no encontrada")}), 404
             
-        if str(booking.id_user) != str(user_id):
+        if not user_owns_booking(booking, user_id):
             return jsonify({"error": _("No tienes permiso para ver esta reserva")}), 403
             
         return jsonify(_get_booking_details(booking)), 200
 
-    user_booking = Booking.query.filter_by(id_user=user_id).all()
+    user_booking = bookings_owned_by_user(user_id).all()
     return jsonify([_get_booking_details(r) for r in user_booking]), 200
 
 @booking_bp.route('/api/booking/<int:id>', methods=['GET'])
@@ -139,7 +143,7 @@ def get_reserva_by_id(id):
     if not booking:
         return jsonify({"error": "Reserva no encontrada"}), 404
         
-    if str(booking.id_user) != str(user_id):
+    if not user_owns_booking(booking, user_id):
         return jsonify({"error": _("No tienes permiso para ver esta reserva")}), 403
         
     return jsonify(_get_booking_details(booking)), 200
@@ -166,10 +170,11 @@ def get_history():
     """
     user_id = get_jwt_identity()
     from models.users import Users
-    
-    bookings = Booking.query.filter_by(id_user=user_id).all()
+
     user = Users.query.get(user_id)
     user_email = user.email if user else ""
+
+    bookings = bookings_owned_by_user(user_id).all()
     
     history = []
     for b in bookings:
@@ -486,13 +491,19 @@ def cancel_booking():
     if not id_reserva:
         return jsonify({"error": _("Falta idReserva")}), 400
         
-    booking = Booking.query.get(id_reserva)
+    booking = Booking.query.get(int(id_reserva))
     if not booking:
         return jsonify({"error": _("Reserva no encontrada")}), 404
         
     user_id = get_jwt_identity()
-    if str(booking.id_user) != str(user_id):
+    if not user_owns_booking(booking, user_id):
         return jsonify({"error": _("No tienes permiso para cancelar esta reserva")}), 403
+
+    if booking.status == BookingStatus.PENDING:
+        return jsonify({"error": _("La reserva ya está cancelada")}), 400
+
+    if booking.status not in (BookingStatus.CONFIRMED, BookingStatus.PROCESSING):
+        return jsonify({"error": _("La reserva no se puede cancelar en su estado actual")}), 400
 
     if booking.start_date and booking.start_date < date.today():
         return jsonify({"error": _("No se puede cancelar una reserva cuya estancia ya ha comenzado o finalizado")}), 400
@@ -560,7 +571,7 @@ def rate_booking():
         return jsonify({"error": _("Reserva no encontrada")}), 404
         
     user_id = get_jwt_identity()
-    if str(booking.id_user) != str(user_id):
+    if not user_owns_booking(booking, user_id):
         return jsonify({"error": _("No tienes permiso para puntuar esta reserva")}), 403
         
     booking.rating = puntuacion

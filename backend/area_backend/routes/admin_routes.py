@@ -118,6 +118,47 @@ def _can_manage_parking(profile: Profiles, parking: Parking) -> bool:
     return profile.role == UserRole.ADMIN and profile.company_id == parking.id_company
 
 
+def _parking_has_active_bookings(parking_id: int) -> bool:
+    today = date.today()
+    return (
+        Booking.query.join(Space)
+        .filter(
+            Space.id_parking == parking_id,
+            Booking.status.in_(('1', '2')),
+            Booking.end_date.isnot(None),
+            Booking.end_date >= today,
+        )
+        .first()
+        is not None
+    )
+
+
+def _space_has_active_bookings(space_id: int) -> bool:
+    today = date.today()
+    return (
+        Booking.query.filter(
+            Booking.id_space == space_id,
+            Booking.status.in_(('1', '2')),
+            Booking.end_date.isnot(None),
+            Booking.end_date >= today,
+        )
+        .first()
+        is not None
+    )
+
+
+def _delete_parking_physical(parking: Parking) -> None:
+    for space in list(parking.spaces):
+        SpaceBlockedDay.query.filter_by(id_space=space.id).delete(synchronize_session=False)
+        db.session.delete(space)
+    db.session.delete(parking)
+
+
+def _wants_permanent_delete() -> bool:
+    value = request.args.get('permanent', request.args.get('hard', 'false'))
+    return str(value).lower() in ('1', 'true', 'yes')
+
+
 def _booking_query_for_profile(profile: Profiles):
     query = Booking.query.join(Space).join(Parking)
     if profile.role == UserRole.ADMIN:
@@ -643,11 +684,22 @@ def delete_parking(_user, profile, parking_id):
     if not _can_manage_parking(profile, parking):
         return jsonify({"error": _("No autorizado")}), 403
 
-    for space in list(parking.spaces):
-        db.session.delete(space)
-    db.session.delete(parking)
+    if _wants_permanent_delete():
+        if _parking_has_active_bookings(parking_id):
+            return jsonify({
+                "error": _("No se puede eliminar físicamente un parking con reservas activas")
+            }), 409
+        try:
+            _delete_parking_physical(parking)
+            db.session.commit()
+        except SQLAlchemyError:
+            db.session.rollback()
+            return jsonify({"error": _("No se puede eliminar el parking por datos asociados")}), 409
+        return jsonify({"mensaje": _("Parking eliminado correctamente")}), 200
+
+    parking.isactive = False
     db.session.commit()
-    return jsonify({"mensaje": _("Parking eliminado correctamente")}), 200
+    return jsonify({"mensaje": _("Parking desactivado correctamente")}), 200
 
 
 @admin_bp.route('/parking/<int:parking_id>/space', methods=['POST'])
@@ -768,9 +820,23 @@ def delete_spot(_user, profile, parking_id, spot_id):
     if not space:
         return jsonify({"error": "Plaza no encontrada"}), 404
 
-    db.session.delete(space)
+    if _wants_permanent_delete():
+        if _space_has_active_bookings(space.id):
+            return jsonify({
+                "error": _("No se puede eliminar físicamente una plaza con reservas activas")
+            }), 409
+        try:
+            SpaceBlockedDay.query.filter_by(id_space=space.id).delete(synchronize_session=False)
+            db.session.delete(space)
+            db.session.commit()
+        except SQLAlchemyError:
+            db.session.rollback()
+            return jsonify({"error": _("No se puede eliminar la plaza por datos asociados")}), 409
+        return jsonify({"mensaje": "Plaza eliminada correctamente"}), 200
+
+    space.status = '1'
     db.session.commit()
-    return jsonify({"mensaje": "Plaza eliminada correctamente"}), 200
+    return jsonify({"mensaje": _("Plaza desactivada correctamente")}), 200
 
 
 @admin_bp.route('/bookings', methods=['GET'])
@@ -1325,19 +1391,42 @@ def delete_company(_user, _profile, company_id):
     if not company:
         return jsonify({"error": _("Empresa no encontrada")}), 404
 
-    for parking in list(company.parkings):
-        for space in list(parking.spaces):
-            db.session.delete(space)
-        db.session.delete(parking)
+    permanent = _wants_permanent_delete()
+    if permanent and Company.query.count() <= 1:
+        return jsonify({"error": _("No se puede eliminar la última empresa del sistema")}), 409
 
-    for profile in Profiles.query.filter_by(company_id=company_id).all():
-        profile.company_id = None
-        if profile.role == UserRole.ADMIN:
-            profile.role = UserRole.USER
+    try:
+        if permanent:
+            ChatMessage.query.filter_by(company_id=company_id).delete(synchronize_session=False)
+            for parking in list(company.parkings):
+                if _parking_has_active_bookings(parking.id):
+                    return jsonify({
+                        "error": _("No se puede eliminar físicamente una empresa con reservas activas")
+                    }), 409
+                _delete_parking_physical(parking)
 
-    db.session.delete(company)
-    db.session.commit()
-    return jsonify({"mensaje": _("Empresa eliminada correctamente")}), 200
+            for profile in Profiles.query.filter_by(company_id=company_id).all():
+                profile.company_id = None
+                if profile.role == UserRole.ADMIN:
+                    profile.role = UserRole.USER
+
+            db.session.delete(company)
+        else:
+            for parking in company.parkings:
+                parking.isactive = False
+            for profile in Profiles.query.filter_by(company_id=company_id).all():
+                if profile.role == UserRole.ADMIN:
+                    profile.role = UserRole.USER
+                profile.company_id = None
+
+        db.session.commit()
+    except SQLAlchemyError:
+        db.session.rollback()
+        return jsonify({"error": _("No se puede eliminar la empresa por datos asociados")}), 409
+
+    if permanent:
+        return jsonify({"mensaje": _("Empresa eliminada correctamente")}), 200
+    return jsonify({"mensaje": _("Empresa desactivada correctamente")}), 200
 
 
 @admin_bp.route('/companies/<int:company_id>/users', methods=['GET'])
@@ -1662,9 +1751,6 @@ def delete_user(user, _profile, user_id):
         return jsonify({"error": _("Usuario no encontrado")}), 404
     if target.profile and target.profile.role == UserRole.SUPER_ADMIN:
         return jsonify({"error": _("No se puede eliminar un superadministrador")}), 403
-
-    if _has_ongoing_bookings(target.id):
-        return jsonify({"error": _("No se puede eliminar el usuario porque tiene reservas en curso")}), 409
 
     try:
         ChatMessage.query.filter_by(sender_id=target.id).delete(synchronize_session=False)

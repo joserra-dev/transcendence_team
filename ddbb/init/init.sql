@@ -245,14 +245,13 @@ ALTER TABLE ONLY public.chat_messages ALTER COLUMN id SET DEFAULT nextval('publi
 --
 
 COPY public.company (id, name, cif, tbai_enabled, tbai_software_license) FROM stdin;
-1	Hemen-go	B68064831	t	TBAI-HEMENGO-99882
-2	hemen-go	B21520622	f	\N
+1	hemen-go	B12345678	t	TBAI-HEMENGO-99882
 \.
 
 COPY public.parking (id, id_company, name, province, municipality, isactive, web_parking, telephone, email, contact_person, has_electricity, has_waste_disposal, has_vip_spots, tbai_serie_facturacion, latitude, longitude, description) FROM stdin;
-1	2	Parking La Galea beach	Bizkaia	Getxo	t	https://www.la-galea-caravaning.com	688745692	info@la-galea-caravaning.com	Mikel Basurko	t	t	t	GALEA26	43.3712	-3.0345	Estupendo parking frente a los acantalidados de La Galea.
-2	2	Parking Zarautz Costa	Gipuzkoa	Zarautz	t	https://www.zarautz-camper.com	943123456	info@zarautz-camper.com	Ane Mendizabal	t	f	t	ZARAUTZ26	43.2844	-2.1691	Ubicación privilegiada en la costa vasca.
-3	2	Parking Hondarribia Puerto	Gipuzkoa	Hondarribia	t	\N	943654321	info@hondarribia-parking.com	Iñaki Agirre	f	t	f	HONDA26	43.3789	-1.7925	Ubicado junto al puerto deportivo.
+1	1	Parking La Galea beach	Bizkaia	Getxo	t	https://www.la-galea-caravaning.com	688745692	info@la-galea-caravaning.com	Mikel Basurko	t	t	t	GALEA26	43.3712	-3.0345	Estupendo parking frente a los acantalidados de La Galea.
+2	1	Parking Zarautz Costa	Gipuzkoa	Zarautz	t	https://www.zarautz-camper.com	943123456	info@zarautz-camper.com	Ane Mendizabal	t	f	t	ZARAUTZ26	43.2844	-2.1691	Ubicación privilegiada en la costa vasca.
+3	1	Parking Hondarribia Puerto	Gipuzkoa	Hondarribia	t	\N	943654321	info@hondarribia-parking.com	Iñaki Agirre	f	t	f	HONDA26	43.3789	-1.7925	Ubicado junto al puerto deportivo.
 \.
 
 COPY public.space (id, id_parking, name, isvip, has_electr, status, price) FROM stdin;

@@ -41,8 +41,11 @@ export class Admin {
     );
   }
 
-  deleteParking(id: number): Observable<{ mensaje: string }> {
-    return this.http.delete<{ mensaje: string }>(`${this.apiUrl}/parking/${id}`);
+  deleteParking(id: number, permanent = true): Observable<{ mensaje: string }> {
+    return this.http.delete<{ mensaje: string }>(
+      `${this.apiUrl}/parking/${id}`,
+      { params: { permanent: String(permanent) } }
+    );
   }
 
   createSpot(parkingId: number, spot: Partial<Space>): Observable<Space> {
@@ -63,9 +66,10 @@ export class Admin {
     );
   }
 
-  deleteSpot(parkingId: number, spotId: number): Observable<{ mensaje: string }> {
+  deleteSpot(parkingId: number, spotId: number, permanent = true): Observable<{ mensaje: string }> {
     return this.http.delete<{ mensaje: string }>(
-      `${this.apiUrl}/parking/${parkingId}/space/${spotId}`
+      `${this.apiUrl}/parking/${parkingId}/space/${spotId}`,
+      { params: { permanent: String(permanent) } }
     );
   }
 
@@ -154,8 +158,11 @@ export class Admin {
     return this.http.put<Company>(`${this.apiUrl}/companies/${id}`, data);
   }
 
-  deleteCompany(id: number): Observable<{ mensaje: string }> {
-    return this.http.delete<{ mensaje: string }>(`${this.apiUrl}/companies/${id}`);
+  deleteCompany(id: number, permanent = true): Observable<{ mensaje: string }> {
+    return this.http.delete<{ mensaje: string }>(
+      `${this.apiUrl}/companies/${id}`,
+      { params: { permanent: String(permanent) } }
+    );
   }
 
   getCompanyUsers(companyId: number): Observable<AdminUser[]> {

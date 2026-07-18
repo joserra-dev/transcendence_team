@@ -32,7 +32,7 @@ SEED_USERS = [
             "dni": "49688627W",
             "birth_day": date(1981, 6, 1),
             "role": UserRole.ADMIN,
-            "company_name": "Hemen-go",
+            "company_name": "hemen-go",
             "company_cif": "B12345678",
             # Datos de inicialización TicketBAI para la empresa
             "tbai_enabled": True,
@@ -137,20 +137,46 @@ SEED_PARKINGS = [
 
 
 def _get_or_create_company(name: str, cif: str | None = None, tbai_enabled: bool = False, tbai_license: str | None = None) -> Company:
-    company = Company.query.filter_by(name=name).first()
-    if company:
-        return company
+    normalized_name = name.strip()
+    if cif:
+        company = Company.query.filter_by(cif=cif).first()
+        if company:
+            return company
 
-    # Pasamos las nuevas propiedades añadidas al modelo Company
+    matches = Company.query.filter(Company.name.ilike(normalized_name)).order_by(Company.id).all()
+    if len(matches) == 1:
+        return matches[0]
+    if len(matches) > 1:
+        for company in matches:
+            if Parking.query.filter_by(id_company=company.id).first():
+                return company
+        return matches[0]
+
     company = Company(
-        name=name, 
-        cif=cif, 
-        tbai_enabled=tbai_enabled, 
+        name=normalized_name,
+        cif=cif,
+        tbai_enabled=tbai_enabled,
         tbai_software_license=tbai_license
     )
     db.session.add(company)
     db.session.flush()
     return company
+
+
+def _ensure_admin_company_linked() -> None:
+    admin = Users.query.filter_by(email="admin@hemen-go.com").first()
+    if not admin or not admin.profile:
+        return
+
+    parking_company = (
+        db.session.query(Company)
+        .join(Parking, Parking.id_company == Company.id)
+        .order_by(Company.id)
+        .first()
+    )
+    if parking_company and admin.profile.company_id != parking_company.id:
+        admin.profile.company_id = parking_company.id
+        db.session.commit()
 
 
 def _seed_users() -> int:
@@ -236,18 +262,19 @@ def _ensure_seed_users_verified() -> None:
 
 
 def seed_database() -> None:
-    """Inserta datos de desarrollo si las tablas están vacías (SOLO USUARIOS Y PERFILES)."""
-    # 1. Cargamos únicamente los usuarios y sus perfiles
+    """Inserta datos de desarrollo si las tablas están vacías."""
     num_users = users_created = _seed_users()
-    
-    # 2. Nos aseguramos de que queden verificados
-    _ensure_seed_users_verified()
+    parkings_created = _seed_parkings()
 
-    # 3. Guardamos los cambios en la base de datos si se creó algún usuario
-    if users_created:
+    _ensure_seed_users_verified()
+    _ensure_admin_company_linked()
+
+    if users_created or parkings_created:
         db.session.commit()
     elif Users.query.filter(Users.email.in_([u["email"] for u in SEED_USERS])).count():
         db.session.commit()
 
     if users_created:
         print(f" * {num_users} usuarios creados")
+    if parkings_created:
+        print(f" * {parkings_created} parkings creados")
