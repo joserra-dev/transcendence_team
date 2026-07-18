@@ -320,7 +320,7 @@ def create_booking():
     except Exception:
         total_price = 0.0
 
-    # 1. Creamos la reserva guardándola en BBDD en estado transitorio ('pendiente')
+    # Creamos la reserva guardándola en BBDD en estado transitorio ('pendiente')
     booking_user = Users.query.get(user_id)
     new_booking = Booking(
         id_user=int(user_id),
@@ -336,7 +336,7 @@ def create_booking():
     db.session.commit()
 
     try:
-        # 2. Creamos la pasarela de Stripe Checkout mandándole el id único de esta reserva recién creada
+        # Creamos la pasarela de Stripe Checkout mandándole el id único de esta reserva recién creada
         stripe.api_key = os.getenv('STRIPE_KEY')
         parking_name = parking.name if parking else "Parking"
         space_name = space.name if space else ""
@@ -367,7 +367,7 @@ def create_booking():
         return jsonify({'url': checkout_session.url}), 200
 
     except Exception as stripe_exc:
-        # 1. Eliminamos el registro de la reserva que acabamos de crear
+        # Eliminamos el registro de la reserva que acabamos de crear
         try:
             db.session.delete(new_booking)
             db.session.commit()
@@ -390,11 +390,11 @@ def confirm_booking_payment(booking_id):
         return "Reserva no encontrada", 404
         
     if booking.status == BookingStatus.PROCESSING:
-        # 1. Confirmamos el estado de la reserva en base de datos
+        # Confirmamos el estado de la reserva en base de datos
         booking.status = BookingStatus.CONFIRMED
         db.session.commit()
         
-        # 2. Despachamos el correo electrónico de confirmación de manera segura ahora que está pagado
+        # Despachamos el correo electrónico de confirmación de manera segura ahora que está pagado
         try:
             user = Users.query.get(booking.id_user)
             space = booking.space
