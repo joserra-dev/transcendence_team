@@ -38,9 +38,8 @@ def _get_reader():
 def clean_plate_text(text):
     return re.sub(r'[\s\-_.]', '', text).upper()
 
-# ==========================================
-# 🗺️ VISTA WEB: Muestra la pantalla del Lector
-# ==========================================
+
+# VISTA WEB: Muestra la pantalla del Lector
 access_bp
 @access_bp.route('/access-control', methods=['GET'])
 def access_control_page():
