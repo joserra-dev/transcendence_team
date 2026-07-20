@@ -170,6 +170,21 @@ register_websocket_handlers()
 # 4. INICIALIZADOR DE BASE DE DATOS
 # En desarrollo se fuerza el seed. En producción solo si la base de datos está vacía.
 with app.app_context():
+    from sqlalchemy import text
+
+    def _ensure_schema() -> None:
+        try:
+            db.session.execute(text(
+                "ALTER TABLE public.users "
+                "ADD COLUMN IF NOT EXISTS is_active boolean NOT NULL DEFAULT true"
+            ))
+            db.session.commit()
+        except Exception as e:
+            db.session.rollback()
+            app.logger.warning(f" * No se pudo aplicar migración is_active: {e}")
+
+    _ensure_schema()
+
     def _should_seed_database() -> bool:
         if os.getenv('FLASK_ENV') == 'development':
             return True

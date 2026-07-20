@@ -62,7 +62,8 @@ CREATE TABLE public.users (
     verification_expires timestamp without time zone,
     reset_password_token character varying(255) UNIQUE,
     reset_password_expires timestamp without time zone,
-    password_reset_verified boolean NOT NULL
+    password_reset_verified boolean NOT NULL,
+    is_active boolean NOT NULL DEFAULT true
 );
 ALTER TABLE public.users OWNER TO defaultdb_user;
 

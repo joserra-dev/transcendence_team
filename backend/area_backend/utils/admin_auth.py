@@ -9,7 +9,7 @@ from models.users import UserRole, Users
 def get_auth_user_and_profile():
     user_id = get_jwt_identity()
     user = Users.query.get(int(user_id))
-    if not user or not user.profile:
+    if not user or not user.profile or not user.is_active:
         return None, None
     return user, user.profile
 

@@ -1026,3 +1026,5 @@ docker exec transcendence_team-backend-1 curl -s -o /dev/null -w "%{http_code}" 
 | Redirección de Stripe da error | `URL_BACK`/`URL_FRONT` apuntan a localhost |
 | Todo falla en prod pero funciona en local | CORS no incluye el dominio de producción |
 | No se ve la URL de Stripe en consola | Backend no puede conectar con Stripe API |
+
+| En sistemas mac, es interesante instalar colima y darle especio suficiente

@@ -390,6 +390,9 @@ def autenticar_usuario():
     if not coincide:
         return jsonify({"error": _("Credenciales incorrectas")}), 401
 
+    if not usuario_existente.is_active:
+        return jsonify({"error": _("Esta cuenta ha sido desactivada")}), 403
+
     # Corregido: El chequeo de verificación va DESPUÉS de comprobar que los datos son reales.
     if not usuario_existente.is_verified:
         return jsonify({"error": _("Debes verificar tu correo electrónico antes de iniciar sesión")}), 403
@@ -423,6 +426,9 @@ def autenticar_admin():
 
     if not check_password_hash(usuario.pass_user, password):
         return jsonify({"error": _("Credenciales incorrectas")}), 401
+
+    if not usuario.is_active:
+        return jsonify({"error": _("Esta cuenta ha sido desactivada")}), 403
 
     if not usuario.is_verified:
         return jsonify({"error": _("Debes verificar tu correo electrónico antes de iniciar sesión")}), 403

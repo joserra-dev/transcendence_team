@@ -21,6 +21,7 @@ class Users(db.Model):
     reset_password_token = db.Column(db.String(255), unique=True, nullable=True)
     reset_password_expires = db.Column(db.DateTime, nullable=True)
     password_reset_verified = db.Column(db.Boolean, default=False, nullable=False)
+    is_active = db.Column(db.Boolean, default=True, nullable=False)
     
     profile = db.relationship('Profiles', back_populates='user', uselist=False, cascade="all, delete-orphan")
     bookings = db.relationship('Booking', back_populates='user', lazy=True)
@@ -29,6 +30,7 @@ class Users(db.Model):
         return {
             "id": self.id,
             "email": self.email,
+            "isActive": self.is_active,
             "profile": self.profile.to_dict() if self.profile else None
         }
 
