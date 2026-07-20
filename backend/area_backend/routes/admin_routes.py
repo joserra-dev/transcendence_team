@@ -150,6 +150,11 @@ def _has_ongoing_bookings(user_id: int) -> bool:
     )
 
 
+def _user_has_booking_history(user_id: int) -> bool:
+    """True si el usuario ha tenido al menos una reserva (activa o cancelada)."""
+    return Booking.query.filter_by(id_user=user_id).first() is not None
+
+
 def _booking_to_admin_dict(booking: Booking) -> dict:
     days = 0
     if booking.start_date and booking.end_date:
@@ -1368,7 +1373,7 @@ def list_company_users(_user, _profile, company_id):
     profiles = Profiles.query.filter_by(company_id=company_id).all()
     result = []
     for profile in profiles:
-        if profile.user:
+        if profile.user and profile.user.is_active:
             result.append(_user_to_admin_dict(profile.user))
     return jsonify(result), 200
 
@@ -1413,7 +1418,7 @@ def list_users(_user, _profile):
       200:
         description: Base total de usuarios
     """
-    users = Users.query.all()
+    users = Users.query.filter_by(is_active=True).all()
     return jsonify([_user_to_admin_dict(user) for user in users]), 200
 
 
@@ -1658,13 +1663,22 @@ def delete_user(user, _profile, user_id):
         return jsonify({"error": _("No puedes eliminar tu propia cuenta")}), 403
 
     target = Users.query.get(user_id)
-    if not target:
+    if not target or not target.is_active:
         return jsonify({"error": _("Usuario no encontrado")}), 404
     if target.profile and target.profile.role == UserRole.SUPER_ADMIN:
         return jsonify({"error": _("No se puede eliminar un superadministrador")}), 403
 
     if _has_ongoing_bookings(target.id):
         return jsonify({"error": _("No se puede eliminar el usuario porque tiene reservas en curso")}), 409
+
+    if _user_has_booking_history(target.id):
+        target.is_active = False
+        try:
+            db.session.commit()
+        except SQLAlchemyError:
+            db.session.rollback()
+            return jsonify({"error": _("No se puede desactivar el usuario")}), 409
+        return jsonify({"mensaje": _("Usuario eliminado correctamente")}), 200
 
     try:
         ChatMessage.query.filter_by(sender_id=target.id).delete(synchronize_session=False)
