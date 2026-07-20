@@ -117,6 +117,7 @@ Recommended practices followed:
 - AI/OCR: EasyOCR and OpenCV for license plate verification
 
 ## Database Schema
+
 ## Entity-Relationship Diagram (ERD)
 
 ```mermaid
@@ -142,7 +143,6 @@ Main tables:
 - `parking`: parking location, services, description, coordinates, TicketBAI series.
 - `space`: parking spot, price, VIP/electricity flags, status.
 - `booking`: user booking with space, dates, status, rating, license plate, total price, invoice/TicketBAI fields.
-- `invoice_sequence`: invoice numbering support per company.
 
 Main relationships:
 - `users` 1:1 `profiles`
