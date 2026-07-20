@@ -302,6 +302,7 @@
   },
 
   "HISTORY_DETAIL": {
+    "PRINT_PDF": "Inprimatu pdf formatuan",
     "BACK": "Itzuli historiara",
     "BOOKING": "Erreserba",
     "CONFIRMED": "Berretsita",

@@ -72,4 +72,10 @@ createBooking(bookingData: BookingRequest): Observable<any> {
       { idReserva: id, puntuacion: score }
     );
   }
+
+  send_bill(id: string | number): Observable<any> {
+    return this.http.get<any>(
+      `${this.apiUrl}/booking/${id}/bill`
+    );
+  }
 }

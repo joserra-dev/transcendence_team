@@ -13,6 +13,8 @@ Flask-Limiter
 redis
 opencv-python-headless
 easyocr
+datetime
+weasyprint
 markupsafe
 Flask-Babel==4.0.0
 debugpy

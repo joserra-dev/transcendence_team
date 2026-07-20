@@ -6,7 +6,11 @@ import cv2
 import numpy as np
 # Importante añadir 'render_template'
 from flask import Blueprint, request, jsonify, render_template, current_app
+import easyocr
+from flask import Blueprint, request, jsonify, render_template
 from models.booking import Booking
+from models.space import Space
+from models.parking import Parking
 
 
 access_bp = Blueprint('access_bp', __name__)
@@ -45,6 +49,13 @@ access_bp
 def access_control_page():
     # Flask busca automáticamente este archivo dentro de la carpeta /templates
     return render_template('access_control.html')
+
+
+# Lista de parkings activos
+@access_bp.route('/api/access/parkings', methods=['GET'])
+def get_parkings():
+    parkings = Parking.query.filter_by(isactive=True).all()
+    return jsonify([{"id": p.id, "name": p.name} for p in parkings])
 
 
 # ==========================================
@@ -105,11 +116,12 @@ def verify_plate():
 
         # Validar en DB
         today = datetime.now(timezone.utc).date()
-        active_booking = Booking.query.filter(
+        active_booking = Booking.query.join(Space).filter(
             Booking.license_plate == detected_plate,
             Booking.start_date <= today,
             Booking.end_date >= today,
-            Booking.status == '1'
+            Booking.status == '1',
+            Space.id_parking == parking_id
         ).first()
 
         if active_booking:

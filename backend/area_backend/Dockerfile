@@ -3,12 +3,14 @@ FROM python:3.12-slim AS builder
 
 WORKDIR /app
 
-# Instalar herramientas de compilación que puedan hacer falta
-RUN apt-get update && apt-get install -y --no-install-recommends gcc g++ && rm -rf /var/lib/apt/lists/*
+# Dependencias del sistema necesarias para WeasyPrint
+RUN apt-get update && apt-get install -y \
+    libglib2.0-0 \
+    libpango-1.0-0 \
+    libpangoft2-1.0-0
 
-# Instalar PyTorch CPU de forma global en el builder
-RUN pip install --no-cache-dir torch torchvision --index-url https://download.pytorch.org/whl/cpu
 
+# Como el Dockerfile está en la misma carpeta que requirements.txt:
 COPY requirements.txt .
 # Instalamos los requerimientos de forma global (SIN --user)
 RUN pip install --no-cache-dir -r requirements.txt

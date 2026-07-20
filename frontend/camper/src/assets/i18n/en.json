@@ -303,6 +303,7 @@
   },
 
   "HISTORY_DETAIL": {
+    "PRINT_PDF": "Print pdf",
     "BACK": "Back to history",
     "BOOKING": "Booking",
     "CONFIRMED": "Confirmed",

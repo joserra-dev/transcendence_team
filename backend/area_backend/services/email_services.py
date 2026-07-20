@@ -7,6 +7,10 @@ from flask_mailman import EmailMessage
 from flask_babel import _, get_locale   
 import os
 
+from email.mime.multipart import MIMEMultipart
+from email.mime.text import MIMEText
+from email.mime.application import MIMEApplication
+
 class EmailService:
     @staticmethod
     def _get_sender() -> str:
@@ -153,3 +157,31 @@ class EmailService:
         )
 
         return cls.base_mail(destinatario, asunto, html_content, plain_txt)
+
+    # base_email para enviar ficheros adjuntos
+    @classmethod
+    def attach_mail(cls, destinatario: str, asunto: str, name: str, bill: bytes):
+        sender = cls._get_sender()
+        msg = MIMEMultipart()
+        msg['Subject'] = asunto
+        msg['From'] = sender
+        msg['To'] = destinatario
+        
+        # Adjuntar PDF
+        pdf = MIMEApplication(bill, _subtype="pdf")
+        pdf.add_header(
+            "Content-Disposition",
+            "attachment",
+            filename=name
+        )
+        msg.attach(pdf)
+
+        return cls._send(msg)
+
+    # Funcion para enviar el email con la factura en pdf
+    @classmethod
+    def send_bill(cls, destinatario: str, bill: bytes):
+        asunto = "HEMEN-GO - PDF factura"
+        
+        
+        return cls.attach_mail(destinatario, asunto, "factura.pdf", bill)

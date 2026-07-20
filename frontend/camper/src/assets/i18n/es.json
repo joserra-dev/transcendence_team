@@ -302,6 +302,7 @@
   },
 
   "HISTORY_DETAIL": {
+    "PRINT_PDF": "Imprimir en PDF",
     "BACK": "Volver al historial",
     "BOOKING": "Reserva",
     "CONFIRMED": "Confirmada",
