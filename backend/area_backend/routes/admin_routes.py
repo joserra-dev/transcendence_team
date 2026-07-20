@@ -504,8 +504,8 @@ def create_parking(_user, profile):
     if not fields.get("name") or not fields.get("municipality") or not fields.get("email"):
         return jsonify({"error": _("Nombre, municipio y email son obligatorios")}), 400
       
-    if(CoordinateValidator.is_informed(fields.get("latitude")) and CoordinateValidator.is_informed(fields.get("logitude"))):  
-      if not CoordinateValidator.validate_coordinates(fields.get("latitude"), fields.get("logitude")):
+    if(CoordinateValidator.is_informed(fields.get("latitude")) and CoordinateValidator.is_informed(fields.get("longitude"))):  
+      if not CoordinateValidator.validate_coordinates(fields.get("latitude"), fields.get("longitude")):
           return jsonify({"error": _("La longitud y/o latitud no correctas")}), 400
       
     if profile.role == UserRole.ADMIN:
@@ -588,9 +588,9 @@ def update_parking(_user, profile):
         return jsonify({"error": _("idParking es obligatorio")}), 400
 
     # ---- INICIO DE VALIDACIÓN DE COORDENADAS ----
-    latitude = data.get("latitude")
-    longitude = data.get("longitude")
-
+    latitude = data.get("latitudParking")
+    longitude = data.get("longitudParking")
+        
     # Helper para verificar si un campo viene informado
     def esta_informado(val):
         return val is not None and str(val).strip() != ""
@@ -599,7 +599,7 @@ def update_parking(_user, profile):
     if esta_informado(latitude) or esta_informado(longitude):
         if not CoordinateValidator.validate_coordinates(latitude, longitude):
             return jsonify({"error": _("La longitud y/o latitud no son correctas")}), 400
-    # ---- FIN DE VALIDACIÓN DE COORDENADAS ----
+        # ---- FIN DE VALIDACIÓN DE COORDENADAS ----
 
     parking = Parking.query.get(parking_id)
     if not parking:
