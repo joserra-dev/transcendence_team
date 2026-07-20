@@ -118,14 +118,31 @@ Recommended practices followed:
 
 ## Database Schema
 
+## Entity-Relationship Diagram (ERD)
+
+```mermaid
+erDiagram
+    users ||--o| profiles : "has profile (1:1)"
+    users ||--o{ booking : "makes (1:N)"
+    users ||--o{ chat_messages : "sends (1:N)"
+
+    company ||--o{ profiles : "employs (1:N)"
+    company ||--o{ parking : "owns (1:N)"
+    company ||--o{ chat_messages : "receives (1:N)"
+
+    parking ||--|{ space : "contains (1:N)"
+    parking ||--o{ parking_blocked_day : "has blocked days (1:N)"
+    
+    space ||--o{ space_blocked_day : "has blocked days (1:N)"
+    space ||--o{ booking : "reserved in (1:N)"
+```
 Main tables:
 - `users`: authentication identity, email, password hash, verification and password reset tokens.
-- `profiles`: personal profile, role, company relation, DNI, birth date, payment method, IBAN, card token/last digits.
+- `profiles`: personal profile, role, company relation, DNI, birth date.
 - `company`: organization owning parkings and administrators.
 - `parking`: parking location, services, description, coordinates, TicketBAI series.
 - `space`: parking spot, price, VIP/electricity flags, status.
 - `booking`: user booking with space, dates, status, rating, license plate, total price, invoice/TicketBAI fields.
-- `invoice_sequence`: invoice numbering support per company.
 
 Main relationships:
 - `users` 1:1 `profiles`
