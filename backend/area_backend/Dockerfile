@@ -4,10 +4,18 @@ FROM python:3.12-slim AS builder
 WORKDIR /app
 
 # Dependencias del sistema necesarias para WeasyPrint
-RUN apt-get update && apt-get install -y \
-    libglib2.0-0 \
-    libpango-1.0-0 \
-    libpangoft2-1.0-0
+RUN apt-get update && \
+    apt-get install -y --no-install-recommends \
+        gcc \
+        g++ \
+        libglib2.0-0 \
+        libpango-1.0-0 \
+        libpangoft2-1.0-0 \
+        libcairo2 \
+        libgdk-pixbuf-2.0-0 \
+        libffi8 \
+        shared-mime-info && \
+    rm -rf /var/lib/apt/lists/*
 
 
 # Como el Dockerfile está en la misma carpeta que requirements.txt:
@@ -25,6 +33,13 @@ WORKDIR /app
 RUN apt-get update && apt-get install -y --no-install-recommends \
     libgl1 \
     libglib2.0-0 \
+    libpango-1.0-0 \
+    libpangocairo-1.0-0 \
+    libpangoft2-1.0-0 \
+    libcairo2 \
+    libgdk-pixbuf-2.0-0 \
+    libffi8 \
+    shared-mime-info \
     openssl \
     curl \
     && rm -rf /var/lib/apt/lists/*

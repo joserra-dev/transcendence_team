@@ -302,7 +302,7 @@
   },
 
   "HISTORY_DETAIL": {
-    "PRINT_PDF": "Imprimir en PDF",
+    "PRINT_PDF": "Enviar factura",
     "BACK": "Volver al historial",
     "BOOKING": "Reserva",
     "CONFIRMED": "Confirmada",
