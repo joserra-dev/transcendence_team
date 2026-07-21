@@ -232,7 +232,7 @@ env:
 		echo "POSTGRES_USER=defaultdb_user" >> .env; \
 		echo "POSTGRES_PASSWORD=$$pass" >> .env; \
 		echo "POSTGRES_PORT=$$db" >> .env; \
-		echo "DATABASE_URL=postgresql://defaultdb_user:$$pass@db:$$db/defaultdb" >> .env; \
+		echo "DATABASE_URL=postgresql://defaultdb_user:$$pass@db:5432/defaultdb" >> .env; \
 		echo -e "$(COLOR_GREEN)Puerto PostgreSQL asignado: $$db (libre desde 5432)$(COLOR_RESET)"; \
 		jwt_secret=$$(python3 -c 'import secrets; print(secrets.token_hex(32))'); \
 		echo "JWT_SECRET_KEY=$$jwt_secret" >> .env; \

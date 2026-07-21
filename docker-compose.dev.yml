@@ -32,25 +32,25 @@ services:
 
 
   frontend:
-
     build:
       context: ./frontend
       target: development
     image: transcendence_team-frontend:dev
 
-    entrypoint: >
-      sh -c "
-      mkdir -p /app/src/assets &&
-      echo \"window.env = { URL_FRONT: '$$URL_FRONT', URL_BACK: '$$URL_BACK' };\" > /app/src/assets/env.js &&
-      exec npm start -- --host 0.0.0.0 --port 4200 --allowed-hosts=all
-      "
+    entrypoint:
+      - /bin/sh
+      - -c
+      - |
+        mkdir -p /app/src/assets
+        echo "window.env = { URL_FRONT: '$$URL_FRONT', URL_BACK: '$$URL_BACK' };" > /app/src/assets/env.js
+        exec npm start -- --host 0.0.0.0 --port 4200 --allowed-hosts=all
 
     volumes:
       - ./frontend/camper:/app
       - /app/node_modules
 
     ports:
-      - "${FRONT_PORT}:4200"
+      - "${FRONT_PORT:-4200}:4200"
 
     env_file:
       - .env

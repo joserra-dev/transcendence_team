@@ -38,7 +38,7 @@ services:
     # frontend/ssl/generate-local.sh durante `make env`). Para producción real
     # con una CA, reemplaza esos archivos por los de tu CA.
     volumes:
-      - ./frontend/ssl:/etc/nginx/ssl:ro
+      - ./frontend/ssl:/etc/nginx/ssl
 
     ports:
       - "${FRONT_PORT}:443"
