@@ -4,7 +4,6 @@ import re
 from datetime import date, datetime, timezone
 import cv2
 import numpy as np
-# Importante añadir 'render_template'
 from flask import Blueprint, request, jsonify, render_template, current_app
 import easyocr
 from flask import Blueprint, request, jsonify, render_template
@@ -58,9 +57,8 @@ def get_parkings():
     return jsonify([{"id": p.id, "name": p.name} for p in parkings])
 
 
-# ==========================================
-# 🧠 API: Procesa la foto enviada por la Web
-# ==========================================
+
+# API: Procesa la foto enviada por la Web
 @access_bp.route('/api/access/verify-plate', methods=['POST'])
 @_require_access_api_key
 def verify_plate():

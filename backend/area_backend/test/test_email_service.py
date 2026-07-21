@@ -22,7 +22,7 @@ def test_enviar_bienvenida_exitoso(app, mocker):
     Prueba que el método enviar_bienvenida renderice el HTML 
     y llame al método de envío físico de Flask-Mailman.
     """
-    # 🌟 CAMBIO AQUÍ: Usamos la ruta en formato string 'modulo.Clase.metodo'
+    # CAMBIO AQUÍ: Usamos la ruta en formato string 'modulo.Clase.metodo'
     mock_enviar = mocker.patch('services.email_services.EmailService._send', return_value=True)
 
     # Ejecutamos la acción de nuestra clase
@@ -45,7 +45,7 @@ def test_enviar_bienvenida_exitoso(app, mocker):
 # 3. Test para verificar manejo de errores
 def test_enviar_bienvenida_falla_servidor(app, mocker):
     """Prueba el comportamiento si el servidor SMTP falla."""
-    # 🌟 CAMBIO AQUÍ TAMBIÉN: Ruta en formato string
+    # CAMBIO AQUÍ TAMBIÉN: Ruta en formato string
     mocker.patch('services.email_services.EmailService._send', side_effect=Exception("Error de conexión SMTP"))
 
     with pytest.raises(Exception) as exc_info:
