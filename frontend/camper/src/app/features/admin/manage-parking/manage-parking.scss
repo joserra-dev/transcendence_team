@@ -15,6 +15,10 @@
   border-radius: $radius-lg;
   box-shadow: $shadow-soft;
 
+  .error-input {
+  border: 2px solid $color-error;
+  }
+
   .form-group-standard {
     textarea {
       width: 100%;
@@ -30,6 +34,10 @@
         outline: none;
         border-color: $color-primary;
       }
+    }
+
+    .error-input {
+      border: 2px solid $color-error;
     }
 
     .char-counter {
