@@ -16,11 +16,10 @@ export class UserService {
     return this.http.get<User>(`${this.apiUrl}/me`);
   }
 
-  updateProfile(userData: any): Observable<string> {
-    return this.http.put(
+  updateProfile(userData: any): Observable<{ mensaje: string }> {
+    return this.http.put<{ mensaje: string }>(
       `${this.apiUrl}/update`,
-      userData,
-      { responseType: 'text' }
+      userData
     );
   }
 }

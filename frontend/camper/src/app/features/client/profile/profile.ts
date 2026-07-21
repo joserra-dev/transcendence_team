@@ -134,8 +134,8 @@ export class Profile implements OnInit {
     };
 
     this.userService.updateProfile(updateData).subscribe({
-      next: (responseMessage: string) => {
-        this.successMessage = responseMessage;
+      next: (response) => {
+        this.successMessage = response.mensaje;
         const updatedUser = {
           ...this.currentUser!,
           ...formData,
