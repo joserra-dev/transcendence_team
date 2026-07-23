@@ -1,4 +1,4 @@
-# --- ETAPA 1: CONSTRUCCIÓN (Compilación de dependencias Python) ---
+# CONSTRUCCIÓN (Compilación de dependencias Python)
 FROM python:3.12-slim AS builder
 
 WORKDIR /app
@@ -8,17 +8,17 @@ RUN apt-get update && \
     apt-get install -y --no-install-recommends gcc g++ libffi-dev && \
     rm -rf /var/lib/apt/lists/*
 
-# 🚀 1. Instalar la versión ligera de PyTorch (CPU) para no descargar CUDA (~4.5GB menos)
+# Instalar la versión ligera de PyTorch (CPU) para no descargar CUDA (~4.5GB menos)
 RUN pip install --no-cache-dir \
     torch torchvision \
     --index-url https://download.pytorch.org/whl/cpu
 
-# 2. Instalar el resto de dependencias desde requirements.txt
+# Instalar el resto de dependencias desde requirements.txt
 COPY requirements.txt .
 RUN pip install --no-cache-dir -r requirements.txt
 
 
-# --- ETAPA 2: EJECUCIÓN (Imagen final ligera) ---
+# EJECUCIÓN (Imagen final ligera)
 FROM python:3.12-slim AS runner
 
 WORKDIR /app

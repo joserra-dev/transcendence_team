@@ -35,7 +35,7 @@ export class ChatSocket {
       return;
     }
 
-    // URL_BACK="/" (prod vía nginx) → mismo origen. Si no, URL absoluta del backend.
+    // URL_BACK="/" (prod vía nginx): mismo origen. Si no, URL absoluta del backend.
     const rawBack = (window.env?.URL_BACK || '').replace(/\/$/, '');
     const url = rawBack || window.location.origin;
 

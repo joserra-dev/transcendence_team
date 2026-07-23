@@ -20,11 +20,11 @@ class PasswordValidator:
         # Pasamos a minúsculas para comparaciones insensibles a mayúsculas/minúsculas
         password_lower = password.lower()
 
-        # 1. Validación: No contener la palabra 'password'
+        # Validación: No contener la palabra 'password'
         if "password" in password_lower:
             return False, _("La contraseña no puede contener la palabra 'password'.")
 
-        # 2. Validación: No contener el nombre de usuario del email
+        # Validación: No contener el nombre de usuario del email
         if email and "@" in email:
             # Extraemos la parte anterior al @ (ej. "pruebamail" de "pruebamail@gmail.com")
             email_username = email.split("@")[0].lower()
@@ -33,7 +33,7 @@ class PasswordValidator:
             if email_username and email_username in password_lower:
                 return False, _("La contraseña no puede contener partes de tu correo electrónico.")
 
-        # 3. Validaciones de estructura clásica
+        # Validaciones de estructura clásica
         if len(password) < 8:
             return False, _("La contraseña debe tener al menos 8 caracteres.")
             
