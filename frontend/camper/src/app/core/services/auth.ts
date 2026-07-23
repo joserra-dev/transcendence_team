@@ -95,14 +95,14 @@ export class Auth {
       const now = Math.floor(Date.now() / 1000);
 
       if (payload.exp && payload.exp < now) {
-        // Token expirado → limpiar sessionStorage
+        // Token expirado: limpiar sessionStorage
         sessionStorage.removeItem('token');
         sessionStorage.removeItem('user');
         return false;
       }
       return true;
     } catch {
-      // Token malformado → limpiar por seguridad
+      // Token malformado: limpiar por seguridad
       sessionStorage.removeItem('token');
       sessionStorage.removeItem('user');
       return false;
