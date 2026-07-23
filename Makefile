@@ -76,10 +76,14 @@ help:
 all: prod ## Arranque por defecto en producción
 
 
-dev: env up ## Entorno desarrollo
+## Entorno desarrollo
+dev: export MODE=dev
+dev: env up
 
 
-prod: env up-prod ## Entorno producción HTTPS/Nginx
+## Entorno producción HTTPS/Nginx
+prod: export MODE=prod
+prod: env up-prod
 
 
 
@@ -192,10 +196,23 @@ fclean: ## Limpieza total Docker
 # ==============================================================================
 
 env:
-	@if [ ! -f .env ]; then \
+	@if [ -f .env ]; then \
+		current_mode=$$(grep -E '^FLASK_ENV=' .env | head -1 | cut -d= -f2); \
+		requested_mode=$${MODE:-dev}; \
+		if [ "$$requested_mode" = "prod" ] && [ "$$current_mode" != "production" ]; then \
+			echo -e "$(COLOR_YELLOW).env anterior detectado en modo $$current_mode. Respaldando como .env.bak y regenerando en producción...$(COLOR_RESET)"; \
+			mv .env .env.bak; \
+		elif [ "$$requested_mode" != "prod" ] && [ "$$current_mode" = "production" ]; then \
+			echo -e "$(COLOR_YELLOW).env anterior detectado en modo $$current_mode. Respaldando como .env.bak y regenerando en desarrollo...$(COLOR_RESET)"; \
+			mv .env .env.bak; \
+		else \
+			echo -e "$(COLOR_GREEN).env ya existe y coincide con el entorno solicitado ($$current_mode)$(COLOR_RESET)"; \
+		fi; \
+	fi; \
+	if [ ! -f .env ]; then \
 		echo -e "$(COLOR_YELLOW)Creando .env$(COLOR_RESET)"; \
-		read -p "Modo de entorno (dev/prod) [dev]: " mode; \
-		mode=$${mode:-dev}; \
+		mode=$${MODE:-dev}; \
+		echo -e "$(COLOR_GREEN)Modo: $$mode$(COLOR_RESET)"; \
 		if [ "$$mode" = "prod" ]; then \
 			echo "FLASK_ENV=production" > .env; \
 			echo "FLASK_DEBUG=0" >> .env; \
@@ -254,6 +271,8 @@ env:
 		echo "MAIL_USERNAME=$$user" >> .env; \
 		echo "MAIL_PASSWORD=$$mailpass" >> .env; \
 		echo "MAIL_DEFAULT_SENDER=$$sender" >> .env; \
+		read -p "Password super-admin: " superpass; \
+		echo "SUPER_ADMIN_PASSWORD=$$superpass" >> .env; \
 		echo -e "$(COLOR_GREEN).env creado con éxito ($$proto)$(COLOR_RESET)"; \
 	else \
 		echo -e "$(COLOR_GREEN).env ya existe$(COLOR_RESET)"; \

@@ -1,4 +1,5 @@
 from datetime import date
+import os
 # pyrefly: ignore [missing-import]
 from werkzeug.security import generate_password_hash
 
@@ -10,7 +11,7 @@ from models.space import Space
 from models.users import Profiles, UserRole, Users
 
 # CORRECCIÓN: Contraseña que cumple con las nuevas reglas de tu PasswordValidator
-DEFAULT_PASSWORD = "password123"
+SUPER_ADMIN_PASSWORD = os.environ["SUPER_ADMIN_PASSWORD"]
 
 SEED_USERS = [
     {
@@ -154,7 +155,7 @@ def _get_or_create_company(name: str, cif: str | None = None, tbai_enabled: bool
 
 
 def _seed_users() -> int:
-    password_hash = hash_password(DEFAULT_PASSWORD)
+    password_hash = hash_password(SUPER_ADMIN_PASSWORD)
     created = 0
 
     for user_data in SEED_USERS:
