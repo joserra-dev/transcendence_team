@@ -1028,3 +1028,123 @@ docker exec transcendence_team-backend-1 curl -s -o /dev/null -w "%{http_code}" 
 | No se ve la URL de Stripe en consola | Backend no puede conectar con Stripe API |
 
 | En sistemas mac, es interesante instalar colima y darle especio suficiente
+
+
+### 22/07/2026 El proyecto estaba funcionando, pero tenía un error en la base de datos. El contenedor de PostgreSQL tenía una versión antigua del esquema y le faltaban columnas en la tabla booking.
+
+Problema encontrado:
+
+Error en logs: column booking.customer_email does not exist
+La tabla booking no tenía las columnas customer_email, customer_name y id_user era NOT NULL en vez de nullable
+Causa: El volumen Docker postgres_data persistía una base de datos inicializada con un init.sql anterior, por lo que las migraciones nuevas no se aplicaron automáticamente.
+
+Solución aplicada: Ejecuté manualmente la migración 003_booking_customer_snapshot.sql directamente en la base de datos en ejecución, añadiendo las columnas faltantes y corrigiendo la Foreign Key de id_user a ON DELETE SET NULL.
+
+docker exec transcendence_team-db-1 psql -U defaultdb_user -d defaultdb -c "
+ALTER TABLE public.booking
+    ADD COLUMN IF NOT EXISTS customer_email character varying(255),
+    ADD COLUMN IF NOT EXISTS customer_name character varying(255);
+
+UPDATE public.booking b
+SET customer_email = u.email,
+    customer_name = TRIM(
+        COALESCE(p.name, '') || CASE
+            WHEN p.last_name IS NOT NULL AND p.last_name <> '' THEN ' ' || p.last_name
+            ELSE ''
+        END
+    )
+FROM public.users u
+LEFT JOIN public.profiles p ON p.user_id = u.id
+WHERE b.id_user = u.id
+  AND (b.customer_email IS NULL OR b.customer_name IS NULL);
+
+ALTER TABLE public.booking DROP CONSTRAINT IF EXISTS booking_id_user_fkey;
+ALTER TABLE public.booking ALTER COLUMN id_user DROP NOT NULL;
+ALTER TABLE public.booking
+    ADD CONSTRAINT booking_id_user_fkey
+    FOREIGN KEY (id_user) REFERENCES public.users(id) ON DELETE SET NULL;
+"
+
+Estado actual:
+
+Backend: saludable (/api/status devuelve 200)
+Frontend: funcionando (http://localhost:4200)
+Sin errores SQL en los logs recientes
+Endpoint /api/parking/search respondiendo correctamente con 200
+
+### SUPER_ADMIN_PASSWORD cambio de variable a solicitud de clave
+Cambios realizados:
+
+backend/area_backend/seed.py: Ahora lee el password del super-admin de la variable de entorno SUPER_ADMIN_PASSWORD.
+El backend fallará al arrancar si SUPER_ADMIN_PASSWORD no está definida en .env.
+El Makefile ya te la pide en el paso interactivo make env y la guarda en .env, que docker-compose inyecta al contenedor mediante env_file.
+
+Makefile: El target make env ahora pregunta:
+Password super-admin:
+y lo guarda en .env como SUPER_ADMIN_PASSWORD.
+
+Cómo usarlo:
+
+Si ya tienes .env creado anteriormente, no se te volverá a preguntar. Para activarlo:
+
+Opción A: edita .env manualmente y añade SUPER_ADMIN_PASSWORD=tu_password
+Opción B: borra .env y ejecuta make env para regenerarlo todo (te preguntará el password)
+Luego, como siempre:
+
+make clean
+make prod
+El backend recibirá SUPER_ADMIN_PASSWORD del .env (a través de env_file en docker-compose) y el superadmin superadmin@hemen-go.com se creará con ese password.
+
+Ahora en seed.py:
+
+No existe ninguna contraseña hardcodeada en el código.
+El password del super-admin se lee obligatoriamente de la variable de entorno SUPER_ADMIN_PASSWORD.
+
+
+### 23/7/2026 Script de instalación fully unattended para Ubuntu/Debian.
+
+The script now includes automatic installation for:
+
+Docker CE + plugin
+Docker Compose
+Python + pip
+Node.js 20 LTS
+PostgreSQL server + client
+Redis server + client
+Angular CLI (global)
+Git, Make, and base utilities
+Each check function now attempts to install the component if missing. The script detects Ubuntu/Debian and uses apt + official repos where needed.
+
+
+chmod +x /home/jrc/Escritorio/transcendence_team/setup_env.sh
+(no output)
+
+
+Script de instalación fully unattended para Ubuntu/Debian.
+
+** Componentes que instala automáticamente si faltan:**
+
+Componente	Método de instalación
+Docker CE + plugin	Repo oficial Docker apt
+Docker Compose	Plugin oficial incluido en docker-ce
+Python 3 + pip + venv	apt
+Node.js 20 LTS + npm	NodeSource apt repo
+PostgreSQL server + client	apt
+Redis server + client	apt
+Angular CLI global	npm global install
+Git / Make	apt
+Uso en otro equipo:
+
+git clone <repo>
+cd transcendence_team
+chmod +x setup_env.sh
+./setup_env.sh
+make env MODE=dev
+make dev
+
+
+Notas importantes:
+
+Requiere contraseña de sudo para apt-get install.
+Docker y PostgreSQL se habilitan como servicios (systemctl enable/start) pero si el equipo necesita reboot tras instalar Docker, te lo indicará.
+Si la distro no es Ubuntu/Debian, el script detecta el fallo y te indica instalación manual.
