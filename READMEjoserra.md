@@ -1148,3 +1148,19 @@ Notas importantes:
 Requiere contraseña de sudo para apt-get install.
 Docker y PostgreSQL se habilitan como servicios (systemctl enable/start) pero si el equipo necesita reboot tras instalar Docker, te lo indicará.
 Si la distro no es Ubuntu/Debian, el script detecta el fallo y te indica instalación manual.
+
+### 24/7/2026 
+## generate_password_hash from werkzeug.security is imported on line 4 but never used in seed.py (line 158 uses hash_password from utils.password_hash instead). 
+Removing the unused import resolves the error.
+
+## The macOS setup script has been created as setup_env_macos.sh. Key differences from setup_env.sh:
+
+Feature	Linux (setup_env.sh)	macOS (setup_env_macos.sh)
+Package manager	apt-get	brew
+Service management	systemctl/service	brew services
+Docker	Docker CE from apt repo	brew install --cask docker (Docker Desktop)
+Node.js	nodesource apt repo	brew install node@20
+Python	apt-get install python3...	brew install python@3.12
+PostgreSQL/Redis	apt-get packages	brew install + brew services start
+Platform detection	/etc/os-release	sw_vers + uname
+The script is executable and passes bash -n syntax validation. It also includes a Homebrew prerequisite check at the start, since Homebrew is the foundational package manager on macOS.
