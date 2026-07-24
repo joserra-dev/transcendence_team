@@ -9,7 +9,7 @@ class CoordinateValidator:
     LONGITUDE_REGEX = r"^[-+]?(180(\.0+)?|((1[0-7]\d)|([1-9]?\d))(\.\d+)?)$"
 
     @classmethod
-    def is_informed(val):
+    def is_informed(cls, val):
         return val is not None and str(val).strip() != ""
     
     @classmethod
