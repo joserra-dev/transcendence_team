@@ -52,7 +52,7 @@
 
       <section>
         <h3>{{ 'HISTORY_DETAIL.STAY' | translate }}</h3>
-        <p><strong>{{ 'HISTORY_DETAIL.ENTRY' | translate }}:</strong> {{ booking.starDate | date:'dd/MM/yyyy' }}</p>
+        <p><strong>{{ 'HISTORY_DETAIL.ENTRY' | translate }}:</strong> {{ booking.startDate | date:'dd/MM/yyyy' }}</p>
         <p><strong>{{ 'HISTORY_DETAIL.EXIT' | translate }}:</strong> {{ booking.endDate | date:'dd/MM/yyyy' }}</p>
         <p><strong>{{ 'HISTORY_DETAIL.TOTAL' | translate }}:</strong> {{ booking.totalPrice | currency:'EUR' }}</p>
       </section>
