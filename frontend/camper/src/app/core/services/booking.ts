@@ -73,6 +73,9 @@ createBooking(bookingData: BookingRequest): Observable<any> {
     );
   }
 
+  /**
+   * Enviar factura por email
+   */
   send_bill(id: string | number): Observable<any> {
     return this.http.get<any>(
       `${this.apiUrl}/booking/${id}/bill`

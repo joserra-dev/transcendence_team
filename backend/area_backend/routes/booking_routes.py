@@ -610,12 +610,12 @@ def get_bill_by_id(id):
     if str(booking.id_user) != str(user_id):
         return jsonify({"error": "No tienes permiso para ver esta reserva"}), 403
 
-    # TODO: llamar a la funcion PDF_GENERATOR()
+    # llamar a la funcion PDF_GENERATOR()
 
     bill = PdfGenerator.pdf_generator(booking, parking)
 
     
-    #TODO: llamar a la funcion para mandar el email
+    # llamar a la funcion para mandar el email
     EmailService.send_bill(user_email, bill)
     
     
