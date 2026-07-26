@@ -40,10 +40,14 @@ REQUIRED_ENV_VARS = [
 ]
 
 def check_env_vars():
-    missing_vars = [var for var in REQUIRED_ENV_VARS if not os.getenv(var)]
+    # Comprueba que exista Y que no esté vacía o compuesta solo por espacios
+    missing_vars = [
+        var for var in REQUIRED_ENV_VARS 
+        if not os.getenv(var) or not os.getenv(var).strip()
+    ]
     
     if missing_vars:
-        logger.error("[ERROR FATAL] Faltan las siguientes variables de entorno requeridas:")
+        logger.error("[ERROR FATAL] Las siguientes variables de entorno no están definidas o están vacías:")
         for var in missing_vars:
             logger.error(f"   - {var}")
         logger.error("El servidor no se iniciará por motivos de seguridad e integridad.")
