@@ -75,15 +75,15 @@ export class BookingDetail implements OnInit {
         if (err.status === 200) {
            this.handleCancelSuccess();
         } else {
-           this.handleError(err, 'Hubo un error al intentar cancelar la reserva.');
-           this.isLoading = false;
+           this.handleError(err, 'HISTORY_DETAIL.ERRORS.CANCEL');
+            this.isLoading = false;
         }
       }
     });
   }
 
   private handleCancelSuccess() {
-    this.showSuccess('Reserva cancelada correctamente.');
+    this.showSuccess('HISTORY_DETAIL.SUCCESS_CANCEL');
     if (this.booking) {
       this.booking.status = '0';
     }
@@ -108,15 +108,15 @@ export class BookingDetail implements OnInit {
 
     this.bookingService.rateBooking(this.booking.id, this.rateValue).subscribe({
       next: (response: any) => {
-        this.showSuccess('¡Gracias por tu valoración!');
+        this.showSuccess('HISTORY_DETAIL.SUCCESS_RATE');
         this.loadBooking(this.booking.id);
       },
       error: (err) => {
         if (err.status === 200) {
-           this.showSuccess('¡Gracias por tu valoración!');
+           this.showSuccess('HISTORY_DETAIL.SUCCESS_RATE');
            this.loadBooking(this.booking.id);
         } else {
-           this.handleError(err, 'Hubo un error al intentar valorar el parking.');
+           this.handleError(err, 'HISTORY_DETAIL.ERRORS.RATE');
            this.isLoading = false;
         }
       }
