@@ -1,4 +1,61 @@
 import os
+import sys
+import logging
+from datetime import timedelta
+
+# Configuración básica del logger nativo de Python
+logging.basicConfig(
+    level=logging.INFO,
+    format='%(asctime)s [%(levelname)s] %(message)s',
+    datefmt='%Y-%m-%d %H:%M:%S'
+)
+logger = logging.getLogger(__name__)
+
+REQUIRED_ENV_VARS = [
+    'FLASK_ENV',
+    'FLASK_DEBUG',
+    'BACK_SCHEME',
+    'FRONT_PORT',
+    'URL_FRONT',
+    'BACK_PORT',
+    'URL_BACK',
+    'POSTGRES_DB',
+    'POSTGRES_USER',
+    'POSTGRES_PASSWORD',
+    'POSTGRES_PORT',
+    'DATABASE_URL',
+    'JWT_SECRET_KEY',
+    'JWT_ACCESS_TOKEN_EXPIRES',
+    'PUBLIC_API_KEY',
+    'PUBLIC_API_RATE_LIMIT',
+    'RATELIMIT_STORAGE_URI',
+    'STRIPE_KEY',
+    'MAIL_SERVER',
+    'MAIL_PORT',
+    'MAIL_USE_TLS',
+    'MAIL_USERNAME',
+    'MAIL_PASSWORD',
+    'SUPER_ADMIN_PASSWORD',
+    'MAIL_DEFAULT_SENDER'
+]
+
+def check_env_vars():
+    missing_vars = [var for var in REQUIRED_ENV_VARS if not os.getenv(var)]
+    
+    if missing_vars:
+        logger.error("[ERROR FATAL] Faltan las siguientes variables de entorno requeridas:")
+        for var in missing_vars:
+            logger.error(f"   - {var}")
+        logger.error("El servidor no se iniciará por motivos de seguridad e integridad.")
+        sys.exit(1)
+
+# Validar antes de ejecutar cualquier lógica o importar Flask
+check_env_vars()
+logger.info("✅ Variables de entorno requeridas validadas con éxito.")
+
+# ==========================================
+# IMPORTS Y CONFIGURACIÓN DE FLASK
+# ==========================================
 from flask import Flask, request
 from flask_mailman import Mail
 from database import db, jwt
@@ -20,24 +77,23 @@ from routes.chat_routes import chat_bp
 from socketio_ext import socketio
 from websocket_handlers import register_websocket_handlers
 
-
 app = Flask(__name__)
 
-# Configurar CORS.
-# - Desarrollo (FLASK_ENV=development): se permite cualquier origen, ya que es
-#   normal acceder desde localhost/127.0.0.1/el hostname de la máquina y simplifica
-#   el trabajo local sin tener que alinear URL_FRONT con el Origin del navegador.
-# - Producción: orígenes restringidos a URL_FRONT (separados por comas), para no
-#   exponer la API a cualquier sitio (CWE-942).
+# Reutilizar la configuración del logger nativo dentro de Flask
+app.logger.handlers = logger.handlers
+app.logger.setLevel(logger.level)
+
+# Configurar CORS
 is_development = os.getenv('FLASK_ENV') == 'development'
 if is_development:
     frontend_origins = "*"
 else:
     frontend_origins = [
         origin.strip().rstrip('/').lower()
-        for origin in os.getenv('URL_FRONT', 'http://localhost:4200').split(',')
+        for origin in os.getenv('URL_FRONT').split(',')
         if origin.strip()
     ]
+
 CORS(app, resources={r"/api/*": {"origins": frontend_origins}})
 socketio.init_app(
     app,
@@ -46,40 +102,31 @@ socketio.init_app(
     logger=False,
     engineio_logger=False,
 )
-# ==========================================
-# 1. PASO CRUCIAL: CONFIGURACIÓN PRIMERO
-# ==========================================
-# Definimos las claves directamente en la app básica
-jwt_secret_key = os.getenv('JWT_SECRET_KEY')
-if not jwt_secret_key:
-    raise RuntimeError(
-        "JWT_SECRET_KEY no está definida. Define JWT_SECRET_KEY en el archivo .env "
-        "(p. ej. con 'python -c \"import secrets; print(secrets.token_hex(32))\"'). "
-        "El arranque se aborta por seguridad."
-    )
-app.config['JWT_SECRET_KEY'] = jwt_secret_key
 
-# Expiración del token de acceso (CWE-613): los tokens dejan de ser válidos
-# tras este tiempo, limitando el impacto de un token filtrado. Se configura en
-# minutos vía JWT_ACCESS_TOKEN_EXPIRES (por defecto 120 = 2 horas).
-from datetime import timedelta
+# ==========================================
+# 1. CONFIGURACIÓN DE LA APLICACIÓN
+# ==========================================
+app.config['JWT_SECRET_KEY'] = os.getenv('JWT_SECRET_KEY')
+
 _jwt_expires_minutes = int(os.getenv('JWT_ACCESS_TOKEN_EXPIRES', '120'))
 app.config['JWT_ACCESS_TOKEN_EXPIRES'] = timedelta(minutes=_jwt_expires_minutes)
-app.config['SQLALCHEMY_DATABASE_URI'] = os.getenv('DATABASE_URL', 'postgresql://defaultdb_uk1q_user:password@db:5432/defaultdb')
-app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
-app.config['MAIL_SERVER'] = os.environ.get('MAIL_SERVER')
-app.config['MAIL_PORT'] = int(os.environ.get('MAIL_PORT', 587))
-app.config['MAIL_USE_TLS'] = os.environ.get('MAIL_USE_TLS') == 'True'
-app.config['MAIL_USERNAME'] = os.environ.get('MAIL_USERNAME')
-app.config['MAIL_PASSWORD'] = os.environ.get('MAIL_PASSWORD')
-app.config['MAIL_DEFAULT_SENDER'] = os.environ.get(
-    'MAIL_DEFAULT_SENDER',
-    os.environ.get('MAIL_USERNAME', 'noreply@local.test')
-)
-app.config['FRONTEND_URL'] = os.environ.get('URL_FRONT', 'https://localhost:8001')
 
-# Rate limiting (CWE-307): protege login/registro/recuperación contra fuerza bruta.
-# En producción usa Redis compartido; si no está disponible, cae a memoria (por-worker).
+app.config['SQLALCHEMY_DATABASE_URI'] = os.getenv('DATABASE_URL')
+app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
+
+# Configuración de Mail
+app.config['MAIL_SERVER'] = os.getenv('MAIL_SERVER', 'smtp.gmail.com')
+app.config['MAIL_PORT'] = int(os.getenv('MAIL_PORT', 587))
+app.config['MAIL_USE_TLS'] = os.getenv('MAIL_USE_TLS', 'True').lower() == 'true'
+app.config['MAIL_USERNAME'] = os.getenv('MAIL_USERNAME', '')
+app.config['MAIL_PASSWORD'] = os.getenv('MAIL_PASSWORD', '')
+app.config['MAIL_DEFAULT_SENDER'] = os.getenv(
+    'MAIL_DEFAULT_SENDER',
+    os.getenv('MAIL_USERNAME', 'noreply@local.test')
+)
+app.config['FRONTEND_URL'] = os.getenv('URL_FRONT')
+
+# Rate limiting
 _ratelimit_uri = os.getenv('RATELIMIT_STORAGE_URI', 'memory://')
 if _ratelimit_uri.startswith('redis'):
     try:
@@ -87,8 +134,9 @@ if _ratelimit_uri.startswith('redis'):
         _client = _redis.from_url(_ratelimit_uri)
         _client.ping()
     except Exception as _e:
-        print(f"ADVERTENCIA: Redis no disponible ({_e}). Usando rate limiting en memoria (no compartido).")
+        app.logger.warning(f"ADVERTENCIA: Redis no disponible ({_e}). Usando rate limiting en memoria (no compartido).")
         _ratelimit_uri = 'memory://'
+
 app.config['RATELIMIT_STORAGE_URI'] = _ratelimit_uri
 app.config['RATELIMIT_DEFAULT'] = "200 per hour"
 app.config['RATELIMIT_HEADERS'] = True
@@ -97,43 +145,33 @@ app.config['RATELIMIT_HEADERS'] = True
 app.config['BABEL_DEFAULT_LOCALE'] = 'es'
 app.config['BABEL_SUPPORTED_LOCALES'] = ['es', 'eu', 'en']
 
-# Inicializamos Mail
+# Inicializar extensiones
 mail = Mail(app)
 
-# Inicializamos Limiter (rate limiting / fuerza bruta)
 from database import limiter
 limiter.init_app(app)
 
-# ==========================================
-# 2. INICIALIZACIÓN DE EXTENSIONES DESPUÉS
-# ==========================================
 db.init_app(app)
-jwt.init_app(app) 
+jwt.init_app(app)
 
-# Función que Babel ejecutará en cada petición para elegir el idioma
+# Selector de idioma para Babel
 def get_locale():
     idiomas_soportados = app.config.get('BABEL_SUPPORTED_LOCALES', ['es', 'eu', 'en'])
     
-    # Priority 1: Buscar si el parámetro explícito viene en la URL (?lang=es)
     lang_url = request.args.get('lang')
     if lang_url and lang_url.lower() in idiomas_soportados:
         return lang_url
 
-    # Priority 2: Ver si algún Blueprint interceptó y guardó ya un idioma válido
     if hasattr(request, 'babel_locale') and request.babel_locale in idiomas_soportados:
         return request.babel_locale
         
-    # Priority 3: Analizar la cabecera 'Accept-Language' del navegador/cliente
     match_cabecera = request.accept_languages.best_match(idiomas_soportados)
     if match_cabecera:
         return match_cabecera
         
-    # Priority 4: Idioma base del sistema por defecto
     return app.config.get('BABEL_DEFAULT_LOCALE', 'es')
 
-# Inicialización de Flask-Babel pasándole la función selectora corregida
 babel = Babel(app, locale_selector=get_locale)
-
 
 swagger_template = {
     "swagger": "2.0",
@@ -151,9 +189,11 @@ swagger_template = {
         }
     }
 }
-swagger = Swagger(app,  template=swagger_template)
+swagger = Swagger(app, template=swagger_template)
 
-# 3. REGISTRO DE BLUEPRINTS
+# ==========================================
+# 2. REGISTRO DE BLUEPRINTS
+# ==========================================
 app.register_blueprint(company_bp)
 app.register_blueprint(users_bp)
 app.register_blueprint(parking_bp)
@@ -167,8 +207,9 @@ app.register_blueprint(chat_bp)
 app.register_blueprint(friends_bp)
 register_websocket_handlers()
 
-# 4. INICIALIZADOR DE BASE DE DATOS
-# En desarrollo se fuerza el seed. En producción solo si la base de datos está vacía.
+# ==========================================
+# 3. INICIALIZADOR DE BASE DE DATOS Y SEED
+# ==========================================
 with app.app_context():
     from sqlalchemy import text
 
@@ -199,10 +240,14 @@ with app.app_context():
         except Exception as e:
             app.logger.error(f" * Error en seed_database: {e}")
 
+# ==========================================
+# 4. ARRANQUE DEL SERVIDOR
+# ==========================================
 if __name__ == '__main__':
     debug_env = os.getenv('FLASK_DEBUG', 'False').strip().lower()
     modo_debug = debug_env in ['true', '1']
-
-    print(f" * Arrancando el servidor con debug={modo_debug}")
-    app.run(host='0.0.0.0', port=5000, debug=modo_debug)
     
+    port = int(os.getenv('BACK_PORT', 5000))
+
+    logger.info(f" * Arrancando el servidor en el puerto {port} con debug={modo_debug}")
+    socketio.run(app, host='0.0.0.0', port=port, debug=modo_debug)

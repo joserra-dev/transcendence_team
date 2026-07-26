@@ -1,4 +1,9 @@
+import logging
 from database import db
+from flask import current_app
+
+# Logger para el módulo
+logger = logging.getLogger(__name__)
 
 class Parking(db.Model):
     __tablename__ = 'parking'
@@ -37,7 +42,7 @@ class Parking(db.Model):
             "web": self.web_parking,
             "telephone": self.telephone,
             "email": self.email,
-             "description": self.description,
+            "description": self.description,
             "longitude": self.longitude,
             "latitude": self.latitude,
             "personaContacto": self.contact_person,
@@ -76,7 +81,7 @@ class Parking(db.Model):
                         else:
                             space_data["status"] = "0"
                     except Exception as e:
-                        print(f"Error checking space occupancy: {e}")
+                        current_app.logger.error(f"Error checking space occupancy for space_id {space.id}: {e}")
                 space_list.append(space_data)
             data["spaces"] = space_list
         return data

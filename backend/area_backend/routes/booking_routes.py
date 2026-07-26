@@ -598,7 +598,7 @@ def get_qr_code():
 def get_bill_by_id(id):
     user_id = get_jwt_identity()
     booking = Booking.query.filter_by(id=id, id_user=user_id).first()
-    print (booking)
+   
     parking = Parking.query.filter_by(id=booking.space.id_parking).first()
     user_email = Users.query.get(user_id).email 
     if not booking:
@@ -614,4 +614,3 @@ def get_bill_by_id(id):
     EmailService.send_bill(user_email, bill)
     
     return jsonify({"OK": "Email con factura enviado"}), 200
-    return jsonify({"message": _("Puntuación guardada correctamente")}), 200
