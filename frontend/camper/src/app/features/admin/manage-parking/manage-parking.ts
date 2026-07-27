@@ -150,7 +150,7 @@ export class ManageParking implements OnInit {
              this.showSuccess('Parking actualizado correctamente');
              this.isLoading = false;
           } else {
-             this.errorMessage = 'Error al actualizar el parking. Inténtalo de nuevo.';
+             this.errorMessage = err?.error?.error ?? 'Error al actualizar el parking. Inténtalo de nuevo.';
              this.isLoading = false;
           }
         }
