@@ -122,7 +122,6 @@ export class ManageParking implements OnInit {
         this.isLoading = false;
       },
       error: (err) => {
-        console.error(err);
         this.isLoading = false;
       }
     });
@@ -151,7 +150,6 @@ export class ManageParking implements OnInit {
              this.showSuccess('Parking actualizado correctamente');
              this.isLoading = false;
           } else {
-             console.error(err);
              this.errorMessage = 'Error al actualizar el parking. Inténtalo de nuevo.';
              this.isLoading = false;
           }
@@ -167,8 +165,7 @@ export class ManageParking implements OnInit {
           this.router.navigate(this.backLink);
         },
         error: (err) => {
-          console.error(err);
-          this.errorMessage = 'Error al crear el parking';
+          this.errorMessage = err?.error?.error ?? 'Error al crear el parking';
           this.isLoading = false;
         }
       });
