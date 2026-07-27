@@ -79,7 +79,6 @@ export class ResetPassword {
         }, 2000);
       },
       error: (err) => {
-        console.error('Error restableciendo contraseña:', err);
         if (err instanceof TimeoutError) {
           this.errorMessage = 'RESET_PASSWORD.ERRORS.TIMEOUT';
         } else if (err.status === 400) {

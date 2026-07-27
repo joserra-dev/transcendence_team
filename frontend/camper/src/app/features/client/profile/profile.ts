@@ -66,7 +66,6 @@ export class Profile implements OnInit {
         this.isLoading = false;
       },
       error: (err) => {
-        console.error('Error cargando perfil:', err);
         this.errorMessage = 'PROFILE.ERROR.DATA';
         this.isLoading = false;
       }
@@ -148,7 +147,6 @@ export class Profile implements OnInit {
         this.profileForm.patchValue({ passPersona: '', confirmPassPersona: '' });
       },
       error: (err) => {
-        console.error(err);
         this.errorMessage = 'PROFILE.ERROR.CHANGES';
         this.isLoading = false;
       }
@@ -173,7 +171,6 @@ export class Profile implements OnInit {
         this.loadFriends();
       },
       error: (err) => {
-        console.error('Error agregando amigo:', err);
         this.errorMessage = 'FRIENDS.ERROR.NOT_FOUND';
       }
     });
@@ -187,7 +184,6 @@ export class Profile implements OnInit {
         this.errorMessage = '';
       },
       error: (err) => {
-        console.error('Error eliminando amigo:', err);
         this.errorMessage = 'FRIENDS.ERROR.REMOVE';
       }
     });

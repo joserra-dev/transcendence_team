@@ -98,7 +98,6 @@ export class Login {
         this.recoveryForm.reset();
       },
       error: (err) => {
-        console.error('Error solicitando recuperación:', err);
         if (err instanceof TimeoutError) {
           this.recoveryMessage = 'LOGIN.RECOVERY.ERROR.TIMEOUT';
         } else {

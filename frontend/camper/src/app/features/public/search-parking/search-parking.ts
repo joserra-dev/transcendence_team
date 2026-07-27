@@ -116,7 +116,6 @@ export class SearchParking implements OnInit, OnDestroy {
           }
         },
         error: (err) => {
-          console.error(err);
           this.errorMessage = 'SEARCH.ERRORS.CONNECTION';
         }
       });

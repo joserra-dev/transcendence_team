@@ -107,8 +107,6 @@ export class Register {
         }, 3000);
       },
       error: (err) => {
-        console.error('Error registro:', err);
-
         if (err instanceof TimeoutError) {
           this.apiErrors = ['REGISTER.BACKEND.TIMEOUT'];
         } else if (err.status === 409) {

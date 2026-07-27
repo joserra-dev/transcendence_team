@@ -88,7 +88,6 @@ export class LoginAdmin {
         this.recoveryForm.reset();
       },
       error: (err) => {
-        console.error('Error solicitando recuperación:', err);
         if (err instanceof TimeoutError) {
           this.recoveryMessage = 'LOGIN.RECOVERY.ERROR.TIMEOUT';
         } else {
@@ -120,7 +119,6 @@ export class LoginAdmin {
         })
       ).subscribe({
       next: (response) => {
-        console.log('Login Admin exitoso:', response);
         const user = this.authService.getUser();
         if (user?.role === 'super_admin') {
           this.router.navigateByUrl('/admin/companies');
@@ -129,7 +127,6 @@ export class LoginAdmin {
         }
       },
       error: (err) => {
-        console.error('Error en login Admin:', err);
         if (err instanceof TimeoutError) {
              this.errorMessage = 'LOGIN.ERROR.TIMEOUT';
         } else if (err.status === 403) {

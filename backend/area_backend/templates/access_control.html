@@ -59,7 +59,6 @@
             .then(stream => { video.srcObject = stream; })
             .catch(err => { 
                 resultDiv.innerHTML = "❌ Error: No se puede acceder a la cámara.";
-                console.error(err); 
             });
 
         // Capturar y enviar por AJAX a las rutas del Backend
@@ -98,7 +97,6 @@
             })
             .catch(err => {
                 resultDiv.innerHTML = "❌ Error crítico de red o servidor.";
-                console.error(err);
             });
         });
     </script>

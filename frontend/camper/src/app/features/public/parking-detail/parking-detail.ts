@@ -201,7 +201,6 @@ export class ParkingDetail implements OnInit, OnDestroy {
         }
       },
       error: (err) => {
-        console.error("Error al procesar la reserva en Flask:", err);
         this.errorMessage = 'PARKING.ERRORS.BOOKING';
         this.isLoading = false;
       }

@@ -52,7 +52,6 @@ export class BookingDetail implements OnInit {
         this.isLoading = false;
       },
       error: (err) => {
-        console.error(err);
         this.errorMessage = 'HISTORY_DETAIL.ERRORS.LOADING';
         this.isLoading = false;
       }
@@ -140,7 +139,6 @@ export class BookingDetail implements OnInit {
   }
 
   private handleError(err: any, defaultMsg: string, isQr = false) {
-    console.error(err);
     let errorMsg = this.translate.instant(defaultMsg);
 
     if (isQr && err.status === 400) {
@@ -168,11 +166,9 @@ export class BookingDetail implements OnInit {
 
     this.bookingService.send_bill(this.booking.id).subscribe({
       next: (data) => {
-        console.log(data);
         this.isLoading = false;
       },
       error: (err) => {
-        console.error(err);
         this.errorMessage = 'HISTORY_DETAIL.ERRORS.LOADING';
         this.isLoading = false;
       }
