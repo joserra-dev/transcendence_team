@@ -359,9 +359,9 @@ def create_booking():
             ],
             mode='payment',
             # Si el pago tiene éxito, Stripe redirigirá primero a Flask para confirmar
-            success_url=f"{os.getenv('URL_BACK', 'https://localhost:8000')}/api/booking/confirm/{new_booking.id}",
+            success_url=f"{os.getenv('URL_BACK')}/api/booking/confirm/{new_booking.id}",
             # Si cancela el checkout en Stripe, lo mandamos de vuelta al historial de Angular
-            cancel_url=f"{os.getenv('URL_BACK', 'https://localhost:8000')}/api/booking/stripe-cancel/{new_booking.id}",
+            cancel_url=f"{os.getenv('URL_BACK')}/api/booking/stripe-cancel/{new_booking.id}",
         )
 
         # Devolvemos un objeto JSON con la URL para que Angular gestione la redirección
@@ -401,7 +401,7 @@ def confirm_booking_payment(booking_id):
             space = booking.space
             parking = space.parking if space else None
             if user and parking:
-                management_url = f"{os.getenv('URL_FRONT', 'http://localhost:4200').rstrip('/')}/client/booking/{booking.id}"
+                management_url = f"{os.getenv('URL_FRONT').rstrip('/')}/client/booking/{booking.id}"
                 EmailService.booking(
                     destinatario=user.email,
                     user_name=user.profile.name if user.profile else user.email,
@@ -415,7 +415,7 @@ def confirm_booking_payment(booking_id):
             current_app.logger.error(f"Error enviando correo de confirmación de reserva pagada: {exc}")
 
     # Redireccionamos el navegador del usuario al frontend de Angular
-    front_url = os.getenv('URL_FRONT', 'http://localhost:4200').rstrip('/')
+    front_url = os.getenv('URL_FRONT').rstrip('/')
     return redirect(f"{front_url}/client/history?status=success")
 
 @booking_bp.route('/api/booking/stripe-cancel/<int:booking_id>', methods=['GET'])
@@ -433,12 +433,12 @@ def stripe_cancel_redirect(booking_id):
             
         # Finalmente rediriges al navegador del usuario a tu historial de Angular
         from flask import redirect
-        front_url = os.getenv('URL_FRONT', 'http://localhost:4200').rstrip('/')
+        front_url = os.getenv('URL_FRONT').rstrip('/')
         return redirect(f"{front_url}/client/history")
         
     except Exception as e:
         current_app.logger.error(f"Error en callback de cancelación: {e}")
-        front_url = os.getenv('URL_FRONT', 'http://localhost:4200').rstrip('/')
+        front_url = os.getenv('URL_FRONT').rstrip('/')
         return redirect(f"{front_url}/historial?error=true")
     
     

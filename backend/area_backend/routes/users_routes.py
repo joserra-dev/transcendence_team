@@ -79,12 +79,12 @@ def _user_to_frontend_dict(user):
 
 
 def _build_frontend_url(path: str) -> str:
-    frontend_url = current_app.config.get('FRONTEND_URL', 'https://localhost:8001').rstrip('/')
+    frontend_url = current_app.config.get('FRONTEND_URL').rstrip('/')
     return f"{frontend_url}/{path.lstrip('/')}"
 
 
 def _build_backend_url(path: str) -> str:
-    backend_url = os.getenv('URL_BACK', 'https://localhost:8000').rstrip('/')
+    backend_url = os.getenv('URL_BACK').rstrip('/')
     return f"{backend_url}/{path.lstrip('/')}"
 
 
