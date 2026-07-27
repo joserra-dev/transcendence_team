@@ -19,12 +19,9 @@ detect_platform() {
         MACOS_VER="$(sw_vers -productVersion 2>/dev/null || echo 'unknown')"
         MACOS_BUILD="$(sw_vers -buildVersion 2>/dev/null || echo 'unknown')"
     else
-        PLATFORM="linux"
-        if [ -f /etc/os-release ]; then
-            . /etc/os-release
-            DISTRO="$ID"
-            PRETTY_NAME="$PRETTY_NAME"
-        fi
+        PLATFORM="unknown"
+        warn "Este script esta disenado para macOS"
+        return 1
     fi
 }
 
@@ -33,23 +30,12 @@ check_cmd() {
 }
 
 install_pkg() {
-    if [ "$PLATFORM" = "macos" ]; then
-        if ! check_cmd brew; then
-            error "Homebrew no esta instalado. Instalalo primero desde https://brew.sh/"
-            exit 1
-        fi
-        info "Instalando paquetes via Homebrew: $*"
-        brew install "$@"
-    elif [ "$PLATFORM" = "linux" ]; then
-        if [ "$DISTRO" = "ubuntu" ] || [ "$DISTRO" = "debian" ]; then
-            info "Instalando paquetes: $*"
-            sudo apt-get update -qq
-            sudo apt-get install -y -qq "$@"
-        else
-            warn "Distro no soportada para instalacion automatica de paquetes ($DISTRO)"
-            return 1
-        fi
+    if ! check_cmd brew; then
+        error "Homebrew no esta instalado. Instalalo primero desde https://brew.sh/"
+        exit 1
     fi
+    info "Instalando paquetes via Homebrew: $*"
+    brew install "$@"
 }
 
 start_service_macos() {
@@ -61,25 +47,13 @@ start_service_macos() {
     fi
 }
 
-start_service() {
-    local svc="$1"
-    if [ "$PLATFORM" = "macos" ]; then
-        start_service_macos "$svc"
-    elif check_cmd systemctl; then
-        sudo systemctl enable -q "$svc" 2>/dev/null || true
-        sudo systemctl start -q "$svc" 2>/dev/null || true
-    elif check_cmd service; then
-        sudo service "$svc" start 2>/dev/null || true
-    fi
-}
-
 # ==============================================================================
 # Docker (Colima en macOS)
 # ==============================================================================
 
 install_colima() {
     info "Instalando Colima..."
-    brew install colima
+    install_pkg colima
     ok "Colima instalado"
 }
 
@@ -100,17 +74,12 @@ start_colima() {
 check_colima() {
     if ! check_cmd colima; then
         warn "Colima no esta instalado"
-        if [ "$PLATFORM" = "macos" ]; then
-            if [ "$CI" = "true" ] || [ ! -t 0 ]; then
-                warn "La instalacion de Colima requiere interaccion (provisioning de VM)"
-                warn "Instalalo manualmente: brew install colima && colima start"
-            else
-                install_colima
-                start_colima
-            fi
+        if [ "$CI" = "true" ] || [ ! -t 0 ]; then
+            warn "La instalacion de Colima requiere interaccion (provisioning de VM)"
+            warn "Instalalo manualmente: brew install colima && colima start"
         else
-            warn "Colima solo esta disponible en macOS"
-            return 1
+            install_colima
+            start_colima
         fi
     fi
 
@@ -135,60 +104,38 @@ check_colima() {
 }
 
 install_docker() {
-    if [ "$PLATFORM" = "macos" ]; then
-        warn "Docker Desktop no se instala automaticamente en macOS"
-        info "Usa Colima como alternativa: brew install colima && colima start"
-        info "Docker Desktop: https://www.docker.com/products/docker-desktop/"
-        return 1
-    else
-        install_pkg ca-certificates curl gnupg lsb-release
-        sudo mkdir -p /etc/apt/keyrings
-        curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo gpg --dearmor -o /etc/apt/keyrings/docker.gpg 2>/dev/null || {
-            warn "No se pudo anadir la clave GPG de Docker"
-            return 1
-        }
-        echo "deb [arch=$(dpkg --print-architecture) signed-by=/etc/apt/keyrings/docker.gpg] https://download.docker.com/linux/ubuntu $(lsb_release -cs) stable" | sudo tee /etc/apt/sources.list.d/docker.list >/dev/null
-        sudo apt-get update -qq
-        sudo apt-get install -y -qq docker-ce docker-ce-cli containerd.io docker-buildx-plugin docker-compose-plugin
-        start_service docker
-        ok "Docker instalado"
-    fi
+    warn "Docker Desktop no se instala automaticamente en macOS"
+    info "Usa Colima como alternativa: brew install colima && colima start"
+    info "Docker Desktop: https://www.docker.com/products/docker-desktop/"
+    return 1
 }
 
 check_docker() {
     if ! check_cmd docker; then
         warn "Docker CLI no esta instalado"
-        if [ "$PLATFORM" = "macos" ]; then
-            if ! install_colima; then
-                error "Instala Docker manualmente en macOS. Opciones:"
-                error "  - Colima: brew install colima && colima start"
-                error "  - Docker Desktop: https://www.docker.com/products/docker-desktop/"
-                exit 1
-            fi
-            if ! check_colima; then
-                error "Colima no disponible. No se puede configurar Docker en macOS."
-                exit 1
-            fi
-            if ! docker info >/dev/null 2>&1; then
-                error "Docker CLI no funciona con Colima. Ejecuta: eval $(colima docker-env)"
-                exit 1
-            fi
-            ok "Docker CLI funciona a traves de Colima"
-        else
-            if ! install_docker; then
-                error "Instala Docker manualmente desde https://docs.docker.com/get-docker/"
-                exit 1
-            fi
+        if ! install_colima; then
+            error "Instala Docker manualmente en macOS. Opciones:"
+            error "  - Colima: brew install colima && colima start"
+            error "  - Docker Desktop: https://www.docker.com/products/docker-desktop/"
+            exit 1
         fi
+        if ! check_colima; then
+            error "Colima no disponible. No se puede configurar Docker en macOS."
+            exit 1
+        fi
+        if ! docker info >/dev/null 2>&1; then
+            error "Docker CLI no funciona con Colima. Ejecuta: eval $(colima docker-env)"
+            exit 1
+        fi
+        ok "Docker CLI funciona a traves de Colima"
+        return
     fi
 
     if ! docker info >/dev/null 2>&1; then
         warn "El daemon de Docker no esta corriendo. Intentando iniciar..."
-        if [ "$PLATFORM" = "macos" ] && check_cmd colima; then
+        if check_cmd colima; then
             start_colima
         fi
-        start_service docker
-        sleep 3
         if ! docker info >/dev/null 2>&1; then
             error "Docker esta instalado pero no se pudo iniciar el daemon. Iniciacarlo manualmente."
             exit 1
@@ -213,11 +160,7 @@ check_docker_compose() {
         COMPOSE_VER="$(docker compose version --short 2>/dev/null || echo 'desconocida')"
     else
         warn "Docker Compose plugin no detectado. Instalando..."
-        if [ "$PLATFORM" = "macos" ]; then
-            brew install docker-compose 2>/dev/null || true
-        fi
-        install_docker || true
-        sleep 2
+        brew install docker-compose 2>/dev/null || true
         if check_cmd docker-compose; then
             COMPOSE_CMD="docker-compose"
             COMPOSE_VER="$(docker-compose --version | awk '{print $4}' | tr -d ',')"
@@ -270,11 +213,7 @@ check_python() {
 
     if ! check_cmd pip3 && ! check_cmd pip; then
         warn "pip no encontrado, instalando..."
-        if [ "$PLATFORM" = "macos" ]; then
-            brew install pip 2>/dev/null || true
-        else
-            install_pkg python3-pip
-        fi
+        brew install pip 2>/dev/null || true
     fi
     ok "pip disponible"
 }
@@ -285,13 +224,8 @@ check_python() {
 
 install_node() {
     info "Instalando Node.js 20 LTS..."
-    if [ "$PLATFORM" = "macos" ]; then
-        brew install node@20
-        brew link --force --overwrite node@20 2>/dev/null || true
-    else
-        curl -fsSL https://deb.nodesource.com/setup_20.x | sudo -E bash -
-        sudo apt-get install -y -qq nodejs
-    fi
+    brew install node@20
+    brew link --force --overwrite node@20 2>/dev/null || true
     ok "Node.js instalado"
 }
 
@@ -332,7 +266,7 @@ check_node() {
 install_postgres() {
     info "Instalando PostgreSQL..."
     install_pkg postgresql
-    start_service postgresql
+    start_service_macos postgresql
     ok "PostgreSQL instalado"
 }
 
@@ -348,7 +282,7 @@ check_postgres_local() {
     fi
     if ! check_cmd pg_isready; then
         warn "pg_isready no disponible, puede que PostgreSQL no este corriendo"
-        start_service postgresql
+        start_service_macos postgresql
     fi
     if pg_isready -q; then
         ok "PostgreSQL server esta corriendo localmente"
@@ -364,7 +298,7 @@ check_postgres_local() {
 install_redis() {
     info "Instalando Redis..."
     install_pkg redis
-    start_service redis
+    start_service_macos redis
     ok "Redis instalado"
 }
 
@@ -380,7 +314,7 @@ check_redis_local() {
     fi
     if ! redis-cli ping >/dev/null 2>&1; then
         warn "Redis no esta corriendo localmente"
-        start_service redis
+        start_service_macos redis
         sleep 1
         redis-cli ping >/dev/null 2>&1 && ok "Redis corriendo" || warn "Redis sigue sin responder. Se usara contenedor Docker."
     else
@@ -475,20 +409,16 @@ check_make() {
 # ==============================================================================
 
 main() {
-    detect_platform
+    detect_platform || exit 1
     info "=== Transcendence Team - Preparacion de entorno (macOS) ==="
     echo ""
-
-    if [ "$PLATFORM" = "macos" ]; then
-        info "Platform: macOS $MACOS_VER (build $MACOS_BUILD)"
-    else
-        info "Platform: Linux - $PRETTY_NAME ($DISTRO)"
-    fi
+    info "Platform: macOS $MACOS_VER (build $MACOS_BUILD)"
     echo ""
 
-    if [ "$PLATFORM" = "macos" ] && ! check_cmd brew; then
+    if ! check_cmd brew; then
         error "Homebrew no esta instalado. Es necesario para macOS."
-        info "  Instalo ejecutando: /bin/bash -c \"\$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)\""
+        info "  Instalo ejecutando:"
+        info "  /bin/bash -c \"\$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)\""
         exit 1
     fi
 
