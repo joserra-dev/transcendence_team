@@ -35,7 +35,7 @@ check_cmd() {
 install_pkg() {
     if [ "$PLATFORM" = "macos" ]; then
         if ! check_cmd brew; then
-            error "Homebrew no está instalado. Instálalo primero desde https://brew.sh/"
+            error "Homebrew no esta instalado. Instalalo primero desde https://brew.sh/"
             exit 1
         fi
         info "Instalando paquetes via Homebrew: $*"
@@ -46,7 +46,7 @@ install_pkg() {
             sudo apt-get update -qq
             sudo apt-get install -y -qq "$@"
         else
-            warn "Distro no soportada para instalación automática de paquetes ($DISTRO)"
+            warn "Distro no soportada para instalacion automatica de paquetes ($DISTRO)"
             return 1
         fi
     fi
@@ -74,26 +74,77 @@ start_service() {
 }
 
 # ==============================================================================
-# Docker
+# Docker (Colima en macOS)
 # ==============================================================================
 
-install_docker() {
-    info "Instalando Docker en macOS..."
-    if [ "$PLATFORM" = "macos" ]; then
-        info "Docker Desktop para Mac se puede descargar desde https://www.docker.com/products/docker-desktop/"
-        info "Alternativa: brew install --cask docker"
-        if brew install --cask docker 2>/dev/null; then
-            ok "Docker Desktop instalado via brew install --cask docker"
-            info "Abre Docker Desktop y complete la configuración inicial"
+install_colima() {
+    info "Instalando Colima..."
+    brew install colima
+    ok "Colima instalado"
+}
+
+start_colima() {
+    info "Iniciando Colima..."
+    colima start 2>/dev/null || {
+        warn "No se pudo iniciar Colima. Intentando con configuracion predeterminada..."
+        colima start --cpu 2 --memory 4 --disk 60 2>/dev/null || true
+    }
+    sleep 3
+    if colima status 2>/dev/null | grep -q "Running"; then
+        ok "Colima esta corriendo"
+    else
+        warn "Colima no esta corriendo"
+    fi
+}
+
+check_colima() {
+    if ! check_cmd colima; then
+        warn "Colima no esta instalado"
+        if [ "$PLATFORM" = "macos" ]; then
+            if [ "$CI" = "true" ] || [ ! -t 0 ]; then
+                warn "La instalacion de Colima requiere interaccion (provisioning de VM)"
+                warn "Instalalo manualmente: brew install colima && colima start"
+            else
+                install_colima
+                start_colima
+            fi
         else
-            warn "No se pudo instalar Docker Desktop automaticamente"
+            warn "Colima solo esta disponible en macOS"
             return 1
         fi
+    fi
+
+    if colima status 2>/dev/null | grep -q "Running"; then
+        ok "Colima $(colima version 2>/dev/null | head -1 | awk '{print $2}') esta corriendo"
+    else
+        warn "Colima instalado pero no esta corriendo"
+        start_colima
+    fi
+
+    if colima status 2>/dev/null | grep -q "Running"; then
+        if [ -e /Applications/Docker.app ]; then
+            if launchctl list 2>/dev/null | grep -q "com.docker.docker"; then
+                warn "Docker Desktop y Colima detectados simultaneamente"
+                warn "Ambos pueden entrar en conflicto por el socket Docker"
+                info "Si tienes problemas, deten Docker Desktop con:"
+                info "  brew services stop docker"
+                info "  open -a Docker --unload"
+            fi
+        fi
+    fi
+}
+
+install_docker() {
+    if [ "$PLATFORM" = "macos" ]; then
+        warn "Docker Desktop no se instala automaticamente en macOS"
+        info "Usa Colima como alternativa: brew install colima && colima start"
+        info "Docker Desktop: https://www.docker.com/products/docker-desktop/"
+        return 1
     else
         install_pkg ca-certificates curl gnupg lsb-release
         sudo mkdir -p /etc/apt/keyrings
         curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo gpg --dearmor -o /etc/apt/keyrings/docker.gpg 2>/dev/null || {
-            warn "No se pudo añadir la clave GPG de Docker"
+            warn "No se pudo anadir la clave GPG de Docker"
             return 1
         }
         echo "deb [arch=$(dpkg --print-architecture) signed-by=/etc/apt/keyrings/docker.gpg] https://download.docker.com/linux/ubuntu $(lsb_release -cs) stable" | sudo tee /etc/apt/sources.list.d/docker.list >/dev/null
@@ -106,18 +157,40 @@ install_docker() {
 
 check_docker() {
     if ! check_cmd docker; then
-        warn "Docker no está instalado"
-        if ! install_docker; then
-            error "Instala Docker manualmente desde https://docs.docker.com/get-docker/"
-            exit 1
+        warn "Docker CLI no esta instalado"
+        if [ "$PLATFORM" = "macos" ]; then
+            if ! install_colima; then
+                error "Instala Docker manualmente en macOS. Opciones:"
+                error "  - Colima: brew install colima && colima start"
+                error "  - Docker Desktop: https://www.docker.com/products/docker-desktop/"
+                exit 1
+            fi
+            if ! check_colima; then
+                error "Colima no disponible. No se puede configurar Docker en macOS."
+                exit 1
+            fi
+            if ! docker info >/dev/null 2>&1; then
+                error "Docker CLI no funciona con Colima. Ejecuta: eval $(colima docker-env)"
+                exit 1
+            fi
+            ok "Docker CLI funciona a traves de Colima"
+        else
+            if ! install_docker; then
+                error "Instala Docker manualmente desde https://docs.docker.com/get-docker/"
+                exit 1
+            fi
         fi
     fi
+
     if ! docker info >/dev/null 2>&1; then
-        warn "El daemon de Docker no está corriendo. Intentando iniciar..."
+        warn "El daemon de Docker no esta corriendo. Intentando iniciar..."
+        if [ "$PLATFORM" = "macos" ] && check_cmd colima; then
+            start_colima
+        fi
         start_service docker
         sleep 3
         if ! docker info >/dev/null 2>&1; then
-            error "Docker está instalado pero no se pudo iniciar el daemon. Inícialo manualmente."
+            error "Docker esta instalado pero no se pudo iniciar el daemon. Iniciacarlo manualmente."
             exit 1
         fi
     fi
@@ -152,7 +225,7 @@ check_docker_compose() {
             COMPOSE_CMD="docker compose"
             COMPOSE_VER="$(docker compose version --short 2>/dev/null || echo 'desconocida')"
         else
-            error "Docker Compose no está disponible. Instálalo desde https://docs.docker.com/compose/install/"
+            error "Docker Compose no esta disponible. Instalo desde https://docs.docker.com/compose/install/"
             exit 1
         fi
     fi
@@ -172,7 +245,7 @@ install_python() {
 check_python() {
     if ! check_cmd python3; then
         if ! check_cmd python; then
-            warn "Python 3 no está instalado"
+            warn "Python 3 no esta instalado"
             install_python || {
                 error "Instala Python 3.10+ manualmente desde https://www.python.org/downloads/"
                 exit 1
@@ -224,7 +297,7 @@ install_node() {
 
 check_node() {
     if ! check_cmd node; then
-        warn "Node.js no está instalado"
+        warn "Node.js no esta instalado"
         install_node || {
             error "Instala Node.js 20+ manualmente desde https://nodejs.org/"
             exit 1
@@ -267,20 +340,20 @@ check_postgres_local() {
     if ! check_cmd psql; then
         warn "Cliente psql no disponible"
         install_postgres || {
-            warn "PostgreSQL no instalado. Se usará el contenedor Docker 'db'."
+            warn "PostgreSQL no instalado. Se usara el contenedor Docker 'db'."
             return
         }
     else
         ok "Cliente psql $(psql --version | awk '{print $3}') disponible"
     fi
     if ! check_cmd pg_isready; then
-        warn "pg_isready no disponible, puede que PostgreSQL no esté corriendo"
+        warn "pg_isready no disponible, puede que PostgreSQL no este corriendo"
         start_service postgresql
     fi
     if pg_isready -q; then
-        ok "PostgreSQL server está corriendo localmente"
+        ok "PostgreSQL server esta corriendo localmente"
     else
-        warn "PostgreSQL server local no disponible. Se usará el contenedor Docker 'db'."
+        warn "PostgreSQL server local no disponible. Se usara el contenedor Docker 'db'."
     fi
 }
 
@@ -299,17 +372,17 @@ check_redis_local() {
     if ! check_cmd redis-cli; then
         warn "redis-cli no disponible"
         install_redis || {
-            warn "Redis no instalado. Se usará el contenedor Docker 'redis'."
+            warn "Redis no instalado. Se usara el contenedor Docker 'redis'."
             return
         }
     else
         ok "redis-cli disponible"
     fi
     if ! redis-cli ping >/dev/null 2>&1; then
-        warn "Redis no está corriendo localmente"
+        warn "Redis no esta corriendo localmente"
         start_service redis
         sleep 1
-        redis-cli ping >/dev/null 2>&1 && ok "Redis corriendo" || warn "Redis sigue sin responder. Se usará contenedor Docker."
+        redis-cli ping >/dev/null 2>&1 && ok "Redis corriendo" || warn "Redis sigue sin responder. Se usara contenedor Docker."
     else
         ok "Redis corriendo localmente"
     fi
@@ -354,7 +427,7 @@ check_env() {
         info "  -> cp .env.example .env"
         info "  -> make env MODE=dev (o MODE=prod)"
     else
-        warn "No se encontró ni .env ni .env.example"
+        warn "No se encontro ni .env ni .env.example"
         info "  -> Ejecuta 'make env' para generar .env interactivamente"
     fi
 }
@@ -368,7 +441,7 @@ check_ssl_certs() {
         if ls "$SCRIPT_DIR/frontend/ssl/"*.crt >/dev/null 2>&1 && ls "$SCRIPT_DIR/frontend/ssl/"*.key >/dev/null 2>&1; then
             ok "Certificados SSL locales encontrados en frontend/ssl/"
         else
-            warn "Carpeta frontend/ssl/ existe pero no contiene certificados válidos (.crt/.key)"
+            warn "Carpeta frontend/ssl/ existe pero no contiene certificados validos (.crt/.key)"
         fi
     else
         warn "Carpeta frontend/ssl/ no existe"
@@ -403,7 +476,7 @@ check_make() {
 
 main() {
     detect_platform
-    info "=== Transcendence Team - Preparación de entorno (macOS) ==="
+    info "=== Transcendence Team - Preparacion de entorno (macOS) ==="
     echo ""
 
     if [ "$PLATFORM" = "macos" ]; then
@@ -413,10 +486,9 @@ main() {
     fi
     echo ""
 
-    # Check Homebrew on macOS
     if [ "$PLATFORM" = "macos" ] && ! check_cmd brew; then
-        error "Homebrew no está instalado. Es necesario para macOS."
-        info "  Instálalo ejecutando: /bin/bash -c \"\$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)\""
+        error "Homebrew no esta instalado. Es necesario para macOS."
+        info "  Instalo ejecutando: /bin/bash -c \"\$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)\""
         exit 1
     fi
 
@@ -424,6 +496,7 @@ main() {
     check_git
     check_docker
     check_docker_compose
+    check_colima
     check_python
     check_node
     check_env
@@ -433,10 +506,10 @@ main() {
     check_ssl_certs
 
     echo ""
-    ok "=== Verificación completada ==="
+    ok "=== Verificacion completada ==="
     info "Para ejecutar el proyecto:"
     info "  - Desarrollo : make dev"
-    info "  - Producción : make prod"
+    info "  - Produccion : make prod"
     if [ ! -f "$SCRIPT_DIR/.env" ]; then
         info "  - Generar .env: make env MODE=dev  (o MODE=prod)"
     fi
