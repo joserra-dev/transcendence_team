@@ -77,7 +77,7 @@ all: prod ## Arranque por defecto en producción
 
 
 ## Entorno desarrollo
-dev: export MODE=dev
+dev: export MODE=dev## Entorno desarrollo 
 dev: env up
 
 
