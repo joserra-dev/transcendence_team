@@ -193,22 +193,6 @@
       "SAVING": "Gordetzen..."
     }
   },
-  "FRIENDS": {
-    "TITLE": "Lagunak",
-    "EMAIL_PLACEHOLDER": "Lagunaren posta",
-    "ADD": "Gehitu",
-    "REMOVE": "Kendu",
-    "SUCCESS": {
-      "ADDED": "Laguna ondo gehituta.",
-      "REMOVED": "Laguna ondo kenduta."
-    },
-    "ERROR": {
-      "EMAIL_REQUIRED": "Sartu lagunaren posta helbidea.",
-      "NOT_FOUND": "Ezin izan da laguna gehitu. Egiaztatu posta helbidea.",
-      "REMOVE": "Ezin izan da laguna kendu."
-    },
-    "EMPTY": "Ez dituzu lagunik gehituta."
-  },
   "PAPID": {
     "LICENCE":"Sartu zure ibilgailuaren matrikula:"
   },

@@ -217,7 +217,6 @@ Company (1) ──────< Profiles >────── (1) Users
    │       └──< Space ──< Booking             └──< Friend >── Users
    │              └──< SpaceBlockedDay
    ├──< ChatMessage ── sender_id ──> Users  (thread by company_id; admin or super_admin)
-   └──< InvoiceSequence
 ```
 
 Admin ↔ super-admin chat only (not client **Friend** chat).
@@ -245,7 +244,6 @@ Admin ↔ super-admin chat only (not client **Friend** chat).
 | name | String | First name |
 | last_name | String? | Last name |
 | birth_day | Date | Birth date |
-| avatar | String? | Avatar URL |
 | role | Enum | `user`, `admin`, or `super_admin` |
 
 #### Company
@@ -337,7 +335,7 @@ Unique constraint: (user_id, friend_id)
 | Registration / Login | Email/password with JWT | joscastr, elarrea- |
 | Email verification | Token-based account activation | joscastr |
 | Password reset | Forgot/reset flow with email | joscastr |
-| User profile | View and edit profile, avatar URL | luisanch |
+| User profile | View and edit profile | luisanch |
 | Friends system | Add, list, and remove friends | luisanch |
 | Multilingual UI | ES, EN, EU language switching | luisanch |
 | Role-based access | User, company admin, and super-admin routes and backend guards | joscastr, luisanch |
@@ -383,7 +381,7 @@ Per the Transcendence subject (`transcendece_en.subject.pdf`): **Major = 2 point
 | 2 | Real-time Features (WebSockets) | Web | Major | joscastr, luisanch, elarrea- | Flask-SocketIO for admin chat: unread counts, `new_message`, and `messages_read` events |
 | 2 | User Interaction | Web | Major | luisanch, joscastr, elarrea- | Admin ↔ super-admin chat, editable user profiles, and friends system between client users |
 | 2 | Public API | Web | Major | joscastr | Secured `X-API-Key` access to parking/space data for external apps without sharing DB credentials or full user sessions |
-| 2 | Standard User Management | User Management | Major | joscastr, luisanch, elarrea- | Registration, JWT login, profile update, avatar URL, email verification, password reset; super-admin creates users and assigns roles |
+| 2 | Standard User Management | User Management | Major | joscastr, luisanch, elarrea- | Registration, JWT login, profile update, email verification, password reset; super-admin creates users and assigns roles |
 | 2 | Advanced Analytics Dashboard | Data & Analytics | Major | joscastr, luisanch | Donut charts (bookings by parking, sales by month), year filters, admin booking filters, CSV export, PDF invoices (WeasyPrint) |
 | 2 | Stripe Payment (module of choice) | Modules of Choice | Major | joscastr, mikegonz | Stripe Checkout confirms paid reservations, reduces no-shows, and avoids storing card data (PCI scope) |
 | 2 | Advanced Permissions | User Management | Major | joscastr, luisanch | Role-based user CRUD, `@require_admin` / `@require_super_admin`, different Angular admin views per role |
@@ -412,7 +410,7 @@ We chose **Stripe Checkout** as our custom **Major** module because camper reser
 | 2 | Real-time Features (WebSockets) | Major | Flask-SocketIO, JWT on connect, company rooms, live chat and unread badge updates |
 | 2 | User Interaction | Major | REST + WebSocket admin chat; profile `/api/users/update`; friends `/api/friends` |
 | 2 | Public API | Major | `/api/public/*`, `X-API-Key`, Redis rate limit, Swagger (Flasgger), parking/space endpoints |
-| 2 | Standard User Management | Major | Register, login, `/me`, avatar URL on profile; super-admin `POST /api/admin/users` with role and `companyId` |
+| 2 | Standard User Management | Major | Register, login, `/me`, on profile; super-admin `POST /api/admin/users` with role and `companyId` |
 | 2 | Advanced Analytics Dashboard | Major | `/api/admin/metrics`, donut charts, year filter; admin booking filters; CSV export; PDF `/api/booking/<id>/bill` |
 | 2 | Stripe Payment | Major | Checkout on booking create, confirm/cancel callbacks, status update after payment |
 | 2 | Advanced Permissions | Major | `UserRole` user/admin/super_admin; route guards; super-admin-only user management |
@@ -425,7 +423,6 @@ We chose **Stripe Checkout** as our custom **Major** module because camper reser
 ## Known Limitations
 
 - **Development TLS**: Self-signed HTTPS in Docker; Angular dev on HTTP (`make dev`); production-like HTTPS via Nginx (`make prod`).
-- **Avatar**: Profiles store an **avatar URL**, not server-side file upload.
 - **Friends**: List implemented; **online status** for friends is not implemented.
 - **Access control (OCR)**: Depends on camera quality and lighting; verification page needs API key and parking context in production.
 - **Email**: Verification and password reset require working SMTP in `.env`.
@@ -476,7 +473,7 @@ We chose **Stripe Checkout** as our custom **Major** module because camper reser
 - Differentiated admin/user welcome emails and role-based dashboard entry points
 - Admin ↔ super-admin chat (REST then WebSocket), unread badges, role-colored alerts, chat layout, Flask-SocketIO, Docker/nginx WebSocket proxy, dynamic metric years
 - Contextual admin «Home» and logo links in `breadcrumb` and `header` for admin vs super-admin
-- Profile flow: editable DNI when empty, document validator, styled alerts, avatar URL mapping; friends system UI (add/list/remove)
+- Profile flow: editable DNI when empty, document validator, styled alerts; friends system UI (add/list/remove)
 - Global responsive adaptation (SCSS/HTML mixins, mobile user cards, admin toolbars, chat and calendar layouts)
 - Admin calendar per **space** (`SpaceBlockedDay`), parking/space selectors, blocked days, public search date picker fix (Firefox)
 - Booking cancel UI aligned with backend rules; admin user delete with FK handling; customer snapshot; logical delete via `is_active`

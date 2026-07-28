@@ -19,7 +19,6 @@ ALTER TABLE IF EXISTS ONLY public.space DROP CONSTRAINT IF EXISTS space_id_parki
 ALTER TABLE IF EXISTS ONLY public.profiles DROP CONSTRAINT IF EXISTS profiles_user_id_fkey;
 ALTER TABLE IF EXISTS ONLY public.profiles DROP CONSTRAINT IF EXISTS profiles_company_id_fkey;
 ALTER TABLE IF EXISTS ONLY public.parking DROP CONSTRAINT IF EXISTS parking_id_company_fkey;
-ALTER TABLE IF EXISTS ONLY public.invoice_sequences DROP CONSTRAINT IF EXISTS invoice_sequences_id_company_fkey;
 ALTER TABLE IF EXISTS ONLY public.booking DROP CONSTRAINT IF EXISTS booking_id_user_fkey;
 ALTER TABLE IF EXISTS ONLY public.booking DROP CONSTRAINT IF EXISTS booking_id_space_fkey;
 ALTER TABLE IF EXISTS ONLY public.parking_blocked_day DROP CONSTRAINT IF EXISTS parking_blocked_day_id_parking_fkey;
@@ -32,7 +31,6 @@ DROP TABLE IF EXISTS public.booking;
 DROP TABLE IF EXISTS public.space;
 DROP TABLE IF EXISTS public.parking;
 DROP TABLE IF EXISTS public.profiles;
-DROP TABLE IF EXISTS public.invoice_sequences;
 DROP TABLE IF EXISTS public.company;
 DROP TABLE IF EXISTS public.users;
 DROP TYPE IF EXISTS public.userrole;
@@ -136,24 +134,6 @@ CREATE SEQUENCE public.space_id_seq START WITH 1 INCREMENT BY 1 NO MINVALUE NO M
 ALTER SEQUENCE public.space_id_seq OWNER TO defaultdb_user;
 ALTER SEQUENCE public.space_id_seq OWNED BY public.space.id;
 ALTER TABLE ONLY public.space ALTER COLUMN id SET DEFAULT nextval('public.space_id_seq'::regclass);
-
---
--- Tabla: invoice_sequences
---
-CREATE TABLE public.invoice_sequences (
-    id integer NOT NULL PRIMARY KEY,
-    id_company integer NOT NULL,
-    serie character varying(20) NOT NULL,
-    last_number integer NOT NULL,
-    CONSTRAINT _company_serie_uc UNIQUE (id_company, serie)
-);
-ALTER TABLE public.invoice_sequences OWNER TO defaultdb_user;
-
-CREATE SEQUENCE public.invoice_sequences_id_seq AS integer START WITH 1 INCREMENT BY 1 NO MINVALUE NO MAXVALUE CACHE 1;
-ALTER SEQUENCE public.invoice_sequences_id_seq OWNER TO defaultdb_user;
-ALTER SEQUENCE public.invoice_sequences_id_seq OWNED BY public.invoice_sequences.id;
-ALTER TABLE ONLY public.invoice_sequences ALTER COLUMN id SET DEFAULT nextval('public.invoice_sequences_id_seq'::regclass);
-
 --
 -- Tabla: profiles
 --
@@ -165,11 +145,7 @@ CREATE TABLE public.profiles (
     name character varying(255) NOT NULL,
     last_name character varying(255),
     birth_day date NOT NULL,
-    avatar character varying(500),
     role public.userrole NOT NULL
-    --iban character varying(34),
-    --metodo_pago character varying(50),
-    --tarjeta character varying(50)
 );
 ALTER TABLE public.profiles OWNER TO defaultdb_user;
 
@@ -268,7 +244,6 @@ COPY public.space (id, id_parking, name, isvip, has_electr, status, price) FROM 
 -- Actualización manual de Secuencias
 SELECT pg_catalog.setval('public.booking_id_seq', 1, false);
 SELECT pg_catalog.setval('public.company_id_seq', 2, true);
-SELECT pg_catalog.setval('public.invoice_sequences_id_seq', 1, false);
 SELECT pg_catalog.setval('public.parking_id_seq', 3, true);
 SELECT pg_catalog.setval('public.profiles_id_seq', 4, true);
 SELECT pg_catalog.setval('public.space_id_seq', 6, true);
@@ -285,9 +260,6 @@ ALTER TABLE ONLY public.booking
 
 ALTER TABLE ONLY public.booking
     ADD CONSTRAINT booking_id_user_fkey FOREIGN KEY (id_user) REFERENCES public.users(id) ON DELETE SET NULL;
-
-ALTER TABLE ONLY public.invoice_sequences
-    ADD CONSTRAINT invoice_sequences_id_company_fkey FOREIGN KEY (id_company) REFERENCES public.company(id) ON DELETE CASCADE;
 
 ALTER TABLE ONLY public.parking
     ADD CONSTRAINT parking_id_company_fkey FOREIGN KEY (id_company) REFERENCES public.company(id);

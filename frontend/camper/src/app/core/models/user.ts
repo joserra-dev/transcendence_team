@@ -8,7 +8,6 @@ export interface User {
   metodoPago?: string;
   tarjeta?: string;
   emailPersona: string | null;
-  avatar?: string;
   empresaNombre: string | null;
   admin: boolean;
   role?: 'user' | 'admin' | 'super_admin';
