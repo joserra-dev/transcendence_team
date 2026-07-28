@@ -15,10 +15,6 @@
     {{ errorMessage | translate }}
   </div>
 
-  <div *ngIf="currentUser?.avatar" class="profile-avatar-preview">
-    <img [src]="currentUser?.avatar || ''" alt="Avatar de usuario" />
-  </div>
-
   <form [formGroup]="profileForm" *ngIf="!isLoading || currentUser" (ngSubmit)="saveChanges()" class="form-standard">
     <h3 class="section-title">{{ 'PROFILE.PERSONAL_DATA' | translate }}</h3>
 
@@ -53,11 +49,6 @@
         {{ 'PROFILE.FIELDS.EMAIL' | translate }} <span class="label-tag">{{ 'PROFILE.NOT_EDITABLE' | translate }}</span>
       </label>
       <input id="email" type="email" formControlName="emailPersona" readonly maxlength="254">
-    </div>
-
-    <div class="mb-3 form-group-standard">
-      <label for="avatar" class="form-label-custom">Avatar URL</label>
-      <input id="avatar" type="url" formControlName="avatarPersona" placeholder="https://example.com/avatar.jpg">
     </div>
 
     <div class="row g-4 mb-3 form-2-group">
@@ -119,43 +110,4 @@
 
     </div>
   </form>
-
-  <section class="friends-section mt-4">
-    <h3 class="section-title">{{ 'FRIENDS.TITLE' | translate }}</h3>
-
-    <div class="input-group mb-3 add-friend-form">
-      <input type="email"
-             class="form-control"
-             [(ngModel)]="newFriendEmail"
-             placeholder="{{ 'FRIENDS.EMAIL_PLACEHOLDER' | translate }}">
-      <button class="btn btn-primary" (click)="addFriend()">
-        {{ 'FRIENDS.ADD' | translate }}
-      </button>
-    </div>
-
-    <div class="error-msg-standard mb-2" *ngIf="errorMessage && errorMessage.startsWith('FRIENDS')">
-      {{ errorMessage | translate }}
-    </div>
-    <div class="success-msg mb-2" *ngIf="successMessage && successMessage.startsWith('FRIENDS')">
-      {{ successMessage | translate }}
-    </div>
-
-    <div class="friends-list" *ngIf="friends.length > 0">
-      <div class="friend-card" *ngFor="let friend of friends">
-        <div class="friend-info">
-          <img *ngIf="friend.avatar" [src]="friend.avatar" alt="Avatar" class="friend-avatar">
-          <div>
-            <strong>{{ friend.nombrePersona }} {{ friend.apellidosPersona }}</strong>
-            <p class="small-text text-muted mb-0">{{ friend.email }}</p>
-          </div>
-        </div>
-        <button class="btn btn-outline-danger btn-sm" (click)="removeFriend(friend.id)">
-          {{ 'FRIENDS.REMOVE' | translate }}
-        </button>
-      </div>
-    </div>
-    <p class="small-text text-muted" *ngIf="friends.length === 0">
-      {{ 'FRIENDS.EMPTY' | translate }}
-    </p>
-  </section>
 </div>

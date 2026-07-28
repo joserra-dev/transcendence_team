@@ -421,7 +421,7 @@ We chose **Stripe Checkout** as our custom **Major** module because camper reser
 | 2 | Real-time Features (WebSockets) | Major | Flask-SocketIO, JWT on connect, company rooms, live chat and unread badge updates |
 | 2 | User Interaction | Major | REST + WebSocket admin chat; profile `/api/users/update`; friends `/api/friends` |
 | 2 | Public API | Major | `/api/public/*`, `X-API-Key`, Redis rate limit, Swagger (Flasgger), parking/space endpoints |
-| 2 | Standard User Management | Major | Register, login, `/me`, avatar URL on profile; super-admin `POST /api/admin/users` with role and `companyId` |
+| 2 | Standard User Management | Major | Register, login, `/me`, on profile; super-admin `POST /api/admin/users` with role and `companyId` |
 | 2 | Advanced Analytics Dashboard | Major | `/api/admin/metrics`, donut charts, year filter; admin booking filters; CSV export; PDF `/api/booking/<id>/bill` |
 | 2 | Stripe Payment | Major | Checkout on booking create, confirm/cancel callbacks, status update after payment |
 | 2 | Advanced Permissions | Major | `UserRole` user/admin/super_admin; route guards; super-admin-only user management |
@@ -478,7 +478,7 @@ We chose **Stripe Checkout** as our custom **Major** module because camper reser
 - Differentiated admin/user welcome emails and role-based dashboard entry points
 - Admin ↔ super-admin chat (REST then WebSocket), unread badges, role-colored alerts, chat layout, Flask-SocketIO, Docker/nginx WebSocket proxy, dynamic metric years
 - Contextual admin «Home» and logo links in `breadcrumb` and `header` for admin vs super-admin
-- Profile flow: editable DNI when empty, document validator, styled alerts, avatar URL mapping; friends system UI (add/list/remove)
+- Profile flow: editable DNI when empty, document validator, styled alerts; friends system UI (add/list/remove)
 - Global responsive adaptation (SCSS/HTML mixins, mobile user cards, admin toolbars, chat and calendar layouts)
 - Admin calendar per **space** (`SpaceBlockedDay`), parking/space selectors, blocked days, public search date picker fix (Firefox)
 - Booking cancel UI aligned with backend rules; admin user delete with FK handling; customer snapshot; logical delete via `is_active`

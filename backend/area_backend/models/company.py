@@ -13,7 +13,6 @@ class Company(db.Model):
 
     users = db.relationship('Profiles', back_populates='company', lazy=True)
     parkings = db.relationship('Parking', back_populates='company', lazy=True)
-    sequences = db.relationship('InvoiceSequence', back_populates='company', lazy=True)
 
     def to_dict(self):
         return {

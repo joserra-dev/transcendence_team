@@ -46,11 +46,7 @@ class Profiles(db.Model):
     name = db.Column(db.String(255), nullable=False)
     last_name = db.Column(db.String(255), nullable=True)
     birth_day = db.Column(db.Date, nullable=False)
-    avatar = db.Column(db.String(500), nullable=True)
     role = db.Column(db.Enum(UserRole), default=UserRole.USER, nullable=False)
-    #iban = db.Column(db.String(34), nullable=True)
-    #metodo_pago = db.Column(db.String(50), nullable=True, default='iban')
-    #tarjeta = db.Column(db.String(50), nullable=True)
     
     user = db.relationship('Users', back_populates='profile')
     company = db.relationship('Company', back_populates='users')
@@ -61,11 +57,7 @@ class Profiles(db.Model):
             "dni": self.dni,
             "name": self.name,
             "last_name": self.last_name,
-            "birth_day": self.birth_day.isoformat() if self.birth_day else None,
-            "avatar": self.avatar,
+            "birth_day": self.birth_day.isoformat() if self.birth_day else None,            
             "role": self.role.value,
             "company_id": self.company_id
-            #"iban": self.iban,
-            #"metodoPago": self.metodo_pago or "iban",
-            #"tarjeta": self.tarjeta
         }

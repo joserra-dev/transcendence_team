@@ -193,22 +193,6 @@
       "SAVING": "Saving..."
     }
   },
-  "FRIENDS": {
-    "TITLE": "Friends",
-    "EMAIL_PLACEHOLDER": "Friend's email",
-    "ADD": "Add",
-    "REMOVE": "Remove",
-    "SUCCESS": {
-      "ADDED": "Friend added successfully.",
-      "REMOVED": "Friend removed successfully."
-    },
-    "ERROR": {
-      "EMAIL_REQUIRED": "Enter your friend's email.",
-      "NOT_FOUND": "Could not add friend. Check the email.",
-      "REMOVE": "Could not remove friend."
-    },
-    "EMPTY": "You have no friends added."
-  },
   "PAPID": {
     "LICENCE":"Enter your vehicle's number plate:"
   },
