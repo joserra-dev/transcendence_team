@@ -1,6 +1,6 @@
 from weasyprint import HTML
 from datetime import datetime
-from flask import current_app, render_template
+from flask import render_template
 from flask_babel import _, get_locale
 
 
@@ -35,15 +35,9 @@ class PdfGenerator:
         nights = (end_date - start_date).days if start_date and end_date else 0
         space_price = booking.space.price if booking.space else 0.0
         total_price = booking.total_price
-
-        # Nº de factura
-        if booking.invoice_serie and booking.invoice_number:
-            invoice_number = f"{booking.invoice_serie}-{booking.invoice_number}"
-        else:
-            invoice_number = "Pendiente"
-
+       
         # Fecha de factura
-        invoice_date = booking.invoice_date or now.strftime('%Y-%m-%d')
+        invoice_date =  now.strftime('%Y-%m-%d')
 
         html_content = render_template(
             f'factura/{idioma}/factura.html',
