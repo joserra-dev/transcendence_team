@@ -180,7 +180,8 @@
       "INVALID_IBAN": "IBAN baliogabea.",
       "PASSWORDS_MISMATCH": "Pasahitzak ez datoz bat.",
       "DATA": "Ezin izan dira erabiltzailearen datuak kargatu.",
-      "CHANGES": "Ezin izan dira aldaketak gorde. Egiaztatu datuak."
+      "CHANGES": "Ezin izan dira aldaketak gorde. Egiaztatu datuak.",
+      "VALIDATION": "Berrikusi formularioa: derrigorrezko eremuak falta dira edo datu okerrak daude."
     },
 
     "CHANGE_PASSWORD": "Aldatu pasahitza",

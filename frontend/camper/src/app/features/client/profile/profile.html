@@ -7,11 +7,11 @@
     {{ 'PROFILE.LOADING' | translate }}
   </div>
 
-  <div class="success-msg mb-3" *ngIf="successMessage">
+  <div class="alert success" *ngIf="successMessage">
     {{ successMessage | translate }}
   </div>
 
-  <div class="error-msg-standard mb-3" *ngIf="errorMessage">
+  <div class="alert error" *ngIf="errorMessage">
     {{ errorMessage | translate }}
   </div>
 
