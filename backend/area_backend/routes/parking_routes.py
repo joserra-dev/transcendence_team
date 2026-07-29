@@ -1,5 +1,4 @@
 from flask import Blueprint, jsonify, request
-from sqlalchemy import func
 from flask_babel import gettext as _
 from datetime import datetime
 

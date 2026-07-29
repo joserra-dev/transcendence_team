@@ -4,9 +4,7 @@ from flask import Blueprint, jsonify, request, current_app, redirect
 from sqlalchemy import func
 from werkzeug.security import check_password_hash 
 from utils.password_hash import hash_password
-from flask_jwt_extended import create_access_token, decode_token, jwt_required, get_jwt_identity
-from flask_mailman import EmailMessage
-
+from flask_jwt_extended import create_access_token, jwt_required, get_jwt_identity
 
 from services.email_services import EmailService
 from utils.password_validator import PasswordValidator
@@ -383,7 +381,7 @@ def autenticar_usuario():
 
     perfil = usuario_existente.profile
     if perfil and perfil.role.value in ['admin', 'super_admin']:
-        return jsonify({"error": _("Debes iniciar sesión desde el acceso de administrador")}), 403
+        return jsonify({"error": _("Credenciales incorrectas")}), 401
    
     token_acceso = create_access_token(identity=str(usuario_existente.id))
 

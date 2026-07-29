@@ -1,7 +1,5 @@
-# pyrefly: ignore [missing-import]
 import logging
 from flask import Blueprint, jsonify, request, redirect, current_app
-# pyrefly: ignore [missing-import]
 from flask_jwt_extended import jwt_required, get_jwt_identity
 from flask_babel import gettext as _
 from datetime import datetime, date
@@ -11,7 +9,6 @@ import stripe
 from database import db
 from models.booking import Booking, BookingStatus
 from models.users import Users
-from models.space import Space
 from models.parking import Parking
 from models.space_blocked_day import SpaceBlockedDay
 from services.email_services import EmailService

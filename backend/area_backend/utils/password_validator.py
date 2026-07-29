@@ -1,6 +1,6 @@
 # utils/validators.py
 import re
-from flask_babel import gettext as _, refresh
+from flask_babel import gettext as _
 
 
 class PasswordValidator:

@@ -3,7 +3,6 @@ from email.mime.text import MIMEText
 import smtplib
 
 from flask import current_app, render_template
-from flask_mailman import EmailMessage
 from flask_babel import _, get_locale   
 import os
 

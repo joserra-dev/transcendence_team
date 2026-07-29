@@ -1,15 +1,13 @@
 import os
 from functools import wraps
-from datetime import datetime, date
+from datetime import datetime 
 
 from flask import Blueprint, jsonify, request
-from sqlalchemy import func
 
 from database import db, limiter
 from models.booking import Booking
 from models.parking import Parking
 from models.space import Space
-from models.users import Users
 
 public_api_bp = Blueprint('public_api_bp', __name__, url_prefix='/api/public')
 

@@ -5,7 +5,7 @@ from flask import Blueprint, jsonify, request
 from database import db
 from models.chat_message import ChatMessage
 from models.company import Company
-from models.users import Profiles, UserRole, Users
+from models.users import Profiles, UserRole
 from chat_events import emit_messages_read, emit_new_message
 from utils.admin_auth import require_admin
 
