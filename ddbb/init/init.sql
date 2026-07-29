@@ -76,9 +76,7 @@ ALTER TABLE ONLY public.users ALTER COLUMN id SET DEFAULT nextval('public.users_
 CREATE TABLE public.company (
     id integer NOT NULL PRIMARY KEY,
     name character varying(50) NOT NULL,
-    cif character varying(15),
-    tbai_enabled boolean NOT NULL,
-    tbai_software_license character varying(100)
+    cif character varying(15)
 );
 ALTER TABLE public.company OWNER TO defaultdb_user;
 
@@ -104,7 +102,6 @@ CREATE TABLE public.parking (
     has_electricity boolean,
     has_waste_disposal boolean,
     has_vip_spots boolean,
-    tbai_serie_facturacion character varying(20),
     latitude double precision,
     longitude double precision,
     description character varying(255)
@@ -169,12 +166,7 @@ CREATE TABLE public.booking (
     license_plate character varying(15) NOT NULL,
     total_price double precision NOT NULL,
     customer_email character varying(255),
-    customer_name character varying(255),
-    invoice_serie character varying(20),
-    invoice_number character varying(20),
-    invoice_date date,
-    tbai_id character varying(100),
-    tbai_qr_code text
+    customer_name character varying(255)
 );
 ALTER TABLE public.booking OWNER TO defaultdb_user;
 
@@ -221,15 +213,15 @@ ALTER TABLE ONLY public.chat_messages ALTER COLUMN id SET DEFAULT nextval('publi
 -- DATA INSERTION (Sección de datos)
 --
 
-COPY public.company (id, name, cif, tbai_enabled, tbai_software_license) FROM stdin;
-1	Hemen-go	B68064831	t	TBAI-HEMENGO-99882
-2	hemen-go	B21520622	f	\N
+COPY public.company (id, name, cif) FROM stdin;
+1	Hemen-go	B68064831
+2	hemen-go	B21520622
 \.
 
-COPY public.parking (id, id_company, name, province, municipality, isactive, web_parking, telephone, email, contact_person, has_electricity, has_waste_disposal, has_vip_spots, tbai_serie_facturacion, latitude, longitude, description) FROM stdin;
-1	2	Parking La Galea beach	Bizkaia	Getxo	t	https://www.la-galea-caravaning.com	688745692	info@la-galea-caravaning.com	Mikel Basurko	t	t	t	GALEA26	43.3712	-3.0345	Estupendo parking frente a los acantalidados de La Galea.
-2	2	Parking Zarautz Costa	Gipuzkoa	Zarautz	t	https://www.zarautz-camper.com	943123456	info@zarautz-camper.com	Ane Mendizabal	t	f	t	ZARAUTZ26	43.2844	-2.1691	Ubicación privilegiada en la costa vasca.
-3	2	Parking Hondarribia Puerto	Gipuzkoa	Hondarribia	t	\N	943654321	info@hondarribia-parking.com	Iñaki Agirre	f	t	f	HONDA26	43.3789	-1.7925	Ubicado junto al puerto deportivo.
+COPY public.parking (id, id_company, name, province, municipality, isactive, web_parking, telephone, email, contact_person, has_electricity, has_waste_disposal, has_vip_spots, latitude, longitude, description) FROM stdin;
+1	2	Parking La Galea beach	Bizkaia	Getxo	t	https://www.la-galea-caravaning.com	688745692	info@la-galea-caravaning.com	Mikel Basurko	t	t	t	43.3712	-3.0345	Estupendo parking frente a los acantalidados de La Galea.
+2	2	Parking Zarautz Costa	Gipuzkoa	Zarautz	t	https://www.zarautz-camper.com	943123456	info@zarautz-camper.com	Ane Mendizabal	t	f	t	43.2844	-2.1691	Ubicación privilegiada en la costa vasca.
+3	2	Parking Hondarribia Puerto	Gipuzkoa	Hondarribia	t	\N	943654321	info@hondarribia-parking.com	Iñaki Agirre	f	t	f	43.3789	-1.7925	Ubicado junto al puerto deportivo.
 \.
 
 COPY public.space (id, id_parking, name, isvip, has_electr, status, price) FROM stdin;

@@ -22,8 +22,7 @@ class Parking(db.Model):
     has_electricity = db.Column(db.Boolean, nullable=True)
     has_waste_disposal = db.Column(db.Boolean, nullable=True)
     has_vip_spots = db.Column(db.Boolean, nullable=True)
-    tbai_serie_facturacion = db.Column(db.String(20), nullable=True)
-    
+      
     latitude = db.Column(db.Float, nullable=True)
     longitude = db.Column(db.Float, nullable=True)
     description = db.Column(db.String(255), nullable=True)
@@ -48,8 +47,7 @@ class Parking(db.Model):
             "personaContacto": self.contact_person,
             "has_electricity": self.has_electricity,
             "has_waste_disposal": self.has_waste_disposal,
-            "has_vip_spots": self.has_vip_spots,
-            "tbai_serie_facturacion": self.tbai_serie_facturacion # Enviamos la serie al front
+            "has_vip_spots": self.has_vip_spots
         }
         if include_spaces:
             space_list = []
