@@ -50,7 +50,8 @@ export class Profile implements OnInit {
         this.profileForm.patchValue(user);
         this.isLoading = false;
       },
-      error: (err) => {
+      error: () => {
+        this.successMessage = '';
         this.errorMessage = 'PROFILE.ERROR.DATA';
         this.isLoading = false;
       }
@@ -96,10 +97,14 @@ export class Profile implements OnInit {
   saveChanges() {
     if (this.profileForm.invalid) {
       this.profileForm.markAllAsTouched();
+      this.successMessage = '';
+      this.errorMessage = 'PROFILE.ERROR.VALIDATION';
       return;
     }
 
     this.isLoading = true;
+    this.successMessage = '';
+    this.errorMessage = '';
     const formData = this.profileForm.getRawValue();
     const updateData = {
       ...formData,
@@ -108,6 +113,7 @@ export class Profile implements OnInit {
 
     this.userService.updateProfile(updateData).subscribe({
       next: (response) => {
+        this.errorMessage = '';
         this.successMessage = response.mensaje;
         const updatedUser = {
           ...this.currentUser!,
@@ -118,8 +124,13 @@ export class Profile implements OnInit {
         this.isEditing = false;
         this.isLoading = false;
         this.profileForm.patchValue({ passPersona: '', confirmPassPersona: '' });
+        [
+          'nombrePersona', 'apellidosPersona', 'dniPersona', 'fecNacimientoPersona',
+          'passPersona', 'confirmPassPersona'
+        ].forEach(field => this.profileForm.get(field)?.disable());
       },
-      error: (err) => {
+      error: () => {
+        this.successMessage = '';
         this.errorMessage = 'PROFILE.ERROR.CHANGES';
         this.isLoading = false;
       }

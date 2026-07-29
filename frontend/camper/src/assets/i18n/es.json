@@ -180,7 +180,8 @@
       "INVALID_IBAN": "IBAN inválido.",
       "PASSWORDS_MISMATCH": "Las contraseñas no coinciden.",
       "DATA": "No se pudieron cargar los datos del usuario.",
-      "CHANGES": "No se pudieron guardar los cambios. Revisa los datos."
+      "CHANGES": "No se pudieron guardar los cambios. Revisa los datos.",
+      "VALIDATION": "Revisa el formulario: faltan campos obligatorios o hay datos incorrectos."
     },
 
     "CHANGE_PASSWORD": "Cambiar contraseña",
