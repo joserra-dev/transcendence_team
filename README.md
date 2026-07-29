@@ -227,14 +227,12 @@ erDiagram
     users ||--o| profiles : "has profile (1:1)"
     users ||--o{ booking : "makes (1:N)"
     users ||--o{ chat_messages : "sends (1:N)"
-
     company ||--o{ profiles : "employs (1:N)"
     company ||--o{ parking : "owns (1:N)"
+    company ||--o{ invoice_sequences : "manages (1:N)"
     company ||--o{ chat_messages : "receives (1:N)"
-
     parking ||--|{ space : "contains (1:N)"
     parking ||--o{ parking_blocked_day : "has blocked days (1:N)"
-    
     space ||--o{ space_blocked_day : "has blocked days (1:N)"
     space ||--o{ booking : "reserved in (1:N)"
 ```
