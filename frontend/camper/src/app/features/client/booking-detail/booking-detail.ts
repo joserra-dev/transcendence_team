@@ -81,6 +81,23 @@ export class BookingDetail implements OnInit {
     });
   }
 
+  retryPayment() {
+    if (!this.booking) return;
+    this.isLoading = true;
+    this.bookingService.retryPayment(this.booking.id).subscribe({
+      next: (res: any) => {
+        this.isLoading = false;
+        if (res && res.url) {
+          window.location.href = res.url;
+        }
+      },
+      error: (err) => {
+        this.isLoading = false;
+        this.handleError(err, 'HISTORY_DETAIL.ERRORS.RETRY');
+      }
+    });
+  }
+
   private handleCancelSuccess() {
     this.showSuccess('HISTORY_DETAIL.SUCCESS_CANCEL');
     if (this.booking) {
@@ -158,7 +175,9 @@ export class BookingDetail implements OnInit {
   }
 
   getStatusLabel(status: string): string {
-    return status === '1' ? 'HISTORY_DETAIL.CONFIRMED' : 'HISTORY_DETAIL.CANCELLED';
+    if (status === '1') return 'HISTORY_DETAIL.CONFIRMED';
+    if (status === '2') return 'HISTORY_DETAIL.PROCESSING';
+    return 'HISTORY_DETAIL.CANCELLED';
   }
 
   send_bill() {

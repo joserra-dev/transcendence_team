@@ -74,6 +74,15 @@ createBooking(bookingData: BookingRequest): Observable<any> {
   }
 
   /**
+   * Reintentar pago de una reserva en estado PROCESSING
+   */
+  retryPayment(id: number): Observable<any> {
+    return this.http.get<any>(
+      `${this.apiUrl}/booking/retry/${id}`
+    );
+  }
+
+  /**
    * Enviar factura por email
    */
   send_bill(id: string | number): Observable<any> {

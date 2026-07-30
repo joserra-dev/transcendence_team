@@ -23,6 +23,7 @@
     "HISTORY": "Booking history",
     "PROFILE": "My profile",
     "BOOKING_DETAIL": "Booking details",
+    "CANCELLED": "Booking cancelled",
     "DASHBOARD": "Admin dashboard",
     "NEW_PARKING": "New parking",
     "MANAGE_PARKING": "Manage parking",
@@ -284,7 +285,10 @@
     "RATING": "Your rating",
     "LICENSE_PLATE": "Licence plate",
     "DETAILS": "View details and manage",
-    "ERROR_LOADING": "Error loading history."
+    "ERROR_LOADING": "Error loading history.",
+    "PROCESSING": "Processing payment",
+    "EXPIRED": "Expired",
+    "NEW_BOOKING": "Make a new booking"
   },
 
   "HISTORY_DETAIL": {
@@ -305,14 +309,25 @@
     "PLATE": "View Licence plate",
     "LICENSE_PLATE": "Booking licence plate",
     "RATE": "Rate stay",
+    "NEW_BOOKING": "New Booking",
     "CANCEL": "Cancel booking",
+    "PROCESSING": "Processing",
+    "PROCESSING_MSG": "This booking is being processed. It will be automatically cancelled if payment is not completed within 30 minutes.",
+    "CANCEL_PROCESSING": "Cancel processing booking",
+    "PAY_NOW": "Pay now",
     "CANCELLED_MSG": "This booking has been cancelled.",
+    "EXPIRED_MSG": "This booking has expired due to non-payment.",
     "PLATE_TITLE": "Access Licence plate",
     "LOADING_PLATE": "Loading PLATE…",
     "LOADING_DETAIL": "Loading details…",
     "SUCCESS_CANCEL": "Booking cancelled",
     "SUCCESS_RATE": "¡Thank you for rating!",
     "CONFIRM_CANCEL_TITLE": "Confirm cancellation",
+    "CANCELLED_TITLE": "Booking cancelled",
+    "CANCELLED_TEXT": "Your booking has been cancelled. The space is now free for another user.",
+    "PENDING_TITLE": "Payment pending",
+    "PENDING_TEXT": "Your booking is pending payment. You have 30 minutes to complete it. Once the time expires, the booking will be automatically cancelled.",
+    "VIEW_HISTORY": "View history",
     "CONFIRM_CANCEL_TEXT": "Are you sure you want to cancel this booking? This action cannot be undone.",
     "CONFIRM_CANCEL_NO": "No, go back",
     "CONFIRM_CANCEL_YES": "Yes, cancel",
@@ -320,7 +335,8 @@
       "LOADING": "Error loading the booking.",
       "CANCEL": "There was an error while trying to cancel the booking.",
       "RATE": "Error submitting the rating.",
-      "QR": "The QR code could not be retrieved."
+      "QR": "The QR code could not be retrieved.",
+      "RETRY": "Error retrying payment. Please try again."
     }
   },
 

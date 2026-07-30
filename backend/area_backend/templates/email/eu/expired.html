@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="eu">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Erreserva iraungita</title>
+</head>
+<body style="margin: 0; padding: 0; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background-color: #f4f6f8; color: #333333;">
+
+    <table role="presentation" cellspacing="0" cellpadding="0" border="0" align="center" width="100%" style="max-width: 600px; margin: 40px auto; background-color: #ffffff; border-radius: 8px; box-shadow: 0 4px 10px rgba(0,0,0,0.05); overflow: hidden;">
+        
+        <tr>
+            <td style="background-color: #DC2626; padding: 40px 20px; text-align: center;">
+                <div style="font-size: 40px; margin-bottom: 10px;">⏳</div>
+                <h1 style="margin: 0; color: #ffffff; font-size: 26px; font-weight: 700; letter-spacing: -0.5px;">
+                    Erreserva Iraungita
+                </h1>
+                <p style="margin: 5px 0 0 0; color: #FEE2E2; font-size: 14px;">
+                    Erreserba kodea: <strong>#{{ codigo_reserva }}</strong>
+                </p>
+            </td>
+        </tr>
+
+        <tr>
+            <td style="padding: 40px 30px;">
+                <p style="margin: 0 0 16px 0; font-size: 18px; line-height: 1.5; font-weight: 600; color: #111827;">
+                    Kaixo, {{ nombre }}.
+                </p>
+                <p style="margin: 0 0 24px 0; font-size: 16px; line-height: 1.6; color: #4B5563;">
+                    Zure <strong>#{{ codigo_reserva }}</strong> erreserba automatikoki bertan behera utzi da, ez bait da ordainketa <strong>{{ minutos_expiracion }}</strong> minututan amaitu. <strong>{{ detalle_servicio }}</strong> espaioa eta <strong>{{ fecha_reserva }}</strong> datak orain libre daude beste erreserba bat egiteko.
+                </p>
+
+                <table role="presentation" cellspacing="0" cellpadding="0" border="0" align="center" style="margin: 20px auto;">
+                    <tr>
+                        <td style="border-radius: 6px; background-color: #059669; text-align: center;">
+                            <a href="{{ enlace_gestion }}" target="_blank" style="background-color: #059669; border: 1px solid #059669; border-radius: 6px; color: #ffffff; display: inline-block; font-size: 15px; font-weight: 600; line-height: 1; padding: 14px 28px; text-decoration: none; text-transform: uppercase; letter-spacing: 0.5px;">
+                                Erreserba Berria Egin
+                            </a>
+                        </td>
+                    </tr>
+                </table>
+
+                <hr style="border: 0; border-top: 1px solid #E5E7EB; margin: 30px 0;">
+
+                <p style="margin: 0; font-size: 14px; line-height: 1.5; color: #6B7280; text-align: center;">
+                    Akats bat izan dela uste baduzu, ez izan zalantzarik gure talde laguntzarekin harremanetan.
+                </p>
+            </td>
+        </tr>
+
+        <tr>
+            <td style="background-color: #F9FAFB; padding: 24px 30px; text-align: center; font-size: 12px; line-height: 1.5; color: #9CA3AF;">
+                <p style="margin: 0 0 8px 0;">Zure konfiantzagatik eskerrik asko.</p>
+                <p style="margin: 0;">© 2026 Zure Enpresa. Eskubide guztiak erreserbatuta.</p>
+            </td>
+        </tr>
+
+    </table>
+
+</body>
+</html>

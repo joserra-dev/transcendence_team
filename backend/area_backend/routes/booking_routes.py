@@ -356,9 +356,9 @@ def create_booking():
             ],
             mode='payment',
             # Si el pago tiene éxito, Stripe redirigirá primero a Flask para confirmar
-            success_url=f"{os.getenv('URL_BACK')}/api/booking/confirm/{new_booking.id}",
-            # Si cancela el checkout en Stripe, lo mandamos de vuelta al historial de Angular
-            cancel_url=f"{os.getenv('URL_BACK')}/api/booking/stripe-cancel/{new_booking.id}",
+            success_url=f"{os.getenv('URL_BACK', '').rstrip('/')}/api/booking/confirm/{new_booking.id}",
+            # Si cancela el checkout en Stripe, lo mandamos de vuelta a la página de cancelación de Angular
+            cancel_url=f"{os.getenv('URL_BACK', '').rstrip('/')}/api/booking/cancelled/{new_booking.id}",
         )
 
         # Devolvemos un objeto JSON con la URL para que Angular gestione la redirección
@@ -415,30 +415,27 @@ def confirm_booking_payment(booking_id):
     front_url = os.getenv('URL_FRONT').rstrip('/')
     return redirect(f"{front_url}/client/history?status=success")
 
-@booking_bp.route('/api/booking/stripe-cancel/<int:booking_id>', methods=['GET'])
-def stripe_cancel_redirect(booking_id):
+@booking_bp.route('/api/booking/cancelled/<int:booking_id>', methods=['GET'])
+def stripe_cancelled(booking_id):
     """
-    Ruta intermedia para capturar el callback GET de Stripe
+    Ruta intermedia para capturar el callback GET de Stripe cuando el usuario cancela
+    el pago en la pasarela. No cambia el estado de la reserva (queda en PROCESSING)
+    para permitir reintentar el pago sin crear una nueva reserva.
     """
     try:
         booking = Booking.query.get(booking_id)
         if booking and booking.status == BookingStatus.PROCESSING:
-            # Aquí ejecutas tu lógica de cancelación o borrado
-            # Ej: db.session.delete(booking) o cambiar estado a 'Cancelado'
-            booking.status = BookingStatus.PENDING
-            db.session.commit()
-            
-        # Finalmente rediriges al navegador del usuario a tu historial de Angular
-        from flask import redirect
+            pass
+
+        front_url = os.getenv('URL_FRONT').rstrip('/')
+        return redirect(f"{front_url}/client/booking/cancelled/{booking_id}?from=stripe")
+
+    except Exception as e:
+        current_app.logger.error(f"Error en callback de cancelacion: {e}")
         front_url = os.getenv('URL_FRONT').rstrip('/')
         return redirect(f"{front_url}/client/history")
-        
-    except Exception as e:
-        current_app.logger.error(f"Error en callback de cancelación: {e}")
-        front_url = os.getenv('URL_FRONT').rstrip('/')
-        return redirect(f"{front_url}/historial?error=true")
-    
-    
+
+
 @booking_bp.route('/api/booking/cancel', methods=['PUT'])
 @jwt_required()
 def cancel_booking():
@@ -499,6 +496,58 @@ def cancel_booking():
     db.session.commit()
     
     return jsonify({"message": _("Reserva cancelada correctamente")}), 200
+
+@booking_bp.route('/api/booking/retry/<int:booking_id>', methods=['GET'])
+@jwt_required()
+def retry_booking_payment(booking_id):
+    """
+    Reintentar el pago de una reserva en estado PROCESSING.
+    Redirige al usuario a la pasarela de Stripe con una nueva sesión de checkout.
+    """
+    user_id = get_jwt_identity()
+    booking = Booking.query.get(booking_id)
+    if not booking:
+        return jsonify({"error": "Reserva no encontrada"}), 404
+
+    if str(booking.id_user) != str(user_id):
+        return jsonify({"error": _("No tienes permiso para esta reserva")}), 403
+
+    if booking.status != BookingStatus.PROCESSING:
+        return jsonify({"error": "La reserva no está en estado de pago pendiente"}), 400
+
+    if booking.start_date and booking.start_date < date.today():
+        return jsonify({"error": _("No se puede pagar una reserva cuya estancia ya ha comenzado o finalizado")}), 400
+
+    try:
+        stripe.api_key = os.getenv('STRIPE_KEY')
+        parking_name = booking.space.parking.name if booking.space and booking.space.parking else "Parking"
+        space_name = booking.space.name if booking.space else ""
+
+        checkout_session = stripe.checkout.Session.create(
+            payment_method_types=['card'],
+            line_items=[
+                {
+                    'price_data': {
+                        'currency': 'eur',
+                        'product_data': {
+                            'name': f"Reserva Plaza: {space_name} - {parking_name}",
+                            'description': f"Matrícula: {booking.license_plate}",
+                        },
+                        'unit_amount': int(float(booking.total_price) * 100),
+                    },
+                    'quantity': 1,
+                },
+            ],
+            mode='payment',
+            success_url=f"{os.getenv('URL_BACK', '').rstrip('/')}/api/booking/confirm/{booking.id}",
+            cancel_url=f"{os.getenv('URL_BACK', '').rstrip('/')}/api/booking/cancelled/{booking.id}",
+        )
+
+        return jsonify({'url': checkout_session.url}), 200
+
+    except Exception as stripe_exc:
+        current_app.logger.error(f"Error reintentando pasarela Stripe para reserva {booking_id}: {stripe_exc}")
+        return jsonify({"error": "Error interno al inicializar la pasarela de pago"}), 500
 
 @booking_bp.route('/api/booking/rate', methods=['PUT'])
 @jwt_required()

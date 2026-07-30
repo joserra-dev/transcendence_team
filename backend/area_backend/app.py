@@ -36,7 +36,7 @@ REQUIRED_ENV_VARS = [
     'MAIL_USERNAME',
     'MAIL_PASSWORD',
     'SUPER_ADMIN_PASSWORD',
-    'MAIL_DEFAULT_SENDER'
+    'MAIL_DEFAULT_SENDER',
 ]
 
 def check_env_vars():
@@ -241,6 +241,10 @@ with app.app_context():
             seed_database()
         except Exception as e:
             app.logger.error(f" * Error en seed_database: {e}")
+
+    # Iniciar el chequeo de expiración de reservas en segundo plano
+    from utils.booking_expiry_checker import start_expiry_checker
+    start_expiry_checker(app)
 
 # ==========================================
 # 4. ARRANQUE DEL SERVIDOR

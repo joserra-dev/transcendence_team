@@ -4,9 +4,10 @@ from datetime import datetime
 
 class BookingStatus:
     """Constantes para los estados de reserva."""
-    PENDING = '0'      # Pendiente de pago
-    CONFIRMED = '1'    # Pagada/Confirmada
-    PROCESSING = '2'   # En proceso de pago (Stripe)
+    PENDING = '0'       # Pendiente de pago (cancelada por el usuario desde Stripe)
+    CONFIRMED = '1'     # Pagada/Confirmada
+    PROCESSING = '2'    # En proceso de pago (Stripe)
+    CANCELLED = '3'     # Cancelada por el sistema (expirada por falta de pago)
 
 
 class Booking(db.Model):

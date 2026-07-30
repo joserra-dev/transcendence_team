@@ -140,6 +140,16 @@ input[type="date"]::-webkit-calendar-picker-indicator {
     background: rgba($color-error, 0.15);
     color: $color-error;
   }
+
+  &.processing {
+    background: rgba($color-warning, 0.15);
+    color: $color-warning;
+  }
+
+  &.expired {
+    background: rgba($color-error, 0.15);
+    color: $color-error;
+  }
 }
 
 .card-body {
