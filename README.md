@@ -29,7 +29,7 @@ Key highlights (see **Features List** for ownership per feature):
 | **macOS** | `./setup_env_macos.sh` | Requires [Homebrew](https://brew.sh/) first. Run: `chmod +x setup_env_macos.sh && ./setup_env_macos.sh`. Installs Colima, Docker, Docker Compose, and other tooling via `brew`. |
 | **Windows** | `.\setup_env_windows.ps1` | Requires **winget** (Windows 10/11). Run in PowerShell from the repo root. Installs Docker Desktop and other tooling. |
 
-**macOS (recomendation):** [Colima](https://github.com/abiosoft/colima) or Docker Desktop. Recommended Colima setup: `brew install colima docker docker-compose`, then `colima start --cpu 4 --memory 8 --disk 60` (increase `--disk` if you hit “no space left” on build). Check `docker compose version` before continuing. Browsers will warn on the backend self-signed HTTPS cert at `https://localhost:8000` — accept for local dev (see **Known Limitations**).
+**macOS (recommendation):** [Colima](https://github.com/abiosoft/colima) or Docker Desktop. Recommended Colima setup: `brew install colima docker docker-compose`, then `colima start --cpu 4 --memory 8 --disk 60` (increase `--disk` if you hit “no space left” on build). Check `docker compose version` before continuing. Browsers will warn on the backend self-signed HTTPS cert at `https://localhost:8000` — accept for local dev (see **Known Limitations**).
 
 ### Environment Setup
 1. Clone the repository and create the environment file:
@@ -38,7 +38,7 @@ git clone <github.url> "name"
 cd "name"
 make env
 ```
-2. Edit `.env.example` and set at minimum(this is an example):
+2. Edit `.env.example` and set at minimum (this is an example):
 ```
 POSTGRES_USER=defaultdb_user
 POSTGRES_PASSWORD=your_secure_password
@@ -65,11 +65,11 @@ Dev vs prod URLs:
 | Service | Dev URL | Prod URL (Nginx) |
 |---------|---------|------------------|
 | Frontend | http://localhost:4200 | https://localhost:8443 |
-| Backend API| http://localhost:8000/apidocs/ | https://localhost:8000/apidocs/ |
+| Backend API | http://localhost:8000/apidocs/ | https://localhost:8000/apidocs/ |
 | Health | http://localhost:8000/api/status | https://localhost:8000/api/status |
 | PostgreSQL | localhost:5432 | (internal) |
 | Redis | internal | internal |
-| Plate Reader| http://localhost:8000/access-control | https://localhost:8000/access-control |
+| Plate Reader | http://localhost:8000/access-control | https://localhost:8000/access-control |
 
 Replace self-signed certificates and rotate `JWT_SECRET_KEY`, `PUBLIC_API_KEY`, and Stripe credentials before a real deployment.
 
@@ -97,7 +97,7 @@ All AI-generated code and documentation were reviewed, tested, and understood by
 | Member | Role | Responsibilities |
 |--------|------|-----------------|
 | joscastr | Developer, Project Manager, Technical Lead | Backend and frontend contributions, reviews, validation, and integration; **focus:** architecture, booking and search logic, public API, access control (OCR), Docker/backend config, subject compliance |
-| elarrea- | Developer, Project Owner | Backend and frontend contributions, reviews, validation, and integration; **focus:** parking and space management, advanced search, blocked-day calendar, admin chat integration, merge and release integration |
+| elarrea- | Developer, Product Owner (PO) | Backend and frontend contributions, reviews, validation, and integration; **focus:** product vision and backlog, parking and space management, advanced search, blocked-day calendar, admin chat integration, merge and release integration |
 | luisanch | Developer, QA Lead | Backend and frontend contributions, reviews, validation, and integration; **focus:** super-admin and admin UI, WebSockets chat, metrics and dashboards, profile and client booking flows, i18n (ES/EN/EU), friends system, cross-browser QA |
 | mikegonz | Developer, Quality testing | Backend and frontend contributions, reviews, validation, and integration; **focus:** booking and parking routes, Stripe-related booking flow, PDF invoices (WeasyPrint), email templates, parking and profile form UX |
 
@@ -307,40 +307,40 @@ Admin ↔ super-admin chat only (not client **Friend** chat).
 | Feature | Description | Implemented by |
 |---------|-------------|----------------|
 | Registration / Login | Email/password with JWT | joscastr, elarrea- |
-| Email verification | Token-based account activation | joscastr, elarrea-|
-| Password reset | Forgot/reset flow with email | joscastr, elarrea-|
+| Email verification | Token-based account activation | joscastr, elarrea- |
+| Password reset | Forgot/reset flow with email | joscastr, elarrea- |
 | User profile | View and edit profile, avatar URL | luisanch, joscastr |
 | Friends system | Add, list, and remove friends | luisanch, elarrea- |
-| Multilingual UI | ES, EN, EU language switching | joscastr, elarrea-, luisanch, mikegonz|
+| Multilingual UI | ES, EN, EU language switching | joscastr, elarrea-, luisanch, mikegonz |
 | Role-based access | User, company admin, and super-admin routes and backend guards | joscastr, luisanch |
 
 ### Real-time & Integration Features
 | Feature | Description | Implemented by |
 |---------|-------------|----------------|
-| Admin chat (WebSocket) | Flask-SocketIO threads per company; unread counts and live messages (admin ↔ super-admin) | luisanch,joscastr, elarrea- |
+| Admin chat (WebSocket) | Flask-SocketIO threads per company; unread counts and live messages (admin ↔ super-admin) | luisanch, joscastr, elarrea- |
 | Public API | External integrations via `X-API-Key`, rate limiting, and Swagger docs | elarrea-, joscastr |
 
 ### Admin Features
 | Feature | Description | Implemented by |
 |---------|-------------|----------------|
 | Parking management | CRUD for parkings and spaces | joscastr, elarrea-, luisanch |
-| Booking management | Admin list with date/parking/status filters, cancellation, CSV export | joscastr, luisanch, mikegonz, elarrea-, mikegonz |
-| Analytics dashboard | Donut charts, yearly metrics, filtered exports | luisanch,  mikegonz |
+| Booking management | Admin list with date/parking/status filters, cancellation, CSV export | joscastr, luisanch, mikegonz, elarrea- |
+| Analytics dashboard | Donut charts, yearly metrics, filtered exports | luisanch, mikegonz |
 | User administration | Super-admin CRUD for users, roles, and company assignment | luisanch, joscastr, elarrea- |
 | Company management | Super-admin companies CRUD, assign admins, metrics per enterprise | luisanch, joscastr |
-| Organization workflows | Link admins to companies; revoke company access and admin privileges | elearre-, luisanch |
-| Admin chat | REST + WebSocket support threads per company | joscastr, elarrea-, luisanch, mikegonz|
-| Access control (OCR) | License plate verification against active bookings (`/access-control`) | elarrea-|
+| Organization workflows | Link admins to companies; revoke company access and admin privileges | elarrea-, luisanch |
+| Admin chat | REST + WebSocket support threads per company | joscastr, elarrea-, luisanch, mikegonz |
+| Access control (OCR) | License plate verification against active bookings (`/access-control`) | elarrea- |
 
 ### Infrastructure Features
 | Feature | Description | Implemented by |
 |---------|-------------|----------------|
 | Docker deployment | Dev and prod Compose stacks | joscastr, elarrea- |
-| Public API | API-key + rate-limited endpoints | joscastr, elarrea-|
-| Status endpoint | `/api/status` health check | joscastr, elarrea-|
-| Nginx + TLS | Production frontend hosting | joscastr, elarrea-|
+| Public API | API-key + rate-limited endpoints | joscastr, elarrea- |
+| Status endpoint | `/api/status` health check | joscastr, elarrea- |
+| Nginx + TLS | Production frontend hosting | joscastr, elarrea- |
 | Cross-browser QA | Manual testing on Chrome, Firefox, Safari, and Brave | luisanch, mikegonz, elarrea-, joscastr |
-| Privacy / Terms | `/legal/privacy` and `/legal/terms` | luisanch, elarrea-|
+| Privacy / Terms | `/legal/privacy` and `/legal/terms` | luisanch, elarrea- |
 
 ## Modules
 Per the Transcendence subject (`transcendece_en.subject.pdf`): **Major = 2 points**, **Minor = 1 point**, minimum **14 points** required.
@@ -350,7 +350,7 @@ Per the Transcendence subject (`transcendece_en.subject.pdf`): **Major = 2 point
 | 2 | Frontend + Backend Framework | Web | Major | joscastr, elarrea-, mikegonz, luisanch | Angular 20 SPA + Flask REST API, containerized with Docker Compose and Makefile |
 | 2 | Real-time Features (WebSockets) | Web | Major | joscastr, luisanch, elarrea- | Flask-SocketIO for admin chat: unread counts, `new_message`, and `messages_read` events |
 | 2 | User Interaction | Web | Major | luisanch, joscastr, elarrea-, mikegonz | Admin ↔ super-admin chat, editable user profiles, and friends system between client users |
-| 2 | Public API | Web | Major | joscastr, elarrea-| Secured `X-API-Key` access to parking/space data for external apps without sharing DB credentials or full user sessions |
+| 2 | Public API | Web | Major | joscastr, elarrea- | Secured `X-API-Key` access to parking/space data for external apps without sharing DB credentials or full user sessions |
 | 2 | Standard User Management | User Management | Major | joscastr, luisanch, elarrea-, mikegonz | Registration, JWT login, profile update, avatar URL, email verification, password reset; super-admin creates users and assigns roles |
 | 2 | Advanced Analytics Dashboard | Data & Analytics | Major | joscastr, luisanch | Donut charts (bookings by parking, sales by month), year filters, admin booking filters, CSV export, PDF invoices (WeasyPrint) |
 | 2 | Stripe Payment (module of choice) | Modules of Choice | Major | elarrea-, joscastr | Stripe Checkout confirms paid reservations, reduces no-shows, and avoids storing card data (PCI scope) |
@@ -398,7 +398,7 @@ We chose **Stripe Checkout** as our custom **Major** module because camper reser
 ## Individual Contributions
 
 ### joscastr
-**Primary areas**: Product Owner, Technical Lead — backend architecture, booking and search, auth and session security, public/admin API, access control, Docker/HTTPS, subject compliance
+**Primary areas**: Project Manager, Technical Lead — backend architecture, booking and search, auth and session security, public/admin API, access control, Docker/HTTPS, subject compliance
 - **Booking and search**: Parking availability by date range in `Parking.to_dict()` and `GET /api/parking/search` with filters, pagination, and sorting
 - **Booking API**: End-to-end `/api/booking` (create with Stripe Checkout, confirm/cancel callbacks, detail, history, cancel, rate, QR, PDF bill) with space overlap and same-user date overlap rules
 - **License plate and pricing**: Plate-based duplicate rules, stay-day calculation aligned between client and admin, cancel allowed only before the stay starts (user and admin routes)
@@ -415,7 +415,7 @@ We chose **Stripe Checkout** as our custom **Major** module because camper reser
 - **Challenges overcome:** Partial booking overlaps and same-user double bookings → SQL overlap rules and status constants; Stripe/HTTPS in Compose → env URLs and Nginx proxy to TLS backend; JWT “zombie” sessions → guards plus 401 logout; production boot crash from `current_app` at import → module-level logging fix; feature-branch drift on `develop` → frequent syncs and review before merge
 
 ### elarrea-
-**Primary areas**: Full-stack development, integration, reviews
+**Primary areas**: Product Owner (PO), full-stack development, integration, reviews
 - Backend and frontend work on parking search, parking/space management, and blocked-day calendar flows
 - Contributed to registration/login flows, admin chat (REST/WebSocket integration), and booking list behaviour
 - Implemented and reviewed overlap validation behaviour with the team on search and booking paths
