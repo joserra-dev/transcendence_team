@@ -38,7 +38,7 @@ git clone <github.url> "name"
 cd "name"
 make env
 ```
-2. Edit `.env.example` and set at minimum (this is an example):
+2. `make env` creates `.env` interactively (Stripe, mail, DB password, etc.). If you need to change anything later, edit **`.env`** — that is the file Docker and the app read at runtime. Example of the main variables:
 ```
 POSTGRES_USER=defaultdb_user
 POSTGRES_PASSWORD=your_secure_password
@@ -54,7 +54,7 @@ MAIL_DEFAULT_SENDER=your_email@gmail.com
 URL_FRONT=http://localhost:4200
 URL_BACK=https://localhost:8000
 ```
-3. Secrets must stay local and must never be committed. Use `.env.example` as reference.
+3. Secrets must stay local and must never be committed. Use `.env.example` only as a reference template (do not edit it for local setup).
 
 ### Running the Application
 **Development** (recommended): `make dev` — runs `docker compose -f docker-compose.yml -f docker-compose.dev.yml up --build`, starting all services.
