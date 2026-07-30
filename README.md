@@ -1,15 +1,12 @@
 *This project has been created as part of the 42 curriculum by elarrea-, joscastr, luisanch, mikegonz.*
 
 ---
-
 # Hemen-Go Camper Booking Platform
 
 ## Description
-
 Hemen-Go is a full-stack web application for searching, reserving, managing, and validating camper parking spaces. The platform includes a public search experience, authenticated user profiles, booking history, license-plate access control, admin parking management, Stripe payments, email notifications, and multilingual support (Spanish, English, and Basque).
 
 Key highlights (see **Features List** for ownership per feature):
-
 - **Search & booking**: Filters, overlap validation, Stripe checkout, cancellation, and rating.
 - **Users & roles**: Registration, JWT auth, profiles, friends; user, company admin, and super-admin guards.
 - **Organization & analytics**: Companies CRUD, dashboards, CSV/PDF export.
@@ -18,26 +15,30 @@ Key highlights (see **Features List** for ownership per feature):
 ## Instructions
 
 ### Prerequisites
-
 - **Docker** and **Docker Compose** (v2.0+)
 - **Node.js** 20+ and **npm** on the host only if you run the Angular app outside Docker; with `make dev` / `make prod`, Node runs inside the frontend Docker image to install dependencies and build the SPA
 - **Python** 3.12+ (only if running backend outside Docker)
 - Valid SMTP credentials for email verification and password reset
 - Stripe test credentials for the payment flow
 
-**macOS:** [Colima](https://github.com/abiosoft/colima) or Docker Desktop. Recommended Colima setup: `brew install colima docker docker-compose`, then `colima start --cpu 4 --memory 8 --disk 60` (increase `--disk` if you hit “no space left” on build). Check `docker compose version` before continuing. Browsers will warn on the backend self-signed HTTPS cert at `https://localhost:8000` — accept for local dev (see **Known Limitations**).
+**Fresh machine (nothing installed yet):** From the repository root, run the setup script for your OS. Each script checks and installs missing dependencies (Docker, Git, Make, Node.js, Python, etc.) and prints next steps when finished.
+
+| OS | Script | Notes |
+|----|--------|-------|
+| **Linux** | `./setup_env.sh` | Debian/Ubuntu. Run: `chmod +x setup_env.sh && ./setup_env.sh`. Installs Docker, Docker Compose, Git, Make, Node.js, Python, etc. via `apt`. |
+| **macOS** | `./setup_env_macos.sh` | Requires [Homebrew](https://brew.sh/) first. Run: `chmod +x setup_env_macos.sh && ./setup_env_macos.sh`. Installs Colima, Docker, Docker Compose, and other tooling via `brew`. |
+| **Windows** | `.\setup_env_windows.ps1` | Requires **winget** (Windows 10/11). Run in PowerShell from the repo root. Installs Docker Desktop and other tooling. |
+
+**macOS (recomendation):** [Colima](https://github.com/abiosoft/colima) or Docker Desktop. Recommended Colima setup: `brew install colima docker docker-compose`, then `colima start --cpu 4 --memory 8 --disk 60` (increase `--disk` if you hit “no space left” on build). Check `docker compose version` before continuing. Browsers will warn on the backend self-signed HTTPS cert at `https://localhost:8000` — accept for local dev (see **Known Limitations**).
 
 ### Environment Setup
-
 1. Clone the repository and create the environment file:
-
 ```bash
 git clone <github.url> "name"
 cd "name"
 make env
 ```
 2. Edit `.env.example` and set at minimum(this is an example):
-
 ```
 POSTGRES_USER=defaultdb_user
 POSTGRES_PASSWORD=your_secure_password
@@ -53,27 +54,14 @@ MAIL_DEFAULT_SENDER=your_email@gmail.com
 URL_FRONT=http://localhost:4200
 URL_BACK=https://localhost:8000
 ```
-
 3. Secrets must stay local and must never be committed. Use `.env.example` as reference.
 
 ### Running the Application
+**Development** (recommended): `make dev` — runs `docker compose -f docker-compose.yml -f docker-compose.dev.yml up --build`, starting all services.
 
-**Development** (recommended):
-
-```bash
-make dev
-```
-
-This runs `docker compose -f docker-compose.yml -f docker-compose.dev.yml up --build`, starting all services.
-
-**Production-like** (Nginx + HTTPS):
-
-```bash
-make prod
-```
+**Production-like** (Nginx + HTTPS): `make prod`
 
 Dev vs prod URLs:
-
 | Service | Dev URL | Prod URL (Nginx) |
 |---------|---------|------------------|
 | Frontend | http://localhost:4200 | https://localhost:8443 |
@@ -85,22 +73,11 @@ Dev vs prod URLs:
 
 Replace self-signed certificates and rotate `JWT_SECRET_KEY`, `PUBLIC_API_KEY`, and Stripe credentials before a real deployment.
 
-### Stopping the Application
-
-```bash
-make clean
-```
-
-To remove all data (including the database):
-
-```bash
-make fclean
-```
+**Stopping:** `make clean` (stop services); `make fclean` (remove all data, including the database).
 
 ## Resources
 
 ### Documentation and References
-
 - [Angular Documentation](https://angular.dev/) — SPA and admin dashboard.
 - [Flask Documentation](https://flask.palletsprojects.com/) — REST API and routing.
 - [Flask-JWT-Extended](https://flask-jwt-extended.readthedocs.io/), [Flask-SQLAlchemy](https://flask-sqlalchemy.palletsprojects.com/), [Flask-Mailman](https://flask-mailman.readthedocs.io/)
@@ -108,9 +85,7 @@ make fclean
 - [ngx-translate](https://github.com/ngx-translate/core), [EasyOCR](https://github.com/JaidedAI/EasyOCR)
 
 ### AI Usage
-
 AI tools (ChatGPT, GitHub, Copilot) were used during development for:
-
 - **Requirements review**: Mapping features to the Transcendence subject and identifying compliance gaps.
 - **Debugging**: Docker networking, booking overlap validation, and Stripe callback handling.
 - **Code generation**: Boilerplate for Flask routes, Angular components, and SQLAlchemy models.
@@ -119,7 +94,6 @@ AI tools (ChatGPT, GitHub, Copilot) were used during development for:
 All AI-generated code and documentation were reviewed, tested, and understood by the team before inclusion.
 
 ## Team Information
-
 | Member | Role | Responsibilities |
 |--------|------|-----------------|
 | joscastr | Developer, Project Manager, Technical Lead | Backend and frontend contributions, reviews, validation, and integration; **focus:** architecture, booking and search logic, public API, access control (OCR), Docker/backend config, subject compliance |
@@ -130,22 +104,18 @@ All AI-generated code and documentation were reviewed, tested, and understood by
 ## Project Management
 
 ### Work Organization
-
 The team organized work using an informal Scrum-like approach:
-
 - **Task distribution**: Features split by area — authentication, user profile, parking search, booking management, admin panel, public API, and DevOps.
 - **Branching strategy**: Main branch with feature branches; merge conflicts resolved collaboratively.
 - **Code reviews**: Backend routes and frontend flows reviewed by at least one other member before merging.
 - **Regular syncs**: Progress, blockers, and next steps discussed on WhatsApp and tracked in Jira.
 
 ### Tools
-
 - **GitHub**: Version control, pull requests, and code reviews.
 - **Jira**: Task board, sprint planning, backlog, and assignment by feature area.
 - **WhatsApp**, **VS Code**, **Docker Compose**, **Makefile**: Coordination and local environment.
 
 ### Communication
-
 - Daily updates and blockers via **WhatsApp** group chat.
 - Work items, priorities, and status tracked in **Jira/Confluence** (tickets linked to features and PRs where applicable).
 - Weekly syncs to review progress and plan the next sprint.
@@ -153,7 +123,6 @@ The team organized work using an informal Scrum-like approach:
 ## Technical Stack
 
 ### Frontend
-
 | Technology | Version | Purpose |
 |------------|---------|---------|
 | Node.js | 20.x | npm, Angular CLI; dev server and production build (`Dockerfile` `node:20-alpine`) |
@@ -171,7 +140,6 @@ The team organized work using an informal Scrum-like approach:
 **Justification**: Node.js builds the Angular app in Docker; Bootstrap and Font Awesome for UI; ngx-translate for ES/EN/EU; CSS donut charts for admin metrics (`company-metrics`, shared `donut-chart` component).
 
 ### Backend
-
 | Technology | Version | Purpose |
 |------------|---------|---------|
 | Python | 3.12 | Backend runtime (`python:3.12-slim` in Docker) |
@@ -195,7 +163,6 @@ The team organized work using an informal Scrum-like approach:
 **Justification**: Python 3.12 and Flask modularity; SQLAlchemy for relational data; JWT and role guards; Socket.IO for admin chat; Flasgger for API docs; CORS for the SPA; Redis client + Redis server for shared rate limits.
 
 ### Database
-
 | Technology | Version | Purpose |
 |------------|---------|---------|
 | PostgreSQL | 15 | Primary relational database (Docker `postgres:15-alpine`) |
@@ -205,7 +172,6 @@ The team organized work using an informal Scrum-like approach:
 **Justification**: ACID compliance and strong support for booking overlap and the multi-tenant company model; schema bootstrapped in Docker and evolved via SQL migration scripts. Application access uses **Flask-SQLAlchemy** and **psycopg2-binary** (see Backend).
 
 ### Infrastructure
-
 | Technology | Version | Purpose |
 |------------|---------|---------|
 | Docker | — | Containerization of all services |
@@ -338,7 +304,6 @@ Admin ↔ super-admin chat only (not client **Friend** chat).
 | Stripe checkout | Paid confirmation for reservations; redirects handled via `URL_FRONT` / `URL_BACK` | elarrea- |
 
 ### User Features
-
 | Feature | Description | Implemented by |
 |---------|-------------|----------------|
 | Registration / Login | Email/password with JWT | joscastr, elarrea- |
@@ -350,14 +315,12 @@ Admin ↔ super-admin chat only (not client **Friend** chat).
 | Role-based access | User, company admin, and super-admin routes and backend guards | joscastr, luisanch |
 
 ### Real-time & Integration Features
-
 | Feature | Description | Implemented by |
 |---------|-------------|----------------|
 | Admin chat (WebSocket) | Flask-SocketIO threads per company; unread counts and live messages (admin ↔ super-admin) | luisanch,joscastr, elarrea- |
 | Public API | External integrations via `X-API-Key`, rate limiting, and Swagger docs | elarrea-, joscastr |
 
 ### Admin Features
-
 | Feature | Description | Implemented by |
 |---------|-------------|----------------|
 | Parking management | CRUD for parkings and spaces | joscastr, elarrea-, luisanch |
@@ -370,7 +333,6 @@ Admin ↔ super-admin chat only (not client **Friend** chat).
 | Access control (OCR) | License plate verification against active bookings (`/access-control`) | elarrea-|
 
 ### Infrastructure Features
-
 | Feature | Description | Implemented by |
 |---------|-------------|----------------|
 | Docker deployment | Dev and prod Compose stacks | joscastr, elarrea- |
@@ -381,7 +343,6 @@ Admin ↔ super-admin chat only (not client **Friend** chat).
 | Privacy / Terms | `/legal/privacy` and `/legal/terms` | luisanch, elarrea-|
 
 ## Modules
-
 Per the Transcendence subject (`transcendece_en.subject.pdf`): **Major = 2 points**, **Minor = 1 point**, minimum **14 points** required.
 
 | Points | Module | Category | Type | Team member(s) | Justification |
@@ -403,16 +364,13 @@ Per the Transcendence subject (`transcendece_en.subject.pdf`): **Major = 2 point
 **Total: 22 points** (18 Major + 4 Minor; 14 required). Subject bonus beyond 14 pts is capped at **+5** in evaluation.
 
 ### Stripe Payment — module of choice (subject IV.10)
-
 We chose **Stripe Checkout** as our custom **Major** module because camper reservations need reliable online payment before a spot is confirmed.
-
 - **Why this module**: Without payment at booking time, spaces stay blocked by abandoned flows; Stripe matches our B2C model without in-house card storage (PCI).
 - **Technical challenge**: Redirect flow (session → pay on Stripe → confirm/cancel callbacks), booking status transitions, secrets in `.env` across Docker dev/prod.
 - **Value to Hemen-Go**: Confirmed bookings drive metrics, and plate access; reduces no-shows vs unpaid holds.
 - **Why Major (2 pts)**: Backend session creation, confirm routes, frontend booking flow, and error handling — comparable scope to other Majors.
 
 ### Module Implementation Details
-
 | Points | Module | Type | Implementation |
 |--------|--------|------|----------------|
 | 2 | Frontend + Backend Framework | Major | Angular 20 (public, client, admin, auth); Flask blueprints; Docker dev/prod via Makefile |
@@ -430,7 +388,6 @@ We chose **Stripe Checkout** as our custom **Major** module because camper reser
 | 1 | Support for Additional Browsers | Minor | Angular SPA tested on Chrome, Firefox, Safari, and Brave (layout, auth, booking, admin flows) |
 
 ## Known Limitations
-
 - **Development TLS**: Self-signed HTTPS in Docker; Angular dev on HTTP (`make dev`); production-like HTTPS via Nginx (`make prod`).
 - **Friends**: List implemented; **online status** for friends is not implemented.
 - **Access control (OCR)**: Depends on camera quality and lighting; verification page needs API key and parking context in production.
