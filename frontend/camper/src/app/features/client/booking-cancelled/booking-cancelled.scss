@@ -1,0 +1,50 @@
+.booking-cancelled-page {
+  max-width: 600px;
+  margin: 40px auto;
+  padding: 0 20px;
+}
+
+.cancelled-card {
+  background: #ffffff;
+  border-radius: 12px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+  padding: 40px 30px;
+  text-align: center;
+}
+
+.cancelled-icon {
+  margin-bottom: 20px;
+}
+
+h1 {
+  color: #dc3545;
+  font-size: 24px;
+  margin-bottom: 12px;
+}
+
+.cancelled-message {
+  color: #6c757d;
+  font-size: 16px;
+  line-height: 1.6;
+  margin-bottom: 24px;
+}
+
+.booking-summary {
+  background: #f8f9fa;
+  border-radius: 8px;
+  padding: 16px;
+  margin-bottom: 24px;
+  text-align: left;
+
+  p {
+    margin: 6px 0;
+    font-size: 14px;
+  }
+}
+
+.cancelled-actions {
+  display: flex;
+  gap: 12px;
+  justify-content: center;
+  flex-wrap: wrap;
+}

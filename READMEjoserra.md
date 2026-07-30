@@ -1164,3 +1164,81 @@ Python	apt-get install python3...	brew install python@3.12
 PostgreSQL/Redis	apt-get packages	brew install + brew services start
 Platform detection	/etc/os-release	sw_vers + uname
 The script is executable and passes bash -n syntax validation. It also includes a Homebrew prerequisite check at the start, since Homebrew is the foundational package manager on macOS.
+
+### 29/07/26 The booking expiry feature is now implemented. Here's what was changed:
+
+New files
+backend/area_backend/utils/booking_expiry_checker.py — Background thread that runs every 60 seconds, finds bookings in PROCESSING state older than BOOKING_EXPIRY_MINUTES (default 30), and sets them to CANCELLED
+backend/area_backend/templates/email/es/expired.html — Spanish email template for expired booking notification
+backend/area_backend/templates/email/en/expired.html — English email template
+backend/area_backend/templates/email/eu/expired.html — Basque email template
+Modified files
+models/booking.py — Added CANCELLED = '3' state to BookingStatus
+services/email_services.py — Added booking_expired() method that sends the expiry notification email
+app.py — Added BOOKING_EXPIRY_MINUTES to required env vars and starts the expiry checker thread on boot
+How it works
+When a user creates a booking via Stripe checkout, the status is set to PROCESSING ('2')
+The background checker fires every 60 seconds looking for bookings in PROCESSING state older than the configured timeout
+Expired bookings are set to CANCELLED ('3') and the user receives an email notification
+CANCELLED bookings don't block new reservations (overlap queries only check CONFIRMED and PROCESSING)
+Configuration
+Environment variable BOOKING_EXPIRY_MINUTES controls the timeout (default: 30 minutes).
+
+The cancel flow is fully wired up. Here's how it works:
+
+**When the user is at the Stripe Checkout payment page (`checkout.stripe.com/c/pay/...`):**
+- Stripe's built-in **cancel button** (X/back arrow at top-left) is already visible
+- Clicking it redirects to `cancel_url` which is `/api/booking/cancelled/:id`
+
+**The flow:**
+1. Stripe cancel → calls `/api/booking/cancelled/:id` (Flask sets status to PENDING)
+2. Flask redirects to Angular `/client/booking/cancelled/:id`
+3. Angular shows the **`BookingCancelled`** component with booking details + "Make a new booking" button
+
+This means the user has a clear cancel path from the Stripe payment gateway back to your app, where they can see their booking was cancelled and either make a new booking or go back to history.
+
+The cancel flow is fully wired up. Here's how it works:
+
+**When the user is at the Stripe Checkout payment page (`checkout.stripe.com/c/pay/...`):**
+- Stripe's built-in **cancel button** (X/back arrow at top-left) is already visible
+- Clicking it redirects to `cancel_url` which is `/api/booking/cancelled/:id`
+
+**The flow:**
+1. Stripe cancel → calls `/api/booking/cancelled/:id` (Flask sets status to PENDING)
+2. Flask redirects to Angular `/client/booking/cancelled/:id`
+3. Angular shows the **`BookingCancelled`** component with booking details + "Make a new booking" button
+
+This means the user has a clear cancel path from the Stripe payment gateway back to your app, where they can see their booking was cancelled and either make a new booking or go back to history.
+
+All tasks are complete. Here's a summary of everything implemented across this session:
+
+Setup Scripts
+setup_env.sh - Original Linux setup (unchanged)
+setup_env_macos.sh - macOS setup with Homebrew + Colima as primary Docker solution (replaces Docker Desktop)
+setup_env_windows.ps1 - Windows setup with winget + Docker Desktop
+Backend - Booking Expiry
+models/booking.py - Added CANCELLED = '3' state
+utils/booking_expiry_checker.py - Background thread that auto-cancels PROCESSING bookings older than 30 minutes (BOOKING_EXPIRY_MINUTES env var)
+services/email_services.py - Added booking_expired() method
+app.py - Integrated expiry checker on startup
+3 email templates (expired.html) for es/en/eu
+Frontend - Cancel at Payment Gateway
+booking_routes.py - Updated cancel_url to /api/booking/cancelled/:id, renamed Stripe callback route
+booking-detail.html - Added cancel button and status messages for PROCESSING ('2') and EXPIRED ('3') states
+booking-detail.ts - Updated getStatusLabel for PROCESSING
+BookingCancelled component - New Angular page for Stripe cancellation confirmation
+client.routes.ts - Added /client/booking/cancelled/:id route
+Translations - Added CANCELLED_TITLE, CANCELLED_TEXT, VIEW_HISTORY, NEW_BOOKING, PROCESSING, etc. in es/en/eu
+
+All containers are up and running. Here's a summary of the fix:
+
+Root Cause
+The getStatusLabel in history.ts treated any status that's not CONFIRMED ('1') as CANCELLED. PROCESSING ('2') bookings were incorrectly displayed as "Cancelada".
+
+Fixes Applied
+history.ts: getStatusLabel now properly handles PROCESSING ('2') → "En proceso de pago" and EXPIRED ('3') → "Expirada"
+history.html: Added processing and expired CSS class bindings for the status badge
+history.scss: Added .processing (amber/warning color) and .expired (error/red color) badge styles
+booking-detail.html: Added processing class for PROCESSING status badge
+booking-detail.scss: Added .processing badge style
+Translations: Added PROCESSING and EXPIRED keys to HISTORY sections in all 3 languages

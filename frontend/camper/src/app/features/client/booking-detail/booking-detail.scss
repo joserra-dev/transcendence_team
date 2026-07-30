@@ -48,6 +48,11 @@
     background: rgba($color-error, 0.15);
     color: $color-error;
   }
+
+  &.processing {
+    background: rgba($color-warning, 0.15);
+    color: $color-warning;
+  }
 }
 
 .booking-info {

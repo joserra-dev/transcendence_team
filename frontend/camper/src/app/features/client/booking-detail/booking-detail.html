@@ -33,8 +33,10 @@
 
       <span
         class="status"
-        [class.confirmed]="booking.status === '1'"
         [class.cancelled]="booking.status === '0'"
+        [class.confirmed]="booking.status === '1'"
+        [class.processing]="booking.status === '2'"
+        [class.expired]="booking.status === '3'"
       >
         {{ getStatusLabel(booking.status) | translate }}
       </span>
@@ -84,8 +86,24 @@
       </button>
     </div>
 
+    <div class="booking-actions" *ngIf="booking.status === '2'">
+      <p class="cancelled-msg">
+        {{ 'HISTORY_DETAIL.PROCESSING_MSG' | translate }}
+      </p>
+      <button class="btn btn-success" (click)="retryPayment()">
+        {{ 'HISTORY_DETAIL.PAY_NOW' | translate }}
+      </button>
+      <button class="btn btn-danger" (click)="cancelBooking()">
+        {{ 'HISTORY_DETAIL.CANCEL_PROCESSING' | translate }}
+      </button>
+    </div>
+
     <p *ngIf="booking.status === '0'" class="cancelled-msg">
       {{ 'HISTORY_DETAIL.CANCELLED_MSG' | translate }}
+    </p>
+
+    <p *ngIf="booking.status === '3'" class="cancelled-msg">
+      {{ 'HISTORY_DETAIL.EXPIRED_MSG' | translate }}
     </p>
   </div>
 </main>

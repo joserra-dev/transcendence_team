@@ -180,8 +180,30 @@ class EmailService:
 
     # Funcion para enviar el email con la factura en pdf
     @classmethod
+    def booking_expired(cls, destinatario: str, user_name: str, booking_code: str, service_detail: str, booking_date: str, minutos_expiracion: int = 30):
+        actual_locale = get_locale()
+        idioma = actual_locale.language
+        asunto = _("HEMEN-GO - Reserva expirada")
+        html_content = render_template(
+            f'email/{idioma}/expired.html',
+            nombre=user_name,
+            codigo_reserva=booking_code,
+            detalle_servicio=service_detail,
+            fecha_reserva=booking_date,
+            minutos_expiracion=minutos_expiracion,
+            enlace_gestion=os.getenv('URL_BACK', '')
+        )
+        plain_txt = (
+            f"Hola {user_name},\n\n"
+            f"Tu reserva #{booking_code} ha sido cancelada automáticamente\n"
+            f"por no completar el pago en {minutos_expiracion} minutos.\n"
+            f"Servicio: {service_detail}\n"
+            f"Fechas: {booking_date}\n\n"
+            f"Puedes realizar una nueva reserva en: {os.getenv('URL_BACK', '')}"
+        )
+        return cls.base_mail(destinatario, asunto, html_content, plain_txt)
+
+    @classmethod
     def send_bill(cls, destinatario: str, bill: bytes):
         asunto = "HEMEN-GO - PDF factura"
-        
-        
         return cls.attach_mail(destinatario, asunto, "factura.pdf", bill)

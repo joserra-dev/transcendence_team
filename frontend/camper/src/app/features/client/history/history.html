@@ -105,6 +105,8 @@
           <span
             class="status"
             [class.confirmed]="booking.status === '1'"
+            [class.processing]="booking.status === '2'"
+            [class.expired]="booking.status === '3'"
             [class.cancelled]="booking.status === '0'"
           >
             {{ getStatusLabel(booking.status) | translate }}
@@ -146,6 +148,13 @@
             [routerLink]="['/client/booking', booking.id]"
           >
             {{ 'HISTORY.DETAILS' | translate }}
+          </a>
+          <a
+            *ngIf="booking.status === '0' || booking.status === '3'"
+            class="btn btn-success"
+            [routerLink]="['/']"
+          >
+            {{ 'HISTORY.NEW_BOOKING' | translate }}
           </a>
         </div>
 

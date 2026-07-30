@@ -23,6 +23,7 @@
     "HISTORY": "Erreserben historia",
     "PROFILE": "Nire datuak",
     "BOOKING_DETAIL": "Erreserbaren xehetasunak",
+    "CANCELLED": "Erreserba bertan behera utzi",
     "DASHBOARD": "Administrazio panela",
     "NEW_PARKING": "Aparkaleku berria",
     "MANAGE_PARKING": "Aparkalekua kudeatu",
@@ -298,7 +299,10 @@
     "RATING": "Zure balorazioa",
     "LICENSE_PLATE": "Matrikula",
     "DETAILS": "Ikusi xehetasunak eta kudeatu",
-    "ERROR_LOADING": "Errorea historia kargatzean."
+    "ERROR_LOADING": "Errorea historia kargatzean.",
+    "PROCESSING": "Prozesatzen",
+    "EXPIRED": "Iraungita",
+    "NEW_BOOKING": "Egin erreserba berria"
   },
 
   "HISTORY_DETAIL": {
@@ -319,8 +323,14 @@
     "PLATE": "Ikusi Matrikula",
     "LICENSE_PLATE": "Erreserbaren matrikula",
     "RATE": "Baloratu egonaldia",
+    "NEW_BOOKING": "Erreserba berria",
     "CANCEL": "Erreserba bertan behera utzi",
+    "PROCESSING": "Prozesatzen",
+    "PROCESSING_MSG": "Erreserba honek ordainketa osatzeko 30 minutu ditu. Amaitu egingo da ordainketarik egin gabe.",
+    "CANCEL_PROCESSING": "Utzi prozesatzen ari den erreserba",
+    "PAY_NOW": "Orduan ordaindu",
     "CANCELLED_MSG": "Erreserba hau bertan behera utzi da.",
+    "EXPIRED_MSG": "Erreserba hau ordainketarik egin gabe iraungi da.",
     "QR_PLATE": "Sartzeko matriula",
     "LOADING_PLATE": "Matrikula kargatzen...",
     "LOADING_DETAIL": "Xehetasunak kargatzen...",
@@ -330,11 +340,17 @@
     "CONFIRM_CANCEL_TEXT": "Ziur zaude erreserba hau bertan behera utzi nahi duzula? Ekintza hau ezin da desegin.",
     "CONFIRM_CANCEL_NO": "Ez, itzuli",
     "CONFIRM_CANCEL_YES": "Bai, ezeztatu",
+    "CANCELLED_TITLE": "Erreserba bertan behera utzi da",
+    "CANCELLED_TEXT": "Zure erreserba bertan behera utzi da. Espazioa libre dago beste erabiltzaile batentzat.",
+    "PENDING_TITLE": "Ordenazioa ordainketarako zain",
+    "PENDING_TEXT": "Zure erreserba ordainketariko dago. 30 minuto dituzu osatzeko. Denbora iragazten bada, erreserba automatikoki bertan behera utzi da.",
+    "VIEW_HISTORY": "Ikusi historia",
     "ERRORS": {
       "LOADING": "Errorea erreserba kargatzean.",
       "CANCEL": "Errorea gertatu da erreserba bertan behera uzten saiatzean.",
       "RATE": "Errorea balorazioa bidaltzean.",
-      "QR": "Ezin izan da QR kodea lortu."
+      "QR": "Ezin izan da QR kodea lortu.",
+      "RETRY": "Errorea ordainketa berritzean. Saiatu berriro."
     }
   },
 

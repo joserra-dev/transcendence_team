@@ -23,6 +23,7 @@
     "HISTORY": "Historial de reservas",
     "PROFILE": "Mis datos",
     "BOOKING_DETAIL": "Detalle de reserva",
+    "CANCELLED": "Reserva cancelada",
     "DASHBOARD": "Panel de administración",
     "NEW_PARKING": "Nuevo parking",
     "MANAGE_PARKING": "Gestionar parking",
@@ -298,7 +299,10 @@
     "RATING": "Tu valoración",
     "LICENSE_PLATE": "Matrícula",
     "DETAILS": "Ver detalles y gestionar",
-    "ERROR_LOADING": "Error al cargar el historial."
+    "ERROR_LOADING": "Error al cargar el historial.",
+    "PROCESSING": "En proceso de pago",
+    "EXPIRED": "Expirada",
+    "NEW_BOOKING": "Realizar nueva reserva"
   },
 
   "HISTORY_DETAIL": {
@@ -320,13 +324,24 @@
     "LICENSE_PLATE": "Matrícula de la reserva",
     "RATE": "Valorar estancia",
     "CANCEL": "Cancelar reserva",
+    "PROCESSING": "En proceso de pago",
+    "PROCESSING_MSG": "Esta reserva está en proceso de pago. Si no se completa el pago en 30 minutos, se cancelará automáticamente.",
+    "CANCEL_PROCESSING": "Cancelar reserva en proceso",
+    "PAY_NOW": "Pagar ahora",
     "CANCELLED_MSG": "Esta reserva ha sido cancelada.",
+    "EXPIRED_MSG": "Esta reserva ha expirado por falta de pago.",
     "PLATE_TITLE": "Matrícula de acceso",
     "LOADING_PLATE": "Cargando Matricula…",
     "LOADING_DETAIL": "Cargando detalles…",
     "SUCCESS_CANCEL": "Reserva cancelada correctamente.",
     "SUCCESS_RATE": "¡Gracias por tu valoración!",
     "CONFIRM_CANCEL_TITLE": "Confirmar cancelación",
+    "CANCELLED_TITLE": "Reserva cancelada",
+    "CANCELLED_TEXT": "Tu reserva ha sido cancelada. El espacio queda libre para otro usuario.",
+    "PENDING_TITLE": "Reserva pendiente de pago",
+    "PENDING_TEXT": "Tu reserva está pendiente de pago. Dispones de 30 minutos para completarlo. Una vez transcurrido ese plazo, la reserva será cancelada automáticamente.",
+    "VIEW_HISTORY": "Ver historial",
+    "NEW_BOOKING": "Realizar nueva reserva",
     "CONFIRM_CANCEL_TEXT": "¿Estás seguro de que deseas cancelar esta reserva? Esta acción no se puede deshacer.",
     "CONFIRM_CANCEL_NO": "No, volver",
     "CONFIRM_CANCEL_YES": "Sí, cancelar",
@@ -334,7 +349,8 @@
       "LOADING": "Error al cargar la reserva.",
       "CANCEL": "Hubo un error al intentar cancelar la reserva.",
       "RATE": "Error al enviar la valoración.",
-      "QR": "No se pudo obtener el código QR."
+      "QR": "No se pudo obtener el código QR.",
+      "RETRY": "Error al reintentar el pago. Inténtalo de nuevo."
     }
   },
 

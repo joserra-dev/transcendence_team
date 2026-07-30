@@ -1,0 +1,47 @@
+<main class="booking-cancelled-page">
+  <div class="back-row">
+    <a routerLink="/client/history" class="btn btn-secondary">
+      ← {{ 'HISTORY_DETAIL.BACK' | translate }}
+    </a>
+  </div>
+
+  <div class="cancelled-card">
+    <div class="cancelled-icon">
+      <span style="font-size: 48px;">{{ fromStripe ? '⏳' : '❌' }}</span>
+    </div>
+
+    <h1>{{ fromStripe ? ('HISTORY_DETAIL.PENDING_TITLE' | translate) : ('HISTORY_DETAIL.CANCELLED_TITLE' | translate) }}</h1>
+
+    <p class="cancelled-message">
+      {{ fromStripe ? ('HISTORY_DETAIL.PENDING_TEXT' | translate) : ('HISTORY_DETAIL.CANCELLED_TEXT' | translate) }}
+    </p>
+
+    <div *ngIf="isLoading" class="loading-msg">
+      <i class="fa-solid fa-spinner loading-icon"></i>
+      {{ 'HISTORY_DETAIL.LOADING_DETAIL' | translate }}
+    </div>
+
+    <div *ngIf="!isLoading && booking" class="booking-summary">
+      <p><strong>{{ 'HISTORY_DETAIL.REFERENCE' | translate }}:</strong> #{{ booking.id }}</p>
+      <p *ngIf="booking.spaceName">
+        <strong>{{ 'HISTORY_DETAIL.SPOT' | translate }}:</strong> {{ booking.spaceName }}
+      </p>
+      <p *ngIf="booking.startDate && booking.endDate">
+        <strong>{{ 'HISTORY_DETAIL.DATES' | translate }}:</strong>
+        {{ booking.startDate | date:'dd/MM/yyyy' }} – {{ booking.endDate | date:'dd/MM/yyyy' }}
+      </p>
+      <p *ngIf="booking.totalPrice">
+        <strong>{{ 'HISTORY_DETAIL.TOTAL' | translate }}:</strong> {{ booking.totalPrice | currency:'EUR' }}
+      </p>
+    </div>
+
+    <div class="cancelled-actions">
+      <a routerLink="/client/history" class="btn btn-primary">
+        {{ 'HISTORY_DETAIL.VIEW_HISTORY' | translate }}
+      </a>
+      <button class="btn btn-success" (click)="newBooking()">
+        {{ 'HISTORY_DETAIL.NEW_BOOKING' | translate }}
+      </button>
+    </div>
+  </div>
+</main>

@@ -94,7 +94,10 @@ export class History implements OnInit {
   }
 
   getStatusLabel(estado: string): string {
-    return estado === '1' ? 'HISTORY.CONFIRMED' : 'HISTORY.CANCELLED';
+    if (estado === '1') return 'HISTORY.CONFIRMED';
+    if (estado === '2') return 'HISTORY.PROCESSING';
+    if (estado === '3') return 'HISTORY.EXPIRED';
+    return 'HISTORY.CANCELLED';
   }
 
   // Para las fechas del buscador
