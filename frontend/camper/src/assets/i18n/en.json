@@ -140,8 +140,30 @@
       "PASSWORD": "Password"
     },
 
+    "PASSWORD_HINT": "At least 8 characters, one uppercase letter, one lowercase letter, one number, and one special character (@$!%*?&). It cannot include the word \"password\" or parts of your email.",
+
+    "PASSWORD_RULES": {
+      "MIN_LENGTH": "At least 8 characters.",
+      "UPPERCASE": "At least one uppercase letter.",
+      "LOWERCASE": "At least one lowercase letter.",
+      "DIGIT": "At least one number.",
+      "SPECIAL_CHAR": "At least one special character (@$!%*?&).",
+      "FORBIDDEN_WORD": "Cannot contain the word \"password\".",
+      "CONTAINS_EMAIL": "Cannot contain parts of your email address."
+    },
+
     "ERROR": {
       "REQUIRED": "Required.",
+      "REQUIRED_PASSWORD": "Password is required.",
+      "REQUIRED_CONFIRM": "You must confirm your password.",
+      "MIN_LENGTH": "Password must be at least 8 characters.",
+      "FORBIDDEN_WORD": "Password cannot contain the word \"password\".",
+      "CONTAINS_EMAIL": "Password cannot contain parts of your email address.",
+      "UPPERCASE": "Password must contain at least one uppercase letter.",
+      "LOWERCASE": "Password must contain at least one lowercase letter.",
+      "DIGIT": "Password must contain at least one number.",
+      "SPECIAL_CHAR": "Password must contain at least one special character (@$!%*?&).",
+      "INVALID_FORMAT": "Password does not meet the required security format.",
       "INVALID_EMAIL": "Invalid email.",
       "INVALID_DNI_FORMAT": "Invalid format.",
       "INVALID_DNI_LETTER": "Incorrect letter.",

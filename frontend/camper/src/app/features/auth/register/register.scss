@@ -1,5 +1,26 @@
 @use "../../../../styles/abstracts/variables" as *;
 
+.password-rules {
+  list-style: none;
+  padding: 0;
+  margin: $space-xxs 0 0;
+  font-size: .85rem;
+
+  li {
+    display: block;
+    line-height: 1.4;
+    margin-bottom: 0.15rem;
+
+    &.rule-unmet {
+      color: $color-error;
+    }
+
+    &.rule-met {
+      color: $color-grey-main;
+    }
+  }
+}
+
 @media (max-width: $bp-sm) {
   .form-standard {
     max-width: 100%;

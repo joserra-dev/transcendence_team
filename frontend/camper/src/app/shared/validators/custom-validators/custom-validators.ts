@@ -93,7 +93,39 @@ export class CustomValidators {
     };
   }
 
-  // 4. Validar IBAN (Formato ES + 22 dígitos)
+  // 4. Validar contraseña (misma lógica que backend PasswordValidator)
+  static passwordStrength(emailField: string = 'email'): ValidatorFn {
+    return (control: AbstractControl): ValidationErrors | null => {
+      const password = control.value;
+      if (!password) return null;
+
+      const passwordLower = String(password).toLowerCase();
+      const email = control.parent?.get(emailField)?.value ?? '';
+
+      if (passwordLower.includes('password')) {
+        return { passwordForbiddenWord: true };
+      }
+
+      if (email && String(email).includes('@')) {
+        const emailUsername = String(email).split('@')[0].toLowerCase();
+        if (emailUsername && passwordLower.includes(emailUsername)) {
+          return { passwordContainsEmail: true };
+        }
+      }
+
+      if (!/[A-Z]/.test(password)) return { passwordUppercase: true };
+      if (!/[a-z]/.test(password)) return { passwordLowercase: true };
+      if (!/\d/.test(password)) return { passwordDigit: true };
+      if (!/[@$!%*?&]/.test(password)) return { passwordSpecialChar: true };
+
+      const regex = /^(?=.*[A-Z])(?=.*[a-z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/;
+      if (!regex.test(password)) return { passwordInvalidFormat: true };
+
+      return null;
+    };
+  }
+
+  // 5. Validar IBAN (Formato ES + 22 dígitos)
   /*static ibanValido(control: AbstractControl): ValidationErrors | null {
     const iban = control.value;
     const regex = /^ES\d{22}$/;
