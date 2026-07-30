@@ -109,12 +109,15 @@ def _clear_reset_token(usuario: Users) -> None:
 # ==============================================================================
 
 @users_bp.route('', methods=['GET'])
+@jwt_required()
 def obtener_usuarios():
     """
     Obtiene la lista de usuarios o un usuario específico por ID.
     ---
     tags:
       - Usuarios y Perfiles
+    security:
+          - BearerAuth: []
     parameters:
       - name: id
         in: query
@@ -130,16 +133,49 @@ def obtener_usuarios():
       200:
         description: Éxito.
     """
-    user_id = request.args.get('id')
+    try:
+        current_user_id = get_jwt_identity()
+        current_user = Users.query.get(current_user_id)
+        
+        # Validar que el usuario autenticado existe
+        if not current_user:
+            return jsonify({"error": _("Usuario autenticado no existe")}), 401
 
-    if user_id:
-        usuario = Users.query.get(user_id)
-        if usuario:
-            return jsonify(usuario.to_dict()), 200
-        return jsonify({"error": _("Usuario no encontrado")}), 404
+        # Asumimos que la verificación del rol se hace a través del perfil o un campo directo.
+        # Ajusta 'current_user.profile.role' según cómo tengas definido el rol en tu modelo.
+        is_super_admin = (getattr(current_user, 'role', None) == 'SUPER_ADMIN' or 
+                        getattr(getattr(current_user, 'profile', None), 'role', None) == 'SUPER_ADMIN')
 
-    all_users = Users.query.all()
-    return jsonify([u.to_dict() for u in all_users]), 200
+        user_id = request.args.get('id')
+
+        # CASO 1: Se proporcionó un ID específico en los query params
+        if user_id:
+            # Convertimos user_id a entero para comparar con el ID del token
+            try:
+                target_id = int(user_id)
+            except ValueError:
+                return jsonify({"error": _("ID de usuario inválido")}), 400
+
+            # Es el propio usuario O tiene rol SUPER_ADMIN
+            if target_id == int(current_user_id) or is_super_admin:
+                usuario = Users.query.get(target_id)
+                if usuario:
+                    return jsonify(usuario.to_dict()), 200
+                return jsonify({"error": _("Usuario no encontrado")}), 404
+            
+            # No es el mismo usuario ni es SUPER_ADMIN
+            return jsonify({"error": _("No tienes permisos para consultar este usuario")}), 403
+
+        # CASO 2: No se proporcionó ID (solicitud para listar todos los usuarios)
+        if not is_super_admin:
+            return jsonify({"error": _("Se requieren permisos de SUPER_ADMIN para listar usuarios")}), 403
+
+        all_users = Users.query.all()
+        return jsonify([u.to_dict() for u in all_users]), 200
+
+    except Exception as e:
+        # Log del error en producción (ej. current_app.logger.error(e))
+        return jsonify({"error": _("Error interno del servidor")}), 500
 
 
 @users_bp.route('/register', methods=['POST'])
