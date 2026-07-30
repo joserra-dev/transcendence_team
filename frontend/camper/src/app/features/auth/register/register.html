@@ -25,11 +25,24 @@
       <div class="col-md-6 form-group-standard">
         <label for="password" class="form-label-custom">{{ 'REGISTER.FIELDS.PASSWORD' | translate }}</label>
         <input id="password" minlength="8" maxlength="254" type="password" formControlName="password" [class.error-input]="isInvalid('password')">
-        <small class="error-msg-standard" *ngIf="isInvalid('password')">{{ 'REGISTER.ERROR.REQUIRED' | translate }}</small>
+        <small class="error-msg-standard" *ngIf="isInvalid('password') && registerForm.get('password')?.hasError('required')">
+          {{ 'REGISTER.ERROR.REQUIRED_PASSWORD' | translate }}
+        </small>
+        <ul class="password-rules" *ngIf="showPasswordFeedback()">
+          <li
+            *ngFor="let rule of passwordRules"
+            [class.rule-unmet]="!isPasswordRuleMet(rule)"
+            [class.rule-met]="isPasswordRuleMet(rule)">
+            {{ rule.label | translate }}
+          </li>
+        </ul>
       </div>
       <div class="col-md-6 form-group-standard">
         <label for="confirmPassword" class="form-label-custom">{{ 'REGISTER.FIELDS.CONFIRM' | translate }}</label>
-        <input id="confirmPassword" minlength="8" maxlength="254" type="password" formControlName="confirmPassword" [class.error-input]="isInvalid('confirmPassword')">
+        <input id="confirmPassword" minlength="8" maxlength="254" type="password" formControlName="confirmPassword" [class.error-input]="isInvalid('confirmPassword') || (registerForm.hasError('passwordsMismatch') && registerForm.get('confirmPassword')?.touched)">
+        <div class="error-msg-standard" *ngIf="isInvalid('confirmPassword') && registerForm.get('confirmPassword')?.hasError('required')">
+          <small>{{ 'REGISTER.ERROR.REQUIRED_CONFIRM' | translate }}</small>
+        </div>
         <small class="error-msg-standard" *ngIf="registerForm.hasError('passwordsMismatch') && registerForm.get('confirmPassword')?.touched">
           {{ 'REGISTER.ERROR.PASSWORDS_MISMATCH' | translate }}
         </small>

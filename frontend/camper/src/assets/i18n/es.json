@@ -140,8 +140,30 @@
       "PASSWORD": "Contraseña"
     },
 
+    "PASSWORD_HINT": "Mínimo 8 caracteres, una mayúscula, una minúscula, un número y un carácter especial (@$!%*?&). No puede incluir la palabra «password» ni partes de tu email.",
+
+    "PASSWORD_RULES": {
+      "MIN_LENGTH": "Al menos 8 caracteres.",
+      "UPPERCASE": "Al menos una letra mayúscula.",
+      "LOWERCASE": "Al menos una letra minúscula.",
+      "DIGIT": "Al menos un número.",
+      "SPECIAL_CHAR": "Al menos un carácter especial (@$!%*?&).",
+      "FORBIDDEN_WORD": "No puede contener la palabra «password».",
+      "CONTAINS_EMAIL": "No puede contener partes de tu correo electrónico."
+    },
+
     "ERROR": {
       "REQUIRED": "Obligatorio.",
+      "REQUIRED_PASSWORD": "La contraseña es obligatoria.",
+      "REQUIRED_CONFIRM": "Debes confirmar la contraseña.",
+      "MIN_LENGTH": "La contraseña debe tener al menos 8 caracteres.",
+      "FORBIDDEN_WORD": "La contraseña no puede contener la palabra «password».",
+      "CONTAINS_EMAIL": "La contraseña no puede contener partes de tu correo electrónico.",
+      "UPPERCASE": "La contraseña debe contener al menos una letra mayúscula.",
+      "LOWERCASE": "La contraseña debe contener al menos una letra minúscula.",
+      "DIGIT": "La contraseña debe contener al menos un número.",
+      "SPECIAL_CHAR": "La contraseña debe contener al menos un carácter especial (@$!%*?&).",
+      "INVALID_FORMAT": "La contraseña no cumple con el formato de seguridad requerido.",
       "INVALID_EMAIL": "Email inválido.",
       "INVALID_DNI_FORMAT": "Formato incorrecto.",
       "INVALID_DNI_LETTER": "Letra incorrecta.",

@@ -140,8 +140,30 @@
       "PASSWORD": "Pasahitza"
     },
 
+    "PASSWORD_HINT": "Gutxienez 8 karaktere, letra larri bat, letra xehe bat, zenbaki bat eta karaktere berezi bat (@$!%*?&). Ezin du «password» hitza edo zure emailaren zatiak izan.",
+
+    "PASSWORD_RULES": {
+      "MIN_LENGTH": "Gutxienez 8 karaktere.",
+      "UPPERCASE": "Gutxienez letra larri bat.",
+      "LOWERCASE": "Gutxienez letra xehe bat.",
+      "DIGIT": "Gutxienez zenbaki bat.",
+      "SPECIAL_CHAR": "Gutxienez karaktere berezi bat (@$!%*?&).",
+      "FORBIDDEN_WORD": "Ezin du «password» hitza eduki.",
+      "CONTAINS_EMAIL": "Ezin du zure posta elektronikoaren zatiak eduki."
+    },
+
     "ERROR": {
       "REQUIRED": "Derrigorrezkoa.",
+      "REQUIRED_PASSWORD": "Pasahitza derrigorrezkoa da.",
+      "REQUIRED_CONFIRM": "Pasahitza berretsi behar duzu.",
+      "MIN_LENGTH": "Pasahitzak gutxienez 8 karaktere izan behar ditu.",
+      "FORBIDDEN_WORD": "Pasahitzak ezin du «password» hitza eduki.",
+      "CONTAINS_EMAIL": "Pasahitzak ezin du zure posta elektronikoaren zatiak eduki.",
+      "UPPERCASE": "Pasahitzak gutxienez letra larri bat eduki behar du.",
+      "LOWERCASE": "Pasahitzak gutxienez letra xehe bat eduki behar du.",
+      "DIGIT": "Pasahitzak gutxienez zenbaki bat eduki behar du.",
+      "SPECIAL_CHAR": "Pasahitzak gutxienez karaktere berezi bat eduki behar du (@$!%*?&).",
+      "INVALID_FORMAT": "Pasahitzak ez du beharrezko segurtasun-formatua betetzen.",
       "INVALID_EMAIL": "Posta elektroniko baliogabea.",
       "INVALID_DNI_FORMAT": "Formatua okerra.",
       "INVALID_DNI_LETTER": "Letra okerra.",
