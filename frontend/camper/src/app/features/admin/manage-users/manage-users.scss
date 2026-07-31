@@ -81,11 +81,9 @@
 }
 
 .submit-field {
-  &__label {
-    opacity: 0;
-    pointer-events: none;
-    user-select: none;
-  }
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
 
   &__btn {
     width: 100%;
