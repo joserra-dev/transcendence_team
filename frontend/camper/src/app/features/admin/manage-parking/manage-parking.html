@@ -25,51 +25,52 @@
 
       <div class="row g-3">
         <div class="col-12 col-md-6 form-group-standard">
-          <label class="form-label-custom">{{ 'MANAGE_PARKING.NAME' | translate }} *</label>
-          <input type="text" formControlName="nombreParking"
+          <label for="parking-nombre" class="form-label-custom">{{ 'MANAGE_PARKING.NAME' | translate }} *</label>
+          <input id="parking-nombre" type="text" formControlName="nombreParking"
             [class.error-input]="parkingForm.get('nombreParking')?.invalid && parkingForm.get('nombreParking')?.touched">
         </div>
 
         <div class="col-12 col-md-6 form-group-standard">
-          <label class="form-label-custom">{{ 'MANAGE_PARKING.EMAIL' | translate }} *</label>
-          <input type="email" formControlName="emailParking"
+          <label for="parking-email" class="form-label-custom">{{ 'MANAGE_PARKING.EMAIL' | translate }} *</label>
+          <input id="parking-email" type="email" formControlName="emailParking"
              [class.error-input]="parkingForm.get('emailParking')?.invalid && parkingForm.get('emailParking')?.touched">
         </div>
 
         <div class="col-12 col-md-6 form-group-standard">
-          <label class="form-label-custom">{{ 'MANAGE_PARKING.PROVINCE' | translate }}</label>
-          <input type="text" formControlName="provinciaParking">
+          <label for="parking-provincia" class="form-label-custom">{{ 'MANAGE_PARKING.PROVINCE' | translate }}</label>
+          <input id="parking-provincia" type="text" formControlName="provinciaParking">
         </div>
 
         <div class="col-12 col-md-6 form-group-standard">
-          <label class="form-label-custom">{{ 'MANAGE_PARKING.CITY' | translate }} *</label>
-          <input type="text" formControlName="municipioParking"
+          <label for="parking-municipio" class="form-label-custom">{{ 'MANAGE_PARKING.CITY' | translate }} *</label>
+          <input id="parking-municipio" type="text" formControlName="municipioParking"
             [class.error-input]="parkingForm.get('municipioParking')?.invalid && parkingForm.get('municipioParking')?.touched">
         </div>
 
         <div class="col-12 col-md-6 form-group-standard">
-          <label class="form-label-custom">{{ 'MANAGE_PARKING.WEB' | translate }}</label>
-          <input type="text" formControlName="webParking">
+          <label for="parking-web" class="form-label-custom">{{ 'MANAGE_PARKING.WEB' | translate }}</label>
+          <input id="parking-web" type="text" formControlName="webParking">
         </div>
 
         <div class="col-12 col-md-6 form-group-standard">
-          <label class="form-label-custom">{{ 'MANAGE_PARKING.PHONE' | translate }}</label>
-          <input type="text" formControlName="telefonoParking">
+          <label for="parking-telefono" class="form-label-custom">{{ 'MANAGE_PARKING.PHONE' | translate }}</label>
+          <input id="parking-telefono" type="text" formControlName="telefonoParking">
         </div>
 
         <div class="col-12 col-md-6 form-group-standard">
-          <label class="form-label-custom">{{ 'MANAGE_PARKING.LATITUDE' | translate }}</label>
-          <input type="number" step="any" formControlName="latitudParking">
+          <label for="parking-latitud" class="form-label-custom">{{ 'MANAGE_PARKING.LATITUDE' | translate }}</label>
+          <input id="parking-latitud" type="number" step="any" formControlName="latitudParking">
         </div>
 
         <div class="col-12 col-md-6 form-group-standard">
-          <label class="form-label-custom">{{ 'MANAGE_PARKING.LONGITUDE' | translate }}</label>
-          <input type="number" step="any" formControlName="longitudParking">
+          <label for="parking-longitud" class="form-label-custom">{{ 'MANAGE_PARKING.LONGITUDE' | translate }}</label>
+          <input id="parking-longitud" type="number" step="any" formControlName="longitudParking">
         </div>
 
         <div class="col-12 form-group-standard">
-          <label class="form-label-custom">{{ 'MANAGE_PARKING.DESCRIPTION' | translate }}</label>
+          <label for="parking-descripcion" class="form-label-custom">{{ 'MANAGE_PARKING.DESCRIPTION' | translate }}</label>
           <textarea
+            id="parking-descripcion"
             formControlName="descripcionParking"
             maxlength="254"
             rows="4"
@@ -195,18 +196,18 @@
             </div>
             
             <div class="form-group-standard">
-              <label class="form-label-custom">{{ 'MANAGE_PARKING.SPOT_NAME' | translate }}</label>
-              <input type="text" formControlName="nombre">
+              <label for="spot-nombre" class="form-label-custom">{{ 'MANAGE_PARKING.SPOT_NAME' | translate }}</label>
+              <input id="spot-nombre" type="text" formControlName="nombre">
             </div>
 
             <div class="form-group-standard">
-              <label class="form-label-custom">{{ 'MANAGE_PARKING.PRICE' | translate }}</label>
-              <input type="number" formControlName="precio">
+              <label for="spot-precio" class="form-label-custom">{{ 'MANAGE_PARKING.PRICE' | translate }}</label>
+              <input id="spot-precio" type="number" formControlName="precio">
             </div>
 
             <div class="form-group-standard">
-              <label class="form-label-custom">{{ 'MANAGE_PARKING.STATUS' | translate }}</label>
-              <select formControlName="estado">
+              <label for="spot-estado" class="form-label-custom">{{ 'MANAGE_PARKING.STATUS' | translate }}</label>
+              <select id="spot-estado" formControlName="estado">
                 <option value="0">{{ 'MANAGE_PARKING.FREE' | translate }}</option>
                 <option value="1">{{ 'MANAGE_PARKING.OCCUPIED' | translate }}</option>
               </select>
