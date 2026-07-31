@@ -10,8 +10,10 @@
     >
       <div class="search-bar">
         <div class="search-field date">
+          <label for="history-startDate" class="visually-hidden">{{ 'HISTORY.START_DATE' | translate }}</label>
           <i class="fa-regular fa-calendar"></i>
           <input
+            id="history-startDate"
             type="date"
             formControlName="startDate"
             (click)="openDatePicker($event)"
@@ -23,8 +25,10 @@
 
 
         <div class="search-field date">
+          <label for="history-endDate" class="visually-hidden">{{ 'HISTORY.END_DATE' | translate }}</label>
           <i class="fa-regular fa-calendar"></i>
           <input
+            id="history-endDate"
             type="date"
             formControlName="endDate"
             (click)="openDatePicker($event)"
@@ -35,8 +39,10 @@
 
 
         <div class="search-field">
+          <label for="history-parking" class="visually-hidden">{{ 'HISTORY.PARKING' | translate }}</label>
           <i class="fa-solid fa-location-dot"></i>
           <input
+            id="history-parking"
             type="text"
             formControlName="nombreParking"
             placeholder="{{ 'HISTORY.PARKING' | translate }}"
@@ -46,9 +52,10 @@
         <div class="divider"></div>
 
         <div class="search-field select-field">
+          <label for="history-status" class="visually-hidden">{{ 'HISTORY.STATUS' | translate }}</label>
           <i class="fa-solid fa-flag"></i>
 
-          <select formControlName="estado" class="search-select">
+          <select id="history-status" formControlName="estado" class="search-select">
             <option value="">{{ 'HISTORY.ALL' | translate }}</option>
             <option value="1">{{ 'HISTORY.CONFIRMED' | translate }}</option>
             <option value="0">{{ 'HISTORY.CANCELLED' | translate }}</option>

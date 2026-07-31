@@ -291,6 +291,9 @@
   "HISTORY": {
     "TITLE": "Historial de reservas",
     "PARKING": "Parking",
+    "START_DATE": "Fecha desde",
+    "END_DATE": "Fecha hasta",
+    "STATUS": "Estado",
     "ALL": "Todos",
     "CONFIRMED": "Confirmada",
     "CANCELLED": "Cancelada",

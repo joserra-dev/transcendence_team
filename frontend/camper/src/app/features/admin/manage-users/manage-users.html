@@ -21,9 +21,9 @@
   <section class="create-form" *ngIf="showForm">
     <h2>{{ 'ADMIN_USERS.CREATE_TITLE' | translate }}</h2>
     <form [formGroup]="userForm" (ngSubmit)="createUser()" class="form-grid">
-      <label>
+      <label for="create-email">
         {{ 'ADMIN_USERS.EMAIL' | translate }}
-        <input type="email" formControlName="email" [attr.maxlength]="maxFieldLength" />
+        <input id="create-email" type="email" formControlName="email" [attr.maxlength]="maxFieldLength" />
         <small class="error-msg-standard" *ngIf="showFieldError(userForm, 'email', 'email')">
           {{ 'ADMIN_USERS.VALIDATION.INVALID_EMAIL' | translate }}
         </small>
@@ -31,30 +31,30 @@
           {{ 'ADMIN_USERS.VALIDATION.MAX_LENGTH_35' | translate }}
         </small>
       </label>
-      <label>
+      <label for="create-password">
         {{ 'ADMIN_USERS.PASSWORD' | translate }}
-        <input type="password" formControlName="password" [attr.maxlength]="maxFieldLength" />
+        <input id="create-password" type="password" formControlName="password" [attr.maxlength]="maxFieldLength" />
         <small class="error-msg-standard" *ngIf="showFieldError(userForm, 'password', 'maxlength')">
           {{ 'ADMIN_USERS.VALIDATION.MAX_LENGTH_35' | translate }}
         </small>
       </label>
-      <label>
+      <label for="name">
         {{ 'ADMIN_USERS.NAME' | translate }}
-        <input type="text" formControlName="nombre" [attr.maxlength]="maxFieldLength" />
+        <input id="name" type="text" formControlName="nombre" [attr.maxlength]="maxFieldLength" />
         <small class="error-msg-standard" *ngIf="showFieldError(userForm, 'nombre', 'maxlength')">
           {{ 'ADMIN_USERS.VALIDATION.MAX_LENGTH_35' | translate }}
         </small>
       </label>
-      <label>
+      <label for="create-lastname">
         {{ 'ADMIN_USERS.LASTNAME' | translate }}
-        <input type="text" formControlName="apellidos" [attr.maxlength]="maxFieldLength" />
+        <input id="create-lastname" type="text" formControlName="apellidos" [attr.maxlength]="maxFieldLength" />
         <small class="error-msg-standard" *ngIf="showFieldError(userForm, 'apellidos', 'maxlength')">
           {{ 'ADMIN_USERS.VALIDATION.MAX_LENGTH_35' | translate }}
         </small>
       </label>
-      <label>
+      <label for="create-dni">
         {{ 'ADMIN_USERS.DNI' | translate }}
-        <input type="text" formControlName="dni" maxlength="9" />
+        <input id="create-dni" type="text" formControlName="dni" maxlength="9" />
         <small class="error-msg-standard" *ngIf="showFieldError(userForm, 'dni', 'dniFormato')">
           {{ 'ADMIN_USERS.VALIDATION.INVALID_DNI_FORMAT' | translate }}
         </small>
@@ -62,24 +62,23 @@
           {{ 'ADMIN_USERS.VALIDATION.INVALID_DNI_FORMAT' | translate }}
         </small>
       </label>
-      <label>
+      <label for="create-role">
         {{ 'ADMIN_USERS.ROLE' | translate }}
-        <select formControlName="role">
+        <select id="create-role" formControlName="role">
           <option value="user">{{ 'ADMIN_USERS.ROLE_USER' | translate }}</option>
           <option value="admin">{{ 'ADMIN_USERS.ROLE_ADMIN' | translate }}</option>
         </select>
       </label>
-      <label *ngIf="userForm.get('role')?.value === 'admin'">
+      <label for="create-company" *ngIf="userForm.get('role')?.value === 'admin'">
         {{ 'ADMIN_USERS.COMPANY' | translate }}
-        <select formControlName="companyId">
+        <select id="create-company" formControlName="companyId">
           <option [ngValue]="null">{{ 'ADMIN_USERS.SELECT_COMPANY' | translate }}</option>
           <option *ngFor="let company of companies" [ngValue]="company.id">{{ company.name }}</option>
         </select>
       </label>
-      <label class="submit-field">
-        <span class="submit-field__label" aria-hidden="true">{{ 'ADMIN_USERS.ROLE' | translate }}</span>
+      <div class="submit-field">
         <button class="btn btn-primary submit-field__btn" type="submit">{{ 'ADMIN_USERS.SAVE' | translate }}</button>
-      </label>
+      </div>
     </form>
   </section>
 
@@ -87,9 +86,9 @@
 
   <section class="users-section" *ngIf="!isLoading">
     <div class="table-filters">
-      <label>
+      <label for="filter-role">
         {{ 'ADMIN_USERS.FILTER_ROLE' | translate }}
-        <select [(ngModel)]="filterRole" [ngModelOptions]="{standalone: true}">
+        <select id="filter-role" [(ngModel)]="filterRole" [ngModelOptions]="{standalone: true}">
           <option [ngValue]="'all'">{{ 'ADMIN_USERS.FILTER_ROLE_ALL' | translate }}</option>
           <option [ngValue]="'super_admin'">{{ 'ADMIN_USERS.ROLE_SUPER' | translate }}</option>
           <option [ngValue]="'admin'">{{ 'ADMIN_USERS.ROLE_ADMIN' | translate }}</option>
@@ -97,17 +96,17 @@
         </select>
       </label>
 
-      <label>
+      <label for="filter-company">
         {{ 'ADMIN_USERS.FILTER_COMPANY' | translate }}
-        <select [(ngModel)]="filterCompanyId" [ngModelOptions]="{standalone: true}">
+        <select id="filter-company" [(ngModel)]="filterCompanyId" [ngModelOptions]="{standalone: true}">
           <option [ngValue]="'all'">{{ 'ADMIN_USERS.FILTER_COMPANY_ALL' | translate }}</option>
           <option *ngFor="let company of companies" [ngValue]="company.id">{{ company.name }}</option>
         </select>
       </label>
 
-      <label>
+      <label for="filter-sort">
         {{ 'ADMIN_USERS.SORT' | translate }}
-        <select [(ngModel)]="sortOrder" [ngModelOptions]="{standalone: true}">
+        <select id="filter-sort" [(ngModel)]="sortOrder" [ngModelOptions]="{standalone: true}">
           <option [ngValue]="'asc'">{{ 'ADMIN_USERS.SORT_ASC' | translate }}</option>
           <option [ngValue]="'desc'">{{ 'ADMIN_USERS.SORT_DESC' | translate }}</option>
         </select>
@@ -191,9 +190,9 @@
 
         <section class="user-card-expanded" *ngIf="editingUserId === user.id">
           <form [formGroup]="editForm" (ngSubmit)="saveUser()" class="form-grid edit-form">
-            <label>
+            <label [attr.for]="'edit-m-email-' + user.id">
               {{ 'ADMIN_USERS.EMAIL' | translate }}
-              <input type="email" formControlName="email" [attr.maxlength]="maxFieldLength" />
+              <input [id]="'edit-m-email-' + user.id" type="email" formControlName="email" [attr.maxlength]="maxFieldLength" />
               <small class="error-msg-standard" *ngIf="showFieldError(editForm, 'email', 'email')">
                 {{ 'ADMIN_USERS.VALIDATION.INVALID_EMAIL' | translate }}
               </small>
@@ -201,30 +200,30 @@
                 {{ 'ADMIN_USERS.VALIDATION.MAX_LENGTH_35' | translate }}
               </small>
             </label>
-            <label>
+            <label [attr.for]="'edit-m-password-' + user.id">
               {{ 'ADMIN_USERS.PASSWORD' | translate }}
-              <input type="password" formControlName="password" [placeholder]="'ADMIN_COMPANIES.PASSWORD_OPTIONAL' | translate" [attr.maxlength]="maxFieldLength" />
+              <input [id]="'edit-m-password-' + user.id" type="password" formControlName="password" [placeholder]="'ADMIN_COMPANIES.PASSWORD_OPTIONAL' | translate" [attr.maxlength]="maxFieldLength" />
               <small class="error-msg-standard" *ngIf="showFieldError(editForm, 'password', 'maxlength')">
                 {{ 'ADMIN_USERS.VALIDATION.MAX_LENGTH_35' | translate }}
               </small>
             </label>
-            <label>
+            <label [attr.for]="'edit-m-name-' + user.id">
               {{ 'ADMIN_USERS.NAME' | translate }}
-              <input type="text" formControlName="nombre" [attr.maxlength]="maxFieldLength" />
+              <input [id]="'edit-m-name-' + user.id" type="text" formControlName="nombre" [attr.maxlength]="maxFieldLength" />
               <small class="error-msg-standard" *ngIf="showFieldError(editForm, 'nombre', 'maxlength')">
                 {{ 'ADMIN_USERS.VALIDATION.MAX_LENGTH_35' | translate }}
               </small>
             </label>
-            <label>
+            <label [attr.for]="'edit-m-lastname-' + user.id">
               {{ 'ADMIN_USERS.LASTNAME' | translate }}
-              <input type="text" formControlName="apellidos" [attr.maxlength]="maxFieldLength" />
+              <input [id]="'edit-m-lastname-' + user.id" type="text" formControlName="apellidos" [attr.maxlength]="maxFieldLength" />
               <small class="error-msg-standard" *ngIf="showFieldError(editForm, 'apellidos', 'maxlength')">
                 {{ 'ADMIN_USERS.VALIDATION.MAX_LENGTH_35' | translate }}
               </small>
             </label>
-            <label>
+            <label [attr.for]="'edit-m-dni-' + user.id">
               {{ 'ADMIN_USERS.DNI' | translate }}
-              <input type="text" formControlName="dni" maxlength="9" />
+              <input [id]="'edit-m-dni-' + user.id" type="text" formControlName="dni" maxlength="9" />
               <small class="error-msg-standard" *ngIf="showFieldError(editForm, 'dni', 'dniFormato')">
                 {{ 'ADMIN_USERS.VALIDATION.INVALID_DNI_FORMAT' | translate }}
               </small>
@@ -232,16 +231,16 @@
                 {{ 'ADMIN_USERS.VALIDATION.INVALID_DNI_FORMAT' | translate }}
               </small>
             </label>
-            <label>
+            <label [attr.for]="'edit-m-role-' + user.id">
               {{ 'ADMIN_USERS.ROLE' | translate }}
-              <select formControlName="role">
+              <select [id]="'edit-m-role-' + user.id" formControlName="role">
                 <option value="user">{{ 'ADMIN_USERS.ROLE_USER' | translate }}</option>
                 <option value="admin">{{ 'ADMIN_USERS.ROLE_ADMIN' | translate }}</option>
               </select>
             </label>
-            <label *ngIf="editForm.get('role')?.value === 'admin'">
+            <label [attr.for]="'edit-m-company-' + user.id" *ngIf="editForm.get('role')?.value === 'admin'">
               {{ 'ADMIN_USERS.COMPANY' | translate }}
-              <select formControlName="companyId">
+              <select [id]="'edit-m-company-' + user.id" formControlName="companyId">
                 <option [ngValue]="null">{{ 'ADMIN_USERS.SELECT_COMPANY' | translate }}</option>
                 <option *ngFor="let company of companies" [ngValue]="company.id">{{ company.name }}</option>
               </select>
@@ -258,9 +257,9 @@
         <section class="user-card-expanded" *ngIf="promotingUserId === user.id">
           <div class="promote-form">
             <p>{{ 'ADMIN_USERS.PROMOTE_DESC' | translate }}</p>
-            <label>
+            <label [attr.for]="'promote-m-company-' + user.id">
               {{ 'ADMIN_USERS.COMPANY' | translate }}
-              <select [(ngModel)]="promoteCompanyId" [ngModelOptions]="{standalone: true}">
+              <select [id]="'promote-m-company-' + user.id" [(ngModel)]="promoteCompanyId" [ngModelOptions]="{standalone: true}">
                 <option [ngValue]="null">{{ 'ADMIN_USERS.SELECT_COMPANY' | translate }}</option>
                 <option *ngFor="let company of companies" [ngValue]="company.id">{{ company.name }}</option>
               </select>
@@ -348,9 +347,9 @@
             <tr *ngIf="editingUserId === user.id" class="expanded-row">
               <td colspan="6">
                 <form [formGroup]="editForm" (ngSubmit)="saveUser()" class="form-grid edit-form">
-                  <label>
+                  <label [attr.for]="'edit-d-email-' + user.id">
                     {{ 'ADMIN_USERS.EMAIL' | translate }}
-                    <input type="email" formControlName="email" [attr.maxlength]="maxFieldLength" />
+                    <input [id]="'edit-d-email-' + user.id" type="email" formControlName="email" [attr.maxlength]="maxFieldLength" />
                     <small class="error-msg-standard" *ngIf="showFieldError(editForm, 'email', 'email')">
                       {{ 'ADMIN_USERS.VALIDATION.INVALID_EMAIL' | translate }}
                     </small>
@@ -358,30 +357,30 @@
                       {{ 'ADMIN_USERS.VALIDATION.MAX_LENGTH_35' | translate }}
                     </small>
                   </label>
-                  <label>
+                  <label [attr.for]="'edit-d-password-' + user.id">
                     {{ 'ADMIN_USERS.PASSWORD' | translate }}
-                    <input type="password" formControlName="password" [placeholder]="'ADMIN_COMPANIES.PASSWORD_OPTIONAL' | translate" [attr.maxlength]="maxFieldLength" />
+                    <input [id]="'edit-d-password-' + user.id" type="password" formControlName="password" [placeholder]="'ADMIN_COMPANIES.PASSWORD_OPTIONAL' | translate" [attr.maxlength]="maxFieldLength" />
                     <small class="error-msg-standard" *ngIf="showFieldError(editForm, 'password', 'maxlength')">
                       {{ 'ADMIN_USERS.VALIDATION.MAX_LENGTH_35' | translate }}
                     </small>
                   </label>
-                  <label>
+                  <label [attr.for]="'edit-d-name-' + user.id">
                     {{ 'ADMIN_USERS.NAME' | translate }}
-                    <input type="text" formControlName="nombre" [attr.maxlength]="maxFieldLength" />
+                    <input [id]="'edit-d-name-' + user.id" type="text" formControlName="nombre" [attr.maxlength]="maxFieldLength" />
                     <small class="error-msg-standard" *ngIf="showFieldError(editForm, 'nombre', 'maxlength')">
                       {{ 'ADMIN_USERS.VALIDATION.MAX_LENGTH_35' | translate }}
                     </small>
                   </label>
-                  <label>
+                  <label [attr.for]="'edit-d-lastname-' + user.id">
                     {{ 'ADMIN_USERS.LASTNAME' | translate }}
-                    <input type="text" formControlName="apellidos" [attr.maxlength]="maxFieldLength" />
+                    <input [id]="'edit-d-lastname-' + user.id" type="text" formControlName="apellidos" [attr.maxlength]="maxFieldLength" />
                     <small class="error-msg-standard" *ngIf="showFieldError(editForm, 'apellidos', 'maxlength')">
                       {{ 'ADMIN_USERS.VALIDATION.MAX_LENGTH_35' | translate }}
                     </small>
                   </label>
-                  <label>
+                  <label [attr.for]="'edit-d-dni-' + user.id">
                     {{ 'ADMIN_USERS.DNI' | translate }}
-                    <input type="text" formControlName="dni" maxlength="9" />
+                    <input [id]="'edit-d-dni-' + user.id" type="text" formControlName="dni" maxlength="9" />
                     <small class="error-msg-standard" *ngIf="showFieldError(editForm, 'dni', 'dniFormato')">
                       {{ 'ADMIN_USERS.VALIDATION.INVALID_DNI_FORMAT' | translate }}
                     </small>
@@ -389,16 +388,16 @@
                       {{ 'ADMIN_USERS.VALIDATION.INVALID_DNI_FORMAT' | translate }}
                     </small>
                   </label>
-                  <label>
+                  <label [attr.for]="'edit-d-role-' + user.id">
                     {{ 'ADMIN_USERS.ROLE' | translate }}
-                    <select formControlName="role">
+                    <select [id]="'edit-d-role-' + user.id" formControlName="role">
                       <option value="user">{{ 'ADMIN_USERS.ROLE_USER' | translate }}</option>
                       <option value="admin">{{ 'ADMIN_USERS.ROLE_ADMIN' | translate }}</option>
                     </select>
                   </label>
-                  <label *ngIf="editForm.get('role')?.value === 'admin'">
+                  <label [attr.for]="'edit-d-company-' + user.id" *ngIf="editForm.get('role')?.value === 'admin'">
                     {{ 'ADMIN_USERS.COMPANY' | translate }}
-                    <select formControlName="companyId">
+                    <select [id]="'edit-d-company-' + user.id" formControlName="companyId">
                       <option [ngValue]="null">{{ 'ADMIN_USERS.SELECT_COMPANY' | translate }}</option>
                       <option *ngFor="let company of companies" [ngValue]="company.id">{{ company.name }}</option>
                     </select>
@@ -417,9 +416,9 @@
               <td colspan="6">
                 <div class="promote-form">
                   <p>{{ 'ADMIN_USERS.PROMOTE_DESC' | translate }}</p>
-                  <label>
+                  <label [attr.for]="'promote-d-company-' + user.id">
                     {{ 'ADMIN_USERS.COMPANY' | translate }}
-                    <select [(ngModel)]="promoteCompanyId" [ngModelOptions]="{standalone: true}">
+                    <select [id]="'promote-d-company-' + user.id" [(ngModel)]="promoteCompanyId" [ngModelOptions]="{standalone: true}">
                       <option [ngValue]="null">{{ 'ADMIN_USERS.SELECT_COMPANY' | translate }}</option>
                       <option *ngFor="let company of companies" [ngValue]="company.id">{{ company.name }}</option>
                     </select>

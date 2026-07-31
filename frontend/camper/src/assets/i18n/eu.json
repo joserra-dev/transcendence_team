@@ -291,6 +291,9 @@
   "HISTORY": {
     "TITLE": "Erreserben historia",
     "PARKING": "Aparkalekua",
+    "START_DATE": "Hasiera-data",
+    "END_DATE": "Amaiera-data",
+    "STATUS": "Egoera",
     "ALL": "Guztiak",
     "CONFIRMED": "Berretsita",
     "CANCELLED": "Ezeztatuta",
