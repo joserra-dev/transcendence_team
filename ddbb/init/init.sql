@@ -166,7 +166,9 @@ CREATE TABLE public.booking (
     license_plate character varying(15) NOT NULL,
     total_price double precision NOT NULL,
     customer_email character varying(255),
-    customer_name character varying(255)
+    customer_name character varying(255),
+    stripe_session_id character varying(255),
+    confirm_token character varying(64)
 );
 ALTER TABLE public.booking OWNER TO defaultdb_user;
 

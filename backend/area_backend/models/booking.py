@@ -31,6 +31,8 @@ class Booking(db.Model):
     total_price = db.Column(db.Float, nullable=False, default=0.0)
     user = db.relationship('Users', back_populates='bookings')
     space = db.relationship('Space', back_populates='bookings_rel')
+    stripe_session_id = db.Column(db.String(255), nullable=True)
+    confirm_token = db.Column(db.String(64), nullable=True, unique=True)
 
     def to_dict(self):
         return {

@@ -1,9 +1,9 @@
-import logging
 from flask import Blueprint, jsonify, request, redirect, current_app
 from flask_jwt_extended import jwt_required, get_jwt_identity
 from flask_babel import gettext as _
 from datetime import datetime, date
 import os
+import uuid
 import stripe
 
 from database import db
@@ -294,11 +294,13 @@ def create_booking():
     
     if same_vehicle_overlap:
         return jsonify({"error": _("Ya existe una reserva para esta matrícula en las fechas seleccionadas. Usa otra matrícula o cambia las fechas.")}), 400
+
     spot_overlap = Booking.query.filter(
-    Booking.id_space == id_space,
-    Booking.start_date < endDate,
-    Booking.end_date > startDate,
-    Booking.status.in_([BookingStatus.CONFIRMED, BookingStatus.PROCESSING])).first()
+        Booking.id_space == id_space,
+        Booking.start_date < endDate,
+        Booking.end_date > startDate,
+        Booking.status.in_([BookingStatus.CONFIRMED, BookingStatus.PROCESSING])
+    ).first()
     
     if spot_overlap:
         return jsonify({"error": _("Existe una reserva en para esta plaza")}), 400
@@ -312,13 +314,14 @@ def create_booking():
         parking = space.parking if space else None
         total_price = 0.0
         if space:
-            # Facturación por noche: la salida es el día siguiente a la entrada.
             days = (endDate - startDate).days
             total_price = days * float(space.price or 0)
     except Exception:
         total_price = 0.0
 
-    # Creamos la reserva guardándola en BBDD en estado transitorio ('pendiente')
+    # 1. Generamos un token secreto único e imposible de adivinar (UUID4)
+    confirm_token = str(uuid.uuid4())
+
     booking_user = Users.query.get(user_id)
     new_booking = Booking(
         id_user=int(user_id),
@@ -327,18 +330,19 @@ def create_booking():
         end_date=endDate,
         status=BookingStatus.PROCESSING,
         license_plate=licensePlate.upper() if licensePlate else "",
-        total_price=total_price
+        total_price=total_price,
+        confirm_token=confirm_token 
     )
     apply_customer_snapshot(new_booking, booking_user)
     db.session.add(new_booking)
     db.session.commit()
 
     try:
-        # Creamos la pasarela de Stripe Checkout mandándole el id único de esta reserva recién creada
         stripe.api_key = os.getenv('STRIPE_KEY')
         parking_name = parking.name if parking else "Parking"
         space_name = space.name if space else ""
         
+        # 2. Incluimos el token en la success_url como parámetro de consulta (?token=...)
         checkout_session = stripe.checkout.Session.create(
             payment_method_types=['card'],
             line_items=[
@@ -355,17 +359,16 @@ def create_booking():
                 },
             ],
             mode='payment',
-            # Si el pago tiene éxito, Stripe redirigirá primero a Flask para confirmar
-            success_url=f"{os.getenv('URL_BACK', '').rstrip('/')}/api/booking/confirm/{new_booking.id}",
-            # Si cancela el checkout en Stripe, lo mandamos de vuelta a la página de cancelación de Angular
+            success_url=f"{os.getenv('URL_BACK', '').rstrip('/')}/api/booking/confirm/{new_booking.id}?token={confirm_token}",
             cancel_url=f"{os.getenv('URL_BACK', '').rstrip('/')}/api/booking/cancelled/{new_booking.id}",
         )
 
-        # Devolvemos un objeto JSON con la URL para que Angular gestione la redirección
+        new_booking.stripe_session_id = checkout_session.id
+        db.session.commit()
+
         return jsonify({'url': checkout_session.url}), 200
 
     except Exception as stripe_exc:
-        # Eliminamos el registro de la reserva que acabamos de crear
         try:
             db.session.delete(new_booking)
             db.session.commit()
@@ -380,39 +383,62 @@ def create_booking():
 @booking_bp.route('/api/booking/confirm/<int:booking_id>', methods=['GET'])
 def confirm_booking_payment(booking_id):
     """
-    Endpoint intermedio encargado de capturar el éxito de Stripe,
-    actualizar la base de datos a estado activo, despachar el email y devolver al usuario a Angular.
+    Endpoint intermedio encargado de validar la sesión de Stripe y el token secreto de seguridad,
+    actualizar la BBDD a estado CONFIRMED, enviar email y redirigir a Angular.
     """
+    front_url = os.getenv('URL_FRONT', '').rstrip('/')
+    token_recibido = request.args.get('token')
+    
     booking = Booking.query.get(booking_id)
     if not booking:
-        return "Reserva no encontrada", 404
-        
-    if booking.status == BookingStatus.PROCESSING:
-        # Confirmamos el estado de la reserva en base de datos
-        booking.status = BookingStatus.CONFIRMED
-        db.session.commit()
-        
-        # Despachamos el correo electrónico de confirmación de manera segura ahora que está pagado
-        try:
-            user = Users.query.get(booking.id_user)
-            space = booking.space
-            parking = space.parking if space else None
-            if user and parking:
-                management_url = f"{os.getenv('URL_FRONT').rstrip('/')}/client/booking/{booking.id}"
-                EmailService.booking(
-                    destinatario=user.email,
-                    user_name=user.profile.name if user.profile else user.email,
-                    booking_code=str(booking.id),
-                    service_detail=f"{parking.name} - {space.name if space else ''}",
-                    booking_date=f"{booking.start_date} a {booking.end_date}",
-                    total_paid=f"{booking.total_price:.2f}€",
-                    management_url=management_url
-                )
-        except Exception as exc:
-            current_app.logger.error(f"Error enviando correo de confirmación de reserva pagada: {exc}")
+        return redirect(f"{front_url}/client/history?error=not_found")
 
-    # Redireccionamos el navegador del usuario al frontend de Angular
-    front_url = os.getenv('URL_FRONT').rstrip('/')
+    if not booking.confirm_token or booking.confirm_token != token_recibido:
+        current_app.logger.warning(f"Intento no autorizado de confirmación en la reserva ID: {booking_id}")
+        return redirect(f"{front_url}/client/history?error=unauthorized")
+
+    # Si ya estaba confirmada previamente, redirigimos limpiamente
+    if booking.status == BookingStatus.CONFIRMED:
+        return redirect(f"{front_url}/client/history?status=success")
+
+    if booking.status == BookingStatus.PROCESSING:
+        try:
+            # 1. VERIFICACIÓN DE ESTADO EN STRIPE
+            stripe.api_key = os.getenv('STRIPE_KEY')
+            if hasattr(booking, 'stripe_session_id') and booking.stripe_session_id:
+                session = stripe.checkout.Session.retrieve(booking.stripe_session_id)
+                
+                if session.payment_status != 'paid':
+                    return redirect(f"{front_url}/client/history?error=payment_not_completed")
+
+            # 2. Confirmamos el estado de la reserva en la BBDD
+            booking.status = BookingStatus.CONFIRMED
+            db.session.commit()
+            
+            # 3. Despachamos el correo electrónico de confirmación
+            try:
+                user = Users.query.get(booking.id_user)
+                space = booking.space
+                parking = space.parking if space else None
+                if user and parking:
+                    management_url = f"{front_url}/client/booking/{booking.id}"
+                    EmailService.booking(
+                        destinatario=user.email,
+                        user_name=user.profile.name if user.profile else user.email,
+                        booking_code=str(booking.id),
+                        service_detail=f"{parking.name} - {space.name if space else ''}",
+                        booking_date=f"{booking.start_date} a {booking.end_date}",
+                        total_paid=f"{booking.total_price:.2f}€",
+                        management_url=management_url
+                    )
+            except Exception as exc:
+                current_app.logger.error(f"Error enviando correo de confirmación: {exc}")
+
+        except Exception as stripe_err:
+            db.session.rollback()
+            current_app.logger.error(f"Error al verificar pago en Stripe para la reserva {booking_id}: {stripe_err}")
+            return redirect(f"{front_url}/client/history?error=verification_failed")
+
     return redirect(f"{front_url}/client/history?status=success")
 
 @booking_bp.route('/api/booking/cancelled/<int:booking_id>', methods=['GET'])
