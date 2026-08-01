@@ -84,30 +84,16 @@
     </div>
 
     <div class="action-buttons">
-      <button type="button"
-        *ngIf="!isEditing"
-        (click)="enableEdit()"
-        class="btn btn-primary button-wide">
-        {{ 'PROFILE.BUTTONS.EDIT' | translate }}
+      <button type="submit"
+              class="btn btn-primary button-wide btn-save"
+              [disabled]="profileForm.invalid || isLoading">
+        {{ isLoading ? ('PROFILE.BUTTONS.SAVING' | translate) : ('PROFILE.BUTTONS.SAVE' | translate) }}
       </button>
-
-      <div *ngIf="isEditing" class="edit-buttons">
-        <button type="button" class="btn btn-secondary button-wide" (click)="cancelEdit()">
-          {{ 'PROFILE.BUTTONS.CANCEL' | translate }}
-        </button>
-
-        <button type="submit"
-                class="btn btn-primary button-wide btn-save"
-                [disabled]="profileForm.invalid || isLoading">
-          {{ isLoading ? ('PROFILE.BUTTONS.SAVING' | translate) : ('PROFILE.BUTTONS.SAVE' | translate) }}
-        </button>
-      </div>
 
       <div *ngIf="isLoading" class="loading-msg">
         <i class="fa-solid fa-spinner loading-icon"></i>
         {{ 'PROFILE.LOADING' | translate }}
       </div>
-
     </div>
   </form>
 </div>

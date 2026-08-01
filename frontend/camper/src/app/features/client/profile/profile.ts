@@ -1,6 +1,6 @@
 import { Component, OnInit, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { FormBuilder, FormGroup, ReactiveFormsModule, Validators, AbstractControl, ValidationErrors } from '@angular/forms';
+import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { UserService } from '../../../core/services/user';
 import { User } from '../../../core/models/user';
 import { CustomValidators } from '../../../shared/validators/custom-validators/custom-validators';
@@ -19,19 +19,18 @@ export class Profile implements OnInit {
   
   currentUser: User | null = null;
   isLoading = true;
-  isEditing = false;
   successMessage = '';
   errorMessage = '';
 
   profileForm: FormGroup = this.fb.group({
-    dniPersona: [{ value: '', disabled: true }],
+    dniPersona: [''],
     emailPersona: [{ value: '', disabled: true }],
-    nombrePersona: [{ value: '', disabled: true }, Validators.required],
-    apellidosPersona: [{ value: '', disabled: true }, Validators.required],
-    fecNacimientoPersona: [{ value: '', disabled: true }, [Validators.required, CustomValidators.mayorDeEdad]],
+    nombrePersona: ['', Validators.required],
+    apellidosPersona: ['', Validators.required],
+    fecNacimientoPersona: ['', [Validators.required, CustomValidators.mayorDeEdad]],
     tarjeta: [{ value: '', disabled: true }],
-    passPersona: [{ value: '', disabled: true }],
-    confirmPassPersona: [{ value: '', disabled: true }]
+    passPersona: [''],
+    confirmPassPersona: ['']
   }, {
     validators: [
       CustomValidators.matchPasswords('passPersona', 'confirmPassPersona'),
@@ -56,42 +55,6 @@ export class Profile implements OnInit {
         this.isLoading = false;
       }
     });
-  }
-
-  
-  enableEdit() {
-    this.isEditing = true;
-    this.successMessage = '';
-    this.errorMessage = '';
-    // Habilitamos todos los campos editables
-    [
-      'nombrePersona', 'apellidosPersona','dniPersona' ,'fecNacimientoPersona',
-      'passPersona', 'confirmPassPersona'
-    ].forEach(field => this.profileForm.get(field)?.enable());
-  }
-
-  cancelEdit() {
-    this.isEditing = false;
-    this.errorMessage = '';
-    this.successMessage = '';
-
-    if (this.currentUser) {
-      this.profileForm.reset({
-        dniPersona: this.currentUser.dniPersona,
-        emailPersona: this.currentUser.emailPersona,
-        nombrePersona: this.currentUser.nombrePersona,
-        apellidosPersona: this.currentUser.apellidosPersona,
-        fecNacimientoPersona: this.currentUser.fecNacimientoPersona,
-        passPersona: '',
-        confirmPassPersona: ''
-      });
-    }
-
-    // Deshabilitamos todos los campos editables al cancelar
-    [
-      'nombrePersona', 'apellidosPersona', 'dniPersona' ,'fecNacimientoPersona',
-      'passPersona', 'confirmPassPersona'
-    ].forEach(field => this.profileForm.get(field)?.disable());
   }
 
   saveChanges() {
@@ -121,13 +84,8 @@ export class Profile implements OnInit {
         };
         this.currentUser = updatedUser;
         sessionStorage.setItem('user', JSON.stringify(updatedUser));
-        this.isEditing = false;
         this.isLoading = false;
         this.profileForm.patchValue({ passPersona: '', confirmPassPersona: '' });
-        [
-          'nombrePersona', 'apellidosPersona', 'dniPersona', 'fecNacimientoPersona',
-          'passPersona', 'confirmPassPersona'
-        ].forEach(field => this.profileForm.get(field)?.disable());
       },
       error: () => {
         this.successMessage = '';
