@@ -19,32 +19,6 @@
   }
 }
 
-// BOTONES CANCELAR/GUARDAR
-.edit-buttons {
-  display: flex;
-  gap: 1rem;
-  margin-top: 1rem;
-
-  button {
-    flex: 1;
-  }
-
-  @media (max-width: $bp-sm) {
-    flex-direction: column;
-  }
-}
-
-/*.parking-card {
-    background: $color-white;
-    border: 1px solid $color-border;
-    border-radius: $radius-md;
-    padding: 1.2rem;
-    box-shadow: $shadow-soft;
-    display: flex;
-    flex-direction: column;
-    gap: 0.8rem;
-}*/
-
 .profile-avatar-preview {
   width: clamp(72px, 20vw, 96px);
   height: clamp(72px, 20vw, 96px);
@@ -72,11 +46,7 @@
     margin-top: 2.1rem;
   }
 
-  .edit-buttons .btn {
-    margin-top: $space-lg;
-  }
-
-  .edit-buttons .btn-save {
+  .action-buttons .btn-save {
     margin-top: $space-sm;
   }
 }
