@@ -9,7 +9,8 @@
     "DASHBOARD": "Administrazio panela",
     "HISTORY": "Erreserben historia",
     "LOGOUT": "Irten",
-    "CLOSE": "Itxi"
+    "CLOSE": "Itxi",
+    "LANGUAGE": "Hizkuntza"
   },
 
   "BREADCRUMB": {
@@ -673,6 +674,7 @@
     "PRICE": "Prezioa",
     "FEATURES": "Ezaugarriak",
     "STATUS": "Egoera",
+    "ACTIONS": "Ekintzak",
     "FREE": "Libre",
     "OCCUPIED": "Okupatuta",
     "EDIT_SPOT": "Editatu",

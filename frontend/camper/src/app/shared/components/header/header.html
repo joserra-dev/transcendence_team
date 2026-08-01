@@ -24,7 +24,9 @@
 
           <a routerLink="/" class="nav-link-desktop">{{ 'HEADER.SEARCH' | translate }}</a>
 
+          <label for="header-lang-desktop" class="visually-hidden">{{ 'HEADER.LANGUAGE' | translate }}</label>
           <select
+            id="header-lang-desktop"
             [ngModel]="languageService.currentLang()"
             (ngModelChange)="onLangChange($event)"
             class="lang-selector">
@@ -62,7 +64,9 @@
   <!-- MENÚ MÓVIL LATERAL -->
   <div class="mobile-menu" [class.open]="mobileMenuOpen">
 
+    <label for="header-lang-mobile" class="visually-hidden">{{ 'HEADER.LANGUAGE' | translate }}</label>
     <select
+      id="header-lang-mobile"
       [ngModel]="languageService.currentLang()"
       (ngModelChange)="onLangChange($event)"
       class="lang-selector mobile-lang">

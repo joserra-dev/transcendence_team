@@ -9,7 +9,8 @@
     "DASHBOARD": "Admin Dashboard",
     "HISTORY": "Booking history",
     "LOGOUT": "Logout",
-    "CLOSE": "Close"
+    "CLOSE": "Close",
+    "LANGUAGE": "Language"
   },
 
   "BREADCRUMB": {
@@ -678,6 +679,7 @@
     "PRICE": "Price",
     "FEATURES": "Features",
     "STATUS": "Status",
+    "ACTIONS": "Actions",
     "FREE": "Free",
     "OCCUPIED": "Maintenance",
     "EDIT_SPOT": "Edit",
