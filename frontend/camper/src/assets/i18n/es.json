@@ -9,7 +9,8 @@
     "DASHBOARD": "Panel de Admin",
     "HISTORY": "Historial de reservas",
     "LOGOUT": "Cerrar sesión",
-    "CLOSE": "Cerrar"
+    "CLOSE": "Cerrar",
+    "LANGUAGE": "Idioma"
   },
 
   "BREADCRUMB": {
@@ -677,6 +678,7 @@
     "PRICE": "Precio",
     "FEATURES": "Características",
     "STATUS": "Estado",
+    "ACTIONS": "Acciones",
     "FREE": "Libre",
     "OCCUPIED": "Mantenimiento",
     "EDIT_SPOT": "Editar",

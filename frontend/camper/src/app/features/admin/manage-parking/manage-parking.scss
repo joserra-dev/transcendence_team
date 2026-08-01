@@ -44,14 +44,18 @@
       display: block;
       margin-top: 0.25rem;
       text-align: right;
-      color: $color-grey-soft;
+      color: $color-grey-main;
       font-size: 0.85rem;
+    }
+
+    .form-label-custom {
+      color: $color-grey-main;
     }
   }
 }
 
 .free {
-  color: $color-success;
+  color: #3d7a2e;
   font-weight: $font-weight-semibold;
 }
 
@@ -140,7 +144,7 @@
 
 .plazas-table th {
   font-weight: $font-weight-semibold;
-  color: $color-grey-soft;
+  color: $color-grey-main;
 }
 
 .table-wrapper {
