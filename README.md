@@ -4,7 +4,7 @@
 # Hemen-Go Camper Booking Platform
 
 ## Description
-Hemen-Go is a full-stack web application for searching, reserving, managing, and validating camper parking spaces. The platform includes a public search experience, authenticated user profiles, booking history, license-plate access control, admin parking management, Stripe payments, email notifications, and multilingual support (Spanish, English, and Basque).
+Hemen-Go is a full-stack web application for searching, reserving, managing, and validating camper parking spaces. The platform includes a public search experience, authenticated user profiles, booking history, license-plate access control, admin parking management, Stripe payments, email notifications and multilingual support (Spanish, English, and Basque).
 
 Key highlights (see **Features List** for ownership per feature):
 - **Search & booking**: Filters, overlap validation, Stripe checkout, cancellation, and rating.
@@ -21,7 +21,7 @@ Key highlights (see **Features List** for ownership per feature):
 - Valid SMTP credentials for email verification and password reset
 - Stripe test credentials for the payment flow
 
-**Fresh machine (nothing installed yet):** From the repository root, run the setup script for your OS. Each script checks and installs missing dependencies (Docker, Git, Make, Node.js, Python, etc.) and prints next steps when finished.
+**On fresh machine (if nothing is installed yet):** From the repository root, run the setup script for your OS. Each script checks and installs missing dependencies (Docker, Git, Make, Node.js, Python, etc.) and prints next steps when finished.
 
 | OS | Script | Notes |
 |----|--------|-------|
@@ -38,7 +38,7 @@ git clone <github.url> "name"
 cd "name"
 make env
 ```
-2. `make env` creates `.env` interactively (Stripe, mail, DB password, etc.). If you need to change anything later, edit **`.env`** — that is the file Docker and the app read at runtime. Example of the main variables:
+2. `make env` creates `.env` interactively (Stripe, mail, DB password, etc.). If you need to change anything later, edit **`.env`** — (this is the file Docker and the app read at runtime). Example of the main variables:
 ```
 POSTGRES_USER=defaultdb_user
 POSTGRES_PASSWORD=your_secure_password
@@ -53,13 +53,14 @@ MAIL_PASSWORD=your_app_password
 MAIL_DEFAULT_SENDER=your_email@gmail.com
 URL_FRONT=http://localhost:4200
 URL_BACK=https://localhost:8000
+SUPER_ADMIN_PASSWORD=super_admin_pass
 ```
 3. Secrets must stay local and must never be committed. Use `.env.example` only as a reference template (do not edit it for local setup).
 
 ### Running the Application
-**Development** (recommended): `make dev` — runs `docker compose -f docker-compose.yml -f docker-compose.dev.yml up --build`, starting all services.
+**For Development mode**: (HTTP): `make dev` — runs `docker compose -f docker-compose.yml -f docker-compose.dev.yml up --build`, starting all services.
 
-**Production-like** (Nginx + HTTPS): `make prod`
+**For production-like mode** (Nginx + HTTPS): `make prod`
 
 Dev vs prod URLs:
 | Service | Dev URL | Prod URL (Nginx) |
