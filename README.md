@@ -18,8 +18,10 @@ Key highlights (see **Features List** for ownership per feature):
 - **Docker** and **Docker Compose** (v2.0+)
 - **Node.js** 20+ and **npm** on the host only if you run the Angular app outside Docker; with `make dev` / `make prod`, Node runs inside the frontend Docker image to install dependencies and build the SPA
 - **Python** 3.12+ (only if running backend outside Docker)
-- Valid SMTP credentials for email verification and password reset
-- Stripe test credentials for the payment flow
+- Valid SMTP credentials for email verification and password reset:
+Requires a Google/Gmail account. You must enable Two-Factor Authentication (2FA) and generate an App Password from your Google Account settings (Security > How you sign in to Google > App passwords). Use this generated key along with your email address, which will be requested interactively during setup to configure the .env file.
+- Stripe test credentials for the payment flow:
+Requires a Stripe account. Register at Stripe, toggle the "Test mode" switch in the dashboard, and navigate to Developers > API keys to copy your Secret Key (sk_test_...). This key will be requested interactively during setup to populate the .env file 
 
 **On fresh machine (if nothing is installed yet):** From the repository root, run the setup script for your OS. Each script checks and installs missing dependencies (Docker, Git, Make, Node.js, Python, etc.) and prints next steps when finished.
 
