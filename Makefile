@@ -262,7 +262,7 @@ env:
 		echo -e "$(COLOR_GREEN)PUBLIC_API_KEY generada automáticamente$(COLOR_RESET)"; \
 		read -p "Stripe Key [sk_test_...]: " stripe; \
 		echo "STRIPE_KEY=$$stripe" >> .env; \
-		echo "MAIL_SERVER=smtp.gmail.com" >> .https://github.com/joserra-dev/transcendence_teamenv; \
+		echo "MAIL_SERVER=smtp.gmail.com" >> .env; \
 		echo "MAIL_PORT=587" >> .env; \
 		echo "MAIL_USE_TLS=True" >> .env; \
 		read -p "MAIL_USERNAME: " user; \
