@@ -118,18 +118,19 @@
 
   <div class="controls-row" *ngIf="pageData && pageData.total > 0">
     <div class="sort-controls">
-      <label for="sort-field">{{ 'ORDENAR POR:' | translate }}</label>
+      <label for="sort-field">{{ 'SEARCH.SORT.LABEL' | translate }}</label>
       <select id="sort-field" class="form-select form-select-sm" (change)="changeSort($any($event.target).value)">
-        <option value="name">{{ 'NOMBRE' | translate }}</option>
-        <option value="municipality">{{ 'MUNICIPIO' | translate }}</option>
-        <option value="province">{{ 'PROVINCIA' | translate }}</option>
-        <option value="latitude">{{ 'LATITUD' | translate }}</option>
+        <option value="name">{{ 'SEARCH.SORT.NAME' | translate }}</option>
+        <option value="municipality">{{ 'SEARCH.SORT.MUNICIPALITY' | translate }}</option>
+        <option value="province">{{ 'SEARCH.SORT.PROVINCE' | translate }}</option>
+        <option value="latitude">{{ 'SEARCH.SORT.LATITUDE' | translate }}</option>
       </select>
     </div>
   </div>
 
   <h2 class="results-title" *ngIf="parkings.length > 0">
-    {{ searchForm.value.localidad || ('SEARCH.ALL' | translate) }}:
+    <ng-container *ngIf="searchForm.value.localidad; else allLabel">{{ searchForm.value.localidad }}</ng-container>
+    <ng-template #allLabel>{{ 'SEARCH.ALL' | translate }}</ng-template>:
     <span>{{ pageData?.total || 0 }} {{ 'SEARCH.RESULTS' | translate }}</span>
   </h2>
 
@@ -166,8 +167,8 @@
             </ng-container>
           </p>
           
-          <p class="description small-text" *ngIf="parking?.description">
-            {{ parking.description }}
+          <p class="description small-text" *ngIf="getDescription(parking)">
+            {{ getDescription(parking) }}
           </p>
         </div>
 
@@ -195,11 +196,11 @@
 
   <nav class="pagination-bar" *ngIf="pageData && pageData.pages > 1">
     <button class="btn btn-outline-secondary btn-sm" (click)="previousPage()" [disabled]="currentPage === 1">
-      {{ 'PAGE.PREV' | translate }}
+      {{ 'SEARCH.PAGE.PREV' | translate }}
     </button>
-    <span class="page-indicator">{{ 'PAGE.OF' | translate }} {{ pageData.pages }}</span>
+    <span class="page-indicator">{{ 'SEARCH.PAGE.OF' | translate }} {{ pageData.pages }}</span>
     <button class="btn btn-outline-secondary btn-sm" (click)="nextPage()" [disabled]="currentPage === pageData.pages">
-      {{ 'PAGE.NEXT' | translate }}
+      {{ 'SEARCH.PAGE.NEXT' | translate }}
     </button>
   </nav>
 </div>

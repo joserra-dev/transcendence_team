@@ -63,9 +63,9 @@
           <img src="/images/fotos/camper1.jpg" alt="Parking" (click)="openGallery(0)">
         </div>
 
-        <div class="services" *ngIf="parking.description">
+        <div class="services" *ngIf="getDescription()">
           <h2 class="section-title">{{ 'PARKING.DESCRIPTION' | translate }}</h2>
-          <p style="white-space: pre-line; color: #555; line-height: 1.6;">{{ parking.description }}</p>
+          <p style="white-space: pre-line; color: #555; line-height: 1.6;">{{ getDescription() }}</p>
         </div>
 
         <div class="services">

@@ -1,4 +1,4 @@
-import { Component, OnInit, OnDestroy, inject } from '@angular/core';
+import { Component, OnInit, OnDestroy, inject, ChangeDetectorRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormBuilder, FormGroup, ReactiveFormsModule } from '@angular/forms';
 import { RouterLink } from '@angular/router';
@@ -19,6 +19,7 @@ export class SearchParking implements OnInit, OnDestroy {
   private parkingService = inject(ParkingService);
   private fb = inject(FormBuilder);
   private translate = inject(TranslateService);
+  private cdr = inject(ChangeDetectorRef);
 
   parkings: Parking[] = [];
   pageData: ParkingPage | null = null;
@@ -45,6 +46,7 @@ export class SearchParking implements OnInit, OnDestroy {
   ngOnInit() {
     this.langFormatSub = this.translate.onLangChange.subscribe((event) => {
       this.dateformatdefine(event.lang);
+      this.cdr.detectChanges();
     });
     this.dateformatdefine(this.translate.currentLang || this.translate.defaultLang || 'es');
 
@@ -229,6 +231,12 @@ export class SearchParking implements OnInit, OnDestroy {
         });
       }
     }
+  }
+
+  getDescription(parking: Parking): string {
+    const key = `PARKING.DESCRIPTIONS.${parking.id}`;
+    const translated = this.translate.instant(key);
+    return translated !== key ? translated : (parking.description || '');
   }
 
   getServices(parking: Parking): string[] {

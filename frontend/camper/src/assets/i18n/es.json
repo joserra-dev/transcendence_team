@@ -245,6 +245,8 @@
       "DESC": "Descendente"
     },
     "PAGE": {
+      "PREV": "Anterior",
+      "NEXT": "Siguiente",
       "OF": "de"
     },
     "ERRORS": {
@@ -267,6 +269,11 @@
     "SUCCESS": "¡Reserva realizada con éxito!",
     "LOCATIONOF":"Ubicación de",
     "DESCRIPTION":"Descripción",
+    "DESCRIPTIONS": {
+      "1": "Estupendo parking frente a los acantilados de La Galea.",
+      "2": "Ubicación privilegiada en la costa vasca.",
+      "3": "Ubicado junto al puerto deportivo."
+    },
     "NO_SERVICES":"No dispone de servicios",
     "ERRORS": {
       "NOT_FOUND": "No se encontró el parking solicitado.",

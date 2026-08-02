@@ -1,4 +1,4 @@
-import { Component, OnInit, OnDestroy, inject } from '@angular/core';
+import { Component, OnInit, OnDestroy, inject, ChangeDetectorRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ActivatedRoute, Router } from '@angular/router';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
@@ -26,6 +26,7 @@ export class ParkingDetail implements OnInit, OnDestroy {
   private authService = inject(Auth);
   private bookingService = inject(BookingService);
   private translate = inject(TranslateService);
+  private cdr = inject(ChangeDetectorRef);
   private sanitizer = inject(DomSanitizer);
 
   parking: Parking | null = null;
@@ -57,6 +58,7 @@ export class ParkingDetail implements OnInit, OnDestroy {
 
     this.langFormatSub = this.translate.onLangChange.subscribe((event) => {
       this.dateformatdefine(event.lang);
+      this.cdr.detectChanges();
     });
 
     this.dateformatdefine(this.translate.currentLang || this.translate.defaultLang || 'es');
@@ -266,6 +268,13 @@ export class ParkingDetail implements OnInit, OnDestroy {
 
   checkViewport() {
     this.isMobile = window.innerWidth <= 768;
+  }
+
+  getDescription(): string {
+    if (!this.parking) return '';
+    const key = `PARKING.DESCRIPTIONS.${this.parking.id}`;
+    const translated = this.translate.instant(key);
+    return translated !== key ? translated : (this.parking.description || '');
   }
 
   ngOnDestroy() {

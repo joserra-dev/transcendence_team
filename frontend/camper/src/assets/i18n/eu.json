@@ -245,6 +245,8 @@
       "DESC": "Beherakorra"
     },
     "PAGE": {
+      "PREV": "Aurrekoa",
+      "NEXT": "Hurrengoa",
       "OF": "etik"
     },
     "ERRORS": {
@@ -267,6 +269,11 @@
     "SUCCESS": "Erreserba arrakastaz egin da!",
     "LOCATIONOF":"Kokapena",
     "DESCRIPTION":"Deskribapena",
+    "DESCRIPTIONS": {
+      "1": "La Galea-ko labarren aurrean dagoen aparkaleku bikaina.",
+      "2": "Euskal kostan kokaleku aparta.",
+      "3": "Kirol-portuaren ondoan kokatuta."
+    },
     "NO_SERVICES":"Ez du zerbitzurik",
     "ERRORS": {
       "NOT_FOUND": "Ez da bilatutako aparkalekua aurkitu.",
