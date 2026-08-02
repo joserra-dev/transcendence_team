@@ -71,7 +71,7 @@ class Parking(db.Model):
                             Booking.id_space == space.id,
                             Booking.start_date < fh,
                             Booking.end_date > fd,
-                            Booking.status == '1' or Booking.status == '2'
+                            Booking.status.in_(['1', '2'])
                         ).first()
                         blocked = SpaceBlockedDay.is_blocked_in_range(space.id, fd, fh)
                         if overlap or blocked or space_data["status"] == "1":
