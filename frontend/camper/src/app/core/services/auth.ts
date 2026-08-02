@@ -3,7 +3,7 @@ import { HttpClient } from '@angular/common/http';
 import { Router } from '@angular/router';
 import { Observable, tap } from 'rxjs';
 
-import { User, AdminUser, Company } from '../models/user';
+import { User } from '../models/user';
 
 export interface LoginRequest {
   email: string;
@@ -30,6 +30,15 @@ export interface ResetPasswordRequest {
 export interface RegisterResponse {
   mensaje: string;
   usuario: { id: number; email: string };
+}
+
+// Estructura interna del Payload del JWT
+interface JwtPayload {
+  sub?: string;
+  role?: string;
+  admin?: boolean;
+  exp?: number;
+  [key: string]: unknown;
 }
 
 @Injectable({
@@ -85,42 +94,75 @@ export class Auth {
     this.router.navigate(['/auth/login-client']);
   }
 
-  isLoggedIn(): boolean {
+  /**
+   * Decodifica el payload del JWT de forma segura sin librerías externas
+   */
+  private getPayloadFromToken(): JwtPayload | null {
     const token = sessionStorage.getItem('token');
-    if (!token) return false;
+    if (!token) return null;
 
     try {
-      // Decodifica la parte del payload del JWT (índice 1) sin librería externa
-      const payload = JSON.parse(atob(token.split('.')[1]));
-      const now = Math.floor(Date.now() / 1000);
+      const parts = token.split('.');
+      if (parts.length !== 3) return null;
 
-      if (payload.exp && payload.exp < now) {
-        // Token expirado: limpiar sessionStorage
-        sessionStorage.removeItem('token');
-        sessionStorage.removeItem('user');
-        return false;
-      }
-      return true;
+      // Decodificación base64url compatible con UTF-8
+      const base64Url = parts[1];
+      const base64 = base64Url.replace(/-/g, '+').replace(/_/g, '/');
+      const jsonPayload = decodeURIComponent(
+        atob(base64)
+          .split('')
+          .map(c => '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2))
+          .join('')
+      );
+
+      return JSON.parse(jsonPayload) as JwtPayload;
     } catch {
-      // Token malformado: limpiar por seguridad
+      return null;
+    }
+  }
+
+  isLoggedIn(): boolean {
+    const payload = this.getPayloadFromToken();
+    if (!payload) return false;
+
+    const now = Math.floor(Date.now() / 1000);
+    if (payload.exp && payload.exp < now) {
       sessionStorage.removeItem('token');
       sessionStorage.removeItem('user');
       return false;
     }
+    return true;
   }
 
+  /**
+   * Devuelve los datos estéticos/visuales del usuario (ej: nombre para el navbar).
+   */
   getUser(): User | null {
     const userStr = sessionStorage.getItem('user');
     return userStr ? JSON.parse(userStr) : null;
   }
 
+  /**
+   * Verifica los permisos leyendo ÚNICAMENTE el token JWT firmado
+   */
   isAdmin(): boolean {
-    const role = this.getUser()?.role;
-    return role === 'admin' || role === 'super_admin' || this.getUser()?.admin === true;
+    if (!this.isLoggedIn()) return false;
+
+    const payload = this.getPayloadFromToken();
+    if (!payload) return false;
+
+    const role = payload.role;
+    return role === 'admin' || role === 'super_admin' || payload.admin === true;
   }
 
+  /**
+   * Verifica permisos de Super Admin usando ÚNICAMENTE el token JWT
+   */
   isSuperAdmin(): boolean {
-    return this.getUser()?.role === 'super_admin';
+    if (!this.isLoggedIn()) return false;
+
+    const payload = this.getPayloadFromToken();
+    return payload?.role === 'super_admin';
   }
 
   logoutAdmin(): void {

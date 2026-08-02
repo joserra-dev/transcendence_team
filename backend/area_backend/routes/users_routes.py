@@ -390,76 +390,99 @@ def autenticar_usuario():
       403:
         description: Cuenta no verificada o rol no autorizado.
     """
-    datos = request.get_json() or {}
+    data = request.get_json() or {}
 
-    email = datos.get('email')
-    password = datos.get('password')
+    email = data.get('email')
+    password = data.get('password')
    
     if not email or not password: 
         return jsonify({"error": _("Todos los campos son obligatorios (email, password)")}), 400
     
-    usuario_existente = Users.query.filter_by(email=email).first()
+    user_exist = Users.query.filter_by(email=email).first()
 
-    # Corregido: Si no existe o las credenciales no cuadran, 401.
-    if not usuario_existente:
+    if not user_exist:
         return jsonify({"error": _("Credenciales incorrectas")}), 401
     
-    coincide = check_password_hash(usuario_existente.pass_user, password)
+    coincide = check_password_hash(user_exist.pass_user, password)
     if not coincide:
         return jsonify({"error": _("Credenciales incorrectas")}), 401
 
-    if not usuario_existente.is_active:
+    if not user_exist.is_active:
         return jsonify({"error": _("Esta cuenta ha sido desactivada")}), 403
 
-    # Corregido: El chequeo de verificación va DESPUÉS de comprobar que los datos son reales.
-    if not usuario_existente.is_verified:
+    if not user_exist.is_verified:
         return jsonify({"error": _("Debes verificar tu correo electrónico antes de iniciar sesión")}), 403
 
-    perfil = usuario_existente.profile
-    if perfil and perfil.role.value in ['admin', 'super_admin']:
+    # Obtención segura del rol desde el perfil
+    user_profil = user_exist.profile
+    rol_user = user_profil.role.value if user_profil and hasattr(user_profil.role, 'value') else (user_profil.role if user_profil else 'user')
+
+    # Bloquear acceso a administradores desde el login de cliente
+    if rol_user in ['admin', 'super_admin']:
         return jsonify({"error": _("Credenciales incorrectas")}), 401
    
-    token_acceso = create_access_token(identity=str(usuario_existente.id))
+    # Claims adicionales integrados en la firma del JWT
+    claims_adicionales = {
+        "role": rol_user,
+        "admin": False
+    }
+
+    token_acces = create_access_token(
+        identity=str(user_exist.id),
+        additional_claims=claims_adicionales
+    )
 
     return jsonify({
         "mensaje": _("¡Login exitoso!"),
-        "token": token_acceso,
-        "user": _user_to_frontend_dict(usuario_existente)
+        "token": token_acces,
+        "user": _user_to_frontend_dict(user_exist)
     }), 200
 
 
 @users_bp.route('/admin-login', methods=['POST'])
 @limiter.limit("10 per minute")
 def autenticar_admin():
-    datos = request.get_json() or {}
-    email = datos.get('email')
-    password = datos.get('password')
+    data = request.get_json() or {}
+    email = data.get('email')
+    password = data.get('password')
 
     if not email or not password:
         return jsonify({"error": _("Todos los campos son obligatorios (email, password)")}), 400
 
-    usuario = Users.query.filter_by(email=email).first()
-    if not usuario:
+    user = Users.query.filter_by(email=email).first()
+    if not user:
         return jsonify({"error": _("Credenciales incorrectas")}), 401
 
-    if not check_password_hash(usuario.pass_user, password):
-        return jsonify({"error": _("Credenciales incorrectas")}), 401
+    if not check_password_hash(user.pass_user, password):
+        return jsonify({"error": _("Credenciales incorrectas1")}), 401
 
-    if not usuario.is_active:
+    if not user.is_active:
         return jsonify({"error": _("Esta cuenta ha sido desactivada")}), 403
 
-    if not usuario.is_verified:
+    if not user.is_verified:
         return jsonify({"error": _("Debes verificar tu correo electrónico antes de iniciar sesión")}), 403
 
-    profile = usuario.profile
-    if not profile or profile.role.value not in ['admin', 'super_admin']:
+    profile = user.profile
+    rol_admin = profile.role.value if profile and hasattr(profile.role, 'value') else (profile.role if profile else '')
+
+    if not profile or rol_admin not in ['admin', 'super_admin']:
         return jsonify({"error": _("No tienes permisos de administrador")}), 403
 
-    token_acceso = create_access_token(identity=str(usuario.id))
+    # Claims adicionales garantizados para un Administrador
+    claims_adicionales = {
+        "role": rol_admin,
+        "admin": True
+    }
+
+    token_acceso = create_access_token(
+        identity=str(user.id),
+        additional_claims=claims_adicionales
+    )
+
     return jsonify({
         "mensaje": _("¡Login exitoso!"),
         "token": token_acceso,
-        "user": _user_to_frontend_dict(usuario)
+        "user": _user_to_frontend_dict(user)
     }), 200
 
 
