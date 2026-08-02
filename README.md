@@ -38,9 +38,12 @@ Requires a Stripe account. Register at Stripe, toggle the "Test mode" switch in 
 ```bash
 git clone <github.url> "name"
 cd "name"
-make env
+make
 ```
-2. `make env` creates `.env` interactively (Stripe, mail, DB password, etc.). If you need to change anything later, edit **`.env`** — (this is the file Docker and the app read at runtime). Example of the main variables:
+make will open list of commands: 
+choose make prod (production mode) or make dev (development mode)
+
+2. After choice, make creates `.env` interactively (Stripe, mail, DB password, etc.). If you need to change anything later, edit **`.env`** — (this is the file Docker and the app read at runtime). Example of the main variables:
 ```
 POSTGRES_USER=defaultdb_user
 POSTGRES_PASSWORD=your_secure_password
