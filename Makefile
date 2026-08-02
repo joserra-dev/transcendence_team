@@ -262,7 +262,7 @@ env:
 		echo -e "$(COLOR_GREEN)PUBLIC_API_KEY generada automáticamente$(COLOR_RESET)"; \
 		read -p "Stripe Key [sk_test_...]: " stripe; \
 		echo "STRIPE_KEY=$$stripe" >> .env; \
-		echo "MAIL_SERVER=smtp.gmail.com" >> .env; \
+		echo "MAIL_SERVER=smtp.gmail.com" >> .https://github.com/joserra-dev/transcendence_teamenv; \
 		echo "MAIL_PORT=587" >> .env; \
 		echo "MAIL_USE_TLS=True" >> .env; \
 		read -p "MAIL_USERNAME: " user; \
@@ -277,9 +277,3 @@ env:
 	else \
 		echo -e "$(COLOR_GREEN).env ya existe$(COLOR_RESET)"; \
 	fi; \
-	echo -e "$(COLOR_BLUE)Generando certificado TLS local para el frontend...$(COLOR_RESET)"; \
-	if [ -x frontend/ssl/generate-local.sh ]; then \
-		sh frontend/ssl/generate-local.sh $(HOST) || echo -e "$(COLOR_YELLOW)No se pudo generar el certificado local (openssl instalado?)$(COLOR_RESET)"; \
-	else \
-		echo -e "$(COLOR_YELLOW)No se encontró frontend/ssl/generate-local.sh$(COLOR_RESET)"; \
-	fi
