@@ -536,22 +536,26 @@ def retry_booking_payment(booking_id):
     user_id = get_jwt_identity()
     booking = Booking.query.get(booking_id)
     if not booking:
-        return jsonify({"error": "Reserva no encontrada"}), 404
+        return jsonify({"error": _("Reserva no encontrada")}), 404
 
     if str(booking.id_user) != str(user_id):
         return jsonify({"error": _("No tienes permiso para esta reserva")}), 403
 
     if booking.status != BookingStatus.PROCESSING:
-        return jsonify({"error": "La reserva no está en estado de pago pendiente"}), 400
-
-    if booking.start_date and booking.start_date <= date.today():
-        return jsonify({"error": _("No se puede pagar una reserva cuya estancia ya ha comenzado o finalizado")}), 400
+        return jsonify({"error": _("La reserva no está en estado de pago pendiente")}), 400
 
     try:
         stripe.api_key = os.getenv('STRIPE_KEY')
-        parking_name = booking.space.parking.name if booking.space and booking.space.parking else "Parking"
-        space_name = booking.space.name if booking.space else ""
+        space = booking.space
+        parking = space.parking if space else None
+        parking_name = parking.name if parking else "Parking"
+        space_name = space.name if space else ""
 
+        # 1. Asegurar o regenerar un token de confirmación válido
+        if not booking.confirm_token:
+            booking.confirm_token = str(uuid.uuid4())
+
+        # 2. Crear nueva sesión en Stripe incluyendo el token de confirmación
         checkout_session = stripe.checkout.Session.create(
             payment_method_types=['card'],
             line_items=[
@@ -568,15 +572,20 @@ def retry_booking_payment(booking_id):
                 },
             ],
             mode='payment',
-            success_url=f"{os.getenv('URL_BACK', '').rstrip('/')}/api/booking/confirm/{booking.id}",
+            success_url=f"{os.getenv('URL_BACK', '').rstrip('/')}/api/booking/confirm/{booking.id}?token={booking.confirm_token}",
             cancel_url=f"{os.getenv('URL_BACK', '').rstrip('/')}/api/booking/cancelled/{booking.id}",
         )
+
+        # 3. Guardar el nuevo ID de sesión de Stripe y el token en la BBDD
+        booking.stripe_session_id = checkout_session.id
+        db.session.commit()
 
         return jsonify({'url': checkout_session.url}), 200
 
     except Exception as stripe_exc:
+        db.session.rollback()
         current_app.logger.error(f"Error reintentando pasarela Stripe para reserva {booking_id}: {stripe_exc}")
-        return jsonify({"error": "Error interno al inicializar la pasarela de pago"}), 500
+        return jsonify({"error": _("Error interno al inicializar la pasarela de pago")}), 500
 
 @booking_bp.route('/api/booking/rate', methods=['PUT'])
 @jwt_required()
