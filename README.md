@@ -78,6 +78,10 @@ Dev vs prod URLs:
 | Redis | internal | internal |
 | Plate Reader | http://localhost:8000/access-control | <URL_BACK from .env>/access-control |
 
+Super Admin user: superadmin@hemen-go.com pass:<SUPER_ADMIN_PASSWORD from .env>
+Admin user: admin@hemen-go.com pass:<SUPER_ADMIN_PASSWORD from .env>
+
+
 Replace self-signed certificates and rotate `JWT_SECRET_KEY`, `PUBLIC_API_KEY`, and Stripe credentials before a real deployment.
 
 **Stopping:** `make clean` (stop services); `make fclean` (remove all data, including the database).
