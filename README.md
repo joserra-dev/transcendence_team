@@ -70,12 +70,13 @@ SUPER_ADMIN_PASSWORD=super_admin_pass
 Dev vs prod URLs:
 | Service | Dev URL | Prod URL (Nginx) |
 |---------|---------|------------------|
-| Frontend | http://localhost:4200 | https://<URL_FRONT from .env> |
-| Backend API | http://localhost:8000/apidocs/ | https://<URL_BACK from .env>/apidocs/ |
-| Health | http://localhost:8000/api/status | https://<URL_BACK from .env>/api/status |
+| Frontend | http://localhost:4200 | <URL_FRONT from .env> |
+| Frontend admin| http://localhost:4200/auth/login-admin | <URL_FRONT from .env>/auth/login-admin |
+| Backend API | http://localhost:8000/apidocs/ | <URL_BACK from .env>/apidocs/ |
+| Health | http://localhost:8000/api/status | <URL_BACK from .env>/api/status |
 | PostgreSQL | localhost:5432 | (internal) |
 | Redis | internal | internal |
-| Plate Reader | http://localhost:8000/access-control | https://<URL_BACK from .env>/access-control |
+| Plate Reader | http://localhost:8000/access-control | <URL_BACK from .env>/access-control |
 
 Replace self-signed certificates and rotate `JWT_SECRET_KEY`, `PUBLIC_API_KEY`, and Stripe credentials before a real deployment.
 
