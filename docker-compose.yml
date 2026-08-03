@@ -43,13 +43,5 @@ services:
       db:
         condition: service_healthy
 
-    healthcheck:
-      test: ["CMD-SHELL", "curl -fs http://localhost:8000/api/status || curl -fsk https://localhost:8000/api/status || exit 1"]
-      interval: 5s
-      timeout: 5s
-      retries: 7
-      start_period: 5s
-
-
 volumes:
   postgres_data:
