@@ -1,5 +1,6 @@
 import { Injectable, signal, inject } from '@angular/core';
 import { TranslateService } from '@ngx-translate/core';
+import { Observable } from 'rxjs';
 
 export type Language = 'es' | 'en' | 'eu';
 
@@ -14,13 +15,14 @@ export class LanguageService {
   // Signal con el idioma inicial validado desde localStorage
   currentLang = signal<Language>(this.getInitialLanguage());
 
-  constructor() {
-    // Configuración base de ngx-translate
+
+  init(): Observable<any> {
     this.translate.addLangs(this.SUPPORTED_LANGS);
     this.translate.setDefaultLang(this.DEFAULT_LANG);
 
-    // Aplicamos el idioma detectado al iniciar la app
-    this.applyLanguage(this.currentLang());
+    const lang = this.getInitialLanguage();
+    this.currentLang.set(lang);
+    return this.translate.use(lang);
   }
 
   changeLanguage(lang: Language) {
@@ -37,7 +39,7 @@ export class LanguageService {
 
   private getInitialLanguage(): Language {
     const savedLang = localStorage.getItem('lang') as Language;
-    
+
     // Verificamos que exista y que sea un idioma válido
     if (savedLang && this.SUPPORTED_LANGS.includes(savedLang)) {
       return savedLang;

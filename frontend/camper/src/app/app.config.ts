@@ -4,9 +4,10 @@ import { HttpClient, provideHttpClient, withInterceptors } from '@angular/common
 import { routes } from './app.routes';
 import { languageInterceptor } from './core/interceptors/language';
 import { authInterceptor } from './core/interceptors/auth-interceptor';
-import { Observable, tap, catchError, of } from 'rxjs'; 
+import { Observable, catchError, of } from 'rxjs';
 
-import { TranslateLoader, TranslateModule, TranslateService } from '@ngx-translate/core'; 
+import { TranslateLoader, TranslateModule } from '@ngx-translate/core';
+import { LanguageService } from './core/services/language';
 
 export class CustomTranslateLoader implements TranslateLoader {
   constructor(private http: HttpClient) {}
@@ -23,12 +24,8 @@ export function HttpLoaderFactory(http: HttpClient) {
   return new CustomTranslateLoader(http);
 }
 
-export function appInitializerFactory(translate: TranslateService) {
-  return () => {
-    const lang = localStorage.getItem('lang') || 'es';
-    translate.setDefaultLang('es');
-    return translate.use(lang);
-  };
+export function appInitializerFactory(language: LanguageService) {
+  return () => language.init();
 }
 
 export const appConfig: ApplicationConfig = {
@@ -53,7 +50,7 @@ export const appConfig: ApplicationConfig = {
     {
       provide: APP_INITIALIZER,
       useFactory: appInitializerFactory,
-      deps: [TranslateService],
+      deps: [LanguageService],
       multi: true
     }
   ]
