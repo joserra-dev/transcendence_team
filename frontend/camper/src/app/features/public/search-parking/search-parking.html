@@ -49,12 +49,13 @@
         >
         
         <input 
-          #startDateInput
-          id="search-startDate"
-          type="date" 
-          formControlName="startDate" 
-          class="native-hidden-date"
-          (change)="onEntryDateChange()"
+           #startDateInput
+           id="search-startDate"
+           type="date" 
+           formControlName="startDate" 
+           class="native-hidden-date"
+           [attr.min]="minDate"
+           (change)="onEntryDateChange()"
         >
       </div>
 
@@ -74,11 +75,12 @@
         >
         
         <input 
-          #endDateInput
-          id="search-endDate"
-          type="date" 
-          formControlName="endDate" 
-          class="native-hidden-date"
+           #endDateInput
+           id="search-endDate"
+           type="date" 
+           formControlName="endDate" 
+           class="native-hidden-date"
+           [attr.min]="searchForm.get('startDate')?.value"
         >
       </div>
 

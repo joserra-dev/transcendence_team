@@ -132,6 +132,10 @@ export class ParkingDetail implements OnInit, OnDestroy {
     if (!this.entryDate || !this.exitDate) return false;
 
     const start = new Date(this.entryDate);
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+    if (start < today) return false;
+
     const expectedExit = new Date(start);
     expectedExit.setDate(expectedExit.getDate() + 1);
     const end = new Date(this.exitDate);

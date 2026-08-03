@@ -284,7 +284,10 @@ def create_booking():
 
     if endDate <= startDate:
         return jsonify({"error": _("La fecha de salida debe ser al menos un día después de la fecha de entrada.")}), 400
-        
+
+    if startDate < date.today():
+        return jsonify({"error": _("No se puede reservar una plaza para fechas pasadas.")}), 400
+
     same_vehicle_overlap = Booking.query.filter(
         Booking.license_plate == licensePlate,
         Booking.start_date < endDate,
@@ -515,7 +518,7 @@ def cancel_booking():
     if str(booking.id_user) != str(user_id):
         return jsonify({"error": _("No tienes permiso para cancelar esta reserva")}), 403
 
-    if booking.start_date and booking.start_date < date.today():
+    if booking.start_date and booking.start_date <= date.today():
         return jsonify({"error": _("No se puede cancelar una reserva cuya estancia ya ha comenzado o finalizado")}), 400
 
     booking.status = BookingStatus.PENDING
@@ -541,7 +544,7 @@ def retry_booking_payment(booking_id):
     if booking.status != BookingStatus.PROCESSING:
         return jsonify({"error": "La reserva no está en estado de pago pendiente"}), 400
 
-    if booking.start_date and booking.start_date < date.today():
+    if booking.start_date and booking.start_date <= date.today():
         return jsonify({"error": _("No se puede pagar una reserva cuya estancia ya ha comenzado o finalizado")}), 400
 
     try:
